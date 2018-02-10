@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.8
+VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ryujinx", "Ryujinx.csproj", "{074045D4-3ED2-4711-9169-E385F2BFB5A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RyujinxUI", "RyujinxUI\RyujinxUI.csproj", "{9FE14F50-4FC8-440F-B789-A8EC955860F8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{074045D4-3ED2-4711-9169-E385F2BFB5A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{074045D4-3ED2-4711-9169-E385F2BFB5A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{074045D4-3ED2-4711-9169-E385F2BFB5A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FE14F50-4FC8-440F-B789-A8EC955860F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FE14F50-4FC8-440F-B789-A8EC955860F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FE14F50-4FC8-440F-B789-A8EC955860F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FE14F50-4FC8-440F-B789-A8EC955860F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
