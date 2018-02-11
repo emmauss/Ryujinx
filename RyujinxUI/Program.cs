@@ -7,13 +7,14 @@ using Gtk;
 
 namespace RyujinxUI
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-
+            Application.Init();
             MainWindow mainWindow = MainWindow.CreateWindow();
             mainWindow.Show();
+            Application.Run();
         }
     }
 }

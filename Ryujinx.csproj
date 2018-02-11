@@ -15,6 +15,9 @@
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.4.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="RyujinxUI\RyujinxUI.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <None Update="Ryujinx.conf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

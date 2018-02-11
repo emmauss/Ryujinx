@@ -2,6 +2,7 @@
 using Gal.OpenGL;
 using System;
 using System.IO;
+using RyujinxUI;
 
 namespace Ryujinx
 {
@@ -10,7 +11,7 @@ namespace Ryujinx
         static void Main(string[] args)
         {
             Config.Read();
-
+            RyujinxUI.Program.Main(new string[]{ ""});
             Console.Title = "Ryujinx Console";
 
             IGalRenderer Renderer = new OpenGLRenderer();

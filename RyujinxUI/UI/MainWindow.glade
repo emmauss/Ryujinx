@@ -1,50 +1,47 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 <interface>
-  <!-- interface-requires gtk+ 3.0 -->
+  <requires lib="gtk+" version="2.16"/>
+  <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkFileChooserWidget" id="containerLoader">
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
     <property name="orientation">vertical</property>
-    <property name="create_folders">False</property>
   </object>
   <object class="GtkWindow" id="mainWindow">
-    <property name="can_focus">False</property>
-    <property name="title" translatable="yes">RyujinxUI</property>
-    <property name="destroy_with_parent">True</property>
+    <property name="title" translatable="yes">Ryujinx</property>
     <child>
-      <object class="GtkBox" id="box2">
+      <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkMenuBar" id="mainMenu">
+          <object class="GtkMenuBar" id="mainMenuBar">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="valign">start</property>
             <child>
               <object class="GtkMenuItem" id="fileMenuItem">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">_File</property>
+                <property name="use_underline">True</property>
                 <child type="submenu">
                   <object class="GtkMenu" id="menu1">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkMenuItem" id="loadMenuItem">
+                      <object class="GtkImageMenuItem" id="loadMenuItem">
+                        <property name="label" translatable="yes">L_oad Container</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="image">image1</property>
+                        <property name="use_stock">False</property>
                       </object>
                     </child>
                     <child>
                       <object class="GtkSeparatorMenuItem" id="separatormenuitem1">
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem" id="closeMenuItem">
+                      <object class="GtkImageMenuItem" id="exitMenuItem">
+                        <property name="label">gtk-quit</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="use_stock">True</property>
                       </object>
                     </child>
                   </object>
@@ -52,18 +49,17 @@
               </object>
             </child>
             <child>
-              <object class="GtkMenuItem" id="menuitem4">
+              <object class="GtkMenuItem" id="helpMenuItem">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">_Help</property>
+                <property name="use_underline">True</property>
                 <child type="submenu">
                   <object class="GtkMenu" id="menu3">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
                     <child>
                       <object class="GtkImageMenuItem" id="aboutMenuItem">
                         <property name="label">gtk-about</property>
                         <property name="visible">True</property>
-                        <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                       </object>
@@ -75,22 +71,25 @@
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="fill">True</property>
             <property name="position">0</property>
           </packing>
         </child>
         <child>
-          <object class="GtkDrawingArea" id="glDrawingArea">
+          <object class="GtkDrawingArea" id="drawingarea1">
+            <property name="width_request">1280</property>
+            <property name="height_request">720</property>
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
           </object>
           <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
             <property name="position">1</property>
           </packing>
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkImage" id="image1">
+    <property name="visible">True</property>
+    <property name="stock">gtk-open</property>
+    <property name="icon-size">1</property>
   </object>
 </interface>
