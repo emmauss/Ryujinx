@@ -183,7 +183,7 @@ namespace Ryujinx.Core
             Marshal.StructureToPtr(ControllerInputEntry, HidPtr, false);
         }
 
-        public void SendTouchPoint(HidTouchScreenEntryTouch TouchPoint)
+        public void SendTouchCoordinates(Touches TouchPoints)
         {
             uint InnerOffset = (uint)Marshal.SizeOf(typeof(HidSharedMemHeader));
 
@@ -203,21 +203,38 @@ namespace Ryujinx.Core
             Marshal.StructureToPtr(TouchScreenHeader, HidPtr, false);
 
             InnerOffset += (uint)Marshal.SizeOf(typeof(HidTouchScreenHeader))
-                + (uint)((uint)(OldTouchScreenHeader.LatestEntry) * Marshal.SizeOf(typeof(HidTouchScreenEntry)));
-            HidPtr = new IntPtr(Ns.Ram.ToInt64() + (uint)SharedMemOffset + InnerOffset);            
+                + (uint)((uint)(TouchScreenHeader.LatestEntry) * Marshal.SizeOf(typeof(HidTouchScreenEntry)));
+            HidPtr = new IntPtr(Ns.Ram.ToInt64() + (uint)SharedMemOffset + InnerOffset);
+
+            //Truncate number of touches
+            TouchPoints.NumberOfTouches = TouchPoints.NumberOfTouches > 16 ? 16 : TouchPoints.NumberOfTouches;
 
             HidTouchScreenEntry hidTouchScreenEntry = new HidTouchScreenEntry()
             {
                 Header = new HidTouchScreenEntryHeader()
                 {
                     Timestamp = (ulong)Environment.TickCount,
-                    NumTouches = 1
+                    NumTouches = TouchPoints.NumberOfTouches
                 },
                 Touches = new HidTouchScreenEntryTouch[16]
             };
 
-            //Only supports single touch
-            hidTouchScreenEntry.Touches[0] = TouchPoint;
+            //Fill the touch buffer.
+            for (uint index = 0; index < TouchPoints.NumberOfTouches; index++)
+            {
+                hidTouchScreenEntry.Touches[index] = new HidTouchScreenEntryTouch()
+                {
+                    Timestamp = (uint)Environment.TickCount,
+                    X = TouchPoints.XTouches[index],
+                    Y = TouchPoints.YTouches[index],
+                    TouchIndex = index,
+
+                    //Placeholder values till more data is acquired
+                    DiameterX = 10,
+                    DiameterY = 10,
+                    Angle = 90,      
+                };
+            }
 
             Marshal.StructureToPtr(hidTouchScreenEntry, HidPtr, false);
         }

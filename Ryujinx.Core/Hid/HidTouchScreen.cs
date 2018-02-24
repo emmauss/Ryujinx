@@ -52,4 +52,11 @@ namespace Ryujinx.Core
         public byte[] Padding;
     }
 
+    public struct Touches
+    {
+        public uint[] XTouches;
+        public uint[] YTouches;
+        public uint NumberOfTouches;
+    }
+
 }

@@ -52,9 +52,9 @@ namespace Ryujinx.Core
             Hid.SendControllerButtons(ControllerId, Layout, Buttons, LeftJoystick, RightJoystick);
         }
         
-        public void SendTouchScreenEntry(HidTouchScreenEntryTouch TouchPoint)
+        public void SendTouchCoordinates(Touches TouchPoints)
         {
-            Hid.SendTouchPoint(TouchPoint);
+            Hid.SendTouchCoordinates(TouchPoints);
         }
 
         internal virtual void OnFinish(EventArgs e)

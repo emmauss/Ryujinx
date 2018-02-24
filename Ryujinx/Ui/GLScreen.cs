@@ -36,6 +36,11 @@ namespace Ryujinx
             JoystickPosition LeftJoystick;
             JoystickPosition RightJoystick;
 
+            Touches CurrentTouchPoints = new Touches()
+            {
+                XTouches = new uint[16],
+                YTouches = new uint[16]
+            };
 
             if (Keyboard[OpenTK.Input.Key.Escape]) this.Exit();
 
@@ -89,26 +94,18 @@ namespace Ryujinx
 
             //Get screen touch position from left mouse click
             //Opentk always captures mouse events, even if out of focus, so check if window is focused.
-            if (Mouse != null && Focused)
-                if (Mouse.GetState().LeftButton == OpenTK.Input.ButtonState.Pressed)
+            if (Mouse != null)
+            {
+                if (Mouse.GetState().LeftButton == OpenTK.Input.ButtonState.Pressed && Focused)
                 {
-                    HidTouchScreenEntryTouch CurrentPoint = new HidTouchScreenEntryTouch
-                    {
-                        Timestamp = (uint)Environment.TickCount,
-                        X = (uint)Mouse.X,
-                        Y = (uint)Mouse.Y,
-
-                        //Placeholder values till more data is acquired
-                        DiameterX = 10,
-                        DiameterY = 10,
-                        Angle = 90,
-
-                        //Only support single touch
-                        TouchIndex = 0,
-                    };
-                    if (Mouse.X > -1 && Mouse.Y > -1)
-                        Ns.SendTouchScreenEntry(CurrentPoint);
+                    CurrentTouchPoints.XTouches[CurrentTouchPoints.NumberOfTouches] = (uint)Mouse.X;
+                    CurrentTouchPoints.YTouches[CurrentTouchPoints.NumberOfTouches] = (uint)Mouse.Y;
+                    CurrentTouchPoints.NumberOfTouches++;
                 }
+            }
+
+            //Send current touches
+            Ns.SendTouchCoordinates(CurrentTouchPoints);
 
             //We just need one pair of JoyCon because it's emulate by the keyboard.
             Ns.SendControllerButtons(HidControllerID.CONTROLLER_HANDHELD, HidControllerLayouts.Main, CurrentButton, LeftJoystick, RightJoystick);
