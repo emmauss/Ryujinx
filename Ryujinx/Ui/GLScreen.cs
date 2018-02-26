@@ -38,8 +38,8 @@ namespace Ryujinx
 
             Touches CurrentTouchPoints = new Touches()
             {
-                XTouches = new uint[16],
-                YTouches = new uint[16]
+                XTouches = new uint[Touches.Hid_Max_Num_Touches],
+                YTouches = new uint[Touches.Hid_Max_Num_Touches]
             };
 
             if (Keyboard[OpenTK.Input.Key.Escape]) this.Exit();
