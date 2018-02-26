@@ -56,8 +56,18 @@ namespace Ryujinx.Core
     {
         public uint[] XTouches;
         public uint[] YTouches;
-        public uint NumberOfTouches;
+        public uint NumberOfTouches { get; private set; }
         public const uint Hid_Max_Num_Touches = 16;
+
+        public void AddTouch(uint X, uint Y)
+        {
+            if (NumberOfTouches < Hid_Max_Num_Touches)
+            {
+                XTouches[NumberOfTouches] = X;
+                YTouches[NumberOfTouches] = Y;
+                NumberOfTouches++;
+            }
+        }
     }
 
 }

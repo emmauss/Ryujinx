@@ -98,9 +98,7 @@ namespace Ryujinx
             {
                 if (Mouse.GetState().LeftButton == OpenTK.Input.ButtonState.Pressed && Focused)
                 {
-                    CurrentTouchPoints.XTouches[CurrentTouchPoints.NumberOfTouches] = (uint)Mouse.X;
-                    CurrentTouchPoints.YTouches[CurrentTouchPoints.NumberOfTouches] = (uint)Mouse.Y;
-                    CurrentTouchPoints.NumberOfTouches++;
+                    CurrentTouchPoints.AddTouch((uint)Mouse.X, (uint)Mouse.Y);
                 }
             }
 

@@ -206,9 +206,6 @@ namespace Ryujinx.Core
                 + (uint)((uint)(TouchScreenHeader.LatestEntry) * Marshal.SizeOf(typeof(HidTouchScreenEntry)));
             HidPtr = new IntPtr(Ns.Ram.ToInt64() + (uint)SharedMemOffset + InnerOffset);
 
-            //Truncate number of touches
-            TouchPoints.NumberOfTouches = TouchPoints.NumberOfTouches > 16 ? 16 : TouchPoints.NumberOfTouches;
-
             HidTouchScreenEntry hidTouchScreenEntry = new HidTouchScreenEntry()
             {
                 Header = new HidTouchScreenEntryHeader()
