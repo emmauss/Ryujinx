@@ -36,6 +36,9 @@ namespace Ryujinx
             JoystickPosition LeftJoystick;
             JoystickPosition RightJoystick;
 
+            float XScaleFactor = (1280 / (float)Width);
+            float YScaleFactor = (720 / (float)Height);
+
             Touches CurrentTouchPoints = new Touches()
             {
                 XTouches = new uint[Touches.Hid_Max_Num_Touches],
@@ -98,7 +101,7 @@ namespace Ryujinx
             {
                 if (Mouse.GetState().LeftButton == OpenTK.Input.ButtonState.Pressed && Focused)
                 {
-                    CurrentTouchPoints.AddTouch((uint)Mouse.X, (uint)Mouse.Y);
+                    CurrentTouchPoints.AddTouch((uint)(Mouse.X * XScaleFactor), (uint)(Mouse.Y * YScaleFactor));
                 }
             }
 
