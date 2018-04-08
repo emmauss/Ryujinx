@@ -13,10 +13,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OpenTK.NETCore" Version="1.1.2749.6433" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ChocolArm64\ChocolArm64.csproj" />
   </ItemGroup>
 
@@ -27,6 +23,16 @@
     <EmbeddedResource Include="Gal\OpenGL\FbFragShader.glsl">
         <LogicalName>GlFbFragShader</LogicalName>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OpenTK.NETCore" Version="1.1.2749.6433" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="OpenTK">
+      <HintPath>..\..\opentk-ns20\src\OpenTK\bin\Debug\OpenTK.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
