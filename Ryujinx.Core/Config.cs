@@ -44,11 +44,11 @@ namespace Ryujinx.Core
             string[] FilteredLogClasses = Parser.Value("Logging_Filtered_Classes", string.Empty).Split(',');
             foreach (string LogClass in FilteredLogClasses)
             {
-                if (Enum.TryParse(typeof(LogClass), LogClass, out object ParsedLogClass))
+                if (Enum.TryParse(typeof(LogClass), LogClass, true, out object ParsedLogClass))
                 {
                     foreach (LogClass EnumItemName in Enum.GetValues(typeof(LogClass)))
                     {
-                        if (EnumItemName.ToString().Contains(ParsedLogClass.ToString()))
+                        if (EnumItemName.ToString().ToLower().Contains(ParsedLogClass.ToString().ToLower()))
                         {
                             LoggingFilteredClasses[(int)EnumItemName] = true;
                         }
