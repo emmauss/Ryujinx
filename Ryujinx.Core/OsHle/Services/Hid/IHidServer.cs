@@ -38,6 +38,8 @@ namespace Ryujinx.Core.OsHle.Services.Hid
 
         public long CreateAppletResource(ServiceCtx Context)
         {
+            Logging.Warn("Stub Called");
+
             MakeObject(Context, new IAppletResource(Context.Ns.Os.HidSharedMem));
 
             return 0;
@@ -45,11 +47,15 @@ namespace Ryujinx.Core.OsHle.Services.Hid
 
         public long ActivateDebugPad(ServiceCtx Context)
         {
+            Logging.Warn("Stub Called");
+
             return 0;
         }
 
         public long ActivateTouchScreen(ServiceCtx Context)
         {
+            Logging.Warn("Stub Called");
+
             long AppletResourceUserId = Context.RequestData.ReadInt64();
 
             return 0;
@@ -57,6 +63,8 @@ namespace Ryujinx.Core.OsHle.Services.Hid
 
         public long ActivateMouse(ServiceCtx Context)
         {
+            Logging.Warn("Stub Called");
+
             long AppletResourceUserId = Context.RequestData.ReadInt64();
 
             return 0;
@@ -64,6 +72,8 @@ namespace Ryujinx.Core.OsHle.Services.Hid
 
         public long ActivateKeyboard(ServiceCtx Context)
         {
+            Logging.Warn("Stub Called");
+
             long AppletResourceUserId = Context.RequestData.ReadInt64();
 
             return 0;
@@ -71,6 +81,8 @@ namespace Ryujinx.Core.OsHle.Services.Hid
 
         public long StartSixAxisSensor(ServiceCtx Context)
         {
+            Logging.Warn("Stub Called");
+
             int Handle = Context.RequestData.ReadInt32();
 
             long AppletResourceUserId = Context.RequestData.ReadInt64();
@@ -80,6 +92,8 @@ namespace Ryujinx.Core.OsHle.Services.Hid
 
         public long GetSupportedNpadStyleSet(ServiceCtx Context)
         {
+            Logging.Warn("Stub Called");
+
             Context.ResponseData.Write(0);
 
             return 0;
@@ -87,6 +101,8 @@ namespace Ryujinx.Core.OsHle.Services.Hid
 
         public long SetSupportedNpadStyleSet(ServiceCtx Context)
         {
+            Logging.Warn("Stub Called");
+
             long Unknown0 = Context.RequestData.ReadInt64();
             long Unknown8 = Context.RequestData.ReadInt64();
 
@@ -95,6 +111,8 @@ namespace Ryujinx.Core.OsHle.Services.Hid
 
         public long SetSupportedNpadIdType(ServiceCtx Context)
         {
+            Logging.Warn("Stub Called");
+
             long Unknown = Context.RequestData.ReadInt64();
 
             return 0;
@@ -102,6 +120,8 @@ namespace Ryujinx.Core.OsHle.Services.Hid
 
         public long ActivateNpad(ServiceCtx Context)
         {
+            Logging.Warn("Stub Called");
+
             long Unknown = Context.RequestData.ReadInt64();
 
             return 0;
@@ -109,6 +129,8 @@ namespace Ryujinx.Core.OsHle.Services.Hid
 
         public long SetNpadJoyHoldType(ServiceCtx Context)
         {
+            Logging.Warn("Stub Called");
+
             long Unknown0 = Context.RequestData.ReadInt64();
             long Unknown8 = Context.RequestData.ReadInt64();
 
@@ -117,6 +139,8 @@ namespace Ryujinx.Core.OsHle.Services.Hid
 
         public long GetNpadJoyHoldType(ServiceCtx Context)
         {
+            Logging.Warn("Stub Called");
+
             Context.ResponseData.Write(0L);
 
             return 0;
@@ -124,6 +148,8 @@ namespace Ryujinx.Core.OsHle.Services.Hid
 
         public long SetNpadJoyAssignmentModeSingleByDefault(ServiceCtx Context)
         {
+            Logging.Warn("Stub Called");
+
             HidControllerId HidControllerId = (HidControllerId)Context.RequestData.ReadInt32();
             long AppletUserResourseId = Context.RequestData.ReadInt64();
 
@@ -132,6 +158,8 @@ namespace Ryujinx.Core.OsHle.Services.Hid
 
         public long SetNpadJoyAssignmentModeSingle(ServiceCtx Context)
         {
+            Logging.Warn("Stub Called");
+
             HidControllerId HidControllerId = (HidControllerId)Context.RequestData.ReadInt32();
             long AppletUserResourseId = Context.RequestData.ReadInt64();
             long NpadJoyDeviceType = Context.RequestData.ReadInt64();
@@ -141,6 +169,8 @@ namespace Ryujinx.Core.OsHle.Services.Hid
 
         public long SetNpadJoyAssignmentModeDual(ServiceCtx Context)
         {
+            Logging.Warn("Stub Called");
+
             HidControllerId HidControllerId = (HidControllerId)Context.RequestData.ReadInt32();
             long AppletUserResourseId = Context.RequestData.ReadInt64();
 
@@ -149,6 +179,8 @@ namespace Ryujinx.Core.OsHle.Services.Hid
 
         public long MergeSingleJoyAsDualJoy(ServiceCtx Context)
         {
+            Logging.Warn("Stub Called");
+
             long Unknown0 = Context.RequestData.ReadInt32();
             long Unknown8 = Context.RequestData.ReadInt32();
             long AppletUserResourseId = Context.RequestData.ReadInt64();
@@ -158,6 +190,8 @@ namespace Ryujinx.Core.OsHle.Services.Hid
 
         public long GetVibrationDeviceInfo(ServiceCtx Context)
         {
+            Logging.Warn("Stub Called");
+
             int VibrationDeviceHandle = Context.RequestData.ReadInt32();
 
             Context.ResponseData.Write(0L); //VibrationDeviceInfoForIpc
@@ -167,6 +201,8 @@ namespace Ryujinx.Core.OsHle.Services.Hid
 
         public long CreateActiveVibrationDeviceList(ServiceCtx Context)
         {
+            Logging.Warn("Stub Called");
+
             MakeObject(Context, new IActiveApplicationDeviceList());
 
             return 0;
@@ -174,6 +210,8 @@ namespace Ryujinx.Core.OsHle.Services.Hid
 
         public long SendVibrationValues(ServiceCtx Context)
         {
+            Logging.Warn("Stub Called");
+
             return 0;
         }
     }
