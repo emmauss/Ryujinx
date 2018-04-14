@@ -141,9 +141,9 @@ namespace Ryujinx.Core
                 LogMessage(new LogEntry
                 {
                     CallingMember = CallingMember,
-                    LogLevel = LogLevel.Stub,
-                    LogClass = LogClass,
-                    Message = Message,
+                    LogLevel      = LogLevel.Stub,
+                    LogClass      = LogClass,
+                    Message       = Message,
                     ExecutionTime = GetExecutionTime()
                 });
             }
