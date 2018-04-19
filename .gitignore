@@ -121,6 +121,7 @@ ClientBin/
 *.publishsettings
 packages/*
 *.config
+*.glide~
 
 # RIA/Silverlight projects
 Generated_Code/

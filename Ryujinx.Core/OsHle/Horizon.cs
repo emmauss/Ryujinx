@@ -167,6 +167,19 @@ namespace Ryujinx.Core.OsHle
             }
         }
 
+        public void ShutDown()
+        {
+            foreach(var Process in Processes)
+            {
+                Process.Value.StopAllThreadsAsync();
+                Process.Value.Dispose();
+            }
+            Processes.Clear();
+            Ns.OnFinish(EventArgs.Empty);
+            Ns.Gpu.Close();
+            Ns.AudioOut.Close();
+        }
+
         internal bool TryGetProcess(int ProcessId, out Process Process)
         {
             return Processes.TryGetValue(ProcessId, out Process);

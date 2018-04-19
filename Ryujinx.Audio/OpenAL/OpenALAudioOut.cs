@@ -360,6 +360,10 @@ namespace Ryujinx.Audio.OpenAL
             return PlaybackState.Stopped;
         }
 
-
+        public void Close()
+        {
+            KeepPolling = false;
+            Context.Dispose();
+        }
     }
 }

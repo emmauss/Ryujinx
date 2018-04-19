@@ -20,5 +20,7 @@ namespace Ryujinx.Audio
         void Stop(int Track);
 
         PlaybackState GetState(int Track);
+
+        void Close();
     }
 }

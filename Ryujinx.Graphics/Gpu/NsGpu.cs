@@ -70,5 +70,10 @@ namespace Ryujinx.Graphics.Gpu
                 Thread.Yield();
             }
         }
+
+        public void Close()
+        {
+            KeepRunning = false;
+        }
     }
 }

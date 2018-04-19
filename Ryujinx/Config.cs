@@ -22,11 +22,11 @@ namespace Ryujinx
 
             AOptimizations.DisableMemoryChecks = !Convert.ToBoolean(Parser.Value("Enable_Memory_Checks"));
 
-            Log.SetEnable(LogLevel.Debug,   Convert.ToBoolean(Parser.Value("Logging_Enable_Debug")));
-            Log.SetEnable(LogLevel.Stub,    Convert.ToBoolean(Parser.Value("Logging_Enable_Stub")));
-            Log.SetEnable(LogLevel.Info,    Convert.ToBoolean(Parser.Value("Logging_Enable_Info")));
+            Log.SetEnable(LogLevel.Debug, Convert.ToBoolean(Parser.Value("Logging_Enable_Debug")));
+            Log.SetEnable(LogLevel.Stub, Convert.ToBoolean(Parser.Value("Logging_Enable_Stub")));
+            Log.SetEnable(LogLevel.Info, Convert.ToBoolean(Parser.Value("Logging_Enable_Info")));
             Log.SetEnable(LogLevel.Warning, Convert.ToBoolean(Parser.Value("Logging_Enable_Warn")));
-            Log.SetEnable(LogLevel.Error,   Convert.ToBoolean(Parser.Value("Logging_Enable_Error")));
+            Log.SetEnable(LogLevel.Error, Convert.ToBoolean(Parser.Value("Logging_Enable_Error")));
 
             string[] FilteredLogClasses = Parser.Value("Logging_Filtered_Classes").Split(',', StringSplitOptions.RemoveEmptyEntries);
 
@@ -60,34 +60,34 @@ namespace Ryujinx
             {
                 Left = new JoyConLeft
                 {
-                    StickUp     = Convert.ToInt16(Parser.Value("Controls_Left_FakeJoycon_Stick_Up")),
-                    StickDown   = Convert.ToInt16(Parser.Value("Controls_Left_FakeJoycon_Stick_Down")),
-                    StickLeft   = Convert.ToInt16(Parser.Value("Controls_Left_FakeJoycon_Stick_Left")),
-                    StickRight  = Convert.ToInt16(Parser.Value("Controls_Left_FakeJoycon_Stick_Right")),
+                    StickUp = Convert.ToInt16(Parser.Value("Controls_Left_FakeJoycon_Stick_Up")),
+                    StickDown = Convert.ToInt16(Parser.Value("Controls_Left_FakeJoycon_Stick_Down")),
+                    StickLeft = Convert.ToInt16(Parser.Value("Controls_Left_FakeJoycon_Stick_Left")),
+                    StickRight = Convert.ToInt16(Parser.Value("Controls_Left_FakeJoycon_Stick_Right")),
                     StickButton = Convert.ToInt16(Parser.Value("Controls_Left_FakeJoycon_Stick_Button")),
-                    DPadUp      = Convert.ToInt16(Parser.Value("Controls_Left_FakeJoycon_DPad_Up")),
-                    DPadDown    = Convert.ToInt16(Parser.Value("Controls_Left_FakeJoycon_DPad_Down")),
-                    DPadLeft    = Convert.ToInt16(Parser.Value("Controls_Left_FakeJoycon_DPad_Left")),
-                    DPadRight   = Convert.ToInt16(Parser.Value("Controls_Left_FakeJoycon_DPad_Right")),
+                    DPadUp = Convert.ToInt16(Parser.Value("Controls_Left_FakeJoycon_DPad_Up")),
+                    DPadDown = Convert.ToInt16(Parser.Value("Controls_Left_FakeJoycon_DPad_Down")),
+                    DPadLeft = Convert.ToInt16(Parser.Value("Controls_Left_FakeJoycon_DPad_Left")),
+                    DPadRight = Convert.ToInt16(Parser.Value("Controls_Left_FakeJoycon_DPad_Right")),
                     ButtonMinus = Convert.ToInt16(Parser.Value("Controls_Left_FakeJoycon_Button_Minus")),
-                    ButtonL     = Convert.ToInt16(Parser.Value("Controls_Left_FakeJoycon_Button_L")),
-                    ButtonZL    = Convert.ToInt16(Parser.Value("Controls_Left_FakeJoycon_Button_ZL"))
+                    ButtonL = Convert.ToInt16(Parser.Value("Controls_Left_FakeJoycon_Button_L")),
+                    ButtonZL = Convert.ToInt16(Parser.Value("Controls_Left_FakeJoycon_Button_ZL"))
                 },
 
                 Right = new JoyConRight
                 {
-                    StickUp     = Convert.ToInt16(Parser.Value("Controls_Right_FakeJoycon_Stick_Up")),
-                    StickDown   = Convert.ToInt16(Parser.Value("Controls_Right_FakeJoycon_Stick_Down")),
-                    StickLeft   = Convert.ToInt16(Parser.Value("Controls_Right_FakeJoycon_Stick_Left")),
-                    StickRight  = Convert.ToInt16(Parser.Value("Controls_Right_FakeJoycon_Stick_Right")),
+                    StickUp = Convert.ToInt16(Parser.Value("Controls_Right_FakeJoycon_Stick_Up")),
+                    StickDown = Convert.ToInt16(Parser.Value("Controls_Right_FakeJoycon_Stick_Down")),
+                    StickLeft = Convert.ToInt16(Parser.Value("Controls_Right_FakeJoycon_Stick_Left")),
+                    StickRight = Convert.ToInt16(Parser.Value("Controls_Right_FakeJoycon_Stick_Right")),
                     StickButton = Convert.ToInt16(Parser.Value("Controls_Right_FakeJoycon_Stick_Button")),
-                    ButtonA     = Convert.ToInt16(Parser.Value("Controls_Right_FakeJoycon_Button_A")),
-                    ButtonB     = Convert.ToInt16(Parser.Value("Controls_Right_FakeJoycon_Button_B")),
-                    ButtonX     = Convert.ToInt16(Parser.Value("Controls_Right_FakeJoycon_Button_X")),
-                    ButtonY     = Convert.ToInt16(Parser.Value("Controls_Right_FakeJoycon_Button_Y")),
-                    ButtonPlus  = Convert.ToInt16(Parser.Value("Controls_Right_FakeJoycon_Button_Plus")),
-                    ButtonR     = Convert.ToInt16(Parser.Value("Controls_Right_FakeJoycon_Button_R")),
-                    ButtonZR    = Convert.ToInt16(Parser.Value("Controls_Right_FakeJoycon_Button_ZR"))
+                    ButtonA = Convert.ToInt16(Parser.Value("Controls_Right_FakeJoycon_Button_A")),
+                    ButtonB = Convert.ToInt16(Parser.Value("Controls_Right_FakeJoycon_Button_B")),
+                    ButtonX = Convert.ToInt16(Parser.Value("Controls_Right_FakeJoycon_Button_X")),
+                    ButtonY = Convert.ToInt16(Parser.Value("Controls_Right_FakeJoycon_Button_Y")),
+                    ButtonPlus = Convert.ToInt16(Parser.Value("Controls_Right_FakeJoycon_Button_Plus")),
+                    ButtonR = Convert.ToInt16(Parser.Value("Controls_Right_FakeJoycon_Button_R")),
+                    ButtonZR = Convert.ToInt16(Parser.Value("Controls_Right_FakeJoycon_Button_ZR"))
                 }
             };
         }

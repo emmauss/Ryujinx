@@ -1,4 +1,7 @@
-//TODO: This is only used by Config, it doesn't belong to Core.
+using System.ComponentModel;
+using Newtonsoft.Json;
+using OpenTK.Input;
+
 namespace Ryujinx.Core.Input
 {
     public struct JoyConLeft
