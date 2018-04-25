@@ -9,6 +9,8 @@ namespace Ryujinx.UI.UI
 {
     public class InputPage : Notebook
     {
+        public Widget Widget => Notebook;
+
         Notebook Notebook;
         //Buttons
         [GUI] Button LeftAnalogUp;
@@ -487,9 +489,6 @@ namespace Ryujinx.UI.UI
             IsPressed = false;
         }
 
-        public Widget GetWidget()
-        {
-            return Notebook;
-        }
+        
     }
 }

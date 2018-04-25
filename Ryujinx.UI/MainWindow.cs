@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Gtk;
 using GUI = Gtk.Builder.ObjectAttribute;
+using Ryujinx;
 using Ryujinx.Audio;
 using Ryujinx.Audio.OpenAL;
 using Ryujinx.Core;
@@ -17,15 +18,17 @@ namespace Ryujinx.UI
     class MainWindow : Window
     {
         //UI Controls
+        [GUI] Box      MainBox;
         [GUI] MenuItem LoadFileMenuItem;
         [GUI] MenuItem LoadFolderMenuItem;
         [GUI] MenuItem ExitMenuItem;
         [GUI] MenuItem OptionMenuItem;
-        [GUI] MenuItem ShowDebugMenuItem;
         [GUI] MenuItem ContinueMenuItem;
         [GUI] MenuItem PauseMenuItem;
         [GUI] MenuItem StopMenuItem;
         [GUI] MenuItem AboutMenuItem;
+
+        UI.Debugging.LogPage LogPage;
 
         bool DebugWindowActive = false;
 
@@ -48,9 +51,7 @@ namespace Ryujinx.UI
             using (StreamReader reader = new StreamReader(stream))
             {
                 Icon = new Gdk.Pixbuf(stream);
-            }
-
-            InitializeSwitch();
+            }            
            
             //Register Events
             DeleteEvent                  += Window_DeleteEvent;
@@ -58,7 +59,6 @@ namespace Ryujinx.UI
             LoadFolderMenuItem.Activated += LoadFolderMenuItem_Activated;
             ExitMenuItem.Activated       += ExitMenuItem_Activated;
             OptionMenuItem.Activated     += OptionMenuItem_Activated;
-            ShowDebugMenuItem.Activated  += ShowDebugMenuItem_Activated;
             ContinueMenuItem.Activated   += ContinueMenuItem_Activated;
             PauseMenuItem.Activated      += PauseMenuItem_Activated;
             StopMenuItem.Activated       += StopMenuItem_Activated;
@@ -70,6 +70,12 @@ namespace Ryujinx.UI
 
             //Initialize Ryujinx
             Console.Title = "Ryujinx Console";
+
+            LogPage = new UI.Debugging.LogPage();
+            MainBox.Add(LogPage.Widget);
+            MainBox.SetChildPacking(LogPage.Widget, false, false, 0, PackType.End);
+
+            InitializeSwitch();
         }
 
         private void AboutMenuItem_Activated(object sender, EventArgs e)
@@ -131,6 +137,9 @@ namespace Ryujinx.UI
 
         void InitializeSwitch()
         {
+            if(Ns!=null)
+            Ns.Log.Updated -= UI.Debugging.LogPage.LogWriter.WriteLog;
+
             Renderer = new OpenGLRenderer();
 
             IAalOutput AudioOut = new OpenALAudioOut();
@@ -138,6 +147,10 @@ namespace Ryujinx.UI
             Ns = new Core.Switch(Renderer, AudioOut);
 
             Settings.Read(Ns.Log);
+
+            LogPage.UpdateSettings(Ns.Log);
+
+            Ns.Log.Updated += UI.Debugging.LogPage.LogWriter.WriteLog;
         }
 
         private void StopMenuItem_Activated(object sender, EventArgs e)
@@ -163,14 +176,6 @@ namespace Ryujinx.UI
             PauseMenuItem.Sensitive = true;
             ContinueMenuItem.Sensitive = false;
             StopMenuItem.Sensitive = true;
-        }
-
-        private void ShowDebugMenuItem_Activated(object sender, EventArgs e)
-        {
-            UI.Debugging.Debugger debugger = new UI.Debugging.Debugger();
-            debugger.DeleteEvent += Debugger_DeleteEvent;
-            DebugWindowActive = true;
-            debugger.Show();
         }
 
         private void Debugger_DeleteEvent(object o, DeleteEventArgs args)
@@ -227,8 +232,11 @@ namespace Ryujinx.UI
 
         void Start()
         {
+            EmulationController?.Stop();
+
             EmulationController = new EmutionController(Ns, Renderer);
             EmulationController.Start();
+
             PauseMenuItem.Sensitive = true;
             ContinueMenuItem.Sensitive = false;
             StopMenuItem.Sensitive = true;

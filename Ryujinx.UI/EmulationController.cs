@@ -12,7 +12,8 @@ namespace Ryujinx.Core
         private Thread EmulationThread;
         private Switch Ns;
         private IGalRenderer Renderer;
-        private bool IsPaused = false;
+        private bool IsPaused   = false;
+        private bool IsShutDown = false;
 
         public EmutionController(Switch Ns, IGalRenderer Renderer)
         {
@@ -33,6 +34,7 @@ namespace Ryujinx.Core
 
                     Screen.Closed += (Sender, Args) =>
                     {
+                        if(!IsShutDown)
                         Stop();
                     };
 
@@ -46,6 +48,7 @@ namespace Ryujinx.Core
         public void Stop()
         {
             IsPaused = false;
+            IsShutDown = true;
             Ns.Os.ShutDown();
         }
 

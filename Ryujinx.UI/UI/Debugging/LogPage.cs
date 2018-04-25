@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using Ryujinx.Core.Logging;
 using GUI = Gtk.Builder.ObjectAttribute;
 namespace Ryujinx.UI.UI.Debugging
@@ -43,6 +44,7 @@ namespace Ryujinx.UI.UI.Debugging
 
             //Style the log text box
             LogTextView.StyleContext.AddProvider(provider,1000);
+            Widget.StyleContext.AddClass("border");
 
             //Register Events
             InfoLogEnable.Toggled           += InfoLogEnable_Toggled;
@@ -161,6 +163,7 @@ namespace Ryujinx.UI.UI.Debugging
         public override Encoding Encoding => Encoding.UTF8;
         public TextBuffer LogBuffer { get; private set; }
         private TextIter EndIter;
+        private static object LogLock = new object();
 
         public LogWriter()
         {
@@ -177,22 +180,42 @@ namespace Ryujinx.UI.UI.Debugging
             LogBuffer.TagTable.Add(new TextTag("DarkGray")   { Foreground = "darkgray" });
         }
 
-        public override void Write(string value)
+        public void WriteLog(object sender, LogEventArgs e)
         {
-            string consoleColor = Console.ForegroundColor.ToString();
-            Gtk.Application.Invoke(delegate
+            lock (LogLock)
             {
-                LogBuffer.InsertWithTagsByName(ref EndIter, value, consoleColor);
-            });
-        }
+                string FormattedTime = e.Time.ToString(@"hh\:mm\:ss\.fff");
 
-        public override void WriteLine(string value)
-        {
-            string consoleColor = Console.ForegroundColor.ToString();
-            Gtk.Application.Invoke(delegate
-            {
-                LogBuffer.InsertWithTagsByName(ref EndIter, value + Environment.NewLine, consoleColor);
-            });
+                string CurrentThread = Thread.CurrentThread.ManagedThreadId.ToString("d4");
+
+                string Message = FormattedTime + " | " + CurrentThread + " " + e.Message;
+
+                string ColorTag = "White";
+
+                switch (e.Level)
+                {
+                    case LogLevel.Debug:
+                        ColorTag = "Gray";
+                        break;
+                    case LogLevel.Error:
+                        ColorTag = "Red";
+                        break;
+                    case LogLevel.Info:
+                        ColorTag = "White";
+                        break;
+                    case LogLevel.Stub:
+                        ColorTag = "DarkGray";
+                        break;
+                    case LogLevel.Warning:
+                        ColorTag = "Yellow";
+                        break;
+                }
+                Gtk.Application.Invoke(delegate
+                {
+                    LogBuffer.InsertWithTagsByName(ref EndIter, Message + Environment.NewLine, ColorTag);
+                });
+            }
+
         }
 
         

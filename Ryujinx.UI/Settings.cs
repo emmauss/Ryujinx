@@ -37,7 +37,7 @@ namespace Ryujinx.UI
 
             Configuration.LoggingFilteredClasses = Configuration.LoggingFilteredClasses != null ?
                 Configuration.LoggingFilteredClasses : string.Empty;
-            string[] FilteredLogClasses = Configuration.LoggingFilteredClasses.Split('\n');
+            string[] FilteredLogClasses = Configuration.LoggingFilteredClasses.Trim().Split('\n',StringSplitOptions.RemoveEmptyEntries);
 
             //When the classes are specified on the list, we only
             //enable the classes that are on the list.
@@ -68,6 +68,8 @@ namespace Ryujinx.UI
 
         public static void Write(Logger Logger)
         {
+            if (Logger == null)
+                Logger = new Logger();
             Configuration Configuration = new Configuration
             {
                 EmulatedJoyCon     = Config.FakeJoyCon,

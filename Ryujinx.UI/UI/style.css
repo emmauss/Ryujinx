@@ -3,3 +3,8 @@
     background-color:black;
     color:blue;
 }
+
+* .border
+{
+    background-color : lightgray;
+}

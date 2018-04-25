@@ -35,7 +35,7 @@ namespace Ryujinx.UI.UI
             OptionNotebook.AppendPage(GeneralPage.GetWidget(), GeneralLabel);
             Label InputLabel = new Label("Input");
             InputPage InputPage = new InputPage();
-            OptionNotebook.AppendPage(InputPage.GetWidget(), InputLabel);
+            OptionNotebook.AppendPage(InputPage.Widget, InputLabel);
 
             //Register Events
             OptionAcceptButton.Clicked += OptionAcceptButton_Clicked;
