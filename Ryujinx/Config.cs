@@ -10,7 +10,7 @@ namespace Ryujinx
 {
     public static class Config
     {
-        public static JoyCon FakeJoyCon { get; private set; }
+        public static JoyCon FakeJoyCon { get; set; }
 
         public static void Read(Logger Log)
         {
