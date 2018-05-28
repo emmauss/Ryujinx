@@ -1,5 +1,7 @@
 using ChocolArm64.Memory;
 using Ryujinx.Core.OsHle.Ipc;
+using System.Text;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -23,6 +25,7 @@ namespace Ryujinx.Core.OsHle.Services.Vi
                 { 101,  GetSystemDisplayService              },
                 { 102,  GetManagerDisplayService             },
                 { 103,  GetIndirectDisplayTransactionService },
+                { 1000, ListDisplays                         },
                 { 1010, OpenDisplay                          },
                 { 1020, CloseDisplay                         },
                 { 1102, GetDisplayResolution                 },
@@ -61,6 +64,26 @@ namespace Ryujinx.Core.OsHle.Services.Vi
         public long GetIndirectDisplayTransactionService(ServiceCtx Context)
         {
             MakeObject(Context, new IHOSBinderDriver(Context.Ns.Gpu.Renderer));
+
+            return 0;
+        }
+
+        public long ListDisplays(ServiceCtx Context)
+        {
+            long RecBuffPtr = Context.Request.ReceiveBuff[0].Position;
+
+            using (MemoryStream MS = new MemoryStream(0x60))
+            {
+                MS.Write(Encoding.ASCII.GetBytes("Default"), 0, 0x40);
+                MS.Write(BitConverter.GetBytes(0x1L),  0x40, 0x8);
+                MS.Write(BitConverter.GetBytes(0x1L),  0x48, 0x8);
+                MS.Write(BitConverter.GetBytes(1920L), 0x50, 0x8);
+                MS.Write(BitConverter.GetBytes(1080L), 0x58, 0x8);
+
+                AMemoryHelper.WriteBytes(Context.Memory, RecBuffPtr, MS.ToArray());
+            }           
+
+            Context.ResponseData.Write(1L);
 
             return 0;
         }
