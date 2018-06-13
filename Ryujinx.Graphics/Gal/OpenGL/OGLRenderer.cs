@@ -46,5 +46,18 @@ namespace Ryujinx.Graphics.Gal.OpenGL
                 RenderAction();
             }
         }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool Disposing)
+        {
+            if (Disposing)
+            {
+                ActionsQueue.Clear();
+            }
+        }
     }
 }

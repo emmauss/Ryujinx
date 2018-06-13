@@ -1,9 +1,10 @@
 using Ryujinx.Graphics.Gal;
 using Ryujinx.HLE.Gpu.Engines;
+using System;
 
 namespace Ryujinx.HLE.Gpu
 {
-    class NvGpu
+    class NvGpu : IDisposable
     {
         public IGalRenderer Renderer { get; private set; }
 
@@ -22,6 +23,11 @@ namespace Ryujinx.HLE.Gpu
             Engine2d  = new NvGpuEngine2d(this);
             Engine3d  = new NvGpuEngine3d(this);
             EngineDma = new NvGpuEngineDma(this);
+        }
+
+        public void Dispose()
+        {
+            Renderer.Dispose();
         }
     }
 }

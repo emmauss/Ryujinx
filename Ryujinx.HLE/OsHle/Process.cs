@@ -169,6 +169,27 @@ namespace Ryujinx.HLE.OsHle
             return true;
         }
 
+        public void Pause()
+        {
+            if (Disposed)
+            {
+                throw new ObjectDisposedException(nameof(Process));
+            }
+
+            ATranslator.Pause = true;
+        }
+
+        public void Resume()
+        {
+            if (Disposed)
+            {
+                throw new ObjectDisposedException(nameof(Process));
+            }
+
+            ATranslator.Pause = false;
+            ATranslator.PauseResetEvent.Set();
+        }
+
         private void MapRWMemRegion(long Position, long Size, MemoryType Type)
         {
             Memory.Manager.Map(Position, Size, (int)Type, AMemoryPerm.RW);

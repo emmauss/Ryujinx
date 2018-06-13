@@ -341,5 +341,30 @@ namespace Ryujinx.Audio.OpenAL
 
             return PlaybackState.Stopped;
         }
+
+        protected virtual void Dispose(bool Disposing)
+        {
+            if (Disposing)
+            {
+                KeepPolling = false;
+
+                foreach (var Track in Tracks)
+                {
+                    if (Track.Value.State == PlaybackState.Playing)
+                        Stop(Track.Key);
+
+                    Track.Value.Dispose();
+                }
+
+                Tracks.Clear();
+
+                Context.Dispose();
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
     }
 }

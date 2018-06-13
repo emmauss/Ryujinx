@@ -23,7 +23,7 @@ namespace Ryujinx.Graphics.Gal.OpenGL
             }
         }
 
-        private class FrameBuffer
+        public class FrameBuffer
         {
             public int Width  { get; set; }
             public int Height { get; set; }

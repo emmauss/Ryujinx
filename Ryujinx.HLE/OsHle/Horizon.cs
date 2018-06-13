@@ -147,6 +147,22 @@ namespace Ryujinx.HLE.OsHle
             return Process;
         }
 
+        public void PauseAllProcesses()
+        {
+            foreach (Process Process in Processes.Values)
+            {
+                Process.Pause();
+            }
+        }
+
+        public void ResumeAllProcesses()
+        {
+            foreach (Process Process in Processes.Values)
+            {
+                Process.Resume();                
+            }
+        }
+        
         private void InitializeProcess(Process Process)
         {
             Process.AppletState.SetFocus(true);
