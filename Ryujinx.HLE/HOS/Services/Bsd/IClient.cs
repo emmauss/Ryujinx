@@ -180,8 +180,7 @@ namespace Ryujinx.HLE.HOS.Services.Bsd
             byte[] SentBuffer = Context.Memory.ReadBytes(Context.Request.SendBuff[0].Position,
                                                          Context.Request.SendBuff[0].Size);
 
-            byte[] AddressBuffer = Context.Memory.ReadBytes(Context.Request.SendBuff[1].Position,
-                                                            Context.Request.SendBuff[1].Size);
+            byte[] AddressBuffer = ReadSmartBuffer(Context, 1);
 
             if (!Sockets[SocketId].Handle.Connected)
             {
@@ -286,8 +285,7 @@ namespace Ryujinx.HLE.HOS.Services.Bsd
         {
             int SocketId = Context.RequestData.ReadInt32();
 
-            byte[] AddressBuffer = Context.Memory.ReadBytes(Context.Request.SendBuff[0].Position,
-                                                            Context.Request.SendBuff[0].Size);
+            byte[] AddressBuffer = ReadSmartBuffer(Context, 0);
 
             try
             {
@@ -310,8 +308,7 @@ namespace Ryujinx.HLE.HOS.Services.Bsd
         {
             int SocketId = Context.RequestData.ReadInt32();
 
-            byte[] AddressBuffer = Context.Memory.ReadBytes(Context.Request.SendBuff[0].Position,
-                                                            Context.Request.SendBuff[0].Size);
+            byte[] AddressBuffer = ReadSmartBuffer(Context, 0);
 
             try
             {
@@ -423,6 +420,21 @@ namespace Ryujinx.HLE.HOS.Services.Bsd
                 Sockets[SocketId].IpAddress = IPAddress.Parse(IpAddress);
 
                 Sockets[SocketId].RemoteEP = new IPEndPoint(Sockets[SocketId].IpAddress, Port);
+            }
+        }
+
+        private byte[] ReadSmartBuffer(ServiceCtx Context, int Index)
+        {
+            if (Context.Request.SendBuff[Index].Position != 0 && 
+                Context.Request.SendBuff[Index].Size != 0)
+            {
+                return Context.Memory.ReadBytes(Context.Request.SendBuff[Index].Position,
+                                                Context.Request.SendBuff[Index].Size);
+            }
+            else
+            {
+                return Context.Memory.ReadBytes(Context.Request.PtrBuff[Index].Position,
+                                                Context.Request.PtrBuff[Index].Size);
             }
         }
 
