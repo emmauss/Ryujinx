@@ -413,7 +413,7 @@ namespace Ryujinx.HLE.HOS.Services.Bsd
 
                 int Size   = Reader.ReadByte();
                 int Family = Reader.ReadByte();
-                int Port   = EndianSwap.Swap16(Reader.ReadInt16());
+                int Port   = EndianSwap.Swap16(Reader.ReadUInt16());
 
                 string IpAddress = Reader.ReadByte().ToString() + "." +
                                    Reader.ReadByte().ToString() + "." +
