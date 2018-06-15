@@ -176,14 +176,14 @@ namespace Ryujinx.HLE.HOS.Ipc
 
         public (long Position, long Size) GetBufferType0x21(int Index = 0)
         {
-            if (PtrBuff.Count           != 0 &&
+            if (PtrBuff.Count > Index &&
                 PtrBuff[Index].Position != 0 &&
                 PtrBuff[Index].Size     != 0)
             {
                 return (PtrBuff[Index].Position, PtrBuff[Index].Size);
             }
 
-            if (SendBuff.Count           != 0 &&
+            if (SendBuff.Count > Index &&
                 SendBuff[Index].Position != 0 &&
                 SendBuff[Index].Size     != 0)
             {
@@ -195,14 +195,14 @@ namespace Ryujinx.HLE.HOS.Ipc
 
         public (long Position, long Size) GetBufferType0x22(int Index = 0)
         {
-            if (RecvListBuff.Count           != 0 &&
+            if (RecvListBuff.Count > Index &&
                 RecvListBuff[Index].Position != 0 &&
                 RecvListBuff[Index].Size     != 0)
             {
                 return (RecvListBuff[Index].Position, RecvListBuff[Index].Size);
             }
 
-            if (ReceiveBuff.Count           != 0 &&
+            if (ReceiveBuff.Count > Index &&
                 ReceiveBuff[Index].Position != 0 &&
                 ReceiveBuff[Index].Size     != 0)
             {
