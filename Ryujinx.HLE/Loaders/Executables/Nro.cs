@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Text;
+using Ryujinx.HLE.Loaders.Archives;
 
 namespace Ryujinx.HLE.Loaders.Executables
 {
@@ -14,7 +15,6 @@ namespace Ryujinx.HLE.Loaders.Executables
         public byte[] Data          { get; private set; }
         public byte[] AssetRomfData { get; set; }
         public byte[] IconData      { get; set; }
-        public byte[] NCAPData      { get; set; }
 
         public int Mod0Offset  { get; private set; }
         public int TextOffset  { get; private set; }
@@ -22,6 +22,10 @@ namespace Ryujinx.HLE.Loaders.Executables
         public int DataOffset  { get; private set; }
         public int BssSize     { get; private set; }
         public int AssetOffset { get; set; }
+
+        public ControlArchive ControlArchive { get; set; }
+
+        private byte[] NACPData { get; set; }
 
         public Nro(Stream Input, string Name)
         {
@@ -88,11 +92,16 @@ namespace Ryujinx.HLE.Loaders.Executables
                     IconData = Reader.ReadBytes((int)IconSize);
 
                     Input.Seek(AssetOffset + NACPOffset, SeekOrigin.Begin);
-                    NCAPData = Reader.ReadBytes((int)NACPSize);
+                    NACPData = Reader.ReadBytes((int)NACPSize);
 
                     Input.Seek(AssetOffset + RomfOffset, SeekOrigin.Begin);
                     AssetRomfData = Reader.ReadBytes((int)RomfSize);
                 }
+            }
+
+            using(MemoryStream NACPStream = new MemoryStream(NACPData))
+            {
+                ControlArchive = new ControlArchive(NACPStream);
             }
         }
     }
