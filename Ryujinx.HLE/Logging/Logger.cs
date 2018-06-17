@@ -43,6 +43,16 @@ namespace Ryujinx.HLE.Logging
             EnabledClasses[(int)Class] = Enabled;
         }
 
+        public bool IsEnabled(LogLevel LogLevel)
+        {
+            return EnabledLevels[(int)LogLevel];
+        }
+
+        public bool IsFiltered(LogClass LogClass)
+        {
+            return EnabledClasses[(int)LogClass];
+        }
+
         internal void PrintDebug(LogClass Class, string Message, [CallerMemberName] string Caller = "")
         {
             Print(LogLevel.Debug, Class, GetFormattedMessage(Class, Message, Caller));

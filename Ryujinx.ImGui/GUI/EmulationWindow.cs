@@ -57,7 +57,7 @@ namespace Ryujinx.UI
 
         private EmulationController EmulationController;
 
-        private Page CurrentPage = Page.PackageLoader;
+        private Page CurrentPage = Page.GameList;
 
         private bool EscapePressed;
 
@@ -74,7 +74,7 @@ namespace Ryujinx.UI
 
         IGalRenderer Renderer;
         IAalOutput AudioOut;
-        Switch Ns;
+        public static Switch Ns;
 
         public EmulationWindow() : base("Test")
         {
@@ -107,7 +107,7 @@ namespace Ryujinx.UI
             _deltaTime = (float)e.Time;
             if (UIActive)
             {
-                StartFrame();
+                StartFrame();                
                 isRunning = false;
                 if (ShowMainUI)
                 {
@@ -119,6 +119,7 @@ namespace Ryujinx.UI
                     showMainUI = false;
                     RenderPauseUI();
                 }
+                ImGuiNative.igShowMetricsWindow(ref UIActive);
                 EndFrame();
             }
             else
@@ -347,6 +348,7 @@ namespace Ryujinx.UI
         {
             Configuration,
             Emulation,
+            GameList,
             PackageLoader
         }
 

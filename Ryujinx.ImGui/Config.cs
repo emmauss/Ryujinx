@@ -1,4 +1,5 @@
-﻿using Ryujinx.HLE.Input;
+﻿using Ryujinx.HLE;
+using Ryujinx.HLE.Input;
 using Ryujinx.HLE.Logging;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,8 @@ namespace Ryujinx
         public static JoyCon FakeJoyCon { get; internal set; }
 
         public static string IniPath { get; set; }
+
+        public static string DefaultGameDirectory { get; set; }
 
         public static void Read(Logger Log)
         {
@@ -92,6 +95,68 @@ namespace Ryujinx
                     ButtonZR    = Convert.ToInt16(Parser.GetValue("Controls_Right_FakeJoycon_Button_ZR"))
                 }
             };
+
+            DefaultGameDirectory = Parser.GetValue("Default_Game_Directory");
+
+            if (string.IsNullOrWhiteSpace(DefaultGameDirectory))
+            {
+                VirtualFileSystem FS = new HLE.VirtualFileSystem();
+                DefaultGameDirectory = Path.Combine(FS.GetSdCardPath(), "switch");
+            }
+        }
+
+        public static void Save(Logger Log)
+        {
+            IniParser Parser = new IniParser(IniPath);
+
+            Parser.SetValue("Enable_Memory_Checks", (!AOptimizations.DisableMemoryChecks).ToString());
+
+            Parser.SetValue("Logging_Enable_Debug", Log.IsEnabled(LogLevel.Debug).ToString());
+            Parser.SetValue("Logging_Enable_Stub",  Log.IsEnabled(LogLevel.Stub).ToString());
+            Parser.SetValue("Logging_Enable_Info",  Log.IsEnabled(LogLevel.Info).ToString());
+            Parser.SetValue("Logging_Enable_Warn",  Log.IsEnabled(LogLevel.Warning).ToString());
+            Parser.SetValue("Logging_Enable_Error", Log.IsEnabled(LogLevel.Error).ToString());
+
+
+            List<string> FilteredClasses = new List<string>();
+
+            foreach(LogClass LogClass in Enum.GetValues(typeof(LogClass)))
+            {
+                if (Log.IsFiltered(LogClass))
+                    FilteredClasses.Add(LogClass.ToString());
+            }
+
+            Parser.SetValue("Logging_Filtered_Classes", string.Join(',', FilteredClasses));
+
+            Parser.SetValue("Controls_Left_FakeJoycon_Stick_Up", FakeJoyCon.Left.StickUp.ToString());
+            Parser.SetValue("Controls_Left_FakeJoycon_Stick_Down", FakeJoyCon.Left.StickDown.ToString());
+            Parser.SetValue("Controls_Left_FakeJoycon_Stick_Left", FakeJoyCon.Left.StickLeft.ToString());
+            Parser.SetValue("Controls_Left_FakeJoycon_Stick_Right", FakeJoyCon.Left.StickRight.ToString());
+            Parser.SetValue("Controls_Left_FakeJoycon_Stick_Button", FakeJoyCon.Left.StickButton.ToString());
+            Parser.SetValue("Controls_Left_FakeJoycon_DPad_Up", FakeJoyCon.Left.DPadUp.ToString());
+            Parser.SetValue("Controls_Left_FakeJoycon_DPad_Down", FakeJoyCon.Left.DPadDown.ToString());
+            Parser.SetValue("Controls_Left_FakeJoycon_DPad_Left", FakeJoyCon.Left.DPadLeft.ToString());
+            Parser.SetValue("Controls_Left_FakeJoycon_DPad_Right", FakeJoyCon.Left.DPadRight.ToString());
+            Parser.SetValue("Controls_Left_FakeJoycon_Button_Minus", FakeJoyCon.Left.ButtonMinus.ToString());
+            Parser.SetValue("Controls_Left_FakeJoycon_Button_L", FakeJoyCon.Left.ButtonL.ToString());
+            Parser.SetValue("Controls_Left_FakeJoycon_Button_ZL", FakeJoyCon.Left.ButtonZL.ToString());
+
+            Parser.SetValue("Controls_Right_FakeJoycon_Stick_Up", FakeJoyCon.Right.StickUp.ToString());
+            Parser.SetValue("Controls_Right_FakeJoycon_Stick_Down", FakeJoyCon.Right.StickDown.ToString());
+            Parser.SetValue("Controls_Right_FakeJoycon_Stick_Left", FakeJoyCon.Right.StickLeft.ToString());
+            Parser.SetValue("Controls_Right_FakeJoycon_Stick_Right", FakeJoyCon.Right.StickRight.ToString());
+            Parser.SetValue("Controls_Right_FakeJoycon_Stick_Button", FakeJoyCon.Right.StickButton.ToString());
+            Parser.SetValue("Controls_Right_FakeJoycon_Button_A", FakeJoyCon.Right.StickUp.ToString());
+            Parser.SetValue("Controls_Right_FakeJoycon_Button_B", FakeJoyCon.Right.StickUp.ToString());
+            Parser.SetValue("Controls_Right_FakeJoycon_Button_X", FakeJoyCon.Right.StickUp.ToString());
+            Parser.SetValue("Controls_Right_FakeJoycon_Button_Y", FakeJoyCon.Right.StickUp.ToString());
+            Parser.SetValue("Controls_Right_FakeJoycon_Button_Plus", FakeJoyCon.Right.StickUp.ToString());
+            Parser.SetValue("Controls_Right_FakeJoycon_Button_R", FakeJoyCon.Right.StickUp.ToString());
+            Parser.SetValue("Controls_Right_FakeJoycon_Button_ZR", FakeJoyCon.Right.StickUp.ToString());
+
+            Parser.SetValue("Default_Game_Directory", DefaultGameDirectory);
+
+            Parser.Save();
         }
     }
 

@@ -172,7 +172,7 @@ namespace Ryujinx.UI
             GL.EnableClientState(ArrayCap.ColorArray);
             GL.Enable(EnableCap.Texture2D);
 
-            GL.UseProgram(1);
+            GL.UseProgram(0);
 
             // Handle cases of screen coordinates != from framebuffer coordinates (e.g. retina displays)
             IO io = ImGui.GetIO();
@@ -194,12 +194,15 @@ namespace Ryujinx.UI
             GL.LoadIdentity();
 
             // Render command lists
-
             for (int n = 0; n < draw_data->CmdListsCount; n++)
             {
                 NativeDrawList* cmd_list = draw_data->CmdLists[n];
                 byte* vtx_buffer = (byte*)cmd_list->VtxBuffer.Data;
                 ushort* idx_buffer = (ushort*)cmd_list->IdxBuffer.Data;
+
+                DrawVert vert0 = *((DrawVert*)vtx_buffer);
+                DrawVert vert1 = *(((DrawVert*)vtx_buffer) + 1);
+                DrawVert vert2 = *(((DrawVert*)vtx_buffer) + 2);
 
                 GL.VertexPointer(2, VertexPointerType.Float, sizeof(DrawVert), new IntPtr(vtx_buffer + DrawVert.PosOffset));
                 GL.TexCoordPointer(2, TexCoordPointerType.Float, sizeof(DrawVert), new IntPtr(vtx_buffer + DrawVert.UVOffset));
@@ -220,6 +223,8 @@ namespace Ryujinx.UI
                             (int)(io.DisplaySize.Y - pcmd->ClipRect.W),
                             (int)(pcmd->ClipRect.Z - pcmd->ClipRect.X),
                             (int)(pcmd->ClipRect.W - pcmd->ClipRect.Y));
+                        ushort[] indices = new ushort[pcmd->ElemCount];
+                        for (int i = 0; i < indices.Length; i++) { indices[i] = idx_buffer[i]; }
                         GL.DrawElements(PrimitiveType.Triangles, (int)pcmd->ElemCount, DrawElementsType.UnsignedShort, new IntPtr(idx_buffer));
                     }
                     idx_buffer += pcmd->ElemCount;

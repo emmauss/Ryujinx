@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Ryujinx.HLE
 {
-    class VirtualFileSystem : IDisposable
+    public class VirtualFileSystem : IDisposable
     {
         private const string BasePath   = "RyuFs";
         private const string NandPath   = "nand";

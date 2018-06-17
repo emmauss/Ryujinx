@@ -13,11 +13,16 @@ namespace Ryujinx.UI.Widgets
         public static JoyCon CurrentJoyConLayout;
         static Page CurrentPage = Page.General;   
         static bool ConfigIntialized = false;
+        static bool OpenFolderPicker;
+        static string CurrentPath;
         static IniParser IniParser;
+        static FolderPicker FolderPicker;
 
         static ConfigurationWidget()
         {
             IniParser = new IniParser(Config.IniPath);
+            FolderPicker = FolderPicker.GetFolderPicker("FolderDialog",Config.DefaultGameDirectory);
+            CurrentPath = Config.DefaultGameDirectory.ToString();
         }
 
         public static void Draw()
@@ -55,6 +60,33 @@ namespace Ryujinx.UI.Widgets
                             {
                                 ImGui.Text("General Emulation Settings");
                                 ImGui.Spacing();
+                                ImGui.LabelText("","Default Game Directory");
+                                ImGui.SameLine();
+
+                                if( ImGui.Selectable(Config.DefaultGameDirectory))
+                                {
+                                    OpenFolderPicker = true;
+                                }
+                                if (OpenFolderPicker)
+                                    ImGui.OpenPopup("OpenFolder");
+
+                                ImGui.SetNextWindowSize(new Vector2(500, 500), Condition.FirstUseEver);
+                                if(ImGui.BeginPopupModal("OpenFolder",WindowFlags.NoResize))
+                                {
+                                    string output = CurrentPath;
+                                    if (FolderPicker.Draw(ref output, false))
+                                    {
+                                        if (!string.IsNullOrWhiteSpace(output))
+                                        {
+                                            Config.DefaultGameDirectory = output;                                            
+                                        }
+                                        ImGui.CloseCurrentPopup();
+                                        OpenFolderPicker = false;
+                                    }
+                                    ImGui.EndPopup();
+                                }
+
+                                ImGui.Spacing();
                                 ImGui.Checkbox("Disable Cpu Memory Checks", ref AOptimizations.DisableMemoryChecks);
                                 ImGui.EndChild();
                             }
@@ -83,7 +115,7 @@ namespace Ryujinx.UI.Widgets
                 }
                 if (ImGui.Button("Save", new Vector2(Values.ButtonWidth, Values.ButtonHeight)))
                 {
-                    IniParser.Save();
+                    Config.Save(EmulationWindow.Ns.Log);
                 }
                 ImGui.SameLine();
                 if (ImGui.Button("Discard", new Vector2(Values.ButtonWidth, Values.ButtonHeight)))

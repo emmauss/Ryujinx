@@ -24,6 +24,12 @@ namespace Ryujinx.UI
                         CurrentPage = Page.PackageLoader;
                     }
 
+                    if (ImGui.Button("Game List", new System.Numerics.Vector2(Values.ButtonWidth,
+                        Values.ButtonHeight)))
+                    {
+                        CurrentPage = Page.GameList;
+                    }
+
                     if (ImGui.Button("Settings", new System.Numerics.Vector2(Values.ButtonWidth,
                         Values.ButtonHeight)))
                     {
@@ -53,6 +59,9 @@ namespace Ryujinx.UI
                                 break;
                             case Page.Configuration:
                                 Widgets.ConfigurationWidget.Draw();
+                                break;
+                            case Page.GameList:
+                                Widgets.GameList.DrawList();
                                 break;
                         }
                         ImGui.EndChildFrame();
