@@ -48,7 +48,7 @@ namespace Ryujinx.UI
                         {
                             case Page.PackageLoader:
                                 string output = CurrentPath;
-                                if (FileDialog.Draw(ref output, false))
+                                if (FileDialog.Draw(ref output, false) == DialogResult.OK)
                                 {
                                     if (!string.IsNullOrWhiteSpace(output))
                                     {
@@ -61,7 +61,11 @@ namespace Ryujinx.UI
                                 Widgets.ConfigurationWidget.Draw();
                                 break;
                             case Page.GameList:
-                                Widgets.GameList.DrawList();
+                                var SelectedPath =  Widgets.GameList.DrawList();
+                                if (SelectedPath.Item1)
+                                {
+                                    LoadPackage(SelectedPath.Item2);
+                                }
                                 break;
                         }
                         ImGui.EndChildFrame();

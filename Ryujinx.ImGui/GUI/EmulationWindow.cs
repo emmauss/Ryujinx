@@ -1,20 +1,20 @@
 ﻿using ImGuiNET;
 using OpenTK;
+using OpenTK.Input;
+using OpenTK.Graphics;
 using Ryujinx.Audio;
 using Ryujinx.Audio.OpenAL;
 using Ryujinx.Graphics.Gal;
 using Ryujinx.Graphics.Gal.OpenGL;
 using Ryujinx.HLE;
 using Ryujinx.HLE.Input;
-using OpenTK.Graphics;
-using OpenTK.Input;
 using System;
-using System.IO;
 
 namespace Ryujinx.UI
 {
     partial class EmulationWindow : WindowHelper
     {
+        public static EmulationController EmulationController;
         //toggles     
         private bool showMainUI = true;
         private bool showPauseUI;
@@ -26,10 +26,6 @@ namespace Ryujinx.UI
             {
                 isRunning = value;
                 UIActive = !value;
-                if (!value)
-                {
-                    //ShowMainUI = true;
-                }
             }
         }
 
@@ -39,8 +35,13 @@ namespace Ryujinx.UI
             set
             {
                 showMainUI = value;
-                showPauseUI = !value && !isRunning;
-                UIActive = value;
+                if (value)
+                {
+                    CurrentPage = Page.GameList;
+                    UIActive    = value;
+                }
+                else if (!ShowPauseUI)
+                    UIActive = false;
             }
         }
 
@@ -50,12 +51,15 @@ namespace Ryujinx.UI
             set
             {
                 showPauseUI = value;
-                UIActive = value;
-                showMainUI = !value;
+                if (value)
+                {
+                    CurrentPage = Page.Emulation;
+                    UIActive    = value;
+                }
+                else if (!ShowMainUI)
+                    UIActive = false;
             }
-        }
-
-        private EmulationController EmulationController;
+        }        
 
         private Page CurrentPage = Page.GameList;
 
@@ -73,42 +77,33 @@ namespace Ryujinx.UI
         FilePicker FileDialog;
 
         IGalRenderer Renderer;
-        IAalOutput AudioOut;
+
         public static Switch Ns;
 
-        public EmulationWindow() : base("Test")
+        public EmulationWindow() : base("Ryujinx")
         {
             FileDialog = FilePicker.GetFilePicker("rom",null);
 
-            Renderer = new OGLRenderer();
-
-            AudioOut = new OpenALAudioOut();
-
-            Ns = new Switch(Renderer, AudioOut);
-
-            Config.Read(Ns.Log);
-
-            EmulationController = new EmulationController(Ns);
-
-            Ns.Log.Updated += ConsoleLog.PrintLog;
+            InitializeSwitch();
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
-            VSync = VSyncMode.On;
-
-            Renderer.FrameBuffer.SetWindowSize(Width, Height);
+            VSync = VSyncMode.On;            
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
         {
-            _deltaTime = (float)e.Time;
+            DeltaTime = (float)e.Time;
+
             if (UIActive)
             {
-                StartFrame();                
+                StartFrame();
+
                 isRunning = false;
+
                 if (ShowMainUI)
                 {
                     showPauseUI = false;
@@ -119,7 +114,7 @@ namespace Ryujinx.UI
                     showMainUI = false;
                     RenderPauseUI();
                 }
-                ImGuiNative.igShowMetricsWindow(ref UIActive);
+
                 EndFrame();
             }
             else
@@ -139,9 +134,28 @@ namespace Ryujinx.UI
             }
         }
 
+        public void InitializeSwitch()
+        {
+            MainContext.MakeCurrent(WindowInfo);
+
+            Renderer = new OGLRenderer();
+
+            Renderer.FrameBuffer.SetWindowSize(Width, Height);
+
+            IAalOutput AudioOut = new OpenALAudioOut();
+
+            Ns = new Switch(Renderer, AudioOut);
+
+            Config.Read(Ns.Log);
+
+            Ns.Log.Updated += ConsoleLog.PrintLog;
+        }
+
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
-            if(!UIActive)
+            KeyboardState Keyboard = this.Keyboard.HasValue ? this.Keyboard.Value : new KeyboardState();
+
+            if (!UIActive)
             {
                 if (Keyboard[Key.Escape] && !EscapePressed)
                 {
@@ -153,7 +167,9 @@ namespace Ryujinx.UI
 
                     if (EmulationController.IsLoaded)
                         ShowPauseUI = true;
+
                     UIActive = true;
+
                     return;
                 }
                 else if (Keyboard[Key.Escape])
@@ -218,8 +234,10 @@ namespace Ryujinx.UI
 
                 //Get screen touch position from left mouse click
                 //OpenTK always captures mouse events, even if out of focus, so check if window is focused.
-                if (Focused && Mouse?.GetState().LeftButton == ButtonState.Pressed)
+                if (Focused && Mouse?.LeftButton == ButtonState.Pressed)
                 {
+                    MouseState Mouse = this.Mouse.Value;
+
                     int ScrnWidth = Width;
                     int ScrnHeight = Height;
 
@@ -289,59 +307,53 @@ namespace Ryujinx.UI
 
                 Renderer.RunActions();
             }
-            else if(EmulationController.IsLoaded)
-            {
-                if (Keyboard[Key.Escape] && !EscapePressed)
+            else if (EmulationController != null)
+                if (EmulationController.IsLoaded)
                 {
-                    EscapePressed = true;
-                    EmulationController.Resume();
+                    if (Keyboard[Key.Escape] && !EscapePressed)
+                    {
+                        EscapePressed = true;
 
-                    if (ShowPauseUI & EmulationController.IsLoaded)
-                        showPauseUI = false;
-                    UIActive = false;
-                    IsRunning = true;
+                        EmulationController.Resume();
+
+                        if (ShowPauseUI & EmulationController.IsLoaded)
+                            showPauseUI = false;
+
+                        UIActive  = false;
+                        IsRunning = true;
+                    }
+                    else if (Keyboard[Key.Escape])
+                        EscapePressed = true;
+                    else
+                        EscapePressed = false;
                 }
-                else if (Keyboard[Key.Escape])
-                    EscapePressed = true;
-                else
-                    EscapePressed = false;
-            }
-        }       
+        }
 
         public void LoadPackage(string path)
-        {
-            ShowMainUI = false;
+        {           
+
             MainContext.MakeCurrent(WindowInfo);
-            if (Directory.Exists(path))
-            {
-                string[] RomFsFiles = Directory.GetFiles(path, "*.istorage");
 
-                if (RomFsFiles.Length == 0)
-                {
-                    RomFsFiles = Directory.GetFiles(path, "*.romfs");
-                }
+            if(Ns == null)
+            InitializeSwitch();
 
-                if (RomFsFiles.Length > 0)
-                {
-                    Console.WriteLine("Loading as cart with RomFS.");
+            if (EmulationController == null)
+                EmulationController = new EmulationController(Ns);
 
-                    Ns.LoadCart(path, RomFsFiles[0]);
-                }
-                else
-                {
-                    Console.WriteLine("Loading as cart WITHOUT RomFS.");
+            EmulationController.IsShutDown += EmulationController_IsShutDown;
 
-                    Ns.LoadCart(path);
-                }
-            }
-            else if (File.Exists(path))
-            {
-                Console.WriteLine("Loading as homebrew.");
+            EmulationController.Load(path);
 
-                Ns.LoadProgram(path);
-            }
             IsRunning = true;
-            EmulationController.IsLoaded = true;
+
+            ShowMainUI = false;
+        }
+
+        private void EmulationController_IsShutDown(object sender, EventArgs e)
+        {
+            EmulationController = null;
+
+            Ns = null;
         }
 
         enum Page

@@ -176,7 +176,7 @@ namespace Ryujinx.HLE.OsHle
                 throw new ObjectDisposedException(nameof(Process));
             }
 
-            ATranslator.Pause = true;
+            ATranslator.PauseResetEvent.Reset();
         }
 
         public void Resume()
@@ -186,7 +186,6 @@ namespace Ryujinx.HLE.OsHle
                 throw new ObjectDisposedException(nameof(Process));
             }
 
-            ATranslator.Pause = false;
             ATranslator.PauseResetEvent.Set();
         }
 
@@ -424,6 +423,8 @@ namespace Ryujinx.HLE.OsHle
         {
             if (Disposing && !Disposed)
             {
+                ATranslator.PauseResetEvent.Set();
+
                 //If there is still some thread running, disposing the objects is not
                 //safe as the thread may try to access those resources. Instead, we set
                 //the flag to have the Process disposed when all threads finishes.

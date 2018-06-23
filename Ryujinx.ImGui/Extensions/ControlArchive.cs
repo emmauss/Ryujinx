@@ -20,6 +20,7 @@ namespace Ryujinx.UI
             byte[] LanguageEntryData = Reader.ReadBytes(0x3000);
 
             Input.Seek(0x3060, SeekOrigin.Begin);
+
             ApplicationVersion = Encoding.ASCII.GetString(Reader.ReadBytes(0x10));
             BaseTitleID        = Reader.ReadInt64();
             ApplicationTitleID = Reader.ReadInt64();

@@ -11,91 +11,91 @@ namespace ImGuiNET
     /// </summary>
     public class FolderPicker
     {
-        private const string FilePickerID = "###FilePicker";
-        private static readonly Dictionary<object, FolderPicker> s_folderPickers 
+        private const string FolderPickerID = "###FolderPicker";
+        private static readonly Dictionary<object, FolderPicker> FolderPickers 
             = new Dictionary<object, FolderPicker>();
         private static readonly Vector2 DefaultFilePickerSize = new Vector2(600, 400);
 
         public string CurrentFolder { get; set; }
-        public string SelectedFile { get; set; }
+        public string SelectedDirectory { get; set; }
 
-        public static FolderPicker GetFolderPicker(object o, string startingPath)
+        public static FolderPicker GetFolderPicker(object Id, string StartingPath)
         {
-            if (File.Exists(startingPath))
+            if (File.Exists(StartingPath))
             {
-                startingPath = new FileInfo(startingPath).DirectoryName;
+                StartingPath = new FileInfo(StartingPath).DirectoryName;
             }
-            else if (string.IsNullOrEmpty(startingPath) || !Directory.Exists(startingPath))
+            else if (string.IsNullOrEmpty(StartingPath) || !Directory.Exists(StartingPath))
             {
-                startingPath = Environment.CurrentDirectory;
-                if (string.IsNullOrEmpty(startingPath))
+                StartingPath = Environment.CurrentDirectory;
+                if (string.IsNullOrEmpty(StartingPath))
                 {
-                    startingPath = AppContext.BaseDirectory;
+                    StartingPath = AppContext.BaseDirectory;
                 }
             }
 
-            if (!s_folderPickers.TryGetValue(o, out FolderPicker fp))
+            if (!FolderPickers.TryGetValue(Id, out FolderPicker FolderPicker))
             {
-                fp = new FolderPicker();
-                fp.CurrentFolder = startingPath;
-                s_folderPickers.Add(o, fp);
+                FolderPicker = new FolderPicker
+                {
+                    CurrentFolder = StartingPath
+                };
+
+                FolderPickers.Add(Id, FolderPicker);
             }
 
-            return fp;
+            return FolderPicker;
         }
 
-        public bool Draw(ref string selected, bool returnOnSelection)
+        public DialogResult Draw(ref string Selected, bool ReturnOnSelection)
         {
-            bool result = false;
-            result = DrawFolder(ref selected, returnOnSelection);
-            return result;
+            return DrawFolder(ref Selected, ReturnOnSelection);
         }
 
-        private bool DrawFolder(ref string selected, bool returnOnSelection = false)
+        private DialogResult DrawFolder(ref string Selected, bool ReturnOnSelection = false)
         {
             ImGui.Text("Current Folder: " + CurrentFolder);
-            bool result = false;
 
             if (ImGui.BeginChildFrame(1, ImGui.GetContentRegionAvailable() - new Vector2(20, Values.ButtonHeight),
                 WindowFlags.Default))
             {
-                DirectoryInfo di = new DirectoryInfo(CurrentFolder);
-                if (di.Exists)
+                DirectoryInfo CurrentDirectory = new DirectoryInfo(CurrentFolder);
+                if (CurrentDirectory.Exists)
                 {
-                    if (di.Parent != null)
+                    if (CurrentDirectory.Parent != null)
                     {
                         ImGui.PushStyleColor(ColorTarget.Text, Values.Color.Yellow);
 
                         if (ImGui.Selectable("../", false, SelectableFlags.DontClosePopups
                             , new Vector2(ImGui.GetContentRegionAvailableWidth(), Values.SelectibleHeight)))
                         {
-                            CurrentFolder = di.Parent.FullName;
+                            CurrentFolder = CurrentDirectory.Parent.FullName;
                         }
 
                         ImGui.PopStyleColor();
                     }
-                    foreach (var dir in Directory.EnumerateFileSystemEntries(di.FullName))
+                    foreach (var Dir in Directory.EnumerateFileSystemEntries(CurrentDirectory.FullName))
                     {
-                        if (Directory.Exists(dir))
+                        if (Directory.Exists(Dir))
                         {
-                            string name = Path.GetFileName(dir);
-                            bool isSelected = SelectedFile == dir;
+                            string Name       = Path.GetFileName(Dir);
+                            bool   IsSelected = SelectedDirectory == Dir;
 
                             ImGui.PushStyleColor(ColorTarget.Text, Values.Color.Yellow);
 
-                            if (ImGui.Selectable(name + "/", isSelected, SelectableFlags.DontClosePopups
+                            if (ImGui.Selectable(Name + "/", IsSelected, SelectableFlags.DontClosePopups
                                , new Vector2(ImGui.GetContentRegionAvailableWidth(), Values.SelectibleHeight)))
                             {
-                                SelectedFile = dir;
-                                selected = SelectedFile;
+                                SelectedDirectory = Dir;
+                                Selected = SelectedDirectory;
                             }
 
-                            if (SelectedFile != null)
-                                if (ImGui.IsMouseDoubleClicked(0) && SelectedFile.Equals(dir))
+                            if (SelectedDirectory != null)
+                                if (ImGui.IsMouseDoubleClicked(0) && SelectedDirectory.Equals(Dir))
                                 {
-                                    SelectedFile = null;
-                                    selected = null;
-                                    CurrentFolder = dir;
+                                    SelectedDirectory = null;
+                                    Selected = null;
+                                    CurrentFolder = Dir;
                                 }
 
                             ImGui.PopStyleColor();
@@ -108,20 +108,59 @@ namespace ImGuiNET
 
             if (ImGui.Button("Cancel", new Vector2(Values.ButtonWidth, Values.ButtonHeight)))
             {
-                result = false;
+                return DialogResult.Cancel;
             }
 
-            if (SelectedFile != null)
+            if (SelectedDirectory != null)
             {
                 ImGui.SameLine();
                 if (ImGui.Button("Open", new Vector2(Values.ButtonWidth, Values.ButtonHeight)))
                 {
-                    result = true;
-                    selected = SelectedFile;
+                    Selected = SelectedDirectory;
+
+                    return DialogResult.OK;
+                }
+                else if(ReturnOnSelection)
+                {
+                    Selected = SelectedDirectory;
+
+                    return DialogResult.OK;
                 }
             }
 
-            return result;
+            return DialogResult.None;
+        }
+
+        public DialogResult GetFolder(ref string CurrentPath)
+        {
+            ImGui.SetNextWindowSize(new Vector2(500, 500), Condition.FirstUseEver);
+            if (ImGui.BeginPopupModal("OpenFolder", WindowFlags.NoResize))
+            {
+                try
+                {
+                    string Output = CurrentPath;
+                    DialogResult DialogResult = Draw(ref Output, false);
+
+                    if (DialogResult == DialogResult.OK)
+                    {
+                        if (string.IsNullOrWhiteSpace(Output))
+                        {
+                            return DialogResult.None;
+                        }                        
+                    }
+
+                    if(DialogResult!= DialogResult.None)
+                        ImGui.CloseCurrentPopup();
+
+                    return DialogResult;
+                }
+                finally
+                {
+                    ImGui.EndPopup();
+                }
+            }
+
+            return DialogResult.None;
         }
     }
 }

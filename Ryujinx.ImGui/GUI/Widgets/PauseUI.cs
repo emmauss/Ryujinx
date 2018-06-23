@@ -1,5 +1,4 @@
-﻿using System;
-using ImGuiNET;
+﻿using ImGuiNET;
 namespace Ryujinx.UI
 {
     partial class EmulationWindow
@@ -8,6 +7,7 @@ namespace Ryujinx.UI
         {
             ImGui.SetNextWindowPos(System.Numerics.Vector2.Zero, Condition.Always,
                     System.Numerics.Vector2.Zero);
+
             ImGui.SetNextWindowSize(new System.Numerics.Vector2(Width, Height), Condition.Always);
             if (ImGui.BeginWindow("PauseWindow", ref showMainUI, WindowFlags.NoTitleBar
                 | WindowFlags.NoMove | WindowFlags.AlwaysAutoResize))
@@ -51,13 +51,14 @@ namespace Ryujinx.UI
                                     Values.ButtonHeight)))
                                 {
                                     ShowPauseUI = false;
-                                    EmulationController.Resume();
                                     EmulationController.ShutDown();
                                     ShowMainUI = true;
                                 }
+
                                 break;
                             case Page.Configuration:
                                 Widgets.ConfigurationWidget.Draw();
+
                                 break;
                         }
                         ImGui.EndChildFrame();

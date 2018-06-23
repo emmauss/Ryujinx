@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Ryujinx": {
-      "commandName": "Project",
-      "commandLineArgs": "\"C:\\Users\\Emmanuel Hansen\\AppData\\Roaming\\RyuFs\\sdmc\\switch\\fruity\\fruity.nro\""
-    }
-  }
-}

@@ -98,10 +98,20 @@ namespace Ryujinx
 
             DefaultGameDirectory = Parser.GetValue("Default_Game_Directory");
 
+            VirtualFileSystem FS = new HLE.VirtualFileSystem();
+
             if (string.IsNullOrWhiteSpace(DefaultGameDirectory))
-            {
-                VirtualFileSystem FS = new HLE.VirtualFileSystem();
+            {                
                 DefaultGameDirectory = Path.Combine(FS.GetSdCardPath(), "switch");
+            }
+
+            if (!Directory.Exists(DefaultGameDirectory))
+            {
+                if (!Directory.CreateDirectory(DefaultGameDirectory).Exists)
+                {
+                    DefaultGameDirectory = Path.Combine(FS.GetSdCardPath(), "switch");
+                    Directory.CreateDirectory(DefaultGameDirectory);
+                }
             }
         }
 
@@ -165,7 +175,7 @@ namespace Ryujinx
     {
         private readonly Dictionary<string, string> Values;
         private readonly Dictionary<string, string> Comments;
-        private string Path;
+        private readonly string Path;
 
         public IniParser(string Path)
         {
@@ -214,20 +224,25 @@ namespace Ryujinx
         {
             bool result = false;
             List<string> Records = new List<string>();
+
             foreach (var Record in Values)
             {
                 if (Comments.ContainsKey(Record.Key))
                 {
                     string Comment = Comments[Record.Key];
+
                     if (!string.IsNullOrWhiteSpace(Comment))
                     {
                         Records.Add(Environment.NewLine);
                         Records.Add(Comments[Record.Key]);
                     }
                 }
+
                 Records.Add(string.Format("{0} = {1}", Record.Key, Record.Value));
             }
+
             File.WriteAllLines(Path, Records);
+
             return result;
         }
     }

@@ -1,39 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using ImGuiNET;
 using OpenTK;
-using OpenTK.Input;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
-using ImGuiNET;
+using OpenTK.Input;
+using System;
 
 namespace Ryujinx.UI
 {
     class WindowHelper : GameWindow
     {
-        protected float _deltaTime;
-        bool IsWindowOpened = false;
-        int s_fontTexture;
-        float _wheelPosition;
+        protected float DeltaTime;
         protected GraphicsContext MainContext;
         protected GraphicsContext UIContext;
         protected bool UIActive;
 
-        public WindowHelper(string title) : base(1280, 720, GraphicsMode.Default, title, GameWindowFlags.Default
+        private bool  IsWindowOpened = false;
+        private int   FontTexture;
+        private float WheelPosition;
+
+        protected KeyboardState? Keyboard = null;
+
+        protected MouseState? Mouse = null;
+
+        public WindowHelper(string Title) : base(1280, 720, GraphicsMode.Default, Title, GameWindowFlags.Default
             , DisplayDevice.Default, 3, 3, GraphicsContextFlags.ForwardCompatible)
         {
-            Title = title;
+            base.Title = Title;
+
             IsWindowOpened = true;
 
             Location = new Point(
                 (DisplayDevice.Default.Width / 2) - (Width / 2),
                 (DisplayDevice.Default.Height / 2) - (Height / 2));
 
-            MainContext = (GraphicsContext)Context;
+            MainContext = new GraphicsContext(GraphicsMode.Default,
+                WindowInfo, 3, 3, GraphicsContextFlags.ForwardCompatible);
 
             UIContext = new GraphicsContext(GraphicsMode.Default,
-                WindowInfo,4,5,GraphicsContextFlags.ForwardCompatible);
+                WindowInfo, 3, 3, GraphicsContextFlags.ForwardCompatible);
+
             UIContext.MakeCurrent(WindowInfo);
+
             UIActive = true;
         }
 
@@ -45,35 +52,39 @@ namespace Ryujinx.UI
         public void StartFrame()
         {
             UIContext.MakeCurrent(WindowInfo);
-            IO io = ImGui.GetIO();
-            io.DisplaySize = new System.Numerics.Vector2(Width, Height);
-            io.DisplayFramebufferScale = new System.Numerics.Vector2(Values.CurrentWindowScale);
-            io.DeltaTime = _deltaTime;
+
+            IO IO = ImGui.GetIO();
+            IO.DisplaySize = new System.Numerics.Vector2(Width, Height);
+            IO.DisplayFramebufferScale = new System.Numerics.Vector2(Values.CurrentWindowScale);
+            IO.DeltaTime = DeltaTime;
+
             ImGui.NewFrame();
-            HandleInput(io);
+
+            HandleInput(IO);
         }
 
         public unsafe void EndFrame()
         {
             ImGui.Render();
+
             DrawData* data = ImGui.GetDrawData();
             RenderImDrawData(data);
 
-            MainContext.MakeCurrent(WindowInfo);
+            MainContext?.MakeCurrent(WindowInfo);
         }
 
         protected unsafe void PrepareTexture()
         {
             ImGui.GetIO().FontAtlas.AddDefaultFont();
 
-            IO io = ImGui.GetIO();
+            IO IO = ImGui.GetIO();
 
             // Build texture atlas
-            FontTextureData texData = io.FontAtlas.GetTexDataAsAlpha8();
+            FontTextureData texData = IO.FontAtlas.GetTexDataAsAlpha8();
 
             // Create OpenGL texture
-            s_fontTexture = GL.GenTexture();
-            GL.BindTexture(TextureTarget.Texture2D, s_fontTexture);
+            FontTexture = GL.GenTexture();
+            GL.BindTexture(TextureTarget.Texture2D, FontTexture);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)All.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)All.Linear);
             GL.TexImage2D(
@@ -88,11 +99,11 @@ namespace Ryujinx.UI
                 new IntPtr(texData.Pixels));
 
             // Store the texture identifier in the ImFontAtlas substructure.
-            io.FontAtlas.SetTexID(s_fontTexture);
+            IO.FontAtlas.SetTexID(FontTexture);
 
             // Cleanup (don't clear the input data if you want to append new fonts later)
             //io.Fonts->ClearInputData();
-            io.FontAtlas.ClearTexData();
+            IO.FontAtlas.ClearTexData();
             GL.BindTexture(TextureTarget.Texture2D, 0);
         }
 
@@ -101,69 +112,79 @@ namespace Ryujinx.UI
             PrepareTexture();
         }
 
-        unsafe void HandleInput(IO io)
+        unsafe void HandleInput(IO IO)
         {
-            MouseState cursorState = Mouse.GetCursorState();
-            MouseState mouseState = Mouse.GetState();
+            KeyboardState KeyboardState = default(KeyboardState);
+            if (Keyboard != null)
+                if (Keyboard.HasValue)
+                    KeyboardState = Keyboard.Value;
+
+            MouseState MouseState = default(MouseState);
+            if (Mouse != null)
+                if (Mouse.HasValue)
+                    MouseState = Mouse.Value;
+
             if (Focused)
             {
-                Point windowPoint = PointToClient(new Point(cursorState.X, cursorState.Y));
-                io.MousePosition = new System.Numerics.Vector2(windowPoint.X / io.DisplayFramebufferScale.X,
-                    windowPoint.Y / io.DisplayFramebufferScale.Y);
-
-                foreach (Key key in Enum.GetValues(typeof(Key)))
+                if (Mouse.HasValue)
                 {
-                    io.KeysDown[(int)key] = Keyboard[key];
-                    if (Keyboard[key])
-                        continue;
-                    ImGuiNative.igGetIO()->KeyAlt = (byte)((Keyboard[Key.AltLeft]
-                        || Keyboard[Key.AltRight]) ? 1 : 0);
-                    ImGuiNative.igGetIO()->KeyCtrl = (byte)((Keyboard[Key.ControlLeft]
-                        || Keyboard[Key.ControlRight]) ? 1 : 0);
-                    ImGuiNative.igGetIO()->KeyShift = (byte)((Keyboard[Key.ShiftLeft]
-                        || Keyboard[Key.ShiftRight]) ? 1 : 0);
-                    ImGuiNative.igGetIO()->KeySuper = (byte)((Keyboard[Key.WinLeft]
-                        || Keyboard[Key.WinRight]) ? 1 : 0);
+                    Point WindowPoint = new Point(MouseState.X, MouseState.Y);
+                    IO.MousePosition = new System.Numerics.Vector2(WindowPoint.X,
+                        WindowPoint.Y);
                 }
+
+                if (this.Keyboard.HasValue)
+                    foreach (Key Key in Enum.GetValues(typeof(Key)))
+                    {
+                        IO.KeysDown[(int)Key] = KeyboardState[Key];
+
+                        if (KeyboardState[Key])
+                            continue;
+                        ImGuiNative.igGetIO()->KeyAlt = (byte)((KeyboardState[Key.AltLeft]
+                            || KeyboardState[Key.AltRight]) ? 1 : 0);
+                        ImGuiNative.igGetIO()->KeyCtrl = (byte)((KeyboardState[Key.ControlLeft]
+                            || KeyboardState[Key.ControlRight]) ? 1 : 0);
+                        ImGuiNative.igGetIO()->KeyShift = (byte)((KeyboardState[Key.ShiftLeft]
+                            || KeyboardState[Key.ShiftRight]) ? 1 : 0);
+                        ImGuiNative.igGetIO()->KeySuper = (byte)((KeyboardState[Key.WinLeft]
+                            || KeyboardState[Key.WinRight]) ? 1 : 0);
+                    }
             }
             else
             {
-                io.MousePosition = new System.Numerics.Vector2(-1f, -1f);
+                IO.MousePosition = new System.Numerics.Vector2(-1f, -1f);
                 for (int i = 0; i <= 512; i++)
                 {
-                    io.KeysDown[i] = false;
+                    IO.KeysDown[i] = false;
                 }
             }
 
-            io.MouseDown[0] = mouseState.LeftButton == ButtonState.Pressed;
-            io.MouseDown[1] = mouseState.RightButton == ButtonState.Pressed;
-            io.MouseDown[2] = mouseState.MiddleButton == ButtonState.Pressed;
+            if (Mouse.HasValue)
+            {
+                IO.MouseDown[0] = MouseState.LeftButton == ButtonState.Pressed;
+                IO.MouseDown[1] = MouseState.RightButton == ButtonState.Pressed;
+                IO.MouseDown[2] = MouseState.MiddleButton == ButtonState.Pressed;
 
-            float newWheelPos = mouseState.WheelPrecise;
-            float delta = newWheelPos - _wheelPosition;
-            _wheelPosition = newWheelPos;
-            io.MouseWheel = delta;
+                float NewWheelPos = MouseState.WheelPrecise;
+                float Delta       = NewWheelPos - WheelPosition;
+                WheelPosition     = NewWheelPos;
+                IO.MouseWheel     = Delta;
+            }
         }
 
-        private unsafe void RenderImDrawData(DrawData* draw_data)
+        private unsafe void RenderImDrawData(DrawData* DrawData)
         {
-            // Rendering
-            int display_w, display_h;
-            display_w = Width;
-            display_h = Height;
-
-            Vector4 clear_color = new Vector4(114f / 255f, 144f / 255f, 154f / 255f, 1.0f);
-            GL.Viewport(0, 0, display_w, display_h);
-            GL.ClearColor(clear_color.X, clear_color.Y, clear_color.Z, clear_color.W);
+            Vector4 ClearColor = new Vector4(114f / 255f, 144f / 255f, 154f / 255f, 1.0f);
+            GL.Viewport(0, 0, Width, Height);
+            GL.ClearColor(ClearColor.X, ClearColor.Y, ClearColor.Z, ClearColor.W);
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
             // We are using the OpenGL fixed pipeline to make the example code simpler to read!
             // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled, vertex/texcoord/color pointers.
-            int last_texture;
-            GL.GetInteger(GetPName.TextureBinding2D, out last_texture);
+            GL.GetInteger(GetPName.TextureBinding2D, out int last_texture);
             GL.PushAttrib(AttribMask.EnableBit | AttribMask.ColorBufferBit | AttribMask.TransformBit);
             GL.Enable(EnableCap.Blend);
-            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.Disable(EnableCap.CullFace);
             GL.Disable(EnableCap.DepthTest);
             GL.Enable(EnableCap.ScissorTest);
@@ -175,8 +196,8 @@ namespace Ryujinx.UI
             GL.UseProgram(0);
 
             // Handle cases of screen coordinates != from framebuffer coordinates (e.g. retina displays)
-            IO io = ImGui.GetIO();
-            ImGui.ScaleClipRects(draw_data, io.DisplayFramebufferScale);
+            IO IO = ImGui.GetIO();
+            ImGui.ScaleClipRects(DrawData, IO.DisplayFramebufferScale);
 
             // Setup orthographic projection matrix
             GL.MatrixMode(MatrixMode.Projection);
@@ -184,8 +205,8 @@ namespace Ryujinx.UI
             GL.LoadIdentity();
             GL.Ortho(
                 0.0f,
-                io.DisplaySize.X / io.DisplayFramebufferScale.X,
-                io.DisplaySize.Y / io.DisplayFramebufferScale.Y,
+                IO.DisplaySize.X / IO.DisplayFramebufferScale.X,
+                IO.DisplaySize.Y / IO.DisplayFramebufferScale.Y,
                 0.0f,
                 -1.0f,
                 1.0f);
@@ -194,40 +215,37 @@ namespace Ryujinx.UI
             GL.LoadIdentity();
 
             // Render command lists
-            for (int n = 0; n < draw_data->CmdListsCount; n++)
+            for (int n = 0; n < DrawData->CmdListsCount; n++)
             {
-                NativeDrawList* cmd_list = draw_data->CmdLists[n];
-                byte* vtx_buffer = (byte*)cmd_list->VtxBuffer.Data;
-                ushort* idx_buffer = (ushort*)cmd_list->IdxBuffer.Data;
+                NativeDrawList* CmdList = DrawData->CmdLists[n];
+                byte* VtxBuffer = (byte*)CmdList->VtxBuffer.Data;
+                ushort* IdxBuffer = (ushort*)CmdList->IdxBuffer.Data;
 
-                DrawVert vert0 = *((DrawVert*)vtx_buffer);
-                DrawVert vert1 = *(((DrawVert*)vtx_buffer) + 1);
-                DrawVert vert2 = *(((DrawVert*)vtx_buffer) + 2);
+                GL.VertexPointer(2, VertexPointerType.Float, sizeof(DrawVert), new IntPtr(VtxBuffer + DrawVert.PosOffset));
+                GL.TexCoordPointer(2, TexCoordPointerType.Float, sizeof(DrawVert), new IntPtr(VtxBuffer + DrawVert.UVOffset));
+                GL.ColorPointer(4, ColorPointerType.UnsignedByte, sizeof(DrawVert), new IntPtr(VtxBuffer + DrawVert.ColOffset));
 
-                GL.VertexPointer(2, VertexPointerType.Float, sizeof(DrawVert), new IntPtr(vtx_buffer + DrawVert.PosOffset));
-                GL.TexCoordPointer(2, TexCoordPointerType.Float, sizeof(DrawVert), new IntPtr(vtx_buffer + DrawVert.UVOffset));
-                GL.ColorPointer(4, ColorPointerType.UnsignedByte, sizeof(DrawVert), new IntPtr(vtx_buffer + DrawVert.ColOffset));
-
-                for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
+                for (int Cmd = 0; Cmd < CmdList->CmdBuffer.Size; Cmd++)
                 {
-                    DrawCmd* pcmd = &(((DrawCmd*)cmd_list->CmdBuffer.Data)[cmd_i]);
-                    if (pcmd->UserCallback != IntPtr.Zero)
+                    DrawCmd* PCmd = &(((DrawCmd*)CmdList->CmdBuffer.Data)[Cmd]);
+                    if (PCmd->UserCallback != IntPtr.Zero)
                     {
                         throw new NotImplementedException();
                     }
                     else
                     {
-                        GL.BindTexture(TextureTarget.Texture2D, pcmd->TextureId.ToInt32());
+                        GL.BindTexture(TextureTarget.Texture2D, PCmd->TextureId.ToInt32());
                         GL.Scissor(
-                            (int)pcmd->ClipRect.X,
-                            (int)(io.DisplaySize.Y - pcmd->ClipRect.W),
-                            (int)(pcmd->ClipRect.Z - pcmd->ClipRect.X),
-                            (int)(pcmd->ClipRect.W - pcmd->ClipRect.Y));
-                        ushort[] indices = new ushort[pcmd->ElemCount];
-                        for (int i = 0; i < indices.Length; i++) { indices[i] = idx_buffer[i]; }
-                        GL.DrawElements(PrimitiveType.Triangles, (int)pcmd->ElemCount, DrawElementsType.UnsignedShort, new IntPtr(idx_buffer));
+                            (int)PCmd->ClipRect.X,
+                            (int)(IO.DisplaySize.Y - PCmd->ClipRect.W),
+                            (int)(PCmd->ClipRect.Z - PCmd->ClipRect.X),
+                            (int)(PCmd->ClipRect.W - PCmd->ClipRect.Y));
+                        ushort[] indices = new ushort[PCmd->ElemCount];
+                        for (int i = 0; i < indices.Length; i++)
+                            indices[i] = IdxBuffer[i];
+                        GL.DrawElements(PrimitiveType.Triangles, (int)PCmd->ElemCount, DrawElementsType.UnsignedShort, new IntPtr(IdxBuffer));
                     }
-                    idx_buffer += pcmd->ElemCount;
+                    IdxBuffer += PCmd->ElemCount;
                 }
             }
 
@@ -243,6 +261,31 @@ namespace Ryujinx.UI
             GL.PopAttrib();
 
             SwapBuffers();
+        }
+
+        protected override void OnKeyDown(KeyboardKeyEventArgs e)
+        {
+            Keyboard = e.Keyboard;
+        }
+
+        protected override void OnKeyUp(KeyboardKeyEventArgs e)
+        {
+            Keyboard = e.Keyboard;
+        }
+
+        protected override void OnMouseDown(MouseButtonEventArgs e)
+        {
+            Mouse = e.Mouse;
+        }
+
+        protected override void OnMouseUp(MouseButtonEventArgs e)
+        {
+            Mouse = e.Mouse;
+        }
+
+        protected override void OnMouseMove(MouseMoveEventArgs e)
+        {
+            Mouse = e.Mouse;
         }
     }
 }

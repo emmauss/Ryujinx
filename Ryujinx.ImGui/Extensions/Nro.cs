@@ -8,12 +8,10 @@ namespace Ryujinx.UI
 {
     class Nro : HLE.Loaders.Executables.Nro
     {
-        public byte[] AssetRomfData { get; set; }
-        public byte[] IconData { get; set; }
-
-        private byte[] NACPData { get; set; }
-
-        public int AssetOffset { get; set; }
+        public  byte[] AssetRomfData { get; set; }
+        public  byte[] IconData      { get; set; }
+        private byte[] NACPData      { get; set; }
+        public  int    AssetOffset   { get; set; }
 
         public ControlArchive ControlArchive { get; set; }
 
@@ -38,18 +36,19 @@ namespace Ryujinx.UI
                 if (AssetMagic == "ASET")
                 {
                     Input.Seek(AssetOffset, SeekOrigin.Begin);
-                    int AssetMagic0 = Reader.ReadInt32();
-                    int AssetFormat = Reader.ReadInt32();
-                    byte[] IconSectionInfo = Reader.ReadBytes(0x10);
-                    byte[] NACPSectionInfo = Reader.ReadBytes(0x10);
+
+                    int AssetMagic0             = Reader.ReadInt32();
+                    int AssetFormat             = Reader.ReadInt32();
+                    byte[] IconSectionInfo      = Reader.ReadBytes(0x10);
+                    byte[] NACPSectionInfo      = Reader.ReadBytes(0x10);
                     byte[] AssetRomfSectionInfo = Reader.ReadBytes(0x10);
 
                     long IconOffset = BitConverter.ToInt64(IconSectionInfo, 0);
-                    long IconSize = BitConverter.ToInt64(IconSectionInfo, 8);
+                    long IconSize   = BitConverter.ToInt64(IconSectionInfo, 8);
                     long NACPOffset = BitConverter.ToInt64(NACPSectionInfo, 0);
-                    long NACPSize = BitConverter.ToInt64(NACPSectionInfo, 8);
+                    long NACPSize   = BitConverter.ToInt64(NACPSectionInfo, 8);
                     long RomfOffset = BitConverter.ToInt64(AssetRomfSectionInfo, 0);
-                    long RomfSize = BitConverter.ToInt64(AssetRomfSectionInfo, 8);
+                    long RomfSize   = BitConverter.ToInt64(AssetRomfSectionInfo, 8);
 
                     Input.Seek(AssetOffset + IconOffset, SeekOrigin.Begin);
                     IconData = Reader.ReadBytes((int)IconSize);

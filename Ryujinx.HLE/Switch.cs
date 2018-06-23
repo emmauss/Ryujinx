@@ -98,7 +98,8 @@ namespace Ryujinx.HLE
             {
                 Os.Dispose();
                 VFs.Dispose();
-                Gpu.Dispose();                
+                Gpu.Dispose();
+                AudioOut.Dispose();
             }
         }
     }

@@ -22,11 +22,7 @@ namespace ChocolArm64
 
         public bool EnableCpuTrace { get; set; }
 
-        public static long CyclesExecuted { get; set; }
-
-        public static bool Pause { get; set; } = false;
-
-        public static ManualResetEvent PauseResetEvent = new ManualResetEvent(false);
+        public static ManualResetEvent PauseResetEvent = new ManualResetEvent(true);
 
         public ATranslator(IReadOnlyDictionary<long, string> SymbolTable = null)
         {
@@ -68,10 +64,7 @@ namespace ChocolArm64
 
                 OpCode.Interpreter(State, Memory, OpCode);
 
-                CyclesExecuted++;
-
-                while (Pause)
-                    PauseResetEvent.WaitOne(1000);
+                PauseResetEvent.WaitOne(1000);
             }
             while (State.R15 != 0 && State.Running);
         }
@@ -102,10 +95,7 @@ namespace ChocolArm64
 
                 Position = Sub.Execute(State, Memory);
 
-                CyclesExecuted++;
-
-                while (Pause)
-                    PauseResetEvent.WaitOne(1000);
+                PauseResetEvent.WaitOne();
             }
             while (Position != 0 && State.Running);
         }

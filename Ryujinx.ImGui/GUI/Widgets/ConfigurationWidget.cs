@@ -1,28 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using ImGuiNET;
-using System.Numerics;
+﻿using ImGuiNET;
 using Ryujinx.HLE.Input;
-using OpenTK.Input;
+using System.Numerics;
 
 namespace Ryujinx.UI.Widgets
 {
     public partial class ConfigurationWidget
-    {
-        public static JoyCon CurrentJoyConLayout;
-        static Page CurrentPage = Page.General;   
+    { 
         static bool ConfigIntialized = false;
         static bool OpenFolderPicker;
         static string CurrentPath;
+
         static IniParser IniParser;
         static FolderPicker FolderPicker;
+        static JoyCon CurrentJoyConLayout;
+        static Page CurrentPage = Page.General;
 
         static ConfigurationWidget()
         {
-            IniParser = new IniParser(Config.IniPath);
+            IniParser    = new IniParser(Config.IniPath);
             FolderPicker = FolderPicker.GetFolderPicker("FolderDialog",Config.DefaultGameDirectory);
-            CurrentPath = Config.DefaultGameDirectory.ToString();
+            CurrentPath  = Config.DefaultGameDirectory.ToString();
         }
 
         public static void Draw()
@@ -60,30 +57,27 @@ namespace Ryujinx.UI.Widgets
                             {
                                 ImGui.Text("General Emulation Settings");
                                 ImGui.Spacing();
-                                ImGui.LabelText("","Default Game Directory");
+                                ImGui.LabelText("", "Default Game Directory");
                                 ImGui.SameLine();
 
-                                if( ImGui.Selectable(Config.DefaultGameDirectory))
+                                if (ImGui.Selectable(Config.DefaultGameDirectory))
                                 {
                                     OpenFolderPicker = true;
                                 }
                                 if (OpenFolderPicker)
                                     ImGui.OpenPopup("OpenFolder");
 
-                                ImGui.SetNextWindowSize(new Vector2(500, 500), Condition.FirstUseEver);
-                                if(ImGui.BeginPopupModal("OpenFolder",WindowFlags.NoResize))
+                                DialogResult DialogResult = FolderPicker.GetFolder(ref CurrentPath);
+                                if (DialogResult == DialogResult.OK)
                                 {
-                                    string output = CurrentPath;
-                                    if (FolderPicker.Draw(ref output, false))
+                                    if (!string.IsNullOrWhiteSpace(CurrentPath))
                                     {
-                                        if (!string.IsNullOrWhiteSpace(output))
-                                        {
-                                            Config.DefaultGameDirectory = output;                                            
-                                        }
-                                        ImGui.CloseCurrentPopup();
-                                        OpenFolderPicker = false;
+                                        Config.DefaultGameDirectory = CurrentPath;
                                     }
-                                    ImGui.EndPopup();
+                                }
+                                if (DialogResult != DialogResult.None)
+                                {
+                                    OpenFolderPicker = false;
                                 }
 
                                 ImGui.Spacing();
