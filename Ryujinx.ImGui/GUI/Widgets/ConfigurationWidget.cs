@@ -6,19 +6,19 @@ namespace Ryujinx.UI.Widgets
 {
     public partial class ConfigurationWidget
     { 
-        static bool ConfigIntialized = false;
-        static bool OpenFolderPicker;
+        static bool   ConfigIntialized = false;
+        static bool   OpenFolderPicker;
         static string CurrentPath;
 
-        static IniParser IniParser;
-        static FolderPicker FolderPicker;
-        static JoyCon CurrentJoyConLayout;
-        static Page CurrentPage = Page.General;
+        static IniParser  IniParser;
+        static FilePicker FolderPicker;
+        static JoyCon     CurrentJoyConLayout;
+        static Page       CurrentPage = Page.General;
 
         static ConfigurationWidget()
         {
             IniParser    = new IniParser(Config.IniPath);
-            FolderPicker = FolderPicker.GetFolderPicker("FolderDialog",Config.DefaultGameDirectory);
+            FolderPicker = FilePicker.GetFilePicker("FolderDialog",Config.DefaultGameDirectory);
             CurrentPath  = Config.DefaultGameDirectory.ToString();
         }
 
@@ -65,7 +65,7 @@ namespace Ryujinx.UI.Widgets
                                     OpenFolderPicker = true;
                                 }
                                 if (OpenFolderPicker)
-                                    ImGui.OpenPopup("OpenFolder");
+                                    ImGui.OpenPopup("Open Folder");
 
                                 DialogResult DialogResult = FolderPicker.GetFolder(ref CurrentPath);
                                 if (DialogResult == DialogResult.OK)

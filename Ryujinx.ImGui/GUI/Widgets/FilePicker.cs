@@ -17,6 +17,7 @@ namespace ImGuiNET
 
         public string CurrentFolder { get; set; }
         public string SelectedEntry { get; set; }
+        public string CurrentDrive  { get; set; }
 
         public static FilePicker GetFilePicker(object Id, string StartingPath)
         {
@@ -46,16 +47,40 @@ namespace ImGuiNET
             return FilePicker;
         }
 
-        public DialogResult Draw(ref string SelectedPath, bool ReturnOnSelection)
+        public DialogResult Draw(ref string SelectedPath, bool ReturnOnSelection, bool FoldersOnly = false)
         {
-            return DrawFolder(ref SelectedPath, ReturnOnSelection);
+            return DrawFolder(ref SelectedPath, ReturnOnSelection, FoldersOnly);
         }
 
-        private DialogResult DrawFolder(ref string SelectedPath, bool ReturnOnSelection = false)
+        private DialogResult DrawFolder(ref string SelectedPath, bool ReturnOnSelection = false, bool FoldersOnly = false)
         {
             ImGui.Text("Current Folder: " + CurrentFolder);
 
-            if (ImGui.BeginChildFrame(1, ImGui.GetContentRegionAvailable() - new Vector2(20, Values.ButtonHeight),
+            if(ImGui.BeginChildFrame(0,new Vector2(ImGui.GetContentRegionAvailableWidth()/3,
+                ImGui.GetContentRegionAvailable().Y - Values.ButtonHeight - 10), WindowFlags.Default))
+            {
+                DriveInfo[] DriveList = DriveInfo.GetDrives();
+                
+                foreach(DriveInfo Drive in DriveList)
+                {
+                    bool IsSelected = CurrentDrive == Drive.Name;
+
+                    ImGui.PushStyleColor(ColorTarget.Text, Values.Color.Yellow);
+
+                    if (ImGui.Selectable(Drive.Name + "/", IsSelected, SelectableFlags.DontClosePopups
+                       , new Vector2(ImGui.GetContentRegionAvailableWidth(), Values.SelectibleHeight)))
+                    {
+                        CurrentDrive = Drive.Name;
+                        CurrentFolder = Drive.Name;
+                    }
+                    ImGui.PopStyleColor();
+                }
+
+                ImGui.EndChildFrame();
+            }
+
+            ImGui.SameLine();
+            if (ImGui.BeginChildFrame(1, ImGui.GetContentRegionAvailable() - new Vector2(20, Values.ButtonHeight + 10),
                 WindowFlags.Default))
             {
                 DirectoryInfo CurrentDirectory = new DirectoryInfo(CurrentFolder);
@@ -87,41 +112,43 @@ namespace ImGuiNET
                                , new Vector2(ImGui.GetContentRegionAvailableWidth(), Values.SelectibleHeight)))
                             {
                                 SelectedEntry = Dir;
-                                SelectedPath = SelectedEntry;
+                                SelectedPath  = SelectedEntry;
                             }
 
                             if (SelectedEntry != null)
                                 if (ImGui.IsMouseDoubleClicked(0) && SelectedEntry.Equals(Dir))
                                 {
                                     SelectedEntry = null;
-                                    SelectedPath = null;
+                                    SelectedPath  = null;
                                     CurrentFolder = Dir;
                                 }
 
                             ImGui.PopStyleColor();
                         }
                     }
-                    foreach (string File in Directory.EnumerateFiles(CurrentDirectory.FullName))
-                    {
-                        string Name       = Path.GetFileName(File);
-                        bool   IsSelected = SelectedEntry == File;
 
-                        if (ImGui.Selectable(Name, IsSelected, SelectableFlags.DontClosePopups
-                            , new Vector2(ImGui.GetContentRegionAvailableWidth(), Values.SelectibleHeight)))
+                    if (!FoldersOnly)
+                        foreach (string File in Directory.EnumerateFiles(CurrentDirectory.FullName))
                         {
-                            SelectedEntry = File;
-                            if (ReturnOnSelection)
-                            {
-                                SelectedPath = SelectedEntry;
-                            }
-                        }
+                            string Name = Path.GetFileName(File);
+                            bool IsSelected = SelectedEntry == File;
 
-                        if (SelectedEntry != null)
-                            if (ImGui.IsMouseDoubleClicked(0) && SelectedEntry.Equals(File))
+                            if (ImGui.Selectable(Name, IsSelected, SelectableFlags.DontClosePopups
+                                , new Vector2(ImGui.GetContentRegionAvailableWidth(), Values.SelectibleHeight)))
                             {
-                                SelectedPath = File;
+                                SelectedEntry = File;
+                                if (ReturnOnSelection)
+                                {
+                                    SelectedPath = SelectedEntry;
+                                }
                             }
-                    }
+
+                            if (SelectedEntry != null)
+                                if (ImGui.IsMouseDoubleClicked(0) && SelectedEntry.Equals(File))
+                                {
+                                    SelectedPath = File;
+                                }
+                        }
                 }
             }
             ImGui.EndChildFrame();
@@ -135,7 +162,7 @@ namespace ImGuiNET
             if (SelectedEntry != null)
             {
                 ImGui.SameLine();
-                if (ImGui.Button("Load", new Vector2(Values.ButtonWidth, Values.ButtonHeight)))
+                if (ImGui.Button("Open", new Vector2(Values.ButtonWidth, Values.ButtonHeight)))
                 {
                     SelectedPath = SelectedEntry;
 
@@ -146,6 +173,38 @@ namespace ImGuiNET
                     SelectedPath = SelectedEntry;
 
                     return DialogResult.OK;
+                }
+            }
+
+            return DialogResult.None;
+        }
+
+        public DialogResult GetFolder(ref string CurrentPath)
+        {
+            ImGui.SetNextWindowSize(new Vector2(600, 600), Condition.FirstUseEver);
+            if (ImGui.BeginPopupModal("Open Folder", WindowFlags.NoResize))
+            {
+                try
+                {
+                    string Output = CurrentPath;
+                    DialogResult DialogResult = Draw(ref Output, false, true);
+
+                    if (DialogResult == DialogResult.OK)
+                    {
+                        if (string.IsNullOrWhiteSpace(Output))
+                        {
+                            return DialogResult.None;
+                        }
+                    }
+
+                    if (DialogResult != DialogResult.None)
+                        ImGui.CloseCurrentPopup();
+
+                    return DialogResult;
+                }
+                finally
+                {
+                    ImGui.EndPopup();
                 }
             }
 

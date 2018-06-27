@@ -14,12 +14,12 @@ namespace Ryujinx.UI.Widgets
         static string         GameDirectory;
         static List<GameItem> GameItems;
         static GameItem       SelectedGame;
-        static FolderPicker   FolderPicker;
+        static FilePicker     FolderPicker;
 
         static GameList()
         {
             GameDirectory = Config.DefaultGameDirectory;
-            FolderPicker  = FolderPicker.GetFolderPicker("FolderDialog", Config.DefaultGameDirectory);
+            FolderPicker  = FilePicker.GetFilePicker("FolderDialog", Config.DefaultGameDirectory);
 
             Refresh(GameDirectory);
         }
@@ -75,7 +75,7 @@ namespace Ryujinx.UI.Widgets
             }
 
             if (OpenFolderPicker)
-                ImGui.OpenPopup("OpenFolder");
+                ImGui.OpenPopup("Open Folder");
 
             DialogResult DialogResult = FolderPicker.GetFolder(ref GameDirectory);
             if (DialogResult == DialogResult.OK)
