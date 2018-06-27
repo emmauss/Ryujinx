@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ryujinx.ShaderTools", "Ryuj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luea", "Ryujinx.LLE\Luea.csproj", "{8E7D36DD-9626-47E2-8EF5-8F2F66751C9C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ryujinx.UI", "Ryujinx.ImGui\Ryujinx.UI.csproj", "{00117502-1661-4C8B-8C07-177C1A8AA455}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ryujinx.UI", "Ryujinx.UI\Ryujinx.UI.csproj", "{00117502-1661-4C8B-8C07-177C1A8AA455}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
