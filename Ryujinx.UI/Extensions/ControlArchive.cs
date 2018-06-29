@@ -45,7 +45,6 @@ namespace Ryujinx.UI
         }
     }
 
-
     public struct LanguageEntry
     {
         public string AplicationName;

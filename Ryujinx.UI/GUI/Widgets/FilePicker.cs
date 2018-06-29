@@ -5,10 +5,8 @@ using System.Numerics;
 
 namespace ImGuiNET
 {
-    /// <summary>
-    /// Adapted from Mellinoe's file picker for imgui
-    /// https://github.com/mellinoe/synthapp/blob/master/src/synthapp/Widgets/FilePicker.cs
-    /// </summary>
+    // Adapted from Mellinoe's file picker for imgui
+    // https://github.com/mellinoe/synthapp/blob/master/src/synthapp/Widgets/FilePicker.cs
     public class FilePicker
     {
         private const  string   FilePickerID = "###FilePicker";

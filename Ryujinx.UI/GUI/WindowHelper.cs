@@ -179,8 +179,6 @@ namespace Ryujinx.UI
             GL.ClearColor(ClearColor.X, ClearColor.Y, ClearColor.Z, ClearColor.W);
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            // We are using the OpenGL fixed pipeline to make the example code simpler to read!
-            // Setup render state: alpha-blending enabled, no face culling, no depth testing, scissor enabled, vertex/texcoord/color pointers.
             GL.GetInteger(GetPName.TextureBinding2D, out int last_texture);
             GL.PushAttrib(AttribMask.EnableBit | AttribMask.ColorBufferBit | AttribMask.TransformBit);
             GL.Enable(EnableCap.Blend);

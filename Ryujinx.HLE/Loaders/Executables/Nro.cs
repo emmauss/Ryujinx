@@ -1,7 +1,4 @@
-using System;
-using System.Drawing;
 using System.IO;
-using System.Text;
 
 namespace Ryujinx.HLE.Loaders.Executables
 {
@@ -43,12 +40,12 @@ namespace Ryujinx.HLE.Loaders.Executables
             int DataSize   = Reader.ReadInt32();
             int BssSize    = Reader.ReadInt32();
 
-            this.Mod0Offset  = Mod0Offset;
-            this.TextOffset  = TextOffset;
-            this.ROOffset    = ROOffset;
-            this.DataOffset  = DataOffset;
-            this.BssSize     = BssSize;
-            this.FileSize    = FileSize;
+            this.Mod0Offset = Mod0Offset;
+            this.TextOffset = TextOffset;
+            this.ROOffset   = ROOffset;
+            this.DataOffset = DataOffset;
+            this.BssSize    = BssSize;
+            this.FileSize   = FileSize;
 
             byte[] Read(long Position, int Size)
             {

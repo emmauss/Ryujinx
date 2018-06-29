@@ -15,7 +15,6 @@ namespace Ryujinx.UI
 
         public ControlArchive ControlArchive { get; set; }
 
-
         public Nro(Stream Input, string Name) : base(Input, Name)
         {
             BinaryReader Reader = new BinaryReader(Input);

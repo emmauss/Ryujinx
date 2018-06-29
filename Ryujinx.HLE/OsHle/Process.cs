@@ -176,7 +176,7 @@ namespace Ryujinx.HLE.OsHle
                 throw new ObjectDisposedException(nameof(Process));
             }
 
-            ATranslator.PauseResetEvent.Reset();
+            Translator.Pause();
         }
 
         public void Resume()
@@ -186,7 +186,7 @@ namespace Ryujinx.HLE.OsHle
                 throw new ObjectDisposedException(nameof(Process));
             }
 
-            ATranslator.PauseResetEvent.Set();
+            Translator.Resume();
         }
 
         private void MapRWMemRegion(long Position, long Size, MemoryType Type)
@@ -198,7 +198,7 @@ namespace Ryujinx.HLE.OsHle
         {
             if (Disposed)
             {
-                throw new ObjectDisposedException(nameof(Process));
+                return;
             }
 
             if (MainThread != null)
@@ -423,7 +423,7 @@ namespace Ryujinx.HLE.OsHle
         {
             if (Disposing && !Disposed)
             {
-                ATranslator.PauseResetEvent.Set();
+                Translator.Resume();
 
                 //If there is still some thread running, disposing the objects is not
                 //safe as the thread may try to access those resources. Instead, we set

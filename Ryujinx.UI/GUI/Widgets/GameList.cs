@@ -61,7 +61,7 @@ namespace Ryujinx.UI.Widgets
             }
         }
 
-        public unsafe static Tuple<bool,string> DrawList()
+        public unsafe static (bool,string) DrawList()
         {
             uint id = 100;
 
@@ -131,7 +131,7 @@ namespace Ryujinx.UI.Widgets
 
                         if (ImGui.IsMouseDoubleClicked(0) && ImGui.IsItemHovered(HoveredFlags.AllowWhenOverlapped) && GameItem == SelectedGame)
                         {
-                            return new Tuple<bool, string>(true, GameItem.Path);
+                            return (true, GameItem.Path);
                         }
                         else if (ImGui.IsMouseClicked(0) && ImGui.IsItemHovered(HoveredFlags.AllowWhenOverlapped | HoveredFlags.RootAndChildWindows))
                         {
@@ -145,7 +145,7 @@ namespace Ryujinx.UI.Widgets
                 ImGui.EndChildFrame();
             }
 
-            return new Tuple<bool, string>(false,string.Empty);
+            return (false, string.Empty);
         }
     }
 
@@ -174,15 +174,11 @@ namespace Ryujinx.UI.Widgets
             }
             else
                 AppletType = AppletType.Cartridge;
-        }        
+        }
 
         public byte[] GetIconData()
         {
-            if (IsNro)
-            {
-                return Nro.IconData;
-            }
-            else return null;
+            return IsNro ? Nro.IconData : null;
         }
     }
 

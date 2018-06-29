@@ -22,7 +22,7 @@ namespace ChocolArm64
 
         public bool EnableCpuTrace { get; set; }
 
-        public static ManualResetEvent PauseResetEvent = new ManualResetEvent(true);
+        private ManualResetEvent PauseResetEvent = new ManualResetEvent(true);
 
         public ATranslator(IReadOnlyDictionary<long, string> SymbolTable = null)
         {
@@ -64,7 +64,7 @@ namespace ChocolArm64
 
                 OpCode.Interpreter(State, Memory, OpCode);
 
-                PauseResetEvent.WaitOne(1000);
+                PauseResetEvent.WaitOne();
             }
             while (State.R15 != 0 && State.Running);
         }
@@ -208,6 +208,16 @@ namespace ChocolArm64
                     SymbolTable.TryAdd(LastOp.Position + 4, Name);
                 }
             }
+        }
+
+        public void Pause()
+        {
+            PauseResetEvent.Reset();
+        }
+
+        public void Resume()
+        {
+            PauseResetEvent.Set();
         }
     }
 }

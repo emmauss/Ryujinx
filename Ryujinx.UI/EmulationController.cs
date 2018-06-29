@@ -19,22 +19,21 @@ namespace Ryujinx.UI
 
         public void Resume()
         {
-            lock (Ns)
-                Ns.Os.ResumeAllProcesses();
+            Ns.Os.ResumeAllProcesses();
         }
 
         public void Pause()
         {
-            lock (Ns)
-                Ns.Os.PauseAllProcesses();
+            Ns.Os.PauseAllProcesses();
         }
 
         public void ShutDown()
         {
-            lock (Ns)
-                Ns.Dispose();
-            Ns = null;
+            Ns.Dispose();
+
+            Ns       = null;
             IsLoaded = false;
+
             IsShutDown.Invoke(null,null);
         }
 

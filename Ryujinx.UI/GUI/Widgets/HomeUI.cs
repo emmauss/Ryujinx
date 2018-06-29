@@ -1,5 +1,6 @@
 ﻿using ImGuiNET;
 using System;
+using System.Numerics;
 
 namespace Ryujinx.UI
 {
@@ -7,30 +8,30 @@ namespace Ryujinx.UI
     {
         void RenderMainUI()
         {
-            ImGui.SetNextWindowPos(System.Numerics.Vector2.Zero, Condition.Always,
-                    System.Numerics.Vector2.Zero);
-            ImGui.SetNextWindowSize(new System.Numerics.Vector2(Width, Height), Condition.Always);
+            ImGui.SetNextWindowPos(Vector2.Zero, Condition.Always,
+                    Vector2.Zero);
+            ImGui.SetNextWindowSize(new Vector2(Width, Height), Condition.Always);
             if (ImGui.BeginWindow("MainWindow", ref showMainUI, WindowFlags.NoTitleBar
                 | WindowFlags.NoMove | WindowFlags.AlwaysAutoResize))
             {
-                if (ImGui.BeginChildFrame(0, new System.Numerics.Vector2(-1, -1),
+                if (ImGui.BeginChildFrame(0, new Vector2(-1, -1),
                     WindowFlags.AlwaysAutoResize))
                 {
                     ImGuiNative.igBeginGroup();
 
-                    if (ImGui.Button("Load Package", new System.Numerics.Vector2(Values.ButtonWidth,
+                    if (ImGui.Button("Load Package", new Vector2(Values.ButtonWidth,
                         Values.ButtonHeight)))
                     {
                         CurrentPage = Page.PackageLoader;
                     }
 
-                    if (ImGui.Button("Game List", new System.Numerics.Vector2(Values.ButtonWidth,
+                    if (ImGui.Button("Game List", new Vector2(Values.ButtonWidth,
                         Values.ButtonHeight)))
                     {
                         CurrentPage = Page.GameList;
                     }
 
-                    if (ImGui.Button("Settings", new System.Numerics.Vector2(Values.ButtonWidth,
+                    if (ImGui.Button("Settings", new Vector2(Values.ButtonWidth,
                         Values.ButtonHeight)))
                     {
                         CurrentPage = Page.Configuration;
@@ -78,7 +79,7 @@ namespace Ryujinx.UI
 
         void DrawQuitButton()
         {
-            if (ImGui.Button("Quit Ryujinx", new System.Numerics.Vector2(Values.ButtonWidth,
+            if (ImGui.Button("Quit Ryujinx", new Vector2(Values.ButtonWidth,
                         Values.ButtonHeight)))
             {
                 ImGui.OpenPopup("Quit");

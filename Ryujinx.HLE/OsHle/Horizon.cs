@@ -195,15 +195,7 @@ namespace Ryujinx.HLE.OsHle
 
             if (Processes.TryRemove(ProcessId, out Process))
             {
-                try
-                {
-                    Process.StopAllThreadsAsync();
-                    Process.Dispose();
-                }
-                catch (ObjectDisposedException Ex)
-                {
-
-                }
+                Process.StopAllThreadsAsync();
 
                 if (Processes.Count == 0)
                 {
