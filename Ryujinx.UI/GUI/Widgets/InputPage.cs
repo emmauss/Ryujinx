@@ -99,7 +99,7 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igBeginGroup();
             ImGui.Text("Up");
 
-            if (ImGui.Button(((Key)CurrentJoyConLayout.Left.StickUp).ToString(),
+            if (ImGui.Button(((Key)KeyboardInputLayout.Left.StickUp).ToString(),
                 new Vector2(ContentWidth, 50)))
             {
                 Toggles[0] = true;
@@ -109,7 +109,7 @@ namespace Ryujinx.UI.Widgets
             {                
                 if (GetKey(ref pressedKey))
                 {
-                    CurrentJoyConLayout.Left.StickUp = (int)pressedKey;
+                    KeyboardInputLayout.Left.StickUp = (int)pressedKey;
                     Toggles[0] = false;
                 }
             }
@@ -120,7 +120,7 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igBeginGroup();
             ImGui.Text("Down");
 
-            if (ImGui.Button(((Key)CurrentJoyConLayout.Left.StickDown).ToString(),
+            if (ImGui.Button(((Key)KeyboardInputLayout.Left.StickDown).ToString(),
                 new Vector2(ContentWidth, 50)))
             {
                 Toggles[1] = true;
@@ -130,7 +130,7 @@ namespace Ryujinx.UI.Widgets
             {
                 if (GetKey(ref pressedKey))
                 {
-                    CurrentJoyConLayout.Left.StickDown = (int)pressedKey;
+                    KeyboardInputLayout.Left.StickDown = (int)pressedKey;
                     Toggles[1] = false;
                 }
             }
@@ -140,7 +140,7 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igBeginGroup();
             ImGui.Text("Left");
 
-            if (ImGui.Button(((Key)CurrentJoyConLayout.Left.StickLeft).ToString(),
+            if (ImGui.Button(((Key)KeyboardInputLayout.Left.StickLeft).ToString(),
                 new Vector2(ContentWidth, 50)))
             {
                 Toggles[2] = true;
@@ -150,7 +150,7 @@ namespace Ryujinx.UI.Widgets
             {
                 if (GetKey(ref pressedKey))
                 {
-                    CurrentJoyConLayout.Left.StickLeft = (int)pressedKey;
+                    KeyboardInputLayout.Left.StickLeft = (int)pressedKey;
                     Toggles[2] = false;
                 }
             }
@@ -160,7 +160,7 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igBeginGroup();
             ImGui.Text("Right");
 
-            if (ImGui.Button(((Key)CurrentJoyConLayout.Left.StickRight).ToString(),
+            if (ImGui.Button(((Key)KeyboardInputLayout.Left.StickRight).ToString(),
                 new Vector2(ContentWidth, 50)))
             {
                 Toggles[3] = true;
@@ -170,7 +170,7 @@ namespace Ryujinx.UI.Widgets
             {
                 if (GetKey(ref pressedKey))
                 {
-                    CurrentJoyConLayout.Left.StickRight = (int)pressedKey;
+                    KeyboardInputLayout.Left.StickRight = (int)pressedKey;
                     Toggles[3] = false;
                 }
             }
@@ -189,7 +189,7 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igBeginGroup();
             ImGui.Text("Up");
 
-            if (ImGui.Button(((Key)CurrentJoyConLayout.Right.StickUp).ToString(),
+            if (ImGui.Button(((Key)KeyboardInputLayout.Right.StickUp).ToString(),
                 new Vector2(ContentWidth, 50)))
             {
                 Toggles[4] = true;
@@ -199,7 +199,7 @@ namespace Ryujinx.UI.Widgets
             {
                 if (GetKey(ref pressedKey))
                 {
-                    CurrentJoyConLayout.Right.StickUp = (int)pressedKey;
+                    KeyboardInputLayout.Right.StickUp = (int)pressedKey;
 
                     Toggles[4] = false;
                 }
@@ -210,7 +210,7 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igBeginGroup();
             ImGui.Text("Down");
 
-            if (ImGui.Button(((Key)CurrentJoyConLayout.Right.StickDown).ToString(),
+            if (ImGui.Button(((Key)KeyboardInputLayout.Right.StickDown).ToString(),
                 new Vector2(ContentWidth, 50)))
             {
                 Toggles[5] = true;
@@ -220,7 +220,7 @@ namespace Ryujinx.UI.Widgets
             {
                 if (GetKey(ref pressedKey))
                 {
-                    CurrentJoyConLayout.Right.StickDown = (int)pressedKey;
+                    KeyboardInputLayout.Right.StickDown = (int)pressedKey;
                     Toggles[5] = false;
                 }
             }
@@ -229,7 +229,7 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igBeginGroup();
             ImGui.Text("Left");
 
-            if (ImGui.Button(((Key)CurrentJoyConLayout.Right.StickLeft).ToString(),
+            if (ImGui.Button(((Key)KeyboardInputLayout.Right.StickLeft).ToString(),
                 new Vector2(ContentWidth, 50)))
             {
                 Toggles[6] = true;
@@ -239,7 +239,7 @@ namespace Ryujinx.UI.Widgets
             {
                 if (GetKey(ref pressedKey))
                 {
-                    CurrentJoyConLayout.Right.StickLeft = (int)pressedKey;
+                    KeyboardInputLayout.Right.StickLeft = (int)pressedKey;
                     Toggles[6] = false;
                 }
             }
@@ -249,7 +249,7 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igBeginGroup();
             ImGui.Text("Right");
 
-            if (ImGui.Button(((Key)CurrentJoyConLayout.Right.StickRight).ToString(),
+            if (ImGui.Button(((Key)KeyboardInputLayout.Right.StickRight).ToString(),
                 new Vector2(ContentWidth, 50)))
             {
                 Toggles[7] = true;
@@ -259,7 +259,7 @@ namespace Ryujinx.UI.Widgets
             {
                 if (GetKey(ref pressedKey))
                 {
-                    CurrentJoyConLayout.Right.StickRight = (int)pressedKey;
+                    KeyboardInputLayout.Right.StickRight = (int)pressedKey;
                     Toggles[7] = false;
                 }
             }
@@ -277,7 +277,7 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igBeginGroup();
             ImGui.Text("Up");
 
-            if (ImGui.Button(((Key)CurrentJoyConLayout.Left.DPadUp).ToString(),
+            if (ImGui.Button(((Key)KeyboardInputLayout.Left.DPadUp).ToString(),
                 new Vector2(ContentWidth, 50)))
             {
                 Toggles[8] = true;
@@ -287,7 +287,7 @@ namespace Ryujinx.UI.Widgets
             {
                 if (GetKey(ref pressedKey))
                 {
-                    CurrentJoyConLayout.Left.DPadUp = (int)pressedKey;
+                    KeyboardInputLayout.Left.DPadUp = (int)pressedKey;
                     Toggles[8] = false;
                 }
             }
@@ -297,7 +297,7 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igBeginGroup();
             ImGui.Text("Down");
 
-            if (ImGui.Button(((Key)CurrentJoyConLayout.Left.DPadDown).ToString(),
+            if (ImGui.Button(((Key)KeyboardInputLayout.Left.DPadDown).ToString(),
                 new Vector2(ContentWidth, 50)))
             {
                 Toggles[9] = true;
@@ -307,7 +307,7 @@ namespace Ryujinx.UI.Widgets
             {
                 if (GetKey(ref pressedKey))
                 {
-                    CurrentJoyConLayout.Left.DPadDown = (int)pressedKey;
+                    KeyboardInputLayout.Left.DPadDown = (int)pressedKey;
                     Toggles[9] = false;
                 }
             }
@@ -316,7 +316,7 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igBeginGroup();
             ImGui.Text("Left");
 
-            if (ImGui.Button(((Key)CurrentJoyConLayout.Left.DPadLeft).ToString(),
+            if (ImGui.Button(((Key)KeyboardInputLayout.Left.DPadLeft).ToString(),
                 new Vector2(ContentWidth, 50)))
             {
                 Toggles[10] = true;
@@ -326,7 +326,7 @@ namespace Ryujinx.UI.Widgets
             {
                 if (GetKey(ref pressedKey))
                 {
-                    CurrentJoyConLayout.Left.DPadLeft = (int)pressedKey;
+                    KeyboardInputLayout.Left.DPadLeft = (int)pressedKey;
                     Toggles[10] = false;
                 }
             }
@@ -336,7 +336,7 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igBeginGroup();
             ImGui.Text("Right");
 
-            if (ImGui.Button(((Key)CurrentJoyConLayout.Left.DPadRight).ToString(),
+            if (ImGui.Button(((Key)KeyboardInputLayout.Left.DPadRight).ToString(),
                 new Vector2(ContentWidth, 50)))
             {
                 Toggles[11] = true;
@@ -346,7 +346,7 @@ namespace Ryujinx.UI.Widgets
             {
                 if (GetKey(ref pressedKey))
                 {
-                    CurrentJoyConLayout.Left.DPadRight = (int)pressedKey;
+                    KeyboardInputLayout.Left.DPadRight = (int)pressedKey;
                     Toggles[11] = false;
                 }
             }
@@ -364,7 +364,7 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igBeginGroup();
             ImGui.Text("A");
 
-            if (ImGui.Button(((Key)CurrentJoyConLayout.Right.ButtonA).ToString(),
+            if (ImGui.Button(((Key)KeyboardInputLayout.Right.ButtonA).ToString(),
                 new Vector2(ContentWidth, 50)))
             {
                 Toggles[12] = true;
@@ -374,7 +374,7 @@ namespace Ryujinx.UI.Widgets
             {
                 if (GetKey(ref pressedKey))
                 {
-                    CurrentJoyConLayout.Right.ButtonA = (int)pressedKey;
+                    KeyboardInputLayout.Right.ButtonA = (int)pressedKey;
                     Toggles[12] = false;
                 }
             }
@@ -384,7 +384,7 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igBeginGroup();
             ImGui.Text("B");
 
-            if (ImGui.Button(((Key)CurrentJoyConLayout.Right.ButtonB).ToString(),
+            if (ImGui.Button(((Key)KeyboardInputLayout.Right.ButtonB).ToString(),
                 new Vector2(ContentWidth, 50)))
             {
                 Toggles[13] = true;
@@ -394,7 +394,7 @@ namespace Ryujinx.UI.Widgets
             {
                 if (GetKey(ref pressedKey))
                 {
-                    CurrentJoyConLayout.Right.ButtonB = (int)pressedKey;
+                    KeyboardInputLayout.Right.ButtonB = (int)pressedKey;
                     Toggles[13] = false;
                 }
             }
@@ -403,7 +403,7 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igBeginGroup();
             ImGui.Text("X");
 
-            if (ImGui.Button(((Key)CurrentJoyConLayout.Right.ButtonX).ToString(),
+            if (ImGui.Button(((Key)KeyboardInputLayout.Right.ButtonX).ToString(),
                 new Vector2(ContentWidth, 50)))
             {
                 Toggles[14] = true;
@@ -413,7 +413,7 @@ namespace Ryujinx.UI.Widgets
             {
                 if (GetKey(ref pressedKey))
                 {
-                    CurrentJoyConLayout.Right.ButtonX = (int)pressedKey;
+                    KeyboardInputLayout.Right.ButtonX = (int)pressedKey;
                     Toggles[14] = false;
                 }
             }
@@ -423,7 +423,7 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igBeginGroup();
             ImGui.Text("Y");
 
-            if (ImGui.Button(((Key)CurrentJoyConLayout.Right.ButtonY).ToString(),
+            if (ImGui.Button(((Key)KeyboardInputLayout.Right.ButtonY).ToString(),
                 new Vector2(ContentWidth, 50)))
             {
                 Toggles[15] = true;
@@ -433,7 +433,7 @@ namespace Ryujinx.UI.Widgets
             {
                 if (GetKey(ref pressedKey))
                 {
-                    CurrentJoyConLayout.Right.ButtonY = (int)pressedKey;
+                    KeyboardInputLayout.Right.ButtonY = (int)pressedKey;
                     Toggles[15] = false;
                 }
             }
@@ -453,7 +453,7 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igBeginGroup();
             ImGui.Text("L");
 
-            if (ImGui.Button(((Key)CurrentJoyConLayout.Left.ButtonL).ToString(),
+            if (ImGui.Button(((Key)KeyboardInputLayout.Left.ButtonL).ToString(),
                 new Vector2(ContentWidth, 50)))
             {
                 Toggles[17] = true;
@@ -463,7 +463,7 @@ namespace Ryujinx.UI.Widgets
             {
                 if (GetKey(ref pressedKey))
                 {
-                    CurrentJoyConLayout.Left.ButtonL = (int)pressedKey;
+                    KeyboardInputLayout.Left.ButtonL = (int)pressedKey;
                     Toggles[17] = false;
                 }
             }
@@ -474,7 +474,7 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igBeginGroup();
             ImGui.Text("R");
 
-            if (ImGui.Button(((Key)CurrentJoyConLayout.Right.ButtonR).ToString(),
+            if (ImGui.Button(((Key)KeyboardInputLayout.Right.ButtonR).ToString(),
                 new Vector2(ContentWidth, 50)))
             {
                 Toggles[16] = true;
@@ -484,7 +484,7 @@ namespace Ryujinx.UI.Widgets
             {
                 if (GetKey(ref pressedKey))
                 {
-                    CurrentJoyConLayout.Right.ButtonR = (int)pressedKey;
+                    KeyboardInputLayout.Right.ButtonR = (int)pressedKey;
                     Toggles[16] = false;
                 }
             }
@@ -493,7 +493,7 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igBeginGroup();
             ImGui.Text("ZL");
 
-            if (ImGui.Button(((Key)CurrentJoyConLayout.Left.ButtonZL).ToString(),
+            if (ImGui.Button(((Key)KeyboardInputLayout.Left.ButtonZL).ToString(),
                 new Vector2(ContentWidth, 50)))
             {
                 Toggles[19] = true;
@@ -503,7 +503,7 @@ namespace Ryujinx.UI.Widgets
             {
                 if (GetKey(ref pressedKey))
                 {
-                    CurrentJoyConLayout.Left.ButtonZL = (int)pressedKey;
+                    KeyboardInputLayout.Left.ButtonZL = (int)pressedKey;
                     Toggles[19] = false;
                 }
             }
@@ -513,7 +513,7 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igBeginGroup();
             ImGui.Text("ZR");
 
-            if (ImGui.Button(((Key)CurrentJoyConLayout.Right.ButtonZR).ToString(),
+            if (ImGui.Button(((Key)KeyboardInputLayout.Right.ButtonZR).ToString(),
                 new Vector2(ContentWidth, 50)))
             {
                 Toggles[18] = true;
@@ -523,7 +523,7 @@ namespace Ryujinx.UI.Widgets
             {
                 if (GetKey(ref pressedKey))
                 {
-                    CurrentJoyConLayout.Right.ButtonZR = (int)pressedKey;
+                    KeyboardInputLayout.Right.ButtonZR = (int)pressedKey;
                     Toggles[18] = false;
                 }
             }
@@ -541,7 +541,7 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igBeginGroup();
             ImGui.Text("-");
 
-            if (ImGui.Button(((Key)CurrentJoyConLayout.Left.ButtonMinus).ToString(),
+            if (ImGui.Button(((Key)KeyboardInputLayout.Left.ButtonMinus).ToString(),
                 new Vector2(ContentWidth, 50)))
             {
                 Toggles[20] = true;
@@ -551,7 +551,7 @@ namespace Ryujinx.UI.Widgets
             {
                 if (GetKey(ref pressedKey))
                 {
-                    CurrentJoyConLayout.Left.ButtonMinus = (int)pressedKey;
+                    KeyboardInputLayout.Left.ButtonMinus = (int)pressedKey;
                     Toggles[20] = false;
                 }
             }
@@ -560,7 +560,7 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igBeginGroup();
             ImGui.Text("+");
 
-            if (ImGui.Button(((Key)CurrentJoyConLayout.Right.ButtonPlus).ToString(),
+            if (ImGui.Button(((Key)KeyboardInputLayout.Right.ButtonPlus).ToString(),
                 new Vector2(ContentWidth, 50)))
             {
                 Toggles[21] = true;
@@ -570,7 +570,7 @@ namespace Ryujinx.UI.Widgets
             {
                 if (GetKey(ref pressedKey))
                 {
-                    CurrentJoyConLayout.Right.ButtonPlus = (int)pressedKey;
+                    KeyboardInputLayout.Right.ButtonPlus = (int)pressedKey;
                     Toggles[21] = false;
                 }
             }

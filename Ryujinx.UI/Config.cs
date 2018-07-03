@@ -1,8 +1,9 @@
-﻿using Ryujinx.HLE;
-using Ryujinx.HLE.Input;
+﻿using Ryujinx.Common.Input;
+using Ryujinx.HLE;
 using Ryujinx.HLE.Logging;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -11,7 +12,13 @@ namespace Ryujinx
 {
     public static class Config
     {
-        public static JoyCon FakeJoyCon { get; internal set; }
+        public static JoyConKeyboard   JoyConKeyboard   { get; set; }
+        public static JoyConController JoyConController { get; set; }
+
+        public static float GamePadDeadzone             { get; private set; }
+        public static bool  GamePadEnable               { get; private set; }
+        public static int   GamePadIndex                { get; private set; }
+        public static float GamePadTriggerThreshold     { get; private set; }
 
         public static string IniPath { get; set; }
 
@@ -32,6 +39,11 @@ namespace Ryujinx
             Log.SetEnable(LogLevel.Info,    Convert.ToBoolean(Parser.GetValue("Logging_Enable_Info")));
             Log.SetEnable(LogLevel.Warning, Convert.ToBoolean(Parser.GetValue("Logging_Enable_Warn")));
             Log.SetEnable(LogLevel.Error,   Convert.ToBoolean(Parser.GetValue("Logging_Enable_Error")));
+
+            GamePadEnable            =        Convert.ToBoolean(Parser.GetValue("GamePad_Enable"));
+            GamePadIndex             =        Convert.ToInt32  (Parser.GetValue("GamePad_Index"));
+            GamePadDeadzone          = (float)Convert.ToDouble (Parser.GetValue("GamePad_Deadzone"),          CultureInfo.InvariantCulture);
+            GamePadTriggerThreshold  = (float)Convert.ToDouble (Parser.GetValue("GamePad_Trigger_Threshold"), CultureInfo.InvariantCulture);
 
             string[] FilteredLogClasses = Parser.GetValue("Logging_Filtered_Classes").Split(',', StringSplitOptions.RemoveEmptyEntries);
 
@@ -61,38 +73,67 @@ namespace Ryujinx
                 }
             }
 
-            FakeJoyCon = new JoyCon
+            JoyConKeyboard = new JoyConKeyboard
             {
-                Left = new JoyConLeft
+                Left = new JoyConKeyboardLeft
                 {
-                    StickUp     = Convert.ToInt16(Parser.GetValue("Controls_Left_FakeJoycon_Stick_Up")),
-                    StickDown   = Convert.ToInt16(Parser.GetValue("Controls_Left_FakeJoycon_Stick_Down")),
-                    StickLeft   = Convert.ToInt16(Parser.GetValue("Controls_Left_FakeJoycon_Stick_Left")),
-                    StickRight  = Convert.ToInt16(Parser.GetValue("Controls_Left_FakeJoycon_Stick_Right")),
-                    StickButton = Convert.ToInt16(Parser.GetValue("Controls_Left_FakeJoycon_Stick_Button")),
-                    DPadUp      = Convert.ToInt16(Parser.GetValue("Controls_Left_FakeJoycon_DPad_Up")),
-                    DPadDown    = Convert.ToInt16(Parser.GetValue("Controls_Left_FakeJoycon_DPad_Down")),
-                    DPadLeft    = Convert.ToInt16(Parser.GetValue("Controls_Left_FakeJoycon_DPad_Left")),
-                    DPadRight   = Convert.ToInt16(Parser.GetValue("Controls_Left_FakeJoycon_DPad_Right")),
-                    ButtonMinus = Convert.ToInt16(Parser.GetValue("Controls_Left_FakeJoycon_Button_Minus")),
-                    ButtonL     = Convert.ToInt16(Parser.GetValue("Controls_Left_FakeJoycon_Button_L")),
-                    ButtonZL    = Convert.ToInt16(Parser.GetValue("Controls_Left_FakeJoycon_Button_ZL"))
+                    StickUp     = Convert.ToInt16(Parser.GetValue("Controls_Left_JoyConKeyboard_Stick_Up")),
+                    StickDown   = Convert.ToInt16(Parser.GetValue("Controls_Left_JoyConKeyboard_Stick_Down")),
+                    StickLeft   = Convert.ToInt16(Parser.GetValue("Controls_Left_JoyConKeyboard_Stick_Left")),
+                    StickRight  = Convert.ToInt16(Parser.GetValue("Controls_Left_JoyConKeyboard_Stick_Right")),
+                    StickButton = Convert.ToInt16(Parser.GetValue("Controls_Left_JoyConKeyboard_Stick_Button")),
+                    DPadUp      = Convert.ToInt16(Parser.GetValue("Controls_Left_JoyConKeyboard_DPad_Up")),
+                    DPadDown    = Convert.ToInt16(Parser.GetValue("Controls_Left_JoyConKeyboard_DPad_Down")),
+                    DPadLeft    = Convert.ToInt16(Parser.GetValue("Controls_Left_JoyConKeyboard_DPad_Left")),
+                    DPadRight   = Convert.ToInt16(Parser.GetValue("Controls_Left_JoyConKeyboard_DPad_Right")),
+                    ButtonMinus = Convert.ToInt16(Parser.GetValue("Controls_Left_JoyConKeyboard_Button_Minus")),
+                    ButtonL     = Convert.ToInt16(Parser.GetValue("Controls_Left_JoyConKeyboard_Button_L")),
+                    ButtonZL    = Convert.ToInt16(Parser.GetValue("Controls_Left_JoyConKeyboard_Button_ZL"))
                 },
 
-                Right = new JoyConRight
+                Right = new JoyConKeyboardRight
                 {
-                    StickUp     = Convert.ToInt16(Parser.GetValue("Controls_Right_FakeJoycon_Stick_Up")),
-                    StickDown   = Convert.ToInt16(Parser.GetValue("Controls_Right_FakeJoycon_Stick_Down")),
-                    StickLeft   = Convert.ToInt16(Parser.GetValue("Controls_Right_FakeJoycon_Stick_Left")),
-                    StickRight  = Convert.ToInt16(Parser.GetValue("Controls_Right_FakeJoycon_Stick_Right")),
-                    StickButton = Convert.ToInt16(Parser.GetValue("Controls_Right_FakeJoycon_Stick_Button")),
-                    ButtonA     = Convert.ToInt16(Parser.GetValue("Controls_Right_FakeJoycon_Button_A")),
-                    ButtonB     = Convert.ToInt16(Parser.GetValue("Controls_Right_FakeJoycon_Button_B")),
-                    ButtonX     = Convert.ToInt16(Parser.GetValue("Controls_Right_FakeJoycon_Button_X")),
-                    ButtonY     = Convert.ToInt16(Parser.GetValue("Controls_Right_FakeJoycon_Button_Y")),
-                    ButtonPlus  = Convert.ToInt16(Parser.GetValue("Controls_Right_FakeJoycon_Button_Plus")),
-                    ButtonR     = Convert.ToInt16(Parser.GetValue("Controls_Right_FakeJoycon_Button_R")),
-                    ButtonZR    = Convert.ToInt16(Parser.GetValue("Controls_Right_FakeJoycon_Button_ZR"))
+                    StickUp     = Convert.ToInt16(Parser.GetValue("Controls_Right_JoyConKeyboard_Stick_Up")),
+                    StickDown   = Convert.ToInt16(Parser.GetValue("Controls_Right_JoyConKeyboard_Stick_Down")),
+                    StickLeft   = Convert.ToInt16(Parser.GetValue("Controls_Right_JoyConKeyboard_Stick_Left")),
+                    StickRight  = Convert.ToInt16(Parser.GetValue("Controls_Right_JoyConKeyboard_Stick_Right")),
+                    StickButton = Convert.ToInt16(Parser.GetValue("Controls_Right_JoyConKeyboard_Stick_Button")),
+                    ButtonA     = Convert.ToInt16(Parser.GetValue("Controls_Right_JoyConKeyboard_Button_A")),
+                    ButtonB     = Convert.ToInt16(Parser.GetValue("Controls_Right_JoyConKeyboard_Button_B")),
+                    ButtonX     = Convert.ToInt16(Parser.GetValue("Controls_Right_JoyConKeyboard_Button_X")),
+                    ButtonY     = Convert.ToInt16(Parser.GetValue("Controls_Right_JoyConKeyboard_Button_Y")),
+                    ButtonPlus  = Convert.ToInt16(Parser.GetValue("Controls_Right_JoyConKeyboard_Button_Plus")),
+                    ButtonR     = Convert.ToInt16(Parser.GetValue("Controls_Right_JoyConKeyboard_Button_R")),
+                    ButtonZR    = Convert.ToInt16(Parser.GetValue("Controls_Right_JoyConKeyboard_Button_ZR"))
+                }
+            };
+
+            JoyConController = new JoyConController
+            {
+                Left = new JoyConControllerLeft
+                {
+                    Stick       = Parser.GetValue("Controls_Left_JoyConController_Stick"),
+                    StickButton = Parser.GetValue("Controls_Left_JoyConController_Stick_Button"),
+                    DPadUp      = Parser.GetValue("Controls_Left_JoyConController_DPad_Up"),
+                    DPadDown    = Parser.GetValue("Controls_Left_JoyConController_DPad_Down"),
+                    DPadLeft    = Parser.GetValue("Controls_Left_JoyConController_DPad_Left"),
+                    DPadRight   = Parser.GetValue("Controls_Left_JoyConController_DPad_Right"),
+                    ButtonMinus = Parser.GetValue("Controls_Left_JoyConController_Button_Minus"),
+                    ButtonL     = Parser.GetValue("Controls_Left_JoyConController_Button_L"),
+                    ButtonZL    = Parser.GetValue("Controls_Left_JoyConController_Button_ZL")
+                },
+
+                Right = new JoyConControllerRight
+                {
+                    Stick       = Parser.GetValue("Controls_Right_JoyConController_Stick"),
+                    StickButton = Parser.GetValue("Controls_Right_JoyConController_Stick_Button"),
+                    ButtonA     = Parser.GetValue("Controls_Right_JoyConController_Button_A"),
+                    ButtonB     = Parser.GetValue("Controls_Right_JoyConController_Button_B"),
+                    ButtonX     = Parser.GetValue("Controls_Right_JoyConController_Button_X"),
+                    ButtonY     = Parser.GetValue("Controls_Right_JoyConController_Button_Y"),
+                    ButtonPlus  = Parser.GetValue("Controls_Right_JoyConController_Button_Plus"),
+                    ButtonR     = Parser.GetValue("Controls_Right_JoyConController_Button_R"),
+                    ButtonZR    = Parser.GetValue("Controls_Right_JoyConController_Button_ZR")
                 }
             };
 
@@ -138,31 +179,56 @@ namespace Ryujinx
 
             Parser.SetValue("Logging_Filtered_Classes", string.Join(',', FilteredClasses));
 
-            Parser.SetValue("Controls_Left_FakeJoycon_Stick_Up", FakeJoyCon.Left.StickUp.ToString());
-            Parser.SetValue("Controls_Left_FakeJoycon_Stick_Down", FakeJoyCon.Left.StickDown.ToString());
-            Parser.SetValue("Controls_Left_FakeJoycon_Stick_Left", FakeJoyCon.Left.StickLeft.ToString());
-            Parser.SetValue("Controls_Left_FakeJoycon_Stick_Right", FakeJoyCon.Left.StickRight.ToString());
-            Parser.SetValue("Controls_Left_FakeJoycon_Stick_Button", FakeJoyCon.Left.StickButton.ToString());
-            Parser.SetValue("Controls_Left_FakeJoycon_DPad_Up", FakeJoyCon.Left.DPadUp.ToString());
-            Parser.SetValue("Controls_Left_FakeJoycon_DPad_Down", FakeJoyCon.Left.DPadDown.ToString());
-            Parser.SetValue("Controls_Left_FakeJoycon_DPad_Left", FakeJoyCon.Left.DPadLeft.ToString());
-            Parser.SetValue("Controls_Left_FakeJoycon_DPad_Right", FakeJoyCon.Left.DPadRight.ToString());
-            Parser.SetValue("Controls_Left_FakeJoycon_Button_Minus", FakeJoyCon.Left.ButtonMinus.ToString());
-            Parser.SetValue("Controls_Left_FakeJoycon_Button_L", FakeJoyCon.Left.ButtonL.ToString());
-            Parser.SetValue("Controls_Left_FakeJoycon_Button_ZL", FakeJoyCon.Left.ButtonZL.ToString());
+            Parser.SetValue("Controls_Left_JoyConKeyboard_Stick_Up",     JoyConKeyboard.Left.StickUp.ToString());
+            Parser.SetValue("Controls_Left_JoyConKeyboard_Stick_Down",   JoyConKeyboard.Left.StickDown.ToString());
+            Parser.SetValue("Controls_Left_JoyConKeyboard_Stick_Left",   JoyConKeyboard.Left.StickLeft.ToString());
+            Parser.SetValue("Controls_Left_JoyConKeyboard_Stick_Right",  JoyConKeyboard.Left.StickRight.ToString());
+            Parser.SetValue("Controls_Left_JoyConKeyboard_Stick_Button", JoyConKeyboard.Left.StickButton.ToString());
+            Parser.SetValue("Controls_Left_JoyConKeyboard_DPad_Up",      JoyConKeyboard.Left.DPadUp.ToString());
+            Parser.SetValue("Controls_Left_JoyConKeyboard_DPad_Down",    JoyConKeyboard.Left.DPadDown.ToString());
+            Parser.SetValue("Controls_Left_JoyConKeyboard_DPad_Left",    JoyConKeyboard.Left.DPadLeft.ToString());
+            Parser.SetValue("Controls_Left_JoyConKeyboard_DPad_Right",   JoyConKeyboard.Left.DPadRight.ToString());
+            Parser.SetValue("Controls_Left_JoyConKeyboard_Button_Minus", JoyConKeyboard.Left.ButtonMinus.ToString());
+            Parser.SetValue("Controls_Left_JoyConKeyboard_Button_L",     JoyConKeyboard.Left.ButtonL.ToString());
+            Parser.SetValue("Controls_Left_JoyConKeyboard_Button_ZL",    JoyConKeyboard.Left.ButtonZL.ToString());
 
-            Parser.SetValue("Controls_Right_FakeJoycon_Stick_Up", FakeJoyCon.Right.StickUp.ToString());
-            Parser.SetValue("Controls_Right_FakeJoycon_Stick_Down", FakeJoyCon.Right.StickDown.ToString());
-            Parser.SetValue("Controls_Right_FakeJoycon_Stick_Left", FakeJoyCon.Right.StickLeft.ToString());
-            Parser.SetValue("Controls_Right_FakeJoycon_Stick_Right", FakeJoyCon.Right.StickRight.ToString());
-            Parser.SetValue("Controls_Right_FakeJoycon_Stick_Button", FakeJoyCon.Right.StickButton.ToString());
-            Parser.SetValue("Controls_Right_FakeJoycon_Button_A", FakeJoyCon.Right.StickUp.ToString());
-            Parser.SetValue("Controls_Right_FakeJoycon_Button_B", FakeJoyCon.Right.StickUp.ToString());
-            Parser.SetValue("Controls_Right_FakeJoycon_Button_X", FakeJoyCon.Right.StickUp.ToString());
-            Parser.SetValue("Controls_Right_FakeJoycon_Button_Y", FakeJoyCon.Right.StickUp.ToString());
-            Parser.SetValue("Controls_Right_FakeJoycon_Button_Plus", FakeJoyCon.Right.StickUp.ToString());
-            Parser.SetValue("Controls_Right_FakeJoycon_Button_R", FakeJoyCon.Right.StickUp.ToString());
-            Parser.SetValue("Controls_Right_FakeJoycon_Button_ZR", FakeJoyCon.Right.StickUp.ToString());
+            Parser.SetValue("Controls_Right_JoyConKeyboard_Stick_Up",     JoyConKeyboard.Right.StickUp.ToString());
+            Parser.SetValue("Controls_Right_JoyConKeyboard_Stick_Down",   JoyConKeyboard.Right.StickDown.ToString());
+            Parser.SetValue("Controls_Right_JoyConKeyboard_Stick_Left",   JoyConKeyboard.Right.StickLeft.ToString());
+            Parser.SetValue("Controls_Right_JoyConKeyboard_Stick_Right",  JoyConKeyboard.Right.StickRight.ToString());
+            Parser.SetValue("Controls_Right_JoyConKeyboard_Stick_Button", JoyConKeyboard.Right.StickButton.ToString());
+            Parser.SetValue("Controls_Right_JoyConKeyboard_Button_A",     JoyConKeyboard.Right.ButtonA.ToString());
+            Parser.SetValue("Controls_Right_JoyConKeyboard_Button_B",     JoyConKeyboard.Right.ButtonB.ToString());
+            Parser.SetValue("Controls_Right_JoyConKeyboard_Button_X",     JoyConKeyboard.Right.ButtonX.ToString());
+            Parser.SetValue("Controls_Right_JoyConKeyboard_Button_Y",     JoyConKeyboard.Right.ButtonY.ToString());
+            Parser.SetValue("Controls_Right_JoyConKeyboard_Button_Plus",  JoyConKeyboard.Right.ButtonPlus.ToString());
+            Parser.SetValue("Controls_Right_JoyConKeyboard_Button_R",     JoyConKeyboard.Right.ButtonR.ToString());
+            Parser.SetValue("Controls_Right_JoyConKeyboard_Button_ZR",    JoyConKeyboard.Right.ButtonZR.ToString());
+
+            Parser.SetValue("Controls_Left_JoyConController_Stick",        JoyConController.Left.Stick.ToString());
+            Parser.SetValue("Controls_Left_JoyConController_Stick_Button", JoyConController.Left.StickButton.ToString());
+            Parser.SetValue("Controls_Left_JoyConController_DPad_Up",      JoyConController.Left.DPadUp.ToString());
+            Parser.SetValue("Controls_Left_JoyConController_DPad_Down",    JoyConController.Left.DPadDown.ToString());
+            Parser.SetValue("Controls_Left_JoyConController_DPad_Left",    JoyConController.Left.DPadLeft.ToString());
+            Parser.SetValue("Controls_Left_JoyConController_DPad_Right",   JoyConController.Left.DPadRight.ToString());
+            Parser.SetValue("Controls_Left_JoyConController_Button_Minus", JoyConController.Left.ButtonMinus.ToString());
+            Parser.SetValue("Controls_Left_JoyConController_Button_L",     JoyConController.Left.ButtonL.ToString());
+            Parser.SetValue("Controls_Left_JoyConController_Button_ZL",    JoyConController.Left.ButtonZL.ToString());
+
+            Parser.SetValue("Controls_Right_JoyConController_Stick_Up",     JoyConController.Right.Stick.ToString());
+            Parser.SetValue("Controls_Right_JoyConController_Stick_Button", JoyConController.Right.StickButton.ToString());
+            Parser.SetValue("Controls_Right_JoyConController_Button_A",     JoyConController.Right.ButtonA.ToString());
+            Parser.SetValue("Controls_Right_JoyConController_Button_B",     JoyConController.Right.ButtonB.ToString());
+            Parser.SetValue("Controls_Right_JoyConController_Button_X",     JoyConController.Right.ButtonX.ToString());
+            Parser.SetValue("Controls_Right_JoyConController_Button_Y",     JoyConController.Right.ButtonY.ToString());
+            Parser.SetValue("Controls_Right_JoyConController_Button_Plus",  JoyConController.Right.ButtonPlus.ToString());
+            Parser.SetValue("Controls_Right_JoyConController_Button_R",     JoyConController.Right.ButtonR.ToString());
+            Parser.SetValue("Controls_Right_JoyConController_Button_ZR",    JoyConController.Right.ButtonZR.ToString());
+
+            Parser.SetValue("GamePad_Enable",            GamePadEnable.ToString());
+            Parser.SetValue("GamePad_Index",             GamePadIndex.ToString());
+            Parser.SetValue("GamePad_Deadzone",          Convert.ToString(GamePadDeadzone,CultureInfo.InvariantCulture));
+            Parser.SetValue("GamePad_Trigger_Threshold", GamePadTriggerThreshold.ToString());
 
             Parser.SetValue("Default_Game_Directory", DefaultGameDirectory);
 

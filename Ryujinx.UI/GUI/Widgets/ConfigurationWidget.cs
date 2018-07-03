@@ -1,5 +1,5 @@
 ﻿using ImGuiNET;
-using Ryujinx.HLE.Input;
+using Ryujinx.Common.Input;
 using System.Numerics;
 
 namespace Ryujinx.UI.Widgets
@@ -10,10 +10,11 @@ namespace Ryujinx.UI.Widgets
         static bool   OpenFolderPicker;
         static string CurrentPath;
 
-        static IniParser  IniParser;
-        static FilePicker FolderPicker;
-        static JoyCon     CurrentJoyConLayout;
-        static Page       CurrentPage = Page.General;
+        static IniParser        IniParser;
+        static FilePicker       FolderPicker;
+        static JoyConKeyboard   KeyboardInputLayout;
+        static JoyConController ControllerInputLayout;
+        static Page              CurrentPage = Page.General;
 
         static ConfigurationWidget()
         {
@@ -26,7 +27,7 @@ namespace Ryujinx.UI.Widgets
         {
             if(!ConfigIntialized)
             {
-                CurrentJoyConLayout = Config.FakeJoyCon;
+                KeyboardInputLayout = Config.JoyConKeyboard;
                 ConfigIntialized = true;
             }
 
@@ -103,7 +104,7 @@ namespace Ryujinx.UI.Widgets
                 {
                     if (ImGui.Button("Apply", new Vector2(Values.ButtonWidth, Values.ButtonHeight)))
                     {
-                        Config.FakeJoyCon = CurrentJoyConLayout;
+                        Config.JoyConKeyboard = KeyboardInputLayout;
                     }
                     ImGui.SameLine();
                 }
