@@ -1,4 +1,4 @@
-namespace Ryujinx.UI.Input
+namespace Ryujinx.Common.Input
 {
     public struct JoyConKeyboardLeft
     {

@@ -1,4 +1,4 @@
-﻿using Ryujinx.UI.Input;
+﻿using Ryujinx.Common.Input;
 using Ryujinx.HLE.Logging;
 using System;
 using System.Globalization;

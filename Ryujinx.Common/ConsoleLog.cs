@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Ryujinx
 {
-    static class ConsoleLog
+    public static class ConsoleLog
     {
         private static Dictionary<LogLevel, ConsoleColor> LogColors;
 

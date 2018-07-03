@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Ryujinx.UI.Input
+﻿namespace Ryujinx.Common.Input
 {
     public struct JoyConControllerLeft
     {
