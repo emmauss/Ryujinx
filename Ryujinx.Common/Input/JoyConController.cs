@@ -2,28 +2,28 @@
 {
     public struct JoyConControllerLeft
     {
-        public string Stick;
-        public string StickButton;
-        public string DPadUp;
-        public string DPadDown;
-        public string DPadLeft;
-        public string DPadRight;
-        public string ButtonMinus;
-        public string ButtonL;
-        public string ButtonZL;
+        public GamePadStick  Stick;
+        public GamePadButton StickButton;
+        public GamePadButton DPadUp;
+        public GamePadButton DPadDown;
+        public GamePadButton DPadLeft;
+        public GamePadButton DPadRight;
+        public GamePadButton ButtonMinus;
+        public GamePadButton ButtonL;
+        public GamePadButton ButtonZL;
     }
 
     public struct JoyConControllerRight
     {
-        public string Stick;
-        public string StickButton;
-        public string ButtonA;
-        public string ButtonB;
-        public string ButtonX;
-        public string ButtonY;
-        public string ButtonPlus;
-        public string ButtonR;
-        public string ButtonZR;
+        public GamePadStick  Stick;
+        public GamePadButton StickButton;
+        public GamePadButton ButtonA;
+        public GamePadButton ButtonB;
+        public GamePadButton ButtonX;
+        public GamePadButton ButtonY;
+        public GamePadButton ButtonPlus;
+        public GamePadButton ButtonR;
+        public GamePadButton ButtonZR;
     }
 
     public struct JoyConController

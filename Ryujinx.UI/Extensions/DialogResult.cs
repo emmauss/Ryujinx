@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-public enum DialogResult
+﻿public enum DialogResult
 {
     OK,
     Cancel,

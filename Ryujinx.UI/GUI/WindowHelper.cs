@@ -4,6 +4,7 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 using System;
+using Ryujinx.Common.Input;
 
 namespace Ryujinx.UI
 {
@@ -21,6 +22,8 @@ namespace Ryujinx.UI
         protected KeyboardState? Keyboard = null;
 
         protected MouseState? Mouse = null;
+
+        protected GamePadState? GamePad = null;
 
         public WindowHelper(string Title) : base(1280, 720, GraphicsMode.Default, Title, GameWindowFlags.Default
             , DisplayDevice.Default, 3, 3, GraphicsContextFlags.ForwardCompatible)
@@ -259,6 +262,60 @@ namespace Ryujinx.UI
             GL.PopAttrib();
 
             SwapBuffers();
+        }
+
+        internal static bool IsGamePadButtonPressed(GamePadState GamePad, GamePadButton Button)
+        {
+            if (Button == GamePadButton.LTrigger || Button == GamePadButton.RTrigger)
+            {
+                return GetGamePadTrigger(GamePad, Button) >= Config.GamePadTriggerThreshold;
+            }
+            else
+            {
+                return (GetGamePadButton(GamePad, Button) == ButtonState.Pressed);
+            }
+        }
+
+        internal static ButtonState GetGamePadButton(GamePadState GamePad, GamePadButton Button)
+        {
+            switch (Button)
+            {
+                case GamePadButton.A:         return GamePad.Buttons.A;
+                case GamePadButton.B:         return GamePad.Buttons.B;
+                case GamePadButton.X:         return GamePad.Buttons.X;
+                case GamePadButton.Y:         return GamePad.Buttons.Y;
+                case GamePadButton.LStick:    return GamePad.Buttons.LeftStick;
+                case GamePadButton.RStick:    return GamePad.Buttons.RightStick;
+                case GamePadButton.LShoulder: return GamePad.Buttons.LeftShoulder;
+                case GamePadButton.RShoulder: return GamePad.Buttons.RightShoulder;
+                case GamePadButton.DPadUp:    return GamePad.DPad.Up;
+                case GamePadButton.DPadDown:  return GamePad.DPad.Down;
+                case GamePadButton.DPadLeft:  return GamePad.DPad.Left;
+                case GamePadButton.DPadRight: return GamePad.DPad.Right;
+                case GamePadButton.Start:     return GamePad.Buttons.Start;
+                case GamePadButton.Back:      return GamePad.Buttons.Back;
+                default:                      throw  new ArgumentException();
+            }
+        }
+
+        internal static float GetGamePadTrigger(GamePadState GamePad, GamePadButton Trigger)
+        {
+            switch (Trigger)
+            {
+                case GamePadButton.LTrigger: return GamePad.Triggers.Left;
+                case GamePadButton.RTrigger: return GamePad.Triggers.Right;
+                default:                     throw new ArgumentException();
+            }
+        }
+
+        internal static Vector2 GetJoystickAxis(GamePadState GamePad, GamePadStick Joystick)
+        {
+            switch (Joystick)
+            {
+                case GamePadStick.LJoystick: return GamePad.ThumbSticks.Left;
+                case GamePadStick.RJoystick: return new Vector2(-GamePad.ThumbSticks.Right.Y, -GamePad.ThumbSticks.Right.X);
+                default:                     throw new ArgumentException();
+            }
         }
 
         protected override void OnKeyDown(KeyboardKeyEventArgs e)

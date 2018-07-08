@@ -15,10 +15,10 @@ namespace Ryujinx
         public static JoyConKeyboard   JoyConKeyboard   { get; set; }
         public static JoyConController JoyConController { get; set; }
 
-        public static float GamePadDeadzone             { get; private set; }
-        public static bool  GamePadEnable               { get; private set; }
-        public static int   GamePadIndex                { get; private set; }
-        public static float GamePadTriggerThreshold     { get; private set; }
+        public static float GamePadDeadzone             { get; set; }
+        public static bool  GamePadEnable               { get; set; }
+        public static int   GamePadIndex                { get; set; }
+        public static float GamePadTriggerThreshold     { get; set; }
 
         public static string IniPath { get; set; }
 
@@ -112,28 +112,28 @@ namespace Ryujinx
             {
                 Left = new JoyConControllerLeft
                 {
-                    Stick       = Parser.GetValue("Controls_Left_JoyConController_Stick"),
-                    StickButton = Parser.GetValue("Controls_Left_JoyConController_Stick_Button"),
-                    DPadUp      = Parser.GetValue("Controls_Left_JoyConController_DPad_Up"),
-                    DPadDown    = Parser.GetValue("Controls_Left_JoyConController_DPad_Down"),
-                    DPadLeft    = Parser.GetValue("Controls_Left_JoyConController_DPad_Left"),
-                    DPadRight   = Parser.GetValue("Controls_Left_JoyConController_DPad_Right"),
-                    ButtonMinus = Parser.GetValue("Controls_Left_JoyConController_Button_Minus"),
-                    ButtonL     = Parser.GetValue("Controls_Left_JoyConController_Button_L"),
-                    ButtonZL    = Parser.GetValue("Controls_Left_JoyConController_Button_ZL")
+                    Stick       = Enum.Parse<GamePadStick>(Parser.GetValue("Controls_Left_JoyConController_Stick")),
+                    StickButton = Enum.Parse<GamePadButton>(Parser.GetValue("Controls_Left_JoyConController_Stick_Button")),
+                    DPadUp      = Enum.Parse<GamePadButton>(Parser.GetValue("Controls_Left_JoyConController_DPad_Up")),
+                    DPadDown    = Enum.Parse<GamePadButton>(Parser.GetValue("Controls_Left_JoyConController_DPad_Down")),
+                    DPadLeft    = Enum.Parse<GamePadButton>(Parser.GetValue("Controls_Left_JoyConController_DPad_Left")),
+                    DPadRight   = Enum.Parse<GamePadButton>(Parser.GetValue("Controls_Left_JoyConController_DPad_Right")),
+                    ButtonMinus = Enum.Parse<GamePadButton>(Parser.GetValue("Controls_Left_JoyConController_Button_Minus")),
+                    ButtonL     = Enum.Parse<GamePadButton>(Parser.GetValue("Controls_Left_JoyConController_Button_L")),
+                    ButtonZL    = Enum.Parse<GamePadButton>(Parser.GetValue("Controls_Left_JoyConController_Button_ZL"))
                 },
 
                 Right = new JoyConControllerRight
                 {
-                    Stick       = Parser.GetValue("Controls_Right_JoyConController_Stick"),
-                    StickButton = Parser.GetValue("Controls_Right_JoyConController_Stick_Button"),
-                    ButtonA     = Parser.GetValue("Controls_Right_JoyConController_Button_A"),
-                    ButtonB     = Parser.GetValue("Controls_Right_JoyConController_Button_B"),
-                    ButtonX     = Parser.GetValue("Controls_Right_JoyConController_Button_X"),
-                    ButtonY     = Parser.GetValue("Controls_Right_JoyConController_Button_Y"),
-                    ButtonPlus  = Parser.GetValue("Controls_Right_JoyConController_Button_Plus"),
-                    ButtonR     = Parser.GetValue("Controls_Right_JoyConController_Button_R"),
-                    ButtonZR    = Parser.GetValue("Controls_Right_JoyConController_Button_ZR")
+                    Stick       = Enum.Parse<GamePadStick>(Parser.GetValue("Controls_Right_JoyConController_Stick")),
+                    StickButton = Enum.Parse<GamePadButton>(Parser.GetValue("Controls_Right_JoyConController_Stick_Button")),
+                    ButtonA     = Enum.Parse<GamePadButton>(Parser.GetValue("Controls_Right_JoyConController_Button_A")),
+                    ButtonB     = Enum.Parse<GamePadButton>(Parser.GetValue("Controls_Right_JoyConController_Button_B")),
+                    ButtonX     = Enum.Parse<GamePadButton>(Parser.GetValue("Controls_Right_JoyConController_Button_X")),
+                    ButtonY     = Enum.Parse<GamePadButton>(Parser.GetValue("Controls_Right_JoyConController_Button_Y")),
+                    ButtonPlus  = Enum.Parse<GamePadButton>(Parser.GetValue("Controls_Right_JoyConController_Button_Plus")),
+                    ButtonR     = Enum.Parse<GamePadButton>(Parser.GetValue("Controls_Right_JoyConController_Button_R")),
+                    ButtonZR    = Enum.Parse<GamePadButton>(Parser.GetValue("Controls_Right_JoyConController_Button_ZR"))
                 }
             };
 

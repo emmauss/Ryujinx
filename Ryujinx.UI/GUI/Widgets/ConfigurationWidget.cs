@@ -9,12 +9,16 @@ namespace Ryujinx.UI.Widgets
         static bool   ConfigIntialized = false;
         static bool   OpenFolderPicker;
         static string CurrentPath;
+        static float  CurrentGamePadDeadzone;
+        static bool   CurrentGamePadEnable;
+        static int    CurrentGamePadIndex;
+        static float  CurrentGamePadTriggerThreshold;
 
         static IniParser        IniParser;
         static FilePicker       FolderPicker;
         static JoyConKeyboard   KeyboardInputLayout;
         static JoyConController ControllerInputLayout;
-        static Page              CurrentPage = Page.General;
+        static Page             CurrentPage = Page.General;
 
         static ConfigurationWidget()
         {
@@ -23,11 +27,32 @@ namespace Ryujinx.UI.Widgets
             CurrentPath  = Config.DefaultGameDirectory.ToString();
         }
 
+        static void Reset()
+        {
+            KeyboardInputLayout            = Config.JoyConKeyboard;
+            ControllerInputLayout          = Config.JoyConController;
+            CurrentGamePadTriggerThreshold = Config.GamePadTriggerThreshold;
+            CurrentGamePadIndex            = Config.GamePadIndex;
+            CurrentGamePadEnable           = Config.GamePadEnable;
+            CurrentGamePadDeadzone         = Config.GamePadDeadzone;
+        }
+
+        static void Apply()
+        {
+            Config.JoyConKeyboard          = KeyboardInputLayout;
+            Config.JoyConController        = ControllerInputLayout;
+            Config.GamePadDeadzone         = CurrentGamePadDeadzone;
+            Config.GamePadEnable           = CurrentGamePadEnable;
+            Config.GamePadIndex            = CurrentGamePadIndex;
+            Config.GamePadTriggerThreshold = CurrentGamePadTriggerThreshold;
+        }
+
         public static void Draw()
         {
             if(!ConfigIntialized)
             {
-                KeyboardInputLayout = Config.JoyConKeyboard;
+                Reset();
+
                 ConfigIntialized = true;
             }
 
@@ -104,12 +129,14 @@ namespace Ryujinx.UI.Widgets
                 {
                     if (ImGui.Button("Apply", new Vector2(Values.ButtonWidth, Values.ButtonHeight)))
                     {
-                        Config.JoyConKeyboard = KeyboardInputLayout;
+                        Apply();
                     }
                     ImGui.SameLine();
                 }
                 if (ImGui.Button("Save", new Vector2(Values.ButtonWidth, Values.ButtonHeight)))
                 {
+                    Apply();
+
                     Config.Save(EmulationWindow.Ns.Log);
                 }
                 ImGui.SameLine();

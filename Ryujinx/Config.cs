@@ -109,28 +109,28 @@ namespace Ryujinx
             {
                 Left = new JoyConControllerLeft
                 {
-                    Stick       = Parser.Value("Controls_Left_JoyConController_Stick"),
-                    StickButton = Parser.Value("Controls_Left_JoyConController_Stick_Button"),
-                    DPadUp      = Parser.Value("Controls_Left_JoyConController_DPad_Up"),
-                    DPadDown    = Parser.Value("Controls_Left_JoyConController_DPad_Down"),
-                    DPadLeft    = Parser.Value("Controls_Left_JoyConController_DPad_Left"),
-                    DPadRight   = Parser.Value("Controls_Left_JoyConController_DPad_Right"),
-                    ButtonMinus = Parser.Value("Controls_Left_JoyConController_Button_Minus"),
-                    ButtonL     = Parser.Value("Controls_Left_JoyConController_Button_L"),
-                    ButtonZL    = Parser.Value("Controls_Left_JoyConController_Button_ZL")
+                    Stick       = Enum.Parse<GamePadStick>(Parser.Value("Controls_Left_JoyConController_Stick")),
+                    StickButton = Enum.Parse<GamePadButton>(Parser.Value("Controls_Left_JoyConController_Stick_Button")),
+                    DPadUp      = Enum.Parse<GamePadButton>(Parser.Value("Controls_Left_JoyConController_DPad_Up")),
+                    DPadDown    = Enum.Parse<GamePadButton>(Parser.Value("Controls_Left_JoyConController_DPad_Down")),
+                    DPadLeft    = Enum.Parse<GamePadButton>(Parser.Value("Controls_Left_JoyConController_DPad_Left")),
+                    DPadRight   = Enum.Parse<GamePadButton>(Parser.Value("Controls_Left_JoyConController_DPad_Right")),
+                    ButtonMinus = Enum.Parse<GamePadButton>(Parser.Value("Controls_Left_JoyConController_Button_Minus")),
+                    ButtonL     = Enum.Parse<GamePadButton>(Parser.Value("Controls_Left_JoyConController_Button_L")),
+                    ButtonZL    = Enum.Parse<GamePadButton>(Parser.Value("Controls_Left_JoyConController_Button_ZL"))
                 },
 
                 Right = new JoyConControllerRight
                 {
-                    Stick       = Parser.Value("Controls_Right_JoyConController_Stick"),
-                    StickButton = Parser.Value("Controls_Right_JoyConController_Stick_Button"),
-                    ButtonA     = Parser.Value("Controls_Right_JoyConController_Button_A"),
-                    ButtonB     = Parser.Value("Controls_Right_JoyConController_Button_B"),
-                    ButtonX     = Parser.Value("Controls_Right_JoyConController_Button_X"),
-                    ButtonY     = Parser.Value("Controls_Right_JoyConController_Button_Y"),
-                    ButtonPlus  = Parser.Value("Controls_Right_JoyConController_Button_Plus"),
-                    ButtonR     = Parser.Value("Controls_Right_JoyConController_Button_R"),
-                    ButtonZR    = Parser.Value("Controls_Right_JoyConController_Button_ZR")
+                    Stick       = Enum.Parse<GamePadStick>(Parser.Value("Controls_Right_JoyConController_Stick")),
+                    StickButton = Enum.Parse<GamePadButton>(Parser.Value("Controls_Right_JoyConController_Stick_Button")),
+                    ButtonA     = Enum.Parse<GamePadButton>(Parser.Value("Controls_Right_JoyConController_Button_A")),
+                    ButtonB     = Enum.Parse<GamePadButton>(Parser.Value("Controls_Right_JoyConController_Button_B")),
+                    ButtonX     = Enum.Parse<GamePadButton>(Parser.Value("Controls_Right_JoyConController_Button_X")),
+                    ButtonY     = Enum.Parse<GamePadButton>(Parser.Value("Controls_Right_JoyConController_Button_Y")),
+                    ButtonPlus  = Enum.Parse<GamePadButton>(Parser.Value("Controls_Right_JoyConController_Button_Plus")),
+                    ButtonR     = Enum.Parse<GamePadButton>(Parser.Value("Controls_Right_JoyConController_Button_R")),
+                    ButtonZR    = Enum.Parse<GamePadButton>(Parser.Value("Controls_Right_JoyConController_Button_ZR"))
                 }
             };
         }
