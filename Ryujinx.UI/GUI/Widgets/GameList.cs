@@ -47,11 +47,15 @@ namespace Ryujinx.UI.Widgets
                             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)All.Linear);
                             GL.PixelStore(PixelStoreParameter.UnpackAlignment, 1);
 
-                            NanoJpeg.NJImage image = new NJImage();
-                            image.Decode(GameItem.GetIconData());
-                            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, image.Width, image.Height, 0, PixelFormat.Rgb,
-                                PixelType.UnsignedByte, new IntPtr(image.Image));
-                            image.Dispose();
+                            NJImage Image = new NJImage();
+
+                            Image.Decode(GameItem.GetIconData());
+
+                            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, Image.Width, Image.Height, 0, PixelFormat.Rgb,
+                                PixelType.UnsignedByte, new IntPtr(Image.Image));
+
+                            Image.Dispose();
+
                             GL.BindTexture(TextureTarget.Texture2D, 0);
                         }
 
@@ -63,12 +67,13 @@ namespace Ryujinx.UI.Widgets
 
         public unsafe static (bool,string) DrawList()
         {
-            uint id = 100;
+            uint Id = 100;
 
             if (ImGui.Button("Refresh GameList"))
                 Refresh(Config.DefaultGameDirectory);
 
             ImGui.SameLine();
+
             if(ImGui.Button("Select Game Directory"))
             {
                 OpenFolderPicker = true;
@@ -78,6 +83,7 @@ namespace Ryujinx.UI.Widgets
                 ImGui.OpenPopup("Open Folder");
 
             DialogResult DialogResult = FolderPicker.GetFolder(ref GameDirectory);
+
             if (DialogResult == DialogResult.OK)
             {
                 Config.DefaultGameDirectory = GameDirectory;
@@ -91,12 +97,12 @@ namespace Ryujinx.UI.Widgets
             {
                 foreach (GameItem GameItem in GameItems)
                 {
-                    id++;
+                    Id++;
 
                     if (GameItem == SelectedGame)
                         ImGui.PushStyleColor(ColorTarget.FrameBg, Values.Color.Yellow);
 
-                    if (ImGui.BeginChildFrame(id, new Vector2(ImGui.GetContentRegionAvailableWidth(), 60)
+                    if (ImGui.BeginChildFrame(Id, new Vector2(ImGui.GetContentRegionAvailableWidth(), 60)
                         , WindowFlags.AlwaysAutoResize))
                     {
                         if (GameItem.IsNro && GameItem.HasIcon)
@@ -106,7 +112,7 @@ namespace Ryujinx.UI.Widgets
                         }
                         else
                         {
-                            ImGui.BeginChildFrame(id + 500, new Vector2(50, 50), WindowFlags.NoResize);
+                            ImGui.BeginChildFrame(Id + 500, new Vector2(50, 50), WindowFlags.NoResize);
                             ImGui.EndChildFrame();
                             ImGui.SameLine();
                             ImGui.Text(Path.GetFileName(GameItem.Path));
@@ -114,7 +120,9 @@ namespace Ryujinx.UI.Widgets
                         }
 
                         ImGui.SameLine();
+
                         ImGuiNative.igBeginGroup();
+
                         if (GameItem.IsNro)
                         {
                             if (GameItem.Nro.ControlArchive != null)
@@ -124,6 +132,7 @@ namespace Ryujinx.UI.Widgets
                             }
 
                         }
+
                         ImGuiNative.igEndGroup();
 
                         if (GameItem == SelectedGame)
@@ -166,7 +175,9 @@ namespace Ryujinx.UI.Widgets
             if (File.Exists(Path))
             {
                 AppletType = AppletType.Homebrew;
+
                 FileInfo Package = new FileInfo(Path);
+
                 if (Package.Extension.ToLower() == ".nro")
                 {
                     Nro = new Nro(File.Open(Path, FileMode.Open), new FileInfo(Path).Name);

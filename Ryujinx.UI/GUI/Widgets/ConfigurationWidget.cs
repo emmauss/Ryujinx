@@ -67,6 +67,7 @@ namespace Ryujinx.UI.Widgets
                 }
 
                 ImGui.SameLine();
+
                 if (ImGui.Button("Input", new Vector2(Values.ButtonWidth, Values.ButtonHeight)))
                 {
                     CurrentPage = Page.Input;
@@ -90,6 +91,7 @@ namespace Ryujinx.UI.Widgets
                                 {
                                     OpenFolderPicker = true;
                                 }
+
                                 if (OpenFolderPicker)
                                     ImGui.OpenPopup("Open Folder");
 
@@ -101,22 +103,28 @@ namespace Ryujinx.UI.Widgets
                                         Config.DefaultGameDirectory = CurrentPath;
                                     }
                                 }
+
                                 if (DialogResult != DialogResult.None)
                                 {
                                     OpenFolderPicker = false;
                                 }
 
                                 ImGui.Spacing();
+                                
                                 ImGui.Checkbox("Disable Cpu Memory Checks", ref AOptimizations.DisableMemoryChecks);
+
                                 ImGui.EndChild();
                             }
+
                             break;
                         case Page.Input:
                             if (ImGui.BeginChild("inputFrame", true, WindowFlags.AlwaysAutoResize))
                             {
                                 DrawInputPage();
+
                                 ImGui.EndChild();
                             }
+
                             break;
                     }
 
@@ -131,15 +139,19 @@ namespace Ryujinx.UI.Widgets
                     {
                         Apply();
                     }
+
                     ImGui.SameLine();
                 }
+
                 if (ImGui.Button("Save", new Vector2(Values.ButtonWidth, Values.ButtonHeight)))
                 {
                     Apply();
 
                     Config.Save(EmulationWindow.Ns.Log);
                 }
+
                 ImGui.SameLine();
+
                 if (ImGui.Button("Discard", new Vector2(Values.ButtonWidth, Values.ButtonHeight)))
                 {
                     IniParser = new IniParser(Config.IniPath);

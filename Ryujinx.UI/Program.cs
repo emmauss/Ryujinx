@@ -6,9 +6,9 @@ namespace Ryujinx.UI
     {
         static void Main(string[] args)
         {
-            EmulationWindow mainUI = new EmulationWindow();
+            EmulationWindow MainUI = new EmulationWindow();
 
-            mainUI.Run(60.0, 60.0);
+            MainUI.MainLoop();
 
             Environment.Exit(0);
         }

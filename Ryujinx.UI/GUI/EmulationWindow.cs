@@ -9,15 +9,17 @@ using Ryujinx.Graphics.Gal.OpenGL;
 using Ryujinx.HLE;
 using Ryujinx.HLE.Input;
 using System;
+using System.Threading;
+
+using Stopwatch = System.Diagnostics.Stopwatch;
 
 namespace Ryujinx.UI
 {
     partial class EmulationWindow : WindowHelper
     {
         public static EmulationController EmulationController;
-        //toggles     
-        private bool showMainUI = true;
-        private bool showPauseUI;
+
+        //toggles
         private bool isRunning = false;
         private bool IsRunning
         {
@@ -29,6 +31,7 @@ namespace Ryujinx.UI
             }
         }
 
+        private bool showMainUI = true;
         private bool ShowMainUI
         {
             get => showMainUI;
@@ -45,6 +48,7 @@ namespace Ryujinx.UI
             }
         }
 
+        private bool showPauseUI;
         private bool ShowPauseUI
         {
             get => showPauseUI;
@@ -63,10 +67,9 @@ namespace Ryujinx.UI
 
         private Page CurrentPage = Page.GameList;
 
-        private bool EscapePressed;
-
-        private string CurrentPath = Environment.CurrentDirectory;
-        private string PackagePath = string.Empty;
+        private bool   EscapePressed;
+        private string CurrentPath;
+        private string PackagePath;
 
         private const int TouchScreenWidth = 1280;
         private const int TouchScreenHeight = 720;
@@ -74,17 +77,33 @@ namespace Ryujinx.UI
         private const float TouchScreenRatioX = (float)TouchScreenWidth / TouchScreenHeight;
         private const float TouchScreenRatioY = (float)TouchScreenHeight / TouchScreenWidth;
 
+        private const int TargetFPS = 60;
+
         FilePicker FileDialog;
 
         IGalRenderer Renderer;
 
         public static Switch Ns;
 
+        private Thread RenderThread;
+
+        private bool ResizeEvent;
+
+        private bool TitleEvent;
+
+        private string NewTitle;
+
         public EmulationWindow() : base("Ryujinx")
         {
-            FileDialog = FilePicker.GetFilePicker("rom",null);
+            CurrentPath = Environment.CurrentDirectory;
+            PackagePath = string.Empty;
+            FileDialog  = FilePicker.GetFilePicker("rom",null);
 
             InitializeSwitch();
+
+            ResizeEvent = false;
+
+            TitleEvent = false;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -94,10 +113,87 @@ namespace Ryujinx.UI
             VSync = VSyncMode.On;            
         }
 
-        protected override void OnRenderFrame(FrameEventArgs e)
+        private void RenderLoop()
         {
-            DeltaTime = (float)e.Time;
+            MakeCurrent();
 
+            PrepareTexture();
+
+            Stopwatch Chrono = new Stopwatch();
+
+            Chrono.Start();
+
+            long TicksPerFrame = Stopwatch.Frequency / TargetFPS;
+
+            long Ticks = 0;
+
+            while (Exists && !IsExiting)
+            {
+                if (Ns.WaitFifo())
+                {
+                    Ns.ProcessFrame();
+                }
+
+                Renderer.RunActions();
+
+                if (ResizeEvent)
+                {
+                    ResizeEvent = false;
+
+                    Renderer.FrameBuffer.SetWindowSize(Width, Height);
+                }
+
+                Ticks += Chrono.ElapsedTicks;
+
+                DeltaTime = (float)Chrono.Elapsed.TotalSeconds;
+
+                Chrono.Restart();
+
+                if (Ticks >= TicksPerFrame)
+                {
+                    RenderFrame();
+
+                    //Queue max. 1 vsync
+                    Ticks = Math.Min(Ticks - TicksPerFrame, TicksPerFrame);
+                }
+            }
+        }
+
+        public void MainLoop()
+        {
+            VSync = VSyncMode.Off;
+
+            Visible = true;
+
+            Renderer.FrameBuffer.SetWindowSize(Width, Height);
+
+            Context.MakeCurrent(null);
+
+            //OpenTK doesn't like sleeps in its thread, to avoid this a renderer thread is created
+            RenderThread = new Thread(RenderLoop);
+
+            RenderThread.Start();
+
+            while (Exists && !IsExiting)
+            {
+                ProcessEvents();
+
+                if (!IsExiting)
+                {
+                    UpdateFrame();
+
+                    if (TitleEvent)
+                    {
+                        TitleEvent = false;
+
+                        Title = NewTitle;
+                    }
+                }
+            }
+        }
+
+        private new void RenderFrame()
+        {
             if (UIActive)
             {
                 StartFrame();
@@ -107,11 +203,13 @@ namespace Ryujinx.UI
                 if (ShowMainUI)
                 {
                     showPauseUI = false;
+
                     RenderMainUI();
                 }
                 else if (ShowPauseUI)
                 {
                     showMainUI = false;
+
                     RenderPauseUI();
                 }
 
@@ -126,7 +224,9 @@ namespace Ryujinx.UI
                 double HostFps = Ns.Statistics.GetSystemFrameRate();
                 double GameFps = Ns.Statistics.GetGameFrameRate();
 
-                Title = $"Ryujinx | Host FPS: {HostFps:0.0} | Game FPS: {GameFps:0.0}";
+                NewTitle = $"Ryujinx | Host FPS: {HostFps:0.0} | Game FPS: {GameFps:0.0}";
+
+                TitleEvent = true;
 
                 SwapBuffers();
 
@@ -151,7 +251,7 @@ namespace Ryujinx.UI
             Ns.Log.Updated += ConsoleLog.PrintLog;
         }
 
-        protected override void OnUpdateFrame(FrameEventArgs e)
+        private new void UpdateFrame()
         {
             KeyboardState Keyboard = this.Keyboard ?? new KeyboardState();
 
@@ -178,8 +278,8 @@ namespace Ryujinx.UI
                     EscapePressed = false;
 
                 HidControllerButtons CurrentButton = 0;
-                HidJoystickPosition LeftJoystick;
-                HidJoystickPosition RightJoystick;
+                HidJoystickPosition  LeftJoystick;
+                HidJoystickPosition  RightJoystick;
 
                 int LeftJoystickDX        = 0;
                 int LeftJoystickDY        = 0;
@@ -282,7 +382,7 @@ namespace Ryujinx.UI
                 {
                     MouseState Mouse = this.Mouse.Value;
 
-                    int ScrnWidth = Width;
+                    int ScrnWidth  = Width;
                     int ScrnHeight = Height;
 
                     if (Width > Height * TouchScreenRatioX)
@@ -319,7 +419,7 @@ namespace Ryujinx.UI
                             //Placeholder values till more data is acquired
                             DiameterX = 10,
                             DiameterY = 10,
-                            Angle = 90
+                            Angle     = 90
                         };
 
                         HasTouch = true;
@@ -346,10 +446,6 @@ namespace Ryujinx.UI
                     CurrentButton,
                     LeftJoystick,
                     RightJoystick);
-
-                Ns.ProcessFrame();
-
-                Renderer.RunActions();
             }
             else if (EmulationController != null)
                 if (EmulationController.IsLoaded)
@@ -373,13 +469,25 @@ namespace Ryujinx.UI
                 }
         }
 
+        protected override void OnUnload(EventArgs e)
+        {
+            RenderThread.Join();
+
+            base.OnUnload(e);
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            ResizeEvent = true;
+        }
+
         public void LoadPackage(string path)
         {           
 
             MainContext.MakeCurrent(WindowInfo);
 
-            if(Ns == null)
-            InitializeSwitch();
+            if (Ns == null)
+                InitializeSwitch();
 
             if (EmulationController == null)
                 EmulationController = new EmulationController(Ns);

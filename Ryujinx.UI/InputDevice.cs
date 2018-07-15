@@ -7,10 +7,10 @@ namespace Ryujinx.UI
 {
     public struct InputDevice
     {
-        public int Index;
+        public int          Index;
+        public string       Name;
         public IInputDevice Device;
-        public DeviceType DeviceType;
-        public string Name;
+        public DeviceType   DeviceType;
     }
 
     public enum DeviceType

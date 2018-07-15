@@ -9,6 +9,7 @@ namespace Ryujinx.UI
                     System.Numerics.Vector2.Zero);
 
             ImGui.SetNextWindowSize(new System.Numerics.Vector2(Width, Height), Condition.Always);
+
             if (ImGui.BeginWindow("PauseWindow", ref showMainUI, WindowFlags.NoTitleBar
                 | WindowFlags.NoMove | WindowFlags.AlwaysAutoResize))
             {
@@ -34,6 +35,7 @@ namespace Ryujinx.UI
                     ImGuiNative.igEndGroup();
 
                     ImGui.SameLine();
+
                     if (ImGui.BeginChildFrame(1, ImGui.GetContentRegionAvailable(),
                         WindowFlags.AlwaysAutoResize))
                     {
@@ -44,6 +46,7 @@ namespace Ryujinx.UI
                                     Values.ButtonHeight)))
                                 {
                                     ShowPauseUI = false;
+
                                     EmulationController.Resume();
                                 }
 
@@ -51,7 +54,9 @@ namespace Ryujinx.UI
                                     Values.ButtonHeight)))
                                 {
                                     ShowPauseUI = false;
+
                                     EmulationController.ShutDown();
+
                                     ShowMainUI = true;
                                 }
 
@@ -61,10 +66,13 @@ namespace Ryujinx.UI
 
                                 break;
                         }
+
                         ImGui.EndChildFrame();
                     }
+
                     ImGui.EndChildFrame();
                 }
+
                 ImGui.EndWindow();
             }
         }

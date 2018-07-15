@@ -10,7 +10,9 @@ namespace Ryujinx.UI
         {
             ImGui.SetNextWindowPos(Vector2.Zero, Condition.Always,
                     Vector2.Zero);
+
             ImGui.SetNextWindowSize(new Vector2(Width, Height), Condition.Always);
+
             if (ImGui.BeginWindow("MainWindow", ref showMainUI, WindowFlags.NoTitleBar
                 | WindowFlags.NoMove | WindowFlags.AlwaysAutoResize))
             {
@@ -42,6 +44,7 @@ namespace Ryujinx.UI
                     ImGuiNative.igEndGroup();
 
                     ImGui.SameLine();
+
                     if (ImGui.BeginChildFrame(1, ImGui.GetContentRegionAvailable(),
                         WindowFlags.AlwaysAutoResize))
                     {
@@ -49,30 +52,38 @@ namespace Ryujinx.UI
                         {
                             case Page.PackageLoader:
                                 string output = CurrentPath;
+
                                 if (FileDialog.Draw(ref output, false) == DialogResult.OK)
                                 {
                                     if (!string.IsNullOrWhiteSpace(output))
                                     {
                                         PackagePath = output;
+
                                         LoadPackage(PackagePath);
                                     }
                                 }
                                 break;
                             case Page.Configuration:
                                 Widgets.ConfigurationWidget.Draw();
+
                                 break;
                             case Page.GameList:
                                 var SelectedPath =  Widgets.GameList.DrawList();
+
                                 if (SelectedPath.Item1)
                                 {
                                     LoadPackage(SelectedPath.Item2);
                                 }
+
                                 break;
                         }
+
                         ImGui.EndChildFrame();
                     }
+
                     ImGui.EndChildFrame();
                 }
+
                 ImGui.EndWindow();
             }
         }

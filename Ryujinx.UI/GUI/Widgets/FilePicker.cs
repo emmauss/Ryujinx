@@ -10,7 +10,9 @@ namespace ImGuiNET
     public class FilePicker
     {
         private const  string   FilePickerID = "###FilePicker";
+
         private static readonly Dictionary<object, FilePicker> FilePickers = new Dictionary<object, FilePicker>();
+
         private static readonly Vector2 DefaultFilePickerSize = new Vector2(600, 400);
 
         public string CurrentFolder { get; set; }
@@ -26,6 +28,7 @@ namespace ImGuiNET
             else if (string.IsNullOrEmpty(StartingPath) || !Directory.Exists(StartingPath))
             {
                 StartingPath = Environment.CurrentDirectory;
+
                 if (string.IsNullOrEmpty(StartingPath))
                 {
                     StartingPath = AppContext.BaseDirectory;
@@ -68,9 +71,10 @@ namespace ImGuiNET
                     if (ImGui.Selectable(Drive.Name + "/", IsSelected, SelectableFlags.DontClosePopups
                        , new Vector2(ImGui.GetContentRegionAvailableWidth(), Values.SelectibleHeight)))
                     {
-                        CurrentDrive = Drive.Name;
+                        CurrentDrive  = Drive.Name;
                         CurrentFolder = Drive.Name;
                     }
+
                     ImGui.PopStyleColor();
                 }
 
@@ -128,8 +132,8 @@ namespace ImGuiNET
                     if (!FoldersOnly)
                         foreach (string File in Directory.EnumerateFiles(CurrentDirectory.FullName))
                         {
-                            string Name = Path.GetFileName(File);
-                            bool IsSelected = SelectedEntry == File;
+                            string Name       = Path.GetFileName(File);
+                            bool   IsSelected = SelectedEntry == File;
 
                             if (ImGui.Selectable(Name, IsSelected, SelectableFlags.DontClosePopups
                                 , new Vector2(ImGui.GetContentRegionAvailableWidth(), Values.SelectibleHeight)))
@@ -149,8 +153,8 @@ namespace ImGuiNET
                         }
                 }
             }
-            ImGui.EndChildFrame();
 
+            ImGui.EndChildFrame();
 
             if (ImGui.Button("Cancel", new Vector2(Values.ButtonWidth, Values.ButtonHeight)))
             {
@@ -180,11 +184,13 @@ namespace ImGuiNET
         public DialogResult GetFolder(ref string CurrentPath)
         {
             ImGui.SetNextWindowSize(new Vector2(600, 600), Condition.FirstUseEver);
+
             if (ImGui.BeginPopupModal("Open Folder", WindowFlags.NoResize))
             {
                 try
                 {
                     string Output = CurrentPath;
+
                     DialogResult DialogResult = Draw(ref Output, false, true);
 
                     if (DialogResult == DialogResult.OK)

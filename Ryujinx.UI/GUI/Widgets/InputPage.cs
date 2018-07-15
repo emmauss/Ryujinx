@@ -68,7 +68,7 @@ namespace Ryujinx.UI.Widgets
 
                 ImGui.SliderFloat(string.Empty, ref CurrentGamePadDeadzone, 0, 1, CurrentGamePadDeadzone.ToString(), 1f);
 
-                 ImGuiNative.igEndGroup();
+                ImGuiNative.igEndGroup();
 
                 ImGui.SameLine();
 
@@ -119,8 +119,10 @@ namespace Ryujinx.UI.Widgets
         {
             // Show the Left Analog bindings
             ImGui.Text("Left Analog");
+
             ImGuiNative.igBeginGroup();
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("Up");
 
             if (ImGui.Button(((Key)KeyboardInputLayout.Left.StickUp).ToString(),
@@ -134,6 +136,7 @@ namespace Ryujinx.UI.Widgets
                 if (GetKey(ref PressedKey))
                 {
                     KeyboardInputLayout.Left.StickUp = (int)PressedKey;
+
                     Toggles[0] = false;
                 }
             }
@@ -141,7 +144,9 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igEndGroup();
 
             ImGui.SameLine();
+
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("Down");
 
             if (ImGui.Button(((Key)KeyboardInputLayout.Left.StickDown).ToString(),
@@ -155,6 +160,7 @@ namespace Ryujinx.UI.Widgets
                 if (GetKey(ref PressedKey))
                 {
                     KeyboardInputLayout.Left.StickDown = (int)PressedKey;
+
                     Toggles[1] = false;
                 }
             }
@@ -162,6 +168,7 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igEndGroup();
 
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("Left");
 
             if (ImGui.Button(((Key)KeyboardInputLayout.Left.StickLeft).ToString(),
@@ -175,13 +182,17 @@ namespace Ryujinx.UI.Widgets
                 if (GetKey(ref PressedKey))
                 {
                     KeyboardInputLayout.Left.StickLeft = (int)PressedKey;
+
                     Toggles[2] = false;
                 }
             }
+
             ImGuiNative.igEndGroup();
 
             ImGui.SameLine();
+
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("Right");
 
             if (ImGui.Button(((Key)KeyboardInputLayout.Left.StickRight).ToString(),
@@ -195,6 +206,7 @@ namespace Ryujinx.UI.Widgets
                 if (GetKey(ref PressedKey))
                 {
                     KeyboardInputLayout.Left.StickRight = (int)PressedKey;
+
                     Toggles[3] = false;
                 }
             }
@@ -208,9 +220,11 @@ namespace Ryujinx.UI.Widgets
         {
             //Show Right Analog Bindings
             ImGui.Text("Right Analog");
+
             ImGuiNative.igBeginGroup();
 
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("Up");
 
             if (ImGui.Button(((Key)KeyboardInputLayout.Right.StickUp).ToString(),
@@ -231,7 +245,9 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igEndGroup();
 
             ImGui.SameLine();
+
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("Down");
 
             if (ImGui.Button(((Key)KeyboardInputLayout.Right.StickDown).ToString(),
@@ -245,12 +261,15 @@ namespace Ryujinx.UI.Widgets
                 if (GetKey(ref PressedKey))
                 {
                     KeyboardInputLayout.Right.StickDown = (int)PressedKey;
+
                     Toggles[5] = false;
                 }
             }
+
             ImGuiNative.igEndGroup();
 
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("Left");
 
             if (ImGui.Button(((Key)KeyboardInputLayout.Right.StickLeft).ToString(),
@@ -264,13 +283,16 @@ namespace Ryujinx.UI.Widgets
                 if (GetKey(ref PressedKey))
                 {
                     KeyboardInputLayout.Right.StickLeft = (int)PressedKey;
+
                     Toggles[6] = false;
                 }
             }
             ImGuiNative.igEndGroup();
 
             ImGui.SameLine();
+
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("Right");
 
             if (ImGui.Button(((Key)KeyboardInputLayout.Right.StickRight).ToString(),
@@ -284,6 +306,7 @@ namespace Ryujinx.UI.Widgets
                 if (GetKey(ref PressedKey))
                 {
                     KeyboardInputLayout.Right.StickRight = (int)PressedKey;
+
                     Toggles[7] = false;
                 }
             }
@@ -298,6 +321,7 @@ namespace Ryujinx.UI.Widgets
             ImGui.Text("Left Analog");
 
             ImGuiNative.igBeginGroup();
+
             ImGuiNative.igBeginGroup();
 
             ImGui.Text("Stick");
@@ -314,6 +338,7 @@ namespace Ryujinx.UI.Widgets
                 {
                     ControllerInputLayout.Left.Stick =
                         (GamePadStick)Enum.Parse(typeof(GamePadStick), Axis);
+
                     Toggles[0] = false;
                 }
             }
@@ -338,6 +363,7 @@ namespace Ryujinx.UI.Widgets
                 {
                     ControllerInputLayout.Left.StickButton =
                         (GamePadButton)Enum.Parse(typeof(GamePadButton),PressedButton);
+
                     Toggles[3] = false;
                 }
             }
@@ -351,9 +377,11 @@ namespace Ryujinx.UI.Widgets
         {
             //Show Right Analog Bindings
             ImGui.Text("Right Analog");
+
             ImGuiNative.igBeginGroup();
 
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("Stick");
 
             if (ImGui.Button(ControllerInputLayout.Right.Stick.ToString()
@@ -372,10 +400,13 @@ namespace Ryujinx.UI.Widgets
                     Toggles[4] = false;
                 }
             }
+
             ImGuiNative.igEndGroup();            
 
             ImGui.SameLine();
+
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("Button");
 
             if (ImGui.Button(ControllerInputLayout.Right.StickButton.ToString(),
@@ -390,6 +421,7 @@ namespace Ryujinx.UI.Widgets
                 {
                     ControllerInputLayout.Right.StickButton =
                         (GamePadButton)Enum.Parse(typeof(GamePadButton),PressedButton);
+
                     Toggles[7] = false;
                 }
             }
@@ -404,9 +436,11 @@ namespace Ryujinx.UI.Widgets
 
             //Show DPad Bindings
             ImGui.Text("D-Pad");
+
             ImGuiNative.igBeginGroup();
 
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("Up");
 
             ButtonHeader = CurrentSelectedDevice.DeviceType == DeviceType.Keyboard ?
@@ -427,6 +461,7 @@ namespace Ryujinx.UI.Widgets
                         {
                             ControllerInputLayout.Left.DPadUp =
                                 (GamePadButton)Enum.Parse(typeof(GamePadButton),PressedButton);
+
                             Toggles[8] = false;
                         }
                         break;
@@ -434,15 +469,19 @@ namespace Ryujinx.UI.Widgets
                         if (GetKey(ref PressedKey))
                         {
                             KeyboardInputLayout.Left.DPadUp = (int)PressedKey;
+
                             Toggles[8] = false;
                         }
                         break;
                 }
             }
+
             ImGuiNative.igEndGroup();
 
             ImGui.SameLine();
+
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("Down");
 
             ButtonHeader = CurrentSelectedDevice.DeviceType == DeviceType.Keyboard ?
@@ -475,9 +514,11 @@ namespace Ryujinx.UI.Widgets
                         break;
                 }
             }
+
             ImGuiNative.igEndGroup();
 
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("Left");
 
             ButtonHeader = CurrentSelectedDevice.DeviceType == DeviceType.Keyboard ?
@@ -498,6 +539,7 @@ namespace Ryujinx.UI.Widgets
                         {
                             ControllerInputLayout.Left.DPadLeft =
                                 (GamePadButton)Enum.Parse(typeof(GamePadButton),PressedButton);
+
                             Toggles[10] = false;
                         }
                         break;
@@ -505,15 +547,19 @@ namespace Ryujinx.UI.Widgets
                         if (GetKey(ref PressedKey))
                         {
                             KeyboardInputLayout.Left.DPadLeft = (int)PressedKey;
+
                             Toggles[10] = false;
                         }
                         break;
                 }
             }
+
             ImGuiNative.igEndGroup();
 
             ImGui.SameLine();
+
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("Right");
 
             ButtonHeader = CurrentSelectedDevice.DeviceType == DeviceType.Keyboard ?
@@ -534,6 +580,7 @@ namespace Ryujinx.UI.Widgets
                         {
                             ControllerInputLayout.Left.DPadRight =
                                 (GamePadButton)Enum.Parse(typeof(GamePadButton),PressedButton);
+
                             Toggles[11] = false;
                         }
                         break;
@@ -541,11 +588,13 @@ namespace Ryujinx.UI.Widgets
                         if (GetKey(ref PressedKey))
                         {
                             KeyboardInputLayout.Left.DPadRight = (int)PressedKey;
+
                             Toggles[11] = false;
                         }
                         break;
                 }
             }
+
             ImGuiNative.igEndGroup();
 
             ImGuiNative.igEndGroup();
@@ -554,11 +603,14 @@ namespace Ryujinx.UI.Widgets
         static void DrawActionKeys()
         {
             string ButtonHeader = string.Empty;
+            
             //Show Action Key Bindings
             ImGui.Text("Action Keys");
+
             ImGuiNative.igBeginGroup();
 
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("A");
 
             ButtonHeader = CurrentSelectedDevice.DeviceType == DeviceType.Keyboard ?
@@ -579,6 +631,7 @@ namespace Ryujinx.UI.Widgets
                         {
                             ControllerInputLayout.Right.ButtonA =
                                 (GamePadButton)Enum.Parse(typeof(GamePadButton),PressedButton);
+
                             Toggles[12] = false;
                         }
                         break;
@@ -586,15 +639,19 @@ namespace Ryujinx.UI.Widgets
                         if (GetKey(ref PressedKey))
                         {
                             KeyboardInputLayout.Right.ButtonA = (int)PressedKey;
+
                             Toggles[12] = false;
                         }
                         break;
                 }
             }
+
             ImGuiNative.igEndGroup();
 
             ImGui.SameLine();
+
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("B");
 
             ButtonHeader = CurrentSelectedDevice.DeviceType == DeviceType.Keyboard ?
@@ -615,6 +672,7 @@ namespace Ryujinx.UI.Widgets
                         {
                             ControllerInputLayout.Right.ButtonB =
                                 (GamePadButton)Enum.Parse(typeof(GamePadButton),PressedButton);
+
                             Toggles[13] = false;
                         }
                         break;
@@ -622,14 +680,17 @@ namespace Ryujinx.UI.Widgets
                         if (GetKey(ref PressedKey))
                         {
                             KeyboardInputLayout.Right.ButtonB = (int)PressedKey;
+
                             Toggles[13] = false;
                         }
                         break;
                 }
             }
+
             ImGuiNative.igEndGroup();
 
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("X");
 
             ButtonHeader = CurrentSelectedDevice.DeviceType == DeviceType.Keyboard ?
@@ -650,6 +711,7 @@ namespace Ryujinx.UI.Widgets
                         {
                             ControllerInputLayout.Right.ButtonX =
                                 (GamePadButton)Enum.Parse(typeof(GamePadButton),PressedButton);
+
                             Toggles[14] = false;
                         }
                         break;
@@ -657,15 +719,19 @@ namespace Ryujinx.UI.Widgets
                         if (GetKey(ref PressedKey))
                         {
                             KeyboardInputLayout.Right.ButtonX = (int)PressedKey;
+
                             Toggles[14] = false;
                         }
                         break;
                 }
             }
+
             ImGuiNative.igEndGroup();
 
             ImGui.SameLine();
+
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("Y");
 
             ButtonHeader = CurrentSelectedDevice.DeviceType == DeviceType.Keyboard ?
@@ -686,6 +752,7 @@ namespace Ryujinx.UI.Widgets
                         {
                             ControllerInputLayout.Right.ButtonY =
                                 (GamePadButton)Enum.Parse(typeof(GamePadButton),PressedButton);
+
                             Toggles[15] = false;
                         }
                         break;
@@ -693,6 +760,7 @@ namespace Ryujinx.UI.Widgets
                         if (GetKey(ref PressedKey))
                         {
                             KeyboardInputLayout.Right.ButtonY = (int)PressedKey;
+
                             Toggles[15] = false;
                         }
                         break;
@@ -707,12 +775,14 @@ namespace Ryujinx.UI.Widgets
         static void DrawTriggers()
         {
             string ButtonHeader = string.Empty;
+
             //Draw Triggers
             ImGuiNative.igBeginGroup();
 
             ImGui.Text("Triggers");
 
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("L");
 
             ButtonHeader = CurrentSelectedDevice.DeviceType == DeviceType.Keyboard ?
@@ -733,6 +803,7 @@ namespace Ryujinx.UI.Widgets
                         {
                             ControllerInputLayout.Left.ButtonL =
                                 (GamePadButton)Enum.Parse(typeof(GamePadButton),PressedButton);
+
                             Toggles[17] = false;
                         }
                         break;
@@ -740,6 +811,7 @@ namespace Ryujinx.UI.Widgets
                         if (GetKey(ref PressedKey))
                         {
                             KeyboardInputLayout.Left.ButtonL = (int)PressedKey;
+
                             Toggles[17] = false;
                         }
                         break;
@@ -749,7 +821,9 @@ namespace Ryujinx.UI.Widgets
             ImGuiNative.igEndGroup();
 
             ImGui.SameLine();
+
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("R");
 
             ButtonHeader = CurrentSelectedDevice.DeviceType == DeviceType.Keyboard ?
@@ -770,6 +844,7 @@ namespace Ryujinx.UI.Widgets
                         {
                             ControllerInputLayout.Right.ButtonR =
                                 (GamePadButton)Enum.Parse(typeof(GamePadButton),PressedButton);
+
                             Toggles[16] = false;
                         }
                         break;
@@ -777,14 +852,17 @@ namespace Ryujinx.UI.Widgets
                         if (GetKey(ref PressedKey))
                         {
                             KeyboardInputLayout.Right.ButtonR = (int)PressedKey;
+
                             Toggles[16] = false;
                         }
                         break;
                 }
             }
+
             ImGuiNative.igEndGroup();
 
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("ZL");
 
             ButtonHeader = CurrentSelectedDevice.DeviceType == DeviceType.Keyboard ?
@@ -805,6 +883,7 @@ namespace Ryujinx.UI.Widgets
                         {
                             ControllerInputLayout.Left.ButtonZL =
                                 (GamePadButton)Enum.Parse(typeof(GamePadButton),PressedButton);
+
                             Toggles[19] = false;
                         }
                         break;
@@ -812,15 +891,19 @@ namespace Ryujinx.UI.Widgets
                         if (GetKey(ref PressedKey))
                         {
                             KeyboardInputLayout.Left.ButtonZL = (int)PressedKey;
+
                             Toggles[19] = false;
                         }
                         break;
                 }
             }
+
             ImGuiNative.igEndGroup();
 
             ImGui.SameLine();
+
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("ZR");
 
             ButtonHeader = CurrentSelectedDevice.DeviceType == DeviceType.Keyboard ?
@@ -841,6 +924,7 @@ namespace Ryujinx.UI.Widgets
                         {
                             ControllerInputLayout.Right.ButtonZR =
                                 (GamePadButton)Enum.Parse(typeof(GamePadButton),PressedButton);
+
                             Toggles[18] = false;
                         }
                         break;
@@ -848,11 +932,13 @@ namespace Ryujinx.UI.Widgets
                         if (GetKey(ref PressedKey))
                         {
                             KeyboardInputLayout.Right.ButtonZR = (int)PressedKey;
+
                             Toggles[18] = false;
                         }
                         break;
                 }
             }
+
             ImGuiNative.igEndGroup();
 
             ImGuiNative.igEndGroup();
@@ -864,9 +950,11 @@ namespace Ryujinx.UI.Widgets
 
             //Draw Extra
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("Extra Keys");
 
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("-");
 
             ButtonHeader = CurrentSelectedDevice.DeviceType == DeviceType.Keyboard ?
@@ -887,6 +975,7 @@ namespace Ryujinx.UI.Widgets
                         {
                             ControllerInputLayout.Left.ButtonMinus =
                                 (GamePadButton)Enum.Parse(typeof(GamePadButton),PressedButton);
+
                             Toggles[20] = false;
                         }
                         break;
@@ -894,14 +983,17 @@ namespace Ryujinx.UI.Widgets
                         if (GetKey(ref PressedKey))
                         {
                             KeyboardInputLayout.Left.ButtonMinus = (int)PressedKey;
+
                             Toggles[20] = false;
                         }
                         break;
                 }
             }
+
             ImGuiNative.igEndGroup();
 
             ImGuiNative.igBeginGroup();
+
             ImGui.Text("+");
 
             ButtonHeader = CurrentSelectedDevice.DeviceType == DeviceType.Keyboard ?
@@ -922,6 +1014,7 @@ namespace Ryujinx.UI.Widgets
                         {
                             ControllerInputLayout.Right.ButtonPlus = 
                                 (GamePadButton)Enum.Parse(typeof(GamePadButton),PressedButton);
+
                             Toggles[21] = false;
                         }
                         break;
@@ -929,11 +1022,13 @@ namespace Ryujinx.UI.Widgets
                         if (GetKey(ref PressedKey))
                         {
                             KeyboardInputLayout.Right.ButtonPlus = (int)PressedKey;
+
                             Toggles[21] = false;
                         }
                         break;
                 }
             }
+
             ImGuiNative.igEndGroup();
 
             ImGuiNative.igEndGroup();
@@ -942,11 +1037,13 @@ namespace Ryujinx.UI.Widgets
         static bool GetKey(ref Key PressedKey)
         {
             IO IO = ImGui.GetIO();
+
             foreach (Key Key in Enum.GetValues(typeof(Key)))
             {
                 if (IO.KeysDown[(int)Key])
                 {
                     PressedKey = Key;
+
                     return true;
                 }
             }
@@ -956,12 +1053,15 @@ namespace Ryujinx.UI.Widgets
         static bool GetButton(ref string PressedButton)
         {
             IO IO = ImGui.GetIO();
+
             GamePadState GamePad = OpenTK.Input.GamePad.GetState(Config.GamePadIndex);
+
             foreach (GamePadButton Button in Enum.GetValues(typeof(GamePadButton)))
             {
                 if (WindowHelper.IsGamePadButtonPressed(GamePad, Button))
                 {
                     PressedButton = Button.ToString();
+
                     return true;
                 }
             }
@@ -971,12 +1071,15 @@ namespace Ryujinx.UI.Widgets
         static bool GetAxis(ref string Axis)
         {
             IO IO = ImGui.GetIO();
+
             GamePadState GamePad = OpenTK.Input.GamePad.GetState(Config.GamePadIndex);
+
             foreach (GamePadStick Stick in Enum.GetValues(typeof(GamePadStick)))
             {
                 if (WindowHelper.GetJoystickAxis(GamePad,Stick).Length > 0)
                 {
                     Axis = Stick.ToString();
+
                     return true;
                 }
             }
@@ -988,7 +1091,7 @@ namespace Ryujinx.UI.Widgets
             if (ImGui.BeginChildFrame(11, GroupSize, WindowFlags.AlwaysAutoResize))
             {
                 ContentWidth = (ImGui.GetContentRegionAvailableWidth() - 10) / 2;
-                GroupSize = ImGui.GetContentRegionMax();
+                GroupSize    = ImGui.GetContentRegionMax();
 
                 DrawLeftAnalog();
 
@@ -996,6 +1099,7 @@ namespace Ryujinx.UI.Widgets
             }
 
             ImGui.SameLine();
+
             if (ImGui.BeginChildFrame(12, GroupSize, WindowFlags.AlwaysAutoResize))
             {
                 DrawRightAnalog();
@@ -1011,7 +1115,7 @@ namespace Ryujinx.UI.Widgets
             if (ImGui.BeginChildFrame(11, GroupSize, WindowFlags.AlwaysAutoResize))
             {
                 ContentWidth = (ImGui.GetContentRegionAvailableWidth() - 10) / 2;
-                GroupSize = ImGui.GetContentRegionMax();
+                GroupSize    = ImGui.GetContentRegionMax();
 
                 DrawControllerLeftAnalog();
 
@@ -1019,6 +1123,7 @@ namespace Ryujinx.UI.Widgets
             }
 
             ImGui.SameLine();
+
             if (ImGui.BeginChildFrame(12, GroupSize, WindowFlags.AlwaysAutoResize))
             {
                 DrawControllerRightAnalog();
@@ -1039,6 +1144,7 @@ namespace Ryujinx.UI.Widgets
             }
 
             ImGui.SameLine();
+
             if (ImGui.BeginChildFrame(14, GroupSize, WindowFlags.AlwaysAutoResize))
             {
                 DrawActionKeys();
@@ -1054,6 +1160,7 @@ namespace Ryujinx.UI.Widgets
             }
 
             ImGui.SameLine();
+
             if (ImGui.BeginChildFrame(16, GroupSize, WindowFlags.AlwaysAutoResize))
             {
                 DrawExtras();
@@ -1070,28 +1177,32 @@ namespace Ryujinx.UI.Widgets
 
             InputDevice KeyboardInputDevice = new InputDevice()
                 {
-                    Index = short.MaxValue,
+                    Index      = short.MaxValue,
                     DeviceType = DeviceType.Keyboard,
-                    Name = "Keyboard"
+                    Name       = "Keyboard"
                 };
-                ConnectedHIDs.Add(short.MaxValue, KeyboardInputDevice);
+
+            ConnectedHIDs.Add(short.MaxValue, KeyboardInputDevice);
             
             // Scans for connected joysticks
             while (true)
             {
                 JoystickState GamePad = Joystick.GetState(GamePadIndex);
+
                 if (GamePad.IsConnected)
                 {
                     InputDevice GamePadDevice = new InputDevice()
                     {
-                        Index = GamePadIndex,
+                        Index      = GamePadIndex,
                         DeviceType = DeviceType.GamePad,
-                        Name = "GamePad " + GamePadIndex
+                        Name       = "GamePad " + GamePadIndex
                     };
+
                     ConnectedHIDs.Add(GamePadIndex, GamePadDevice);
                 }
                 else
                     break;
+
                 GamePadIndex++;
             }
         }
