@@ -1,7 +1,5 @@
 version: 1.0.{build}
-branches:
-  only:
-  - master
+
 image: Visual Studio 2017
 configuration: Release
 install:
@@ -36,4 +34,6 @@ build_script:
     7z a ryujinx-$env:APPVEYOR_BUILD_VERSION-osx_x64.zip $env:APPVEYOR_BUILD_FOLDER\Ryujinx\bin\Release\netcoreapp2.1\osx-x64\publish\
 
 artifacts:
-- path: ryujinx-%APPVEYOR_BUILD_VERSION%.zip
+- path: ryujinx-%APPVEYOR_BUILD_VERSION%-win_x64.zip
+- path: ryujinx-%APPVEYOR_BUILD_VERSION%-linux_x64.zip
+- path: ryujinx-%APPVEYOR_BUILD_VERSION%-osx_x64.zip
