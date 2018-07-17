@@ -1,11 +1,30 @@
 version: 1.0.{build}
+branches:
+  only:
+  - master
 image: Visual Studio 2017
-environment:
-  '%APPVEYOR_BUILD_FOLDER%': C:\projects\ryujinx
+configuration: Release
+install:
+- ps: >-
+    $urlCurrent = "https://dotnetcli.azureedge.net/dotnet/Sdk/2.1.300-rc1-008673/dotnet-sdk-2.1.300-rc1-008673-win-x64.zip"
+
+    $env:DOTNET_INSTALL_DIR = "$pwd\.dotnetsdk"
+
+    mkdir $env:DOTNET_INSTALL_DIR -Force | Out-Null
+
+    $tempFileCurrent = [System.IO.Path]::GetTempFileName()
+
+    (New-Object System.Net.WebClient).DownloadFile($urlCurrent, $tempFileCurrent)
+
+    Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::ExtractToDirectory($tempFileCurrent, $env:DOTNET_INSTALL_DIR)
+
+    $env:Path = "$env:DOTNET_INSTALL_DIR;$env:Path"
 build_script:
-- pwsh: >-
+- ps: >-
+    dotnet --version
+
     dotnet publish -c Release -r win10-x64
 
-    7z a ryujinx_latest_unstable.zip C:\projects\ryujinx\Ryujinx\bin\Release\netcoreapp2.1\win10-x64\publish\
+    7z a ryujinx-$env:APPVEYOR_BUILD_VERSION.zip $env:APPVEYOR_BUILD_FOLDER\Ryujinx\bin\Release\netcoreapp2.1\win10-x64\publish\
 artifacts:
-- path: ryujinx_latest_unstable.zip
+- path: ryujinx-%APPVEYOR_BUILD_VERSION%.zip
