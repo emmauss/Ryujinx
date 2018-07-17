@@ -1,0 +1,11 @@
+version: 1.0.{build}
+image: Visual Studio 2017
+environment:
+  '%APPVEYOR_BUILD_FOLDER%': C:\projects\ryujinx
+build_script:
+- pwsh: >-
+    dotnet publish -c Release -r win10-x64
+
+    7z a ryujinx_latest_unstable.zip C:\projects\ryujinx\Ryujinx\bin\Release\netcoreapp2.1\win10-x64\publish\
+artifacts:
+- path: ryujinx_latest_unstable.zip
