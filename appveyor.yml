@@ -4,21 +4,6 @@ branches:
 - master
 image: Visual Studio 2017
 configuration: Release
-install:
-- ps: >-
-    $urlCurrent = "https://download.microsoft.com/download/4/0/9/40920432-3302-47a8-b13c-bbc4848ad114/dotnet-sdk-2.1.302-win-x64.zip"
-
-    $env:DOTNET_INSTALL_DIR = "$pwd\.dotnetsdk"
-
-    mkdir $env:DOTNET_INSTALL_DIR -Force | Out-Null
-
-    $tempFileCurrent = [System.IO.Path]::GetTempFileName()
-
-    (New-Object System.Net.WebClient).DownloadFile($urlCurrent, $tempFileCurrent)
-
-    Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::ExtractToDirectory($tempFileCurrent, $env:DOTNET_INSTALL_DIR)
-
-    $env:Path = "$env:DOTNET_INSTALL_DIR;$env:Path"
 build_script:
 - ps: >-
     dotnet --version
