@@ -89,6 +89,8 @@ namespace Ryujinx
 
                 if (Ticks >= TicksPerFrame)
                 {
+                    Ns.RateResetEvent.Set();
+
                     RenderFrame();
 
                     //Queue max. 1 vsync

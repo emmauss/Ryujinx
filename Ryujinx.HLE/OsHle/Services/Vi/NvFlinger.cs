@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Diagnostics;
 
 using static Ryujinx.HLE.OsHle.Services.Android.Parcel;
 
@@ -164,6 +165,8 @@ namespace Ryujinx.HLE.OsHle.Services.Android
 
         private long GbpQueueBuffer(ServiceCtx Context, BinaryReader ParcelReader)
         {
+            Context.Ns.RateResetEvent.WaitOne();
+
             Context.Ns.Statistics.RecordGameFrameTime();
 
             //TODO: Errors.
@@ -198,6 +201,8 @@ namespace Ryujinx.HLE.OsHle.Services.Android
             BufferQueue[Slot].State = BufferState.Queued;
 
             SendFrameBuffer(Context, Slot);
+
+            Context.Ns.RateResetEvent.Reset();
 
             return MakeReplyParcel(Context, 1280, 720, 0, 0, 0);
         }

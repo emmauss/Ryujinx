@@ -6,6 +6,7 @@ using Ryujinx.HLE.Logging;
 using Ryujinx.HLE.OsHle;
 using Ryujinx.HLE.Settings;
 using System;
+using System.Threading;
 
 namespace Ryujinx.HLE
 {
@@ -28,6 +29,8 @@ namespace Ryujinx.HLE
         public Hid Hid { get; private set; }
 
         public event EventHandler Finish;
+
+        public ManualResetEvent RateResetEvent;
 
         public Switch(IGalRenderer Renderer, IAalOutput AudioOut)
         {
@@ -59,6 +62,8 @@ namespace Ryujinx.HLE
 
             Os.HidSharedMem.MemoryMapped   += Hid.ShMemMap;
             Os.HidSharedMem.MemoryUnmapped += Hid.ShMemUnmap;
+
+            RateResetEvent = new ManualResetEvent(false);
         }
 
         public void LoadCart(string ExeFsDir, string RomFsFile = null)
