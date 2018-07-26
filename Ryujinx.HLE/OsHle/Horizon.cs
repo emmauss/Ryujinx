@@ -25,7 +25,8 @@ namespace Ryujinx.HLE.OsHle
         internal HSharedMem HidSharedMem  { get; private set; }
         internal HSharedMem FontSharedMem { get; private set; }
 
-        internal KEvent VsyncEvent { get; private set; }
+        internal KEvent VsyncEvent              { get; private set; }
+        internal KEvent NpadStyleSetUpdateEvent { get; private set; }
 
         public Horizon(Switch Ns)
         {
@@ -42,7 +43,8 @@ namespace Ryujinx.HLE.OsHle
             HidSharedMem  = new HSharedMem();
             FontSharedMem = new HSharedMem();
 
-            VsyncEvent = new KEvent();
+            VsyncEvent              = new KEvent();
+            NpadStyleSetUpdateEvent = new KEvent();
         }
 
         public void LoadCart(string ExeFsDir, string RomFsFile = null)
@@ -123,6 +125,8 @@ namespace Ryujinx.HLE.OsHle
         }
 
         public void SignalVsync() => VsyncEvent.WaitEvent.Set();
+
+        public void SignalNpadStyleSetUpdate() => NpadStyleSetUpdateEvent.WaitEvent.Set();
 
         private Process MakeProcess()
         {
@@ -208,6 +212,8 @@ namespace Ryujinx.HLE.OsHle
                 }
 
                 VsyncEvent.Dispose();
+
+                NpadStyleSetUpdateEvent.Dispose();
 
                 Scheduler.Dispose();
             }
