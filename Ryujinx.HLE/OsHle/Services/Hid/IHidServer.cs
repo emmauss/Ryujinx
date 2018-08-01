@@ -1,6 +1,7 @@
 using Ryujinx.HLE.Input;
 using Ryujinx.HLE.Logging;
 using Ryujinx.HLE.OsHle.Ipc;
+using Ryujinx.HLE.OsHle.Handles;
 using System.Collections.Generic;
 
 namespace Ryujinx.HLE.OsHle.Services.Hid
@@ -8,6 +9,8 @@ namespace Ryujinx.HLE.OsHle.Services.Hid
     class IHidServer : IpcService
     {
         private Dictionary<int, ServiceProcessRequest> m_Commands;
+
+        private KEvent NpadStyleSetUpdateEvent { get; set; }
 
         public override IReadOnlyDictionary<int, ServiceProcessRequest> Commands => m_Commands;
 
@@ -40,6 +43,8 @@ namespace Ryujinx.HLE.OsHle.Services.Hid
                 { 203, CreateActiveVibrationDeviceList         },
                 { 206, SendVibrationValues                     }
             };
+
+            NpadStyleSetUpdateEvent = new KEvent();
         }
 
         public long CreateAppletResource(ServiceCtx Context)
@@ -107,7 +112,7 @@ namespace Ryujinx.HLE.OsHle.Services.Hid
 
         public long AcquireNpadStyleSetUpdateEventHandle(ServiceCtx Context)
         {
-            int Handle = Context.Process.HandleTable.OpenHandle(Context.Ns.Os.NpadStyleSetUpdateEvent);
+            int Handle = Context.Process.HandleTable.OpenHandle(NpadStyleSetUpdateEvent);
 
             Context.Response.HandleDesc = IpcHandleDesc.MakeCopy(Handle);
 
