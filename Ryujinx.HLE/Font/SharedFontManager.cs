@@ -46,6 +46,7 @@ namespace Ryujinx.HLE.Font
             };
 
             int FontMemoryUsage = 0;
+
             foreach (byte[] data in FontData.Values)
             {
                 FontMemoryUsage += data.Length;
@@ -63,13 +64,16 @@ namespace Ryujinx.HLE.Font
         public byte[] GetData(string FontName)
         {
             string FontFilePath = Path.Combine(FontsPath, $"{FontName}.ttf");
+
             if (File.Exists(FontFilePath))
             {
                 return File.ReadAllBytes(FontFilePath);
             }
             else
             {
-                throw new InvalidSystemResourceException($"Font \"{FontName}.ttf\" not found. Please provide it in \"{FontsPath}\".");
+                Console.WriteLine($"Font \"{FontName}.ttf\" not found. Please provide it in \"{FontsPath}\".");
+
+                return new byte[0];
             }
         }
 
