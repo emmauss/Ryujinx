@@ -198,12 +198,12 @@ namespace Ryujinx.HLE.OsHle.Services.Time
             long BufferPosition = Context.Request.SendBuff[0].Position;
             long BufferSize     = Context.Request.SendBuff[0].Size;
 
-            ushort Year = Context.RequestData.ReadUInt16();
-            byte Month  = Context.RequestData.ReadByte();
-            byte Day    = Context.RequestData.ReadByte();
-            byte Hour   = Context.RequestData.ReadByte();
-            byte Minute = Context.RequestData.ReadByte();
-            byte Second = Context.RequestData.ReadByte();
+            ushort Year   = Context.RequestData.ReadUInt16();
+            byte   Month  = Context.RequestData.ReadByte();
+            byte   Day    = Context.RequestData.ReadByte();
+            byte   Hour   = Context.RequestData.ReadByte();
+            byte   Minute = Context.RequestData.ReadByte();
+            byte   Second = Context.RequestData.ReadByte();
 
             DateTime CalendarTime = new DateTime(Year, Month, Day, Hour, Minute, Second, DateTimeKind.Local);
 
@@ -236,12 +236,12 @@ namespace Ryujinx.HLE.OsHle.Services.Time
 
         public long ToPosixTimeWithMyRule(ServiceCtx Context)
         {
-            ushort Year = Context.RequestData.ReadUInt16();
-            byte Month  = Context.RequestData.ReadByte();
-            byte Day    = Context.RequestData.ReadByte();
-            byte Hour   = Context.RequestData.ReadByte();
-            byte Minute = Context.RequestData.ReadByte();
-            byte Second = Context.RequestData.ReadByte();
+            ushort Year   = Context.RequestData.ReadUInt16();
+            byte   Month  = Context.RequestData.ReadByte();
+            byte   Day    = Context.RequestData.ReadByte();
+            byte   Hour   = Context.RequestData.ReadByte();
+            byte   Minute = Context.RequestData.ReadByte();
+            byte   Second = Context.RequestData.ReadByte();
 
             DateTime CalendarTime = new DateTime(Year, Month, Day, Hour, Minute, Second, DateTimeKind.Local);
 
