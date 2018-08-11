@@ -10,7 +10,7 @@ namespace Ryujinx.HLE.OsHle.Services.Hid
     {
         private Dictionary<int, ServiceProcessRequest> m_Commands;
 
-        private KEvent NpadStyleSetUpdateEvent { get; set; }
+        private KEvent NpadStyleSetUpdateEvent;
 
         public override IReadOnlyDictionary<int, ServiceProcessRequest> Commands => m_Commands;
 
