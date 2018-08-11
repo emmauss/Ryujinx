@@ -259,9 +259,7 @@ namespace Ryujinx.HLE.OsHle.Services.Time
 
             Context.Memory.WriteInt64(Position, PosixTime);
 
-            int Count = BitConverter.GetBytes(PosixTime).Length;
-
-            Context.ResponseData.Write(Count);
+            Context.ResponseData.Write(1);
 
             return 0;
         }
