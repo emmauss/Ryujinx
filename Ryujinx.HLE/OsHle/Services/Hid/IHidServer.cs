@@ -2,11 +2,12 @@ using Ryujinx.HLE.Input;
 using Ryujinx.HLE.Logging;
 using Ryujinx.HLE.OsHle.Ipc;
 using Ryujinx.HLE.OsHle.Handles;
+using System;
 using System.Collections.Generic;
 
 namespace Ryujinx.HLE.OsHle.Services.Hid
 {
-    class IHidServer : IpcService
+    class IHidServer : IpcService, IDisposable
     {
         private Dictionary<int, ServiceProcessRequest> m_Commands;
 
@@ -280,6 +281,19 @@ namespace Ryujinx.HLE.OsHle.Services.Hid
             Context.Ns.Log.PrintStub(LogClass.ServiceHid, "Stubbed.");
 
             return 0;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool Disposing)
+        {
+            if (Disposing)
+            {
+                NpadStyleSetUpdateEvent.Dispose();
+            }
         }
     }
 }
