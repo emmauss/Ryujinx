@@ -42,7 +42,7 @@ namespace Ryujinx.HLE.OsHle
             HidSharedMem  = new HSharedMem();
             FontSharedMem = new HSharedMem();
 
-            VsyncEvent              = new KEvent();
+            VsyncEvent = new KEvent();
         }
 
         public void LoadCart(string ExeFsDir, string RomFsFile = null)
