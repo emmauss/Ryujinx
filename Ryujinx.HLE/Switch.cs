@@ -71,7 +71,7 @@ namespace Ryujinx.HLE
             Settings.User = new Profile()
             {
                 Username = "Ryujinx",
-                UserId   = "00000000000000000000000000000000"
+                UserId   = "000123456789abcdef09876543210000"
             };
         }
 
