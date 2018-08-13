@@ -22,10 +22,6 @@ namespace Ryujinx
 
             Config.Read(Ns.Log);
 
-            Ns.Settings.UserProfiles     = Config.Users;
-            Ns.Settings.DefaultUserIndex = Config.DefaultUserIndex;
-            Ns.Settings.ActiveUser       = Config.Users[Config.DefaultUserIndex];
-
             Ns.Log.Updated += ConsoleLog.PrintLog;
 
             if (args.Length == 1)

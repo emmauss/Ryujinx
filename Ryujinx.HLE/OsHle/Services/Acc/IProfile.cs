@@ -39,7 +39,7 @@ namespace Ryujinx.HLE.OsHle.Services.Acc
 
         public long GetBase(ServiceCtx Context)
         {
-            ProfileBase ProfileBase = new ProfileBase(Context.Ns.Settings.ActiveUser);
+            ProfileBase ProfileBase = new ProfileBase(Context.Ns.Settings.User);
 
             Context.ResponseData.Write(ProfileBase.UserId.ToBytes());
             Context.ResponseData.Write(ProfileBase.Timestamp);
