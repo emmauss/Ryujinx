@@ -166,6 +166,13 @@ namespace Ryujinx.HLE.HOS.Services.Android
         {
             Context.Device.Statistics.RecordGameFrameTime();
 
+            if (Context.Ns.EnableVsync)
+            {
+                Context.Ns.Os.VsyncEvent.WaitEvent.WaitOne();
+
+                Context.Ns.Os.VsyncEvent.WaitEvent.Reset();
+            }
+
             //TODO: Errors.
             int Slot            = ParcelReader.ReadInt32();
             int Unknown4        = ParcelReader.ReadInt32();

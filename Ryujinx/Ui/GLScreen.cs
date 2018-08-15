@@ -82,6 +82,8 @@ namespace Ryujinx
 
                 if (Ticks >= TicksPerFrame)
                 {
+                    Ns.Os.SignalVsync();
+
                     RenderFrame();
 
                     //Queue max. 1 vsync
@@ -258,7 +260,8 @@ namespace Ryujinx
             double HostFps = Device.Statistics.GetSystemFrameRate();
             double GameFps = Device.Statistics.GetGameFrameRate();
 
-            NewTitle = $"Ryujinx | Host FPS: {HostFps:0.0} | Game FPS: {GameFps:0.0}";
+            NewTitle = $"Ryujinx | Host FPS: {HostFps:0.0} | Game FPS: {GameFps:0.0} | Game Vsync: " +
+               (Ns.EnableVsync ? "On" : "Off");
 
             TitleEvent = true;
 
@@ -310,6 +313,9 @@ namespace Ryujinx
         protected override void OnKeyUp(KeyboardKeyEventArgs e)
         {
             Keyboard = e.Keyboard;
+
+            if (e.Key == Key.Tab)
+                Ns.EnableVsync = !Ns.EnableVsync;
         }
 
         protected override void OnMouseDown(MouseButtonEventArgs e)

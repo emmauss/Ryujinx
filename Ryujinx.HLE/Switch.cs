@@ -27,6 +27,12 @@ namespace Ryujinx.HLE
 
         public Hid Hid { get; private set; }
 
+        public bool LimitSpeed { get; set; }
+
+        public bool EnableVsync { get; set; }
+
+        public event EventHandler Finish;
+
         public Switch(IGalRenderer Renderer, IAalOutput AudioOut)
         {
             if (Renderer == null)
