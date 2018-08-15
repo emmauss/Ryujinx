@@ -205,7 +205,7 @@ namespace Ryujinx.HLE.OsHle.Services.Time
             byte   Minute = Context.RequestData.ReadByte();
             byte   Second = Context.RequestData.ReadByte();
 
-            DateTime CalendarTime = new DateTime(Year, Month, Day, Hour, Minute, Second, DateTimeKind.Local);
+            DateTime CalendarTime = new DateTime(Year, Month, Day, Hour, Minute, Second);
 
             if (BufferSize != 0x4000)
             {
