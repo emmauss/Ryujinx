@@ -166,11 +166,9 @@ namespace Ryujinx.HLE.HOS.Services.Android
         {
             Context.Device.Statistics.RecordGameFrameTime();
 
-            if (Context.Ns.EnableVsync)
+            if (Context.Device.EnableVsync)
             {
-                Context.Ns.Os.VsyncEvent.WaitEvent.WaitOne();
-
-                Context.Ns.Os.VsyncEvent.WaitEvent.Reset();
+                Context.Device.VsyncEvent.WaitOne();
             }
 
             //TODO: Errors.
