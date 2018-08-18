@@ -131,8 +131,6 @@ namespace Ryujinx.HLE.HOS.Services.Bsd
             {
                 int BytesRead = Sockets[SocketId].Handle.Receive(ReceivedBuffer);
 
-                //Logging.Debug("Received Buffer:" + Environment.NewLine + Logging.HexDump(ReceivedBuffer));
-
                 Context.Memory.WriteBytes(ReceivePosition, ReceivedBuffer);
 
                 Context.ResponseData.Write(BytesRead);
@@ -158,8 +156,6 @@ namespace Ryujinx.HLE.HOS.Services.Bsd
 
             try
             {
-                //Logging.Debug("Sent Buffer:" + Environment.NewLine + Logging.HexDump(SentBuffer));
-
                 int BytesSent = Sockets[SocketId].Handle.Send(SentBuffer);
 
                 Context.ResponseData.Write(BytesSent);
@@ -203,8 +199,6 @@ namespace Ryujinx.HLE.HOS.Services.Bsd
 
             try
             {
-                //Logging.Debug("Sent Buffer:" + Environment.NewLine + Logging.HexDump(SentBuffer));
-
                 int BytesSent = Sockets[SocketId].Handle.Send(SentBuffer);
 
                 Context.ResponseData.Write(BytesSent);
