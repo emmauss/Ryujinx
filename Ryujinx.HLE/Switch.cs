@@ -28,7 +28,7 @@ namespace Ryujinx.HLE
 
         public Hid Hid { get; private set; }
 
-        public bool EnableVsync { get; set; } = true;
+        public bool EnableDeviceVsync { get; set; } = true;
 
         public AutoResetEvent VsyncEvent { get; private set; }
 

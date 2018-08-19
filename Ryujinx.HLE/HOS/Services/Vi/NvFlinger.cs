@@ -166,11 +166,6 @@ namespace Ryujinx.HLE.HOS.Services.Android
         {
             Context.Device.Statistics.RecordGameFrameTime();
 
-            if (Context.Device.EnableVsync)
-            {
-                Context.Device.VsyncEvent.WaitOne();
-            }
-
             //TODO: Errors.
             int Slot            = ParcelReader.ReadInt32();
             int Unknown4        = ParcelReader.ReadInt32();
@@ -203,6 +198,11 @@ namespace Ryujinx.HLE.HOS.Services.Android
             BufferQueue[Slot].State = BufferState.Queued;
 
             SendFrameBuffer(Context, Slot);
+
+            if (Context.Device.EnableDeviceVsync)
+            {
+                Context.Device.VsyncEvent.WaitOne();
+            }
 
             return MakeReplyParcel(Context, 1280, 720, 0, 0, 0);
         }
