@@ -74,8 +74,8 @@ namespace Ryujinx.HLE.HOS.Services.Bsd
         {
             BsdSocket NewBsdSocket = new BsdSocket
             {
-                Family   = Context.RequestData.ReadInt32(),
-                Type     = Context.RequestData.ReadInt32(),
+                Family = Context.RequestData.ReadInt32(),
+                Type = Context.RequestData.ReadInt32(),
                 Protocol = Context.RequestData.ReadInt32()
             };
 
@@ -95,7 +95,7 @@ namespace Ryujinx.HLE.HOS.Services.Bsd
         public long Poll(ServiceCtx Context)
         {
             int PollCount = Context.RequestData.ReadInt32();
-            int TimeOut   = Context.RequestData.ReadInt32();
+            int TimeOut = Context.RequestData.ReadInt32();
 
             //https://github.com/torvalds/linux/blob/master/include/uapi/asm-generic/poll.h
             //https://msdn.microsoft.com/fr-fr/library/system.net.sockets.socket.poll(v=vs.110).aspx
@@ -106,9 +106,9 @@ namespace Ryujinx.HLE.HOS.Services.Bsd
             byte[] SentBuffer = Context.Memory.ReadBytes(Context.Request.SendBuff[0].Position,
                                                          Context.Request.SendBuff[0].Size);
 
-            int SocketId        = Get32(SentBuffer, 0);
+            int SocketId = Get32(SentBuffer, 0);
             int RequestedEvents = Get16(SentBuffer, 4);
-            int ReturnedEvents  = Get16(SentBuffer, 6);
+            int ReturnedEvents = Get16(SentBuffer, 6);
 
             //Todo: Stub - Need to implemented the Type-22 buffer.
 
@@ -121,10 +121,11 @@ namespace Ryujinx.HLE.HOS.Services.Bsd
         //(u32 socket, u32 flags) -> (i32 ret, u32 bsd_errno, buffer<i8, 0x22, 0> message)
         public long Recv(ServiceCtx Context)
         {
-            int SocketId    = Context.RequestData.ReadInt32();
+            int SocketId = Context.RequestData.ReadInt32();
             int SocketFlags = Context.RequestData.ReadInt32();
 
             (long ReceivePosition, long ReceiveLength) = Context.Request.GetBufferType0x22();
+
             byte[] ReceivedBuffer = new byte[ReceiveLength];
 
             try
@@ -148,10 +149,11 @@ namespace Ryujinx.HLE.HOS.Services.Bsd
         //(u32 socket, u32 flags, buffer<i8, 0x21, 0>) -> (i32 ret, u32 bsd_errno)
         public long Send(ServiceCtx Context)
         {
-            int SocketId    = Context.RequestData.ReadInt32();
+            int SocketId = Context.RequestData.ReadInt32();
             int SocketFlags = Context.RequestData.ReadInt32();
 
             (long SentPosition, long SentSize) = Context.Request.GetBufferType0x21();
+
             byte[] SentBuffer = Context.Memory.ReadBytes(SentPosition, SentSize);
 
             try
@@ -173,13 +175,14 @@ namespace Ryujinx.HLE.HOS.Services.Bsd
         //(u32 socket, u32 flags, buffer<i8, 0x21, 0>, buffer<sockaddr, 0x21, 0>) -> (i32 ret, u32 bsd_errno)
         public long SendTo(ServiceCtx Context)
         {
-            int SocketId    = Context.RequestData.ReadInt32();
+            int SocketId = Context.RequestData.ReadInt32();
             int SocketFlags = Context.RequestData.ReadInt32();
 
             byte[] SentBuffer = Context.Memory.ReadBytes(Context.Request.SendBuff[0].Position,
                                                          Context.Request.SendBuff[0].Size);
 
             (long AddressPosition, long AddressSize) = Context.Request.GetBufferType0x21(Index: 1);
+
             byte[] AddressBuffer = Context.Memory.ReadBytes(AddressPosition, AddressSize);
 
             if (!Sockets[SocketId].Handle.Connected)
@@ -242,8 +245,8 @@ namespace Ryujinx.HLE.HOS.Services.Bsd
                 BsdSocket NewBsdSocket = new BsdSocket
                 {
                     IpAddress = ((IPEndPoint)Sockets[SocketId].Handle.LocalEndPoint).Address,
-                    RemoteEP  = ((IPEndPoint)Sockets[SocketId].Handle.LocalEndPoint),
-                    Handle    = HandleAccept
+                    RemoteEP = ((IPEndPoint)Sockets[SocketId].Handle.LocalEndPoint),
+                    Handle = HandleAccept
                 };
 
                 Sockets.Add(NewBsdSocket);
@@ -282,8 +285,9 @@ namespace Ryujinx.HLE.HOS.Services.Bsd
         public long Bind(ServiceCtx Context)
         {
             int SocketId = Context.RequestData.ReadInt32();
-            
+
             (long AddressPosition, long AddressSize) = Context.Request.GetBufferType0x21();
+
             byte[] AddressBuffer = Context.Memory.ReadBytes(AddressPosition, AddressSize);
 
             try
@@ -308,6 +312,7 @@ namespace Ryujinx.HLE.HOS.Services.Bsd
             int SocketId = Context.RequestData.ReadInt32();
 
             (long AddressPosition, long AddressSize) = Context.Request.GetBufferType0x21();
+
             byte[] AddressBuffer = Context.Memory.ReadBytes(AddressPosition, AddressSize);
 
             try
@@ -332,7 +337,7 @@ namespace Ryujinx.HLE.HOS.Services.Bsd
         public long Listen(ServiceCtx Context)
         {
             int SocketId = Context.RequestData.ReadInt32();
-            int BackLog  = Context.RequestData.ReadInt32();
+            int BackLog = Context.RequestData.ReadInt32();
 
             try
             {
@@ -356,8 +361,8 @@ namespace Ryujinx.HLE.HOS.Services.Bsd
         {
             int SocketId = Context.RequestData.ReadInt32();
 
-            SocketOptionLevel SocketLevel      = (SocketOptionLevel)Context.RequestData.ReadInt32();
-            SocketOptionName  SocketOptionName =  (SocketOptionName)Context.RequestData.ReadInt32();
+            SocketOptionLevel SocketLevel = (SocketOptionLevel)Context.RequestData.ReadInt32();
+            SocketOptionName SocketOptionName = (SocketOptionName)Context.RequestData.ReadInt32();
 
             byte[] SocketOptionValue = Context.Memory.ReadBytes(Context.Request.PtrBuff[0].Position,
                                                                 Context.Request.PtrBuff[0].Size);
@@ -386,6 +391,7 @@ namespace Ryujinx.HLE.HOS.Services.Bsd
             int SocketId = Context.RequestData.ReadInt32();
 
             (long SentPosition, long SentSize) = Context.Request.GetBufferType0x21();
+
             byte[] SentBuffer = Context.Memory.ReadBytes(SentPosition, SentSize);
 
             try
@@ -412,13 +418,12 @@ namespace Ryujinx.HLE.HOS.Services.Bsd
             int SocketId = Context.RequestData.ReadInt32();
 
             (long ReceivePosition, long ReceiveLength) = Context.Request.GetBufferType0x22();
+
             byte[] ReceivedBuffer = new byte[ReceiveLength];
 
             try
             {
                 int BytesRead = Sockets[SocketId].Handle.Receive(ReceivedBuffer);
-
-                //Logging.Debug("Received Buffer:" + Environment.NewLine + Logging.HexDump(ReceivedBuffer));
 
                 Context.Memory.WriteBytes(ReceivePosition, ReceivedBuffer);
 
@@ -462,9 +467,9 @@ namespace Ryujinx.HLE.HOS.Services.Bsd
             {
                 BinaryReader Reader = new BinaryReader(MS);
 
-                int Size   = Reader.ReadByte();
+                int Size = Reader.ReadByte();
                 int Family = Reader.ReadByte();
-                int Port   = EndianSwap.Swap16(Reader.ReadUInt16());
+                int Port = EndianSwap.Swap16(Reader.ReadUInt16());
 
                 string IpAddress = Reader.ReadByte().ToString() + "." +
                                    Reader.ReadByte().ToString() + "." +
