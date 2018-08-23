@@ -1,7 +1,8 @@
 using System;
 using System.IO;
+using Ryujinx.HLE.HOS;
 
-namespace Ryujinx.HLE
+namespace Ryujinx.HLE.FileSystem
 {
     class VirtualFileSystem : IDisposable
     {
@@ -50,7 +51,10 @@ namespace Ryujinx.HLE
 
         public string GetSdCardPath() => MakeDirAndGetFullPath(SdCardPath);
 
-        public string GetGameSavesPath() => MakeDirAndGetFullPath(NandPath);
+        public string GetNandPath() => MakeDirAndGetFullPath(NandPath);
+
+        public string GetGameSavesPath(Save SaveMetaData, ServiceCtx Context) 
+            => MakeDirAndGetFullPath(SaveHelper.GetSavePath(SaveMetaData, Context));
 
         public string GetSystemPath() => MakeDirAndGetFullPath(SystemPath);
 
