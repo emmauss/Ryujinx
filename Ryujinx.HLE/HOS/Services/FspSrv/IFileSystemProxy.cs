@@ -3,6 +3,8 @@ using Ryujinx.HLE.Logging;
 using System.Collections.Generic;
 using Ryujinx.HLE.FileSystem;
 
+using Ryujinx.HLE.HOS.SystemState;
+
 namespace Ryujinx.HLE.HOS.Services.FspSrv
 {
     class IFileSystemProxy : IpcService
@@ -17,7 +19,6 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             {
                 { 1,    SetCurrentProcess                        },
                 { 18,   OpenSdCardFileSystem                     },
-                { 22,   CreateSaveDataFileSystem                 },
                 { 51,   OpenSaveDataFileSystem                   },
                 { 52,   OpenSaveDataFileSystemBySystemSaveDataId },
                 { 200,  OpenDataStorageByCurrentProcess          },
@@ -34,41 +35,6 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
         public long OpenSdCardFileSystem(ServiceCtx Context)
         {
             MakeObject(Context, new IFileSystem(Context.Device.FileSystem.GetSdCardPath()));
-
-            return 0;
-        }
-
-        public long CreateSaveDataFileSystem(ServiceCtx Context)
-        {
-            long TitleId    = Context.RequestData.ReadInt64();
-            long UserIdHigh = Context.RequestData.ReadInt64();
-            long UserIdLow  = Context.RequestData.ReadInt64();
-            long SaveId     = Context.RequestData.ReadInt64();
-
-            SaveDataType Type = (SaveDataType)Context.RequestData.ReadByte();
-
-            Save SaveInfo = new Save()
-            {
-                TitleId      = TitleId,
-                UserID       = new SystemState.UserId(UserIdLow, UserIdHigh),
-                SaveID       = SaveId,
-                SaveDataType = Type
-            };
-
-            switch (SaveInfo.SaveDataType)
-            {
-                case SaveDataType.SaveData:
-                    SaveInfo.SaveSpaceId = SaveSpaceId.NandUser;
-                    break;
-                case SaveDataType.SystemSaveData:
-                    SaveInfo.SaveSpaceId = SaveSpaceId.NandSystem;
-                    break;
-            }
-
-            byte[] SaveCreateStruct = Context.RequestData.ReadBytes(0x40);
-            byte[] Input            = Context.RequestData.ReadBytes(0x10);
-
-            Context.Device.FileSystem.GetGameSavesPath(SaveInfo, Context);
 
             return 0;
         }
@@ -110,29 +76,20 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
 
         public void LoadSaveDataFileSystem(ServiceCtx Context)
         {
-            byte id = Context.RequestData.ReadByte();
-            SaveSpaceId SaveSpaceId = (SaveSpaceId)id;
-
-            int Unknown = Context.RequestData.ReadInt32();
-
-            long   TitleId = Context.RequestData.ReadInt64();
-            byte[] UserId  = Context.RequestData.ReadBytes(0x10);
-            long   SaveId  = Context.RequestData.ReadInt64();
-
-            byte type = Context.RequestData.ReadByte();
-            SaveDataType Type = (SaveDataType)type;
+            SaveSpaceId SaveSpaceId = (SaveSpaceId)Context.RequestData.ReadInt64();
 
             Save SaveInfo = new Save()
             {
-                TitleId      = TitleId,
-                UserID       = new SystemState.UserId(UserId),
-                SaveID       = SaveId,
-                SaveDataType = Type
+                TitleId      = Context.RequestData.ReadInt64(),
+                UserID       = new UserId(Context.RequestData.ReadInt64(),
+                                    Context.RequestData.ReadInt64()),
+                SaveID       = Context.RequestData.ReadInt64(),
+                SaveDataType = (SaveDataType)Context.RequestData.ReadByte()
             };
 
             SaveInfo.SaveSpaceId = SaveSpaceId;
 
-            MakeObject(Context, new IFileSystem(Context.Device.FileSystem.GetGameSavesPath(SaveInfo, Context)));
+            MakeObject(Context, new IFileSystem(Context.Device.FileSystem.GetGameSavePath(SaveInfo, Context)));
         }
     }
 }

@@ -10,33 +10,33 @@ namespace Ryujinx.HLE.FileSystem
     {
         public static string GetSavePath(Save SaveMetaData, ServiceCtx Context)
         {
-            string BasePartitionPath = "nand";
-            long   CurrentTitleId    = SaveMetaData.TitleId;
+            string BaseSavePath   = "nand";
+            long   CurrentTitleId = SaveMetaData.TitleId;
 
             switch (SaveMetaData.SaveSpaceId)
             {
                 case SaveSpaceId.NandUser:
-                    BasePartitionPath =  Path.Combine(BasePartitionPath, "user");
+                    BaseSavePath =  Path.Combine(BaseSavePath, "user");
                     break;
                 case SaveSpaceId.NandSystem:
-                    BasePartitionPath = Path.Combine(BasePartitionPath, "system");
+                    BaseSavePath = Path.Combine(BaseSavePath, "system");
                     break;
                 case SaveSpaceId.SdCard:
-                    BasePartitionPath = Path.Combine("sdmc", "Nintendo");
+                    BaseSavePath = Path.Combine("sdmc", "Nintendo");
                     break;
             }
 
-            BasePartitionPath = Path.Combine(BasePartitionPath, "save");
+            BaseSavePath = Path.Combine(BaseSavePath, "save");
 
             if (SaveMetaData.TitleId == 0 && SaveMetaData.SaveDataType == SaveDataType.SaveData)
             {
                 CurrentTitleId = Context.Process.MetaData.ACI0.TitleId;
             }
 
-            string SavePath = Path.Combine(BasePartitionPath,
-                SaveMetaData.SaveID.ToString("X16"),
+            string SavePath = Path.Combine(BaseSavePath,
+                SaveMetaData.SaveID.ToString("x16"),
                 SaveMetaData.UserID.ToString(),
-                SaveMetaData.SaveDataType == SaveDataType.SaveData ? CurrentTitleId.ToString("X16") : string.Empty);
+                SaveMetaData.SaveDataType == SaveDataType.SaveData ? CurrentTitleId.ToString("x16") : string.Empty);
 
             return SavePath;
         }

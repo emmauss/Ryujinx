@@ -1,6 +1,6 @@
 ﻿namespace Ryujinx.HLE.FileSystem
 {
-    enum SaveDataType
+    enum SaveDataType : byte
     {
         SystemSaveData,
         SaveData,

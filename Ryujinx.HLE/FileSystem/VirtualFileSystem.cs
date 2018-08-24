@@ -53,7 +53,7 @@ namespace Ryujinx.HLE.FileSystem
 
         public string GetNandPath() => MakeDirAndGetFullPath(NandPath);
 
-        public string GetGameSavesPath(Save SaveMetaData, ServiceCtx Context) 
+        public string GetGameSavePath(Save SaveMetaData, ServiceCtx Context) 
             => MakeDirAndGetFullPath(SaveHelper.GetSavePath(SaveMetaData, Context));
 
         public string GetSystemPath() => MakeDirAndGetFullPath(SystemPath);
