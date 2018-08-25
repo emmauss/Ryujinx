@@ -31,7 +31,7 @@ namespace Ryujinx.HLE.FileSystem
             {
                 if (Context.Process.MetaData != null)
                 {
-                    CurrentTitleId = (long)Context.Process.MetaData?.ACI0.TitleId;
+                    CurrentTitleId = Context.Process.MetaData.ACI0.TitleId;
                 }
             }
 
