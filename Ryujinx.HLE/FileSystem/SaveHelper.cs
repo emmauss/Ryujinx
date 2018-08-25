@@ -1,28 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Ryujinx.HLE.HOS;
 using System.IO;
-using Ryujinx.HLE.HOS;
+
+using static Ryujinx.HLE.FileSystem.VirtualFileSystem;
 
 namespace Ryujinx.HLE.FileSystem
 {
     static class SaveHelper
     {
-        public static string GetSavePath(Save SaveMetaData, ServiceCtx Context)
+        public static string GetSavePath(SaveInfo SaveMetaData, ServiceCtx Context)
         {
-            string BaseSavePath   = "nand";
+            string BaseSavePath   = NandPath;
             long   CurrentTitleId = SaveMetaData.TitleId;
 
             switch (SaveMetaData.SaveSpaceId)
             {
                 case SaveSpaceId.NandUser:
-                    BaseSavePath =  Path.Combine(BaseSavePath, "user");
+                    BaseSavePath = UserNandPath;
                     break;
                 case SaveSpaceId.NandSystem:
-                    BaseSavePath = Path.Combine(BaseSavePath, "system");
+                    BaseSavePath = SystemNandPath;
                     break;
                 case SaveSpaceId.SdCard:
-                    BaseSavePath = Path.Combine("sdmc", "Nintendo");
+                    BaseSavePath = Path.Combine(SdCardPath, "Nintendo");
                     break;
             }
 
@@ -30,7 +29,10 @@ namespace Ryujinx.HLE.FileSystem
 
             if (SaveMetaData.TitleId == 0 && SaveMetaData.SaveDataType == SaveDataType.SaveData)
             {
-                CurrentTitleId = Context.Process.MetaData.ACI0.TitleId;
+                if (Context.Process.MetaData != null)
+                {
+                    CurrentTitleId = (long)Context.Process.MetaData?.ACI0.TitleId;
+                }
             }
 
             string SavePath = Path.Combine(BaseSavePath,

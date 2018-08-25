@@ -43,20 +43,6 @@ namespace Ryujinx.HLE.HOS.SystemState
             this.Bytes = Bytes;
         }
 
-        public UserId(byte[] UserIdBytes)
-        {
-            Bytes = UserIdBytes;
-
-            UserIdHex = string.Empty;
-
-            foreach (byte Byte in Bytes)
-            {
-                UserIdHex += Byte.ToString("X2");
-            }
-
-            this.Bytes = Bytes;
-        }
-
         public UserId(string UserIdHex)
         {
             if (UserIdHex == null || UserIdHex.Length != 32 || !UserIdHex.All("0123456789abcdefABCDEF".Contains))

@@ -1,9 +1,7 @@
-using Ryujinx.HLE.HOS.Ipc;
-using Ryujinx.HLE.Logging;
-using System.Collections.Generic;
 using Ryujinx.HLE.FileSystem;
-
+using Ryujinx.HLE.HOS.Ipc;
 using Ryujinx.HLE.HOS.SystemState;
+using System.Collections.Generic;
 
 namespace Ryujinx.HLE.HOS.Services.FspSrv
 {
@@ -78,7 +76,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
         {
             SaveSpaceId SaveSpaceId = (SaveSpaceId)Context.RequestData.ReadInt64();
 
-            Save SaveInfo = new Save()
+            SaveInfo SaveInfo = new SaveInfo()
             {
                 TitleId      = Context.RequestData.ReadInt64(),
                 UserID       = new UserId(Context.RequestData.ReadInt64(),
