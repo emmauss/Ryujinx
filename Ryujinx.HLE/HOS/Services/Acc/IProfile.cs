@@ -19,7 +19,7 @@ namespace Ryujinx.HLE.HOS.Services.Acc
 
         private UserProfile Profile;
 
-        private Stream IconStream;
+        private Stream ProfilePictureStream;
 
         public IProfile(UserProfile Profile)
         {
@@ -33,7 +33,7 @@ namespace Ryujinx.HLE.HOS.Services.Acc
 
             this.Profile = Profile;
 
-            IconStream = Assembly.GetCallingAssembly().GetManifestResourceStream("Ryujinx.HLE.Ryujinx_icon.jpg");
+            ProfilePictureStream = Assembly.GetCallingAssembly().GetManifestResourceStream("Ryujinx.HLE.Ryujinx_icon.jpg");
         }
 
         public long Get(ServiceCtx Context)
@@ -69,20 +69,20 @@ namespace Ryujinx.HLE.HOS.Services.Acc
             long BufferPosition = Context.Request.ReceiveBuff[0].Position;
             long BufferLen      = Context.Request.ReceiveBuff[0].Size;
 
-            byte[] IconData = new byte[BufferLen];
+            byte[] ProfilePictureData = new byte[BufferLen];
 
-            IconStream.Read(IconData, 0, IconData.Length);
+            ProfilePictureStream.Read(ProfilePictureData, 0, ProfilePictureData.Length);
 
-            Context.Memory.WriteBytes(BufferPosition, IconData);
+            Context.Memory.WriteBytes(BufferPosition, ProfilePictureData);
 
-            Context.ResponseData.Write(IconStream.Length);
+            Context.ResponseData.Write(ProfilePictureStream.Length);
 
             return 0;
         }
 
         private long GetImageSize(ServiceCtx Context)
         {
-            Context.ResponseData.Write(IconStream.Length);
+            Context.ResponseData.Write(ProfilePictureStream.Length);
 
             return 0;
         }
