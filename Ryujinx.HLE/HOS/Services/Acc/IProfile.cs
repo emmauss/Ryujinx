@@ -33,7 +33,7 @@ namespace Ryujinx.HLE.HOS.Services.Acc
 
             this.Profile = Profile;
 
-            ProfilePictureStream = Assembly.GetCallingAssembly().GetManifestResourceStream("Ryujinx.HLE.Ryujinx_icon.jpg");
+            ProfilePictureStream = Assembly.GetCallingAssembly().GetManifestResourceStream("Ryujinx.HLE.RyujinxProfileImage.jpg");
         }
 
         public long Get(ServiceCtx Context)

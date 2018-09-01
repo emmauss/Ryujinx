@@ -14,11 +14,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Ryujinx_icon.jpg" />
+    <None Remove="RyujinxProfileImage.jpg" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Ryujinx_icon.jpg" />
+    <EmbeddedResource Include="RyujinxProfileImage.jpg" />
   </ItemGroup>
 
   <ItemGroup>
