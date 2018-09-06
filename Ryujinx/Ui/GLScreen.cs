@@ -313,9 +313,6 @@ namespace Ryujinx
         protected override void OnKeyUp(KeyboardKeyEventArgs e)
         {
             Keyboard = e.Keyboard;
-
-            if (e.Key == Key.Tab)
-                Device.EnableDeviceVsync = !Device.EnableDeviceVsync;
         }
 
         protected override void OnMouseDown(MouseButtonEventArgs e)
