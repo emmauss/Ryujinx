@@ -62,7 +62,7 @@ namespace Ryujinx.HLE
 
             Hid = new Hid(this, System.HidSharedMem.PA);
 
-            VsyncEvent =  new AutoResetEvent(true);
+            VsyncEvent = new AutoResetEvent(true);
         }
 
         public void LoadCart(string ExeFsDir, string RomFsFile = null)

@@ -31,7 +31,7 @@ namespace Ryujinx
             Device.Log.SetEnable(LogLevel.Warning, Convert.ToBoolean(Parser.Value("Logging_Enable_Warn")));
             Device.Log.SetEnable(LogLevel.Error,   Convert.ToBoolean(Parser.Value("Logging_Enable_Error")));
 
-            Device.System.State.DockedMode   = Convert.ToBoolean(Parser.Value("Docked_Mode"));
+            Device.System.State.DockedMode = Convert.ToBoolean(Parser.Value("Docked_Mode"));
 
             Device.EnableDeviceVsync = Convert.ToBoolean(Parser.Value("Enable_Vsync"));
 
