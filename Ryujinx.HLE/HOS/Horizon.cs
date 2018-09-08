@@ -47,6 +47,8 @@ namespace Ryujinx.HLE.HOS
 
         private bool HasStarted;
 
+        public Nacp ControlData { get; set; }
+
         public Horizon(Switch Device)
         {
             this.Device = Device;
@@ -173,8 +175,9 @@ namespace Ryujinx.HLE.HOS
                 throw new InvalidDataException("Could not find XCI secure partition");
             }
 
-            Nca MainNca = null;
-            Nca PatchNca = null;
+            Nca MainNca    = null;
+            Nca PatchNca   = null;
+            Nca ControlNca = null;
 
             foreach (PfsFileEntry FileEntry in Xci.SecurePartition.Files.Where(x => x.Name.EndsWith(".nca")))
             {
@@ -193,6 +196,10 @@ namespace Ryujinx.HLE.HOS
                         PatchNca = Nca;
                     }
                 }
+                else if(Nca.Header.ContentType == ContentType.Control)
+                {
+                    ControlNca = Nca;
+                }
             }
 
             if (MainNca == null)
@@ -202,7 +209,23 @@ namespace Ryujinx.HLE.HOS
 
             MainNca.SetBaseNca(PatchNca);
 
+            if (ControlNca != null)
+            {
+                ReadControlData(ControlNca);
+            }
+
             return MainNca;
+        }
+
+        public void ReadControlData(Nca ControlNca)
+        {
+            Romfs ControlRomfs = new Romfs(ControlNca.OpenSection(0, false));
+
+            byte[] ControlFile = ControlRomfs.GetFile("/control.nacp");
+
+            BinaryReader Reader = new BinaryReader(new MemoryStream(ControlFile));
+
+            ControlData = new Nacp(Reader);
         }
 
         public void LoadNca(string NcaFile)
@@ -231,16 +254,25 @@ namespace Ryujinx.HLE.HOS
                 KeySet.TitleKeys[Ticket.RightsId] = Ticket.GetTitleKey(KeySet);
             }
 
+            Nca MainNca = null;
+
             foreach (PfsFileEntry NcaFile in Nsp.Files.Where(x => x.Name.EndsWith(".nca")))
             {
                 Nca Nca = new Nca(KeySet, Nsp.OpenFile(NcaFile), true);
 
                 if (Nca.Header.ContentType == ContentType.Program)
                 {
-                    LoadNca(Nca);
-
-                    return;
+                    MainNca = Nca;
                 }
+                else if(Nca.Header.ContentType == ContentType.Control)
+                {
+                    ReadControlData(Nca);
+                }
+            }
+
+            if (MainNca != null)
+            {
+                LoadNca(MainNca);
             }
 
             Device.Log.PrintError(LogClass.Loader, "Could not find an Application NCA in the provided NSP file");
