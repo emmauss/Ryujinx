@@ -160,7 +160,7 @@ namespace Ryujinx.HLE.HOS
 
             Xci Xci = new Xci(KeySet, File);
 
-            (Nca MainNca, Nca ControlNca) = GetXciMainNca(Xci);
+            (Nca MainNca, Nca ControlNca) = GetXciGameData(Xci);
 
             if (MainNca == null)
             {
@@ -172,7 +172,7 @@ namespace Ryujinx.HLE.HOS
             LoadNca(MainNca, ControlNca);
         }
 
-        private (Nca Main,Nca Control) GetXciMainNca(Xci Xci)
+        private (Nca Main, Nca Control) GetXciGameData(Xci Xci)
         {
             if (Xci.SecurePartition == null)
             {
@@ -200,7 +200,7 @@ namespace Ryujinx.HLE.HOS
                         PatchNca = Nca;
                     }
                 }
-                else if(Nca.Header.ContentType == ContentType.Control)
+                else if (Nca.Header.ContentType == ContentType.Control)
                 {
                     ControlNca = Nca;
                 }
@@ -269,7 +269,7 @@ namespace Ryujinx.HLE.HOS
                 {
                     MainNca = Nca;
                 }
-                else if(Nca.Header.ContentType == ContentType.Control)
+                else if (Nca.Header.ContentType == ContentType.Control)
                 {
                     ControlNca = Nca;
                 }
@@ -305,9 +305,11 @@ namespace Ryujinx.HLE.HOS
             }
 
             Stream RomfsStream = MainNca.OpenSection(RomfsSection.SectionNum, false);
+
             Device.FileSystem.SetRomFs(RomfsStream);
 
             Stream ExefsStream = MainNca.OpenSection(ExefsSection.SectionNum, false);
+
             Pfs Exefs = new Pfs(ExefsStream);
 
             Npdm MetaData = null;
@@ -358,7 +360,7 @@ namespace Ryujinx.HLE.HOS
 
                 if (string.IsNullOrWhiteSpace(CurrentTitle))
                 {
-                    CurrentTitle = ControlData.Languages[0].Title;
+                    CurrentTitle = ControlData.Languages.ToList().Find(x => !string.IsNullOrWhiteSpace(x.Title)).Title;
                 }
 
                 return ControlData;
