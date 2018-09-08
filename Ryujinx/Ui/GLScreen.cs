@@ -258,8 +258,8 @@ namespace Ryujinx
             double HostFps = Device.Statistics.GetSystemFrameRate();
             double GameFps = Device.Statistics.GetGameFrameRate();
 
-            NewTitle = $"Ryujinx | Host FPS: {HostFps:0.0} | Game FPS: {GameFps:0.0} | Game Vsync: " +
-               (Device.EnableDeviceVsync ? "On" : "Off");
+            NewTitle = $"Ryujinx | {Device.System.CurrentTitle ?? ""} | Host FPS: {HostFps:0.0} " +
+                $"| Game FPS: {GameFps:0.0} | Game Vsync: {(Device.EnableDeviceVsync ? "On" : "Off")}";
 
             TitleEvent = true;
 

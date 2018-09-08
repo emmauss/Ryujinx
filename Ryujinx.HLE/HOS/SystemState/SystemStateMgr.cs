@@ -37,6 +37,8 @@ namespace Ryujinx.HLE.HOS.SystemState
 
         internal long DesiredLanguageCode { get; private set; }
 
+        public SystemLanguage DesiredLanguage { get; private set; }
+
         internal string ActiveAudioOutput { get; private set; }
 
         public bool DockedMode { get; set; }
@@ -64,6 +66,8 @@ namespace Ryujinx.HLE.HOS.SystemState
         public void SetLanguage(SystemLanguage Language)
         {
             DesiredLanguageCode = GetLanguageCode((int)Language);
+
+            DesiredLanguage = Language;
         }
 
         public void SetAudioOutputAsTv()
