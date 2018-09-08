@@ -1,24 +1,27 @@
-﻿using Ryujinx.HLE.HOS;
-using Ryujinx.HLE.HOS.SystemState;
+﻿using Ryujinx.HLE.HOS.SystemState;
 
 namespace Ryujinx.HLE.FileSystem
 {
     struct SaveInfo
     {
         public long   TitleId { get; private set; }
-        public long   SaveID  { get; private set; }
-        public UserId UserID  { get; private set; }
+        public long   SaveId  { get; private set; }
+        public UserId UserId  { get; private set; }
 
         public SaveDataType SaveDataType { get; private set; }
         public SaveSpaceId  SaveSpaceId  { get; private set; }
 
-        public SaveInfo(ServiceCtx Context, SaveSpaceId SaveSpaceId)
+        public SaveInfo(long TitleId,
+            long         SaveId,
+            SaveDataType SaveDataType,
+            UserId       UserId,
+            SaveSpaceId SaveSpaceId)
         {
-            TitleId          = Context.RequestData.ReadInt64();
-            UserID           = new UserId(Context.RequestData.ReadInt64(), Context.RequestData.ReadInt64());
-            SaveID           = Context.RequestData.ReadInt64();
-            SaveDataType     = (SaveDataType)Context.RequestData.ReadByte();
-            this.SaveSpaceId = SaveSpaceId;
+            this.TitleId      = TitleId;
+            this.UserId       = UserId;
+            this.SaveId       = SaveId;
+            this.SaveDataType = SaveDataType;
+            this.SaveSpaceId  = SaveSpaceId;
         }
     }
 }
