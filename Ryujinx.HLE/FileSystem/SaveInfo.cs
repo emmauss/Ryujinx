@@ -16,7 +16,7 @@ namespace Ryujinx.HLE.FileSystem
             long         SaveId,
             SaveDataType SaveDataType,
             UserId       UserId,
-            SaveSpaceId SaveSpaceId)
+            SaveSpaceId  SaveSpaceId)
         {
             this.TitleId      = TitleId;
             this.UserId       = UserId;

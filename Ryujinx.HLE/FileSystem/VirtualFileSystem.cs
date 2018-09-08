@@ -54,7 +54,7 @@ namespace Ryujinx.HLE.FileSystem
 
         public string GetSdCardPath() => MakeDirAndGetFullPath(SdCardPath);
 
-        public string GetNandPath() => MakeDirAndGetFullPath(NandPath);        
+        public string GetNandPath() => MakeDirAndGetFullPath(NandPath);
 
         public string GetSystemPath() => MakeDirAndGetFullPath(SystemPath);
 
