@@ -78,7 +78,9 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
 
             long TitleId = Context.RequestData.ReadInt64();
 
-            UserId UserId = new UserId(Context.RequestData.ReadInt64(), Context.RequestData.ReadInt64());
+            UserId UserId = new UserId(
+                Context.RequestData.ReadInt64(), 
+                Context.RequestData.ReadInt64());
 
             long SaveId = Context.RequestData.ReadInt64();
 

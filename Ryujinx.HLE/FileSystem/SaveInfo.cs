@@ -11,7 +11,8 @@ namespace Ryujinx.HLE.FileSystem
         public SaveDataType SaveDataType { get; private set; }
         public SaveSpaceId  SaveSpaceId  { get; private set; }
 
-        public SaveInfo(long TitleId,
+        public SaveInfo(
+            long         TitleId,
             long         SaveId,
             SaveDataType SaveDataType,
             UserId       UserId,

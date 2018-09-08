@@ -11,8 +11,8 @@ namespace Ryujinx.HLE.FileSystem
         public const string SdCardPath = "sdmc";
         public const string SystemPath = "system";
 
-        public static string SystemNandPath = Path.Combine("nand", "system");
-        public static string UserNandPath   = Path.Combine("nand", "user");
+        public static string SystemNandPath = Path.Combine(NandPath, "system");
+        public static string UserNandPath   = Path.Combine(NandPath, "user");
 
         public Stream RomFs { get; private set; }
 
@@ -54,12 +54,14 @@ namespace Ryujinx.HLE.FileSystem
 
         public string GetSdCardPath() => MakeDirAndGetFullPath(SdCardPath);
 
-        public string GetNandPath() => MakeDirAndGetFullPath(NandPath);
-
-        public string GetGameSavePath(SaveInfo Save, ServiceCtx Context)
-            => MakeDirAndGetFullPath(SaveHelper.GetSavePath(Save, Context));
+        public string GetNandPath() => MakeDirAndGetFullPath(NandPath);        
 
         public string GetSystemPath() => MakeDirAndGetFullPath(SystemPath);
+
+        public string GetGameSavePath(SaveInfo Save, ServiceCtx Context)
+        {
+            return MakeDirAndGetFullPath(SaveHelper.GetSavePath(Save, Context));
+        }
 
         public string SwitchPathToSystemPath(string SwitchPath)
         {
