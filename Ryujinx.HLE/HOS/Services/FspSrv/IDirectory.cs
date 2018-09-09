@@ -1,3 +1,4 @@
+using Ryujinx.HLE.FileSystem;
 using Ryujinx.HLE.HOS.Ipc;
 using System;
 using System.Collections.Generic;
@@ -20,9 +21,11 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
 
         public event EventHandler<EventArgs> Disposed;
 
-        public string HostPath { get; private set; }
+        public string DirectoryPath { get; private set; }
 
-        public IDirectory(string HostPath, int Flags)
+        private IFileSystemProvider Provider;
+
+        public IDirectory(string DirectoryPath, int Flags, IFileSystemProvider Provider)
         {
             m_Commands = new Dictionary<int, ServiceProcessRequest>()
             {
@@ -30,18 +33,20 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
                 { 1, GetEntryCount }
             };
 
-            this.HostPath = HostPath;
+            this.Provider = Provider;
+
+            this.DirectoryPath = DirectoryPath;
 
             DirectoryEntries = new List<string>();
 
             if ((Flags & 1) != 0)
             {
-                DirectoryEntries.AddRange(Directory.GetDirectories(HostPath));
+                DirectoryEntries.AddRange(Provider.GetDirectories(DirectoryPath));
             }
 
             if ((Flags & 2) != 0)
             {
-                DirectoryEntries.AddRange(Directory.GetFiles(HostPath));
+                DirectoryEntries.AddRange(Provider.GetFiles(DirectoryPath));
             }
 
             CurrentItemIndex = 0;
