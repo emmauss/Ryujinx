@@ -356,7 +356,7 @@ namespace Ryujinx.HLE.HOS
 
                 Nacp ControlData = new Nacp(Reader);
 
-                CurrentTitle = ControlData.Languages[(int)State.DesiredLanguage].Title;
+                CurrentTitle = ControlData.Languages[(int)State.DesiredTitleLanguage].Title;
 
                 if (string.IsNullOrWhiteSpace(CurrentTitle))
                 {

@@ -37,7 +37,7 @@ namespace Ryujinx.HLE.HOS.SystemState
 
         internal long DesiredLanguageCode { get; private set; }
 
-        public SystemLanguage DesiredLanguage { get; private set; }
+        public TitleLanguage DesiredTitleLanguage { get; private set; }
 
         internal string ActiveAudioOutput { get; private set; }
 
@@ -67,7 +67,7 @@ namespace Ryujinx.HLE.HOS.SystemState
         {
             DesiredLanguageCode = GetLanguageCode((int)Language);
 
-            DesiredLanguage = Language;
+            DesiredTitleLanguage = Enum.Parse<TitleLanguage>(Enum.GetName(typeof(SystemLanguage), Language));
         }
 
         public void SetAudioOutputAsTv()
