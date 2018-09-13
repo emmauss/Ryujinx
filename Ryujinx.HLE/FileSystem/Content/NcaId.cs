@@ -32,7 +32,7 @@ namespace Ryujinx.HLE.FileSystem.Content
 
             foreach (byte Byte in Bytes)
             {
-                NcaIdHex += Byte.ToString("X2");
+                NcaIdHex += Byte.ToString("x2");
             }
 
             this.Bytes = Bytes;
@@ -44,7 +44,7 @@ namespace Ryujinx.HLE.FileSystem.Content
 
             foreach (byte Byte in Bytes)
             {
-                NcaIdHex += Byte.ToString("X2");
+                NcaIdHex += Byte.ToString("x2");
             }
 
             this.Bytes = Bytes;

@@ -61,7 +61,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
 
                 if (!string.IsNullOrWhiteSpace(InstallPath))
                 {
-                    string NcaPath = Path.Combine(InstallPath, NcaId.ToString() + ".nca", "00");
+                    string NcaPath = Path.Combine(InstallPath, "00");
 
                     if (File.Exists(NcaPath))
                     {
