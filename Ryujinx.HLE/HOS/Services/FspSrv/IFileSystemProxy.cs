@@ -85,7 +85,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
                     throw new DirectoryNotFoundException($"Path for title id {TitleId} on Storage {StorageId} was not found.");
             }
 
-            throw new FileNotFoundException($"System archive with titleid {TitleId.ToString("x16")} was not found.");
+            throw new FileNotFoundException($"System archive with titleid {TitleId.ToString("x16")} was not found on Storage {StorageId}.");
         }
 
         public long SetCurrentProcess(ServiceCtx Context)
