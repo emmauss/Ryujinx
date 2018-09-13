@@ -70,6 +70,8 @@ namespace Ryujinx.HLE.FileSystem.Content
 
                         ContentDictionary.Add((Nca.Header.TitleId,Nca.Header.ContentType), NcaName);
 
+                        NcaFile.Close();
+
                         Nca.Dispose();
 
                         NcaFile.Dispose();
@@ -107,6 +109,8 @@ namespace Ryujinx.HLE.FileSystem.Content
                         PreviousEntry = Entry;
 
                         ContentDictionary.Add((Nca.Header.TitleId, Nca.Header.ContentType), NcaName);
+
+                        NcaFile.Close();
 
                         Nca.Dispose();
 
@@ -160,6 +164,12 @@ namespace Ryujinx.HLE.FileSystem.Content
                 string Filename = Path.GetFileName(NcaPath);
 
                 InstallContent(Nca, Filename);
+
+                NcaStream.Close();
+
+                NcaStream.Dispose();
+
+                Nca.Dispose();
             }
         }
 
@@ -216,6 +226,10 @@ namespace Ryujinx.HLE.FileSystem.Content
                     Stream NcaStream = Nca.GetStream();
 
                     NcaStream.CopyStream(FileStream, NcaStream.Length);
+
+                    NcaStream.Close();
+
+                    FileStream.Close();
                 }
             }
         }
