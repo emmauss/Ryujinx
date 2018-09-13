@@ -5,6 +5,7 @@ using Ryujinx.Graphics.Gal.OpenGL;
 using Ryujinx.HLE;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace Ryujinx
 {
@@ -24,8 +25,16 @@ namespace Ryujinx
 
             Device.Log.Updated += ConsoleLog.Log;
 
-            if (args.Length == 1)
+            if (args.Length > 0)
             {
+                if(args.Length == 2)
+                {
+                    if (args[1] == "-i" || args[1] == "--install")
+                    {
+                        Device.System.State.InstallContents = true;
+                    }
+                }
+                
                 if (Directory.Exists(args[0]))
                 {
                     string[] RomFsFiles = Directory.GetFiles(args[0], "*.istorage");
