@@ -52,6 +52,11 @@ namespace Ryujinx.HLE.FileSystem.Content
 
         public NcaId(string NcaIdHex)
         {
+            if(NcaIdHex.Contains("."))
+            {
+                NcaIdHex = NcaIdHex.Substring(0, NcaIdHex.IndexOf("."));
+            }
+
             if (NcaIdHex == null || NcaIdHex.Length != 32 || !NcaIdHex.All("0123456789abcdefABCDEF".Contains))
             {
                 throw new ArgumentException("Invalid ncaid!", nameof(NcaIdHex));
