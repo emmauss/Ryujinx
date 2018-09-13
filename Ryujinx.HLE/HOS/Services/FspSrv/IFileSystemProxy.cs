@@ -65,7 +65,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
 
                     if (File.Exists(NcaPath))
                     {
-                        FileStream NcaStream = new FileStream(NcaPath, FileMode.Open);
+                        FileStream NcaStream = new FileStream(NcaPath, FileMode.Open, FileAccess.Read);
 
                         Nca Nca = new Nca(Context.Device.System.KeySet, NcaStream, false);
 

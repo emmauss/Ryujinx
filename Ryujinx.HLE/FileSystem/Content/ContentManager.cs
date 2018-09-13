@@ -44,7 +44,7 @@ namespace Ryujinx.HLE.FileSystem.Content
                 {
                     string NcaName = new DirectoryInfo(DirectoryPath).Name;
 
-                    using (FileStream NcaFile = new FileStream(Directory.GetFiles(DirectoryPath)[0], FileMode.Open))
+                    using (FileStream NcaFile = new FileStream(Directory.GetFiles(DirectoryPath)[0], FileMode.Open, FileAccess.Read))
                     {
 
                         Nca Nca = new Nca(Device.System.KeySet, NcaFile, false);
@@ -85,7 +85,7 @@ namespace Ryujinx.HLE.FileSystem.Content
                 {
                     string NcaName = Path.GetFileName(FilePath);
 
-                    using (FileStream NcaFile = new FileStream(FilePath, FileMode.Open))
+                    using (FileStream NcaFile = new FileStream(FilePath, FileMode.Open, FileAccess.Read))
                     {
                         Nca Nca = new Nca(Device.System.KeySet, NcaFile, false);
 
@@ -157,7 +157,7 @@ namespace Ryujinx.HLE.FileSystem.Content
         {
             if (File.Exists(NcaPath))
             {
-                FileStream NcaStream = new FileStream(NcaPath, FileMode.Open);
+                FileStream NcaStream = new FileStream(NcaPath, FileMode.Open, FileAccess.Read);
 
                 Nca Nca = new Nca(Device.System.KeySet, NcaStream, false);
 
