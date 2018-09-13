@@ -67,7 +67,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
                     {
                         FileStream NcaStream = new FileStream(NcaPath, FileMode.Open);
 
-                        Nca Nca = new Nca(Context.Device.System.KeySet, NcaStream, true);
+                        Nca Nca = new Nca(Context.Device.System.KeySet, NcaStream, false);
 
                         NcaSection RomfsSection = Nca.Sections.FirstOrDefault(x => x?.Type == SectionType.Romfs);
 

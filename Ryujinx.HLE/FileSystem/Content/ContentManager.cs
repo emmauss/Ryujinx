@@ -159,7 +159,7 @@ namespace Ryujinx.HLE.FileSystem.Content
             {
                 FileStream NcaStream = new FileStream(NcaPath, FileMode.Open);
 
-                Nca Nca = new Nca(Device.System.KeySet, NcaStream, true);
+                Nca Nca = new Nca(Device.System.KeySet, NcaStream, false);
 
                 string Filename = Path.GetFileName(NcaPath);
 
@@ -226,6 +226,8 @@ namespace Ryujinx.HLE.FileSystem.Content
                     Stream NcaStream = Nca.GetStream();
 
                     NcaStream.CopyStream(FileStream, NcaStream.Length);
+
+                    Nca.Dispose();
 
                     NcaStream.Close();
 
