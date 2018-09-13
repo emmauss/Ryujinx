@@ -69,6 +69,10 @@ namespace Ryujinx.HLE.FileSystem.Content
                         PreviousEntry = Entry;
 
                         ContentDictionary.Add((Nca.Header.TitleId,Nca.Header.ContentType), NcaName);
+
+                        Nca.Dispose();
+
+                        NcaFile.Dispose();
                     }
                 }
             }
@@ -103,6 +107,10 @@ namespace Ryujinx.HLE.FileSystem.Content
                         PreviousEntry = Entry;
 
                         ContentDictionary.Add((Nca.Header.TitleId, Nca.Header.ContentType), NcaName);
+
+                        Nca.Dispose();
+
+                        NcaFile.Dispose();
                     }
                 }
             }

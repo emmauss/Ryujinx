@@ -81,7 +81,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
                         throw new FileNotFoundException($"No nca found in Path `{NcaPath}`.");
                 }
                 else
-                    throw new DirectoryNotFoundException($"Path for title id {TitleId} on Storage {StorageId} was not found.");
+                    throw new DirectoryNotFoundException($"Path for title id {TitleId} on Storage {StorageId} was not found in Path {InstallPath}.");
             }
 
             throw new FileNotFoundException($"System archive with titleid {TitleId.ToString("x16")} was not found on Storage {StorageId}. Found in {InstalledStorage}.");
