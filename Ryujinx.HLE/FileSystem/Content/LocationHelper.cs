@@ -45,5 +45,33 @@ namespace Ryujinx.HLE.FileSystem.Content
                     throw new NotSupportedException($"Content Storage `{ContentStorageId}` is not supported.");
             }
         }
+
+        public static StorageId GetStorageId(string ContentPathString)
+        {
+            switch (ContentPathString)
+            {
+                case ContentPath.SystemContent:
+                case ContentPath.System:
+                    return StorageId.NandSystem;
+
+                case ContentPath.UserContent:
+                case ContentPath.User:
+                    return StorageId.NandUser;
+
+                case ContentPath.SdCardContent:
+                    return StorageId.SdCard;
+
+                case ContentPath.Host:
+                    return StorageId.Host;
+
+                case ContentPath.GamecardApp:
+                case ContentPath.GamecardContents:
+                case ContentPath.GamecardUpdate:
+                    return StorageId.GameCard;
+
+                default:
+                    return StorageId.None;
+            }
+        }
     }
 }

@@ -31,7 +31,7 @@ namespace Ryujinx.HLE.HOS
 
         internal SharedFontManager Font { get; private set; }
 
-        public ContentManager ContentManager { get; private set; }
+        internal ContentManager ContentManager { get; private set; }
 
         internal KEvent VsyncEvent { get; private set; }
 
@@ -145,10 +145,10 @@ namespace Ryujinx.HLE.HOS
                 return;
             }
 
-            ContentManager.LoadEntries();
-
             if (State.InstallContents)
             {
+                ContentManager.LoadEntries();
+
                 if (Xci.UpdatePartition != null)
                 {
                     foreach (PfsFileEntry FileEntry in Xci.UpdatePartition.Files.Where(x => x.Name.EndsWith(".nca")))

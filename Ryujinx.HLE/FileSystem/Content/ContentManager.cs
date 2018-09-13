@@ -9,11 +9,11 @@ using Ryujinx.HLE.Loaders.Npdm;
 
 namespace Ryujinx.HLE.FileSystem.Content
 {
-    public class ContentManager
+    internal class ContentManager
     {
         public LocationEntry FirstLocationEntry { get; private set; }
 
-        public SortedDictionary<ulong,string> ContentDictionary { get; private set; }
+        public SortedDictionary<(ulong,ContentType),string> ContentDictionary { get; private set; }
 
         public ContentStorageId DefaultInstallationStorage { get; private set; }
 
@@ -21,7 +21,7 @@ namespace Ryujinx.HLE.FileSystem.Content
 
         public ContentManager(Switch Device)
         {
-            ContentDictionary = new SortedDictionary<ulong, string>();
+            ContentDictionary = new SortedDictionary<(ulong, ContentType), string>();
 
             this.Device = Device;
         }
@@ -36,7 +36,7 @@ namespace Ryujinx.HLE.FileSystem.Content
 
             LocationEntry PreviousEntry = null;
 
-            ContentDictionary = new SortedDictionary<ulong, string>();
+            ContentDictionary = new SortedDictionary<(ulong, ContentType), string>();
 
             foreach(string DirectoryPath in Directory.EnumerateDirectories(SystemContentPath))
             {
@@ -68,7 +68,7 @@ namespace Ryujinx.HLE.FileSystem.Content
 
                         PreviousEntry = Entry;
 
-                        ContentDictionary.Add(Nca.Header.TitleId, NcaName);
+                        ContentDictionary.Add((Nca.Header.TitleId,Nca.Header.ContentType), NcaName);
                     }
                 }
             }
@@ -102,7 +102,7 @@ namespace Ryujinx.HLE.FileSystem.Content
 
                         PreviousEntry = Entry;
 
-                        ContentDictionary.Add(Nca.Header.TitleId, NcaName);
+                        ContentDictionary.Add((Nca.Header.TitleId, Nca.Header.ContentType), NcaName);
                     }
                 }
             }
@@ -159,79 +159,83 @@ namespace Ryujinx.HLE.FileSystem.Content
         {
             if (Nca.Header.Distribution == DistributionType.Download)
             {
-                if (Nca.Header.ContentType == ContentType.AocData || Nca.Header.ContentType == ContentType.Data)
+                string ContentStoragePath = LocationHelper.GetContentPath(ContentStorageId.NandSystem);
+
+                string RealContentPath = LocationHelper.GetRealPath(Device.FileSystem, ContentStoragePath);
+
+                string NcaName = Filename.Substring(0, Filename.IndexOf("."));
+
+                if (!NcaName.EndsWith(".nca"))
                 {
-                    string ContentStoragePath = LocationHelper.GetContentPath(ContentStorageId.NandSystem);
+                    NcaName += ".nca";
+                }
 
-                    string RealContentPath = LocationHelper.GetRealPath(Device.FileSystem, ContentStoragePath);
+                string InstallationPath = Path.Combine(RealContentPath, NcaName);
 
-                    string NcaName = Filename;
+                string FilePath = Path.Combine(InstallationPath, "00");
 
-                    if (!NcaName.EndsWith(".nca"))
+                if (File.Exists(FilePath))
+                {
+                    FileInfo FileInfo = new FileInfo(FilePath);
+
+                    if (FileInfo.Length == (long)Nca.Header.NcaSize)
                     {
-                        NcaName += ".nca";
+                        return;
                     }
+                }
 
-                    string InstallationPath = Path.Combine(RealContentPath, NcaName);
+                if (ContentDictionary.ContainsKey((Nca.Header.TitleId, Nca.Header.ContentType)))
+                {
+                    string InstalledPath = GetInstalledPath((long)Nca.Header.TitleId, Nca.Header.ContentType);
 
-                    string FilePath = Path.Combine(InstallationPath, "00");
-
-                    if (File.Exists(FilePath))
+                    if (File.Exists(InstalledPath))
                     {
-                        FileInfo FileInfo = new FileInfo(FilePath);
-
-                        if (FileInfo.Length == (long)Nca.Header.NcaSize)
-                        {
-                            return;
-                        }
+                        File.Delete(InstalledPath);
                     }
-
-                    if (ContentDictionary.ContainsKey(Nca.Header.TitleId))
+                    if (Directory.Exists(InstalledPath))
                     {
-                        string InstalledPath = GetInstalledPath((long)Nca.Header.TitleId);
-
-                        if (File.Exists(InstalledPath))
-                        {
-                            File.Delete(InstalledPath);
-                        }
-                        if (Directory.Exists(InstalledPath))
-                        {
-                            Directory.Delete(InstalledPath, true);
-                        }
+                        Directory.Delete(InstalledPath, true);
                     }
+                }
 
-                    if (!Directory.Exists(InstallationPath))
-                    {
-                        Directory.CreateDirectory(InstallationPath);
-                    }
+                if (!Directory.Exists(InstallationPath))
+                {
+                    Directory.CreateDirectory(InstallationPath);
+                }
 
-                    using (FileStream FileStream = File.Create(FilePath))
-                    {
-                        Stream NcaStream = Nca.GetStream();
+                using (FileStream FileStream = File.Create(FilePath))
+                {
+                    Stream NcaStream = Nca.GetStream();
 
-                        NcaStream.CopyStream(FileStream, NcaStream.Length);
-                    }
+                    NcaStream.CopyStream(FileStream, NcaStream.Length);
                 }
             }
         }
 
-        public NcaId GetInstalledNcaId(long TitleId)
-        {            
-            if (ContentDictionary.ContainsKey((ulong)TitleId))
+        public NcaId GetInstalledNcaId(long TitleId, ContentType ContentType)
+        {
+            if (ContentDictionary.ContainsKey(((ulong)TitleId,ContentType)))
             {
-                return new NcaId(ContentDictionary[(ulong)TitleId]);
+                return new NcaId(ContentDictionary[((ulong)TitleId,ContentType)]);
             }
 
             return null;
         }
 
-        public string GetInstalledPath(long TitleId)
+        public string GetInstalledPath(long TitleId, ContentType ContentType)
         {
             LocationEntry LocationEntry = GetLocation(TitleId);
 
             string ContentPath = LocationHelper.GetRealPath(Device.FileSystem, LocationEntry.ContentPath);
 
-            return Path.Combine(ContentPath, ContentDictionary[(ulong)TitleId]);
+            return Path.Combine(ContentPath, ContentDictionary[((ulong)TitleId, ContentType)]);
+        }
+
+        public StorageId GetInstalledStorage(long TitleId)
+        {
+            LocationEntry LocationEntry = GetLocation(TitleId);
+
+            return LocationEntry != null ? LocationHelper.GetStorageId(LocationEntry.ContentPath) : StorageId.None;
         }
 
         private LocationEntry GetLocation(long TitleId)
