@@ -61,13 +61,12 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
 
                 if (!string.IsNullOrWhiteSpace(InstallPath))
                 {
-
-
                     string NcaPath = Path.Combine(InstallPath, NcaId.ToString() + ".nca", "00");
 
                     if (File.Exists(NcaPath))
                     {
                         FileStream NcaStream = new FileStream(NcaPath, FileMode.Open);
+
                         Nca Nca = new Nca(Context.Device.System.KeySet, NcaStream, true);
 
                         NcaSection RomfsSection = Nca.Sections.FirstOrDefault(x => x?.Type == SectionType.Romfs);
@@ -85,7 +84,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
                     throw new DirectoryNotFoundException($"Path for title id {TitleId} on Storage {StorageId} was not found.");
             }
 
-            throw new FileNotFoundException($"System archive with titleid {TitleId.ToString("x16")} was not found on Storage {StorageId}.");
+            throw new FileNotFoundException($"System archive with titleid {TitleId.ToString("x16")} was not found on Storage {StorageId}. Found in {InstalledStorage}.");
         }
 
         public long SetCurrentProcess(ServiceCtx Context)
