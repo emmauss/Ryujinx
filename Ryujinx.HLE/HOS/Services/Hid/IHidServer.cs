@@ -114,12 +114,14 @@ namespace Ryujinx.HLE.HOS.Services.Hid
 
         public long IsSixAxisSensorAtRest(ServiceCtx Context)
         {
-            int  Handle               = Context.RequestData.ReadInt32();
+            int SixAxisSensorHandle   = Context.RequestData.ReadInt32();
             long AppletResourceUserId = Context.RequestData.ReadInt64();
 
             Context.ResponseData.Write(true);
 
-            Context.Device.Log.PrintStub(LogClass.ServiceHid, "Stubbed.");
+            Context.Device.Log.PrintStub(LogClass.ServiceHid, $"Stubbed. AppletResourceUserId: {AppletResourceUserId} - " +
+                                                              $"SixAxisSensorHandle: {SixAxisSensorHandle} - " +
+                                                              $"IsAtRest: {true}");
 
             return 0;
         }
