@@ -141,7 +141,7 @@ namespace Ryujinx.HLE.HOS
                 throw new NotImplementedException("32-bit titles are unsupported!");
             }
 
-            CurrentTitle = MainProcess.MetaData.ACI0.TitleId.ToString("x32");
+            CurrentTitle = MainProcess.MetaData.ACI0.TitleId.ToString("x16");
 
             LoadNso("rtld");
 
@@ -372,7 +372,7 @@ namespace Ryujinx.HLE.HOS
             }
             else
             {
-                CurrentTitle = MainProcess.MetaData.ACI0.TitleId.ToString("x32");
+                CurrentTitle = MainProcess.MetaData.ACI0.TitleId.ToString("x16");
             }
 
             if (!MainProcess.MetaData.Is64Bits)
