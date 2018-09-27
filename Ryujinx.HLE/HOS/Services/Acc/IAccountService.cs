@@ -39,7 +39,7 @@ namespace Ryujinx.HLE.HOS.Services.Acc
         {
             UserId Uuid = new UserId(
                 Context.RequestData.ReadInt64(),
-                Context.RequestData.ReadInt64());
+                Context.RequestData.ReadInt64(), false);
 
             Context.ResponseData.Write(Context.Device.System.State.TryGetUser(Uuid, out _) ? 1 : 0);
 
@@ -94,7 +94,7 @@ namespace Ryujinx.HLE.HOS.Services.Acc
         {
             UserId Uuid = new UserId(
                 Context.RequestData.ReadInt64(),
-                Context.RequestData.ReadInt64());
+                Context.RequestData.ReadInt64(), false);
 
             if (!Context.Device.System.State.TryGetUser(Uuid, out UserProfile Profile))
             {

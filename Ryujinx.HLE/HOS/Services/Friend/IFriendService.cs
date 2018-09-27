@@ -63,7 +63,7 @@ namespace Ryujinx.HLE.HOS.Services.Friend
         {
             UserId Uuid = new UserId(
                 Context.RequestData.ReadInt64(),
-                Context.RequestData.ReadInt64());
+                Context.RequestData.ReadInt64(), false);
 
             if (Context.Device.System.State.TryGetUser(Uuid, out UserProfile Profile))
             {
@@ -81,7 +81,7 @@ namespace Ryujinx.HLE.HOS.Services.Friend
         {
             UserId Uuid = new UserId(
                 Context.RequestData.ReadInt64(),
-                Context.RequestData.ReadInt64());
+                Context.RequestData.ReadInt64(), false);
 
             long Unknown0 = Context.RequestData.ReadInt64();
 

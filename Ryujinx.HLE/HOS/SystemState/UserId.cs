@@ -11,9 +11,9 @@ namespace Ryujinx.HLE.HOS.SystemState
 
         public byte[] Bytes { get; private set; }
 
-        public UserId(long Low, long High)
+        public UserId(long Low, long High, bool Verify)
         {
-            if ((Low | High) == 0)
+            if ((Low | High) == 0 && Verify)
             {
                 throw new ArgumentException("Zero is not a valid user id!");
             }
@@ -43,14 +43,14 @@ namespace Ryujinx.HLE.HOS.SystemState
             this.Bytes = Bytes;
         }
 
-        public UserId(string UserIdHex)
+        public UserId(string UserIdHex, bool Verify)
         {
             if (UserIdHex == null || UserIdHex.Length != 32 || !UserIdHex.All("0123456789abcdefABCDEF".Contains))
             {
                 throw new ArgumentException("Invalid user id!", nameof(UserIdHex));
             }
 
-            if (UserIdHex == "00000000000000000000000000000000")
+            if (UserIdHex == "00000000000000000000000000000000" && Verify)
             {
                 throw new ArgumentException("Zero is not a valid user id!", nameof(UserIdHex));
             }
