@@ -80,7 +80,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
 
             UserId UserId = new UserId(
                 Context.RequestData.ReadInt64(), 
-                Context.RequestData.ReadInt64(), false);
+                Context.RequestData.ReadInt64());
 
             long SaveId = Context.RequestData.ReadInt64();
 

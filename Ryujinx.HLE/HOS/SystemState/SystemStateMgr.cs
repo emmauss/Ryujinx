@@ -57,7 +57,7 @@ namespace Ryujinx.HLE.HOS.SystemState
 
             Profiles = new ConcurrentDictionary<string, UserProfile>();
 
-            UserId DefaultUuid = new UserId("00000000000000000000000000000001", true);
+            UserId DefaultUuid = new UserId("00000000000000000000000000000001");
 
             AddUser(DefaultUuid, "Player");
 
