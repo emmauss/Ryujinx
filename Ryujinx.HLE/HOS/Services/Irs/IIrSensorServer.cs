@@ -28,7 +28,7 @@ namespace Ryujinx.HLE.HOS.Services.Irs
             long AppletResourceUserId = Context.RequestData.ReadInt64();
             int  IrsSensorHandle      = Context.RequestData.ReadInt32();
 
-            Context.Device.Log.PrintStub(LogClass.ServiceHid, $"Stubbed. AppletResourceUserId: {AppletResourceUserId} - " +
+            Context.Device.Log.PrintStub(LogClass.ServiceIrs, $"Stubbed. AppletResourceUserId: {AppletResourceUserId} - " +
                                                               $"IrsSensorHandle: {IrsSensorHandle}");
 
             return 0;
@@ -39,7 +39,7 @@ namespace Ryujinx.HLE.HOS.Services.Irs
             long AppletResourceUserId = Context.RequestData.ReadInt64();
             int  IrsSensorHandle      = Context.RequestData.ReadInt32();
 
-            Context.Device.Log.PrintStub(LogClass.ServiceHid, $"Stubbed. AppletResourceUserId: {AppletResourceUserId} - " +
+            Context.Device.Log.PrintStub(LogClass.ServiceIrs, $"Stubbed. AppletResourceUserId: {AppletResourceUserId} - " +
                                                               $"IrsSensorHandle: {IrsSensorHandle}");
 
             return 0;
