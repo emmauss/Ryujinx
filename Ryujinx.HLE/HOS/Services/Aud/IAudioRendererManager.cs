@@ -3,6 +3,7 @@ using Ryujinx.HLE.HOS.Ipc;
 using Ryujinx.HLE.HOS.Services.Aud.AudioRenderer;
 using Ryujinx.HLE.Logging;
 using Ryujinx.HLE.Utilities;
+using System;
 using System.Collections.Generic;
 
 using static Ryujinx.HLE.HOS.ErrorCode;
@@ -28,9 +29,10 @@ namespace Ryujinx.HLE.HOS.Services.Aud
         {
             m_Commands = new Dictionary<int, ServiceProcessRequest>()
             {
-                { 0, OpenAudioRenderer              },
-                { 1, GetAudioRendererWorkBufferSize },
-                { 2, GetAudioDevice                 }
+                { 0, OpenAudioRenderer                     },
+                { 1, GetAudioRendererWorkBufferSize        },
+                { 2, GetAudioDeviceService                 },
+                { 4, GetAudioDeviceServiceWithRevisionInfo }
             };
         }
 
@@ -161,7 +163,7 @@ namespace Ryujinx.HLE.HOS.Services.Aud
             return Result / 8;
         }
 
-        public long GetAudioDevice(ServiceCtx Context)
+        public long GetAudioDeviceService(ServiceCtx Context)
         {
             long UserId = Context.RequestData.ReadInt64();
 
@@ -169,5 +171,13 @@ namespace Ryujinx.HLE.HOS.Services.Aud
 
             return 0;
         }
+
+        private long GetAudioDeviceServiceWithRevisionInfo(ServiceCtx Context)
+        {
+            Context.Device.Log.PrintStub(LogClass.ServiceAudio, "Stubbed.");
+
+            return GetAudioDeviceService(Context);
+        }
+
     }
 }

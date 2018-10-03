@@ -38,6 +38,8 @@ namespace Ryujinx.HLE.HOS.Services.Aud.AudioRenderer
 
         private int Track;
 
+        private bool IsStarted;
+
         public IAudioRenderer(
             Horizon                System,
             AMemory                Memory,
@@ -46,10 +48,14 @@ namespace Ryujinx.HLE.HOS.Services.Aud.AudioRenderer
         {
             m_Commands = new Dictionary<int, ServiceProcessRequest>()
             {
-                { 4, RequestUpdateAudioRenderer },
-                { 5, StartAudioRenderer         },
-                { 6, StopAudioRenderer          },
-                { 7, QuerySystemEvent           }
+                { 0, GetAudioRendererSampleRate     },
+                { 1, GetAudioRendererSampleCount    },
+                { 2, GetAudioRendererMixBufferCount },
+                { 3, GetAudioRendererState          },
+                { 4, RequestUpdateAudioRenderer     },
+                { 5, StartAudioRenderer             },
+                { 6, StopAudioRenderer              },
+                { 7, QuerySystemEvent               }
             };
 
             UpdateEvent = new KEvent(System);
@@ -68,6 +74,38 @@ namespace Ryujinx.HLE.HOS.Services.Aud.AudioRenderer
             Voices = CreateArray<VoiceContext>(Params.VoiceCount);
 
             InitializeAudioOut();
+
+            IsStarted = false;
+        }
+
+        public long GetAudioRendererSampleRate(ServiceCtx Context)
+        {
+            Context.ResponseData.Write(Params.SampleRate);
+
+            return 0;
+        }
+
+        public long GetAudioRendererSampleCount(ServiceCtx Context)
+        {
+            Context.ResponseData.Write(Params.SampleCount);
+
+            return 0;
+        }
+
+        public long GetAudioRendererMixBufferCount(ServiceCtx Context)
+        {
+            Context.ResponseData.Write(Params.MixCount);
+
+            return 0;
+        }
+
+        private long GetAudioRendererState(ServiceCtx Context)
+        {
+            Context.ResponseData.Write(!IsStarted);
+
+            Context.Device.Log.PrintStub(LogClass.ServiceAudio, $"Stubbed. Renderer State = {(IsStarted? "Started":"Stopped")}");
+
+            return 0;
         }
 
         private void AudioCallback()
@@ -206,12 +244,16 @@ namespace Ryujinx.HLE.HOS.Services.Aud.AudioRenderer
         {
             Context.Device.Log.PrintStub(LogClass.ServiceAudio, "Stubbed.");
 
+            IsStarted = true;
+
             return 0;
         }
 
         public long StopAudioRenderer(ServiceCtx Context)
         {
             Context.Device.Log.PrintStub(LogClass.ServiceAudio, "Stubbed.");
+
+            IsStarted = false;
 
             return 0;
         }
