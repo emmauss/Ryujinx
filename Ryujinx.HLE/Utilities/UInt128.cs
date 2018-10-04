@@ -38,11 +38,8 @@ namespace Ryujinx.HLE.Utilities
                 throw new ArgumentException("Invalid Hex value!", nameof(UInt128Hex));
             }
 
-            byte[] LowBytes  = StringUtils.HexToBytes(UInt128Hex.Substring(8));
-            byte[] HighBytes = StringUtils.HexToBytes(UInt128Hex.Substring(0,8));
-
-            Low  = BitConverter.ToInt64(LowBytes);
-            High = BitConverter.ToInt64(HighBytes);
+            Low  = Convert.ToInt64(UInt128Hex.Substring(16),16);
+            High = Convert.ToInt64(UInt128Hex.Substring(0, 16), 16);
         }
 
         public void Write(BinaryWriter BinaryWriter)
