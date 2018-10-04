@@ -1,12 +1,23 @@
-﻿using System;
+﻿using Qml.Net;
+using System;
 
 namespace Ryujinx.UI
 {
     class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            QQuickStyle.SetStyle("Material");
+
+            using (var Application = new QGuiApplication(args))
+            {
+                using (var QmlEngine = new QQmlApplicationEngine())
+                {
+                    QmlEngine.Load("UI/MainWindow.qml");
+
+                    return Application.Exec();
+                }
+            }
         }
     }
 }

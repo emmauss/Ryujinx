@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -8,7 +8,19 @@
   <ItemGroup>
     <PackageReference Include="Qml.Net" Version="0.6.2" />
     <PackageReference Include="Qml.Net.LinuxBinaries" Version="0.6.2" />
+    <PackageReference Include="Qml.Net.OSXBinaries" Version="0.6.2" />
     <PackageReference Include="Qml.Net.WindowsBinaries" Version="0.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="UI\Models\" />
+    <Folder Include="UI\Views\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="UI\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
