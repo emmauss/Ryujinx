@@ -28,11 +28,12 @@ ApplicationWindow {
                 text: qsTr("")
                 spacing: 3
                 display: AbstractButton.IconOnly
-                icon.source: "./Images/drawer.png"
+                icon.source: !drawer.visible ? "./Images/drawer.png"
+                                             : "./Images/arrowBack.svg"
 
                 onClicked: {
-                    if (contentStack.depth > 1) {
-                        contentStack.pop()
+                    if (drawer.visible) {
+                        drawer.close()
                     } else {
                         drawer.open()
                     }
@@ -41,9 +42,9 @@ ApplicationWindow {
 
             RowLayout {
                 id: mainControlPanel
+                spacing: 20
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
 
                 ToolButton {
                     id: openGameFileButton
@@ -54,7 +55,7 @@ ApplicationWindow {
                     }
 
                     onClicked: {
-                    loadDialog.loadGame()
+                        loadDialog.loadGame()
                     }
                 }
 
@@ -67,14 +68,9 @@ ApplicationWindow {
                     }
 
                     onClicked: {
-                    loadDialog.loadGameFolder()
+                        loadDialog.loadGameFolder()
                     }
                 }
-            }
-
-            ToolButton {
-                id: menuButton
-                text: qsTr("Tool Button")
             }
         }
     }
@@ -85,55 +81,102 @@ ApplicationWindow {
     }
 
     Drawer {
-            id: drawer
-            width: Math.min(window.width, window.height) / 3 * 2
-            height: window.height
-            interactive: stackView.depth === 1
+        id: drawer
+        width: window.width / 3
+        height: window.height
+        topMargin: toolBar.height
+        spacing: 10
 
-            ListView {
-                id: drawerMenuList
-                focus: true
-                currentIndex: -1
-                anchors.fill: parent
+        Rectangle{
 
-                delegate: ItemDelegate {
-                    width: parent.width
-                    text: model.title
-                    highlighted: ListView.isCurrentItem
+            Column{
+                id: column
+                x: 40
+                y: 20
+                anchors.left: parent.left
+                anchors.leftMargin: 40
+                anchors.top: parent.top
+                anchors.topMargin: 20
+                spacing: 20
+
+                Image {
+                    id: logo
+                    width: 100
+                    height: 100
+                    fillMode: Image.PreserveAspectFit
+                    source: "./Images/ryujinxLogo.png"
                 }
 
-                model: ListModel {
-                    ListElement { title: "Games"}
-                    ListElement { title: "Settings"}
-                    ListElement { title: "Exit"}
+                Label {
+                    id: appLabel
+                    text: qsTr("Ryujinx")
+                    font.bold: true
+                    font.pointSize: 16
+                    font.weight: Font.Bold
+                    lineHeight: 1.2
                 }
 
-                ScrollIndicator.vertical: ScrollIndicator { }
+                Rectangle{
+                    id: rectangle
+                    anchors.top: appLabel.bottom
+                    anchors.topMargin: 20
+
+                    ListView {
+                        id: drawerMenuList
+                        width: 100
+                        height: 120
+                        anchors.top: parent.top
+                        anchors.topMargin: 0
+                        currentIndex: -1
+
+                        delegate: ItemDelegate {
+                            width: parent.width
+                            text: model.title
+                            highlighted: ListView.isCurrentItem
+                        }
+
+                        model: ListModel {
+                            ListElement { title: "Games"}
+                            ListElement { title: "Settings"}
+                            ListElement { title: "Exit"}
+                        }
+
+                        ScrollIndicator.vertical: ScrollIndicator { }
+                    }
+
+                }
+
             }
+
+        }
     }
 
     FileDialog {
         id: loadDialog
         selectMultiple: false
         nameFilters: ["Game Carts (*.xci)",
-                      "Application Packages (*.nca *.nsp)",
-                      "Executable (*.nso *.nro)",
-                      "All Supported Formats (*.xci *.nca *.nsp *.nso *.nro)"]
-
-        Component.onCompleted: visible = false
+            "Application Packages (*.nca *.nsp)",
+            "Executable (*.nso *.nro)",
+            "All Supported Formats (*.xci *.nca *.nsp *.nso *.nro)"]
+        folder: shortcuts.home
 
         function loadGame() {
             selectFolder = false
             title        = qsTr("Load Game File")
 
-            show()
+            open()
         }
 
         function loadGameFolder() {
             selectFolder = true
             title        = qsTr("Load Game Folder")
 
-            show()
+            open()
         }
     }
 }
+
+/*##^## Designer {
+    D{i:272;anchors_height:120;anchors_width:100}
+}
+ ##^##*/
