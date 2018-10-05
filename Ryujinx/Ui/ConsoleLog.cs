@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Ryujinx
 {
-    static class ConsoleLog
+    public static class ConsoleLog
     {
         private static Thread MessageThread;
 
@@ -26,31 +26,7 @@ namespace Ryujinx
                 { LogLevel.Error,   ConsoleColor.Red      }
             };
 
-            MessageQueue = new BlockingCollection<LogEventArgs>();
-
-            ConsoleLock = new object();
-
-            MessageThread = new Thread(() =>
-            {
-                while (!MessageQueue.IsCompleted)
-                {
-                    try
-                    {
-                        PrintLog(MessageQueue.Take());
-                    }
-                    catch (InvalidOperationException)
-                    {
-                        // IOE means that Take() was called on a completed collection.
-                        // Some other thread can call CompleteAdding after we pass the
-                        // IsCompleted check but before we call Take.
-                        // We can simply catch the exception since the loop will break
-                        // on the next iteration.
-                    }
-                }
-            });
-
-            MessageThread.IsBackground = true;
-            MessageThread.Start();
+            Start();
         }
 
         private static void PrintLog(LogEventArgs e)
@@ -83,6 +59,45 @@ namespace Ryujinx
             {
                 MessageQueue.Add(e);
             }
+        }
+
+        public static void Stop()
+        {
+            MessageQueue?.CompleteAdding();
+        }
+
+        public static void Start()
+        {
+            if (MessageQueue != null && !MessageQueue.IsCompleted)
+            {
+                return;
+            }
+
+            MessageQueue = new BlockingCollection<LogEventArgs>();
+
+            ConsoleLock = new object();
+
+            MessageThread = new Thread(() =>
+            {
+                while (!MessageQueue.IsCompleted)
+                {
+                    try
+                    {
+                        PrintLog(MessageQueue.Take());
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        // IOE means that Take() was called on a completed collection.
+                        // Some other thread can call CompleteAdding after we pass the
+                        // IsCompleted check but before we call Take.
+                        // We can simply catch the exception since the loop will break
+                        // on the next iteration.
+                    }
+                }
+            });
+
+            MessageThread.IsBackground = true;
+            MessageThread.Start();
         }
     }
 }

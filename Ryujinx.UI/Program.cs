@@ -1,5 +1,7 @@
 ﻿using Qml.Net;
-using System;
+using Ryujinx.UI.Emulation;
+
+using static Qml.Net.Qml;
 
 namespace Ryujinx.UI
 {
@@ -7,12 +9,14 @@ namespace Ryujinx.UI
     {
         static int Main(string[] args)
         {
-            QQuickStyle.SetStyle("Material");
+            QQuickStyle.SetStyle("Fusion");
 
             using (var Application = new QGuiApplication(args))
             {
                 using (var QmlEngine = new QQmlApplicationEngine())
                 {
+                    RegisterType<EmulationController>("Ryujinx");
+
                     QmlEngine.Load("UI/MainWindow.qml");
 
                     return Application.Exec();

@@ -1,10 +1,11 @@
 using Ryujinx.Graphics.Memory;
 using System.Collections.Concurrent;
 using System.Threading;
+using System;
 
 namespace Ryujinx.Graphics
 {
-    public class NvGpuFifo
+    public class NvGpuFifo : IDisposable
     {
         private const int MacrosCount    = 0x80;
         private const int MacroIndexMask = MacrosCount - 1;
@@ -198,6 +199,16 @@ namespace Ryujinx.Graphics
         private void CallM2mfMethod(NvGpuVmm Vmm, NvGpuPBEntry PBEntry)
         {
             Gpu.EngineM2mf.CallMethod(Vmm, PBEntry);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool Disposing)
+        {
+            BufferQueue.Clear();
         }
     }
 }

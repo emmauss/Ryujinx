@@ -1,8 +1,9 @@
 using Ryujinx.Graphics.Gal;
+using System;
 
 namespace Ryujinx.Graphics
 {
-    public class NvGpu
+    public class NvGpu : IDisposable
     {
         public IGalRenderer Renderer { get; private set; }
 
@@ -27,6 +28,16 @@ namespace Ryujinx.Graphics
             Engine3d   = new NvGpuEngine3d(this);
             EngineM2mf = new NvGpuEngineM2mf(this);
             EngineP2mf = new NvGpuEngineP2mf(this);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool Disposing)
+        {
+            Fifo.Dispose();
         }
     }
 }

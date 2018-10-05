@@ -1,8 +1,10 @@
-import QtQuick 2.9
+import QtQuick 2.11
 import QtQuick.Layouts 1.3
-import QtQuick.Controls 2.3
-import QtQuick.Controls.Material 2.1
-import QtQuick.Dialogs 1.0
+import QtQuick.Controls 2.4
+import QtQuick.Controls.Material 2.4
+import QtQuick.Dialogs 1.3
+
+import Ryujinx 1.0
 
 ApplicationWindow {
     id: window
@@ -11,9 +13,39 @@ ApplicationWindow {
     visible: true
     title: "Ryujinx"
 
-    Material.theme: Material.Light
-    Material.accent: '#41cd52'
-    Material.primary: '#41cd52'
+    menuBar: MenuBar {
+        Menu{
+            leftPadding: 5
+            leftMargin: 0
+            title: "&File"
+
+
+            MenuItem {
+                id: loadGameMenuItem
+                text: "Load Game File"
+                onClicked: {
+                    loadDialog.loadGame()
+                }
+            }
+
+            MenuItem {
+                id: loadGameFolderMenuItem
+                text: "Load Game Folder"
+                onClicked: {
+                    loadDialog.loadGame()
+                }
+            }
+
+            MenuSeparator{}
+
+            MenuItem {
+                text: "Exit"
+                onClicked: {
+                    Qt.quit()
+                }
+            }
+        }
+    }
 
     header: ToolBar {
         id: toolBar
@@ -23,23 +55,6 @@ ApplicationWindow {
             anchors.fill: parent
             spacing: 20
 
-            ToolButton {
-                id: drawerButton
-                text: qsTr("")
-                spacing: 3
-                display: AbstractButton.IconOnly
-                icon.source: !drawer.visible ? "./Images/drawer.png"
-                                             : "./Images/arrowBack.svg"
-
-                onClicked: {
-                    if (drawer.visible) {
-                        drawer.close()
-                    } else {
-                        drawer.open()
-                    }
-                }
-            }
-
             RowLayout {
                 id: mainControlPanel
                 spacing: 20
@@ -48,7 +63,8 @@ ApplicationWindow {
 
                 ToolButton {
                     id: openGameFileButton
-                    display: AbstractButton.IconOnly
+                    text: qsTr("Load Game File")
+                    display: AbstractButton.TextUnderIcon
                     icon.source: "./Images/loadGame.svg"
                     ToolTip {
                         text: qsTr("Load Game File")
@@ -61,7 +77,8 @@ ApplicationWindow {
 
                 ToolButton {
                     id: openGameFolderButton
-                    display: AbstractButton.IconOnly
+                    text: qsTr("Load Game Folder")
+                    display: AbstractButton.TextUnderIcon
                     icon.source: "./Images/loadFolder.svg"
                     ToolTip {
                         text: qsTr("Load Game Folder")
@@ -69,6 +86,24 @@ ApplicationWindow {
 
                     onClicked: {
                         loadDialog.loadGameFolder()
+                    }
+                }
+
+                ToolSeparator{}
+
+                ToolButton {
+                    id: closeGameButton
+                    text: qsTr("Stop")
+                    display: AbstractButton.TextUnderIcon
+                    icon.source: "./Images/closeGame.svg"
+                    enabled: false
+
+                    ToolTip {
+                        text: qsTr("Close Current Game")
+                    }
+
+                    onClicked: {
+                        controller.shutdownEmulation()
                     }
                 }
             }
@@ -80,77 +115,6 @@ ApplicationWindow {
         anchors.fill: parent
     }
 
-    Drawer {
-        id: drawer
-        width: window.width / 3
-        height: window.height
-        topMargin: toolBar.height
-        spacing: 10
-
-        Rectangle{
-
-            Column{
-                id: column
-                x: 40
-                y: 20
-                anchors.left: parent.left
-                anchors.leftMargin: 40
-                anchors.top: parent.top
-                anchors.topMargin: 20
-                spacing: 20
-
-                Image {
-                    id: logo
-                    width: 100
-                    height: 100
-                    fillMode: Image.PreserveAspectFit
-                    source: "./Images/ryujinxLogo.png"
-                }
-
-                Label {
-                    id: appLabel
-                    text: qsTr("Ryujinx")
-                    font.bold: true
-                    font.pointSize: 16
-                    font.weight: Font.Bold
-                    lineHeight: 1.2
-                }
-
-                Rectangle{
-                    id: rectangle
-                    anchors.top: appLabel.bottom
-                    anchors.topMargin: 20
-
-                    ListView {
-                        id: drawerMenuList
-                        width: 100
-                        height: 120
-                        anchors.top: parent.top
-                        anchors.topMargin: 0
-                        currentIndex: -1
-
-                        delegate: ItemDelegate {
-                            width: parent.width
-                            text: model.title
-                            highlighted: ListView.isCurrentItem
-                        }
-
-                        model: ListModel {
-                            ListElement { title: "Games"}
-                            ListElement { title: "Settings"}
-                            ListElement { title: "Exit"}
-                        }
-
-                        ScrollIndicator.vertical: ScrollIndicator { }
-                    }
-
-                }
-
-            }
-
-        }
-    }
-
     FileDialog {
         id: loadDialog
         selectMultiple: false
@@ -159,6 +123,17 @@ ApplicationWindow {
             "Executable (*.nso *.nro)",
             "All Supported Formats (*.xci *.nca *.nsp *.nso *.nro)"]
         folder: shortcuts.home
+
+        onAccepted: {
+            if(selectFolder )
+            {
+                controller.loadGameFolder(fileUrl)
+            }
+            else
+            {
+                controller.loadGameFile(fileUrl)
+            }
+        }
 
         function loadGame() {
             selectFolder = false
@@ -174,9 +149,47 @@ ApplicationWindow {
             open()
         }
     }
-}
 
-/*##^## Designer {
-    D{i:272;anchors_height:120;anchors_width:100}
+
+
+    EmulationController {
+        id: controller
+
+        onFailed: function(result) {
+           // alertBox.title = "Failed to load game"
+           // alertBox.text  = result
+
+           // alertBox.open()
+
+            loadGameMenuItem.enabled       = true
+            loadGameFolderMenuItem.enabled = true
+            openGameFileButton.enabled     = true
+            openGameFolderButton.enabled   = true
+            closeGameButton.enabled        = false
+        }
+
+        onSuccess: {
+            loadGameMenuItem.enabled       = false
+            loadGameFolderMenuItem.enabled = false
+            openGameFileButton.enabled     = false
+            openGameFolderButton.enabled   = false
+            closeGameButton.enabled        = true
+        }
+
+        onLoaded: {
+            loadGameMenuItem.enabled       = false
+            loadGameFolderMenuItem.enabled = false
+            openGameFileButton.enabled     = false
+            openGameFolderButton.enabled   = false
+            closeGameButton.enabled        = true
+        }
+
+        onUnloaded: {
+            loadGameMenuItem.enabled       = true
+            loadGameFolderMenuItem.enabled = true
+            openGameFileButton.enabled     = true
+            openGameFolderButton.enabled   = true
+            closeGameButton.enabled        = false
+        }
+    }
 }
- ##^##*/

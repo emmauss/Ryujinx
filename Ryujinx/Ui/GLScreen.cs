@@ -60,7 +60,7 @@ namespace Ryujinx
 
             long Ticks = 0;
 
-            while (Exists && !IsExiting)
+            while (!IsDisposed && Exists && !IsExiting)
             {
                 if (Device.WaitFifo())
                 {
@@ -109,7 +109,7 @@ namespace Ryujinx
             {
                 ProcessEvents();
 
-                if (!IsExiting)
+                if (!IsDisposed && !IsExiting)
                 {
                     UpdateFrame();
 
@@ -266,11 +266,18 @@ namespace Ryujinx
 
             TitleEvent = true;
 
-            SwapBuffers();
+            if (!IsDisposed && Exists)
+            {
+                SwapBuffers();
+            }
+            else
+            {
+
+            }
 
             Device.System.SignalVsync();
 
-            Device.VsyncEvent.Set();
+            Device.VsyncEvent?.Set();
         }
 
         protected override void OnUnload(EventArgs e)

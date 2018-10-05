@@ -50,5 +50,10 @@ namespace Ryujinx.Graphics.Gal.OpenGL
                 RenderAction();
             }
         }
+
+        public void ClearActions()
+        {
+            ActionsQueue.Clear();
+        }
     }
 }

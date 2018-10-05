@@ -120,6 +120,8 @@ namespace Ryujinx.HLE
                 System.Dispose();
 
                 VsyncEvent.Dispose();
+
+                Gpu.Dispose();
             }
         }
     }

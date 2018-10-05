@@ -8,6 +8,8 @@ namespace Ryujinx.Graphics.Gal
 
         void RunActions();
 
+        void ClearActions();
+
         IGalConstBuffer Buffer { get; }
 
         IGalRenderTarget RenderTarget { get; }
