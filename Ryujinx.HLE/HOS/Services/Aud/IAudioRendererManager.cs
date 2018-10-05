@@ -163,21 +163,26 @@ namespace Ryujinx.HLE.HOS.Services.Aud
             return Result / 8;
         }
 
+        // GetAudioDeviceService(nn::applet::AppletResourceUserId) -> object<nn::audio::detail::IAudioDevice>
         public long GetAudioDeviceService(ServiceCtx Context)
         {
-            long UserId = Context.RequestData.ReadInt64();
+            long AppletResourceUserId = Context.RequestData.ReadInt64();
 
             MakeObject(Context, new IAudioDevice(Context.Device.System));
 
             return 0;
         }
 
+        // GetAudioDeviceServiceWithRevisionInfo(nn::applet::AppletResourceUserId, u32) -> object<nn::audio::detail::IAudioDevice>
         private long GetAudioDeviceServiceWithRevisionInfo(ServiceCtx Context)
         {
-            Context.Device.Log.PrintStub(LogClass.ServiceAudio, "Stubbed.");
+            long AppletResourceUserId = Context.RequestData.ReadInt64();
+            int  RevisionInfo         = Context.RequestData.ReadInt32();
+
+            Context.Device.Log.PrintStub(LogClass.ServiceAudio, $"Stubbed. AppletResourceUserId: {AppletResourceUserId} - " +
+                                                                $"RevisionInfo: {RevisionInfo}");
 
             return GetAudioDeviceService(Context);
         }
-
     }
 }

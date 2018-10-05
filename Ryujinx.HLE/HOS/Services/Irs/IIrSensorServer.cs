@@ -23,24 +23,22 @@ namespace Ryujinx.HLE.HOS.Services.Irs
             };
         }
 
+        // ActivateIrsensor(nn::applet::AppletResourceUserId, pid)
         public long ActivateIrsensor(ServiceCtx Context)
         {
             long AppletResourceUserId = Context.RequestData.ReadInt64();
-            int  IrsSensorHandle      = Context.RequestData.ReadInt32();
 
-            Context.Device.Log.PrintStub(LogClass.ServiceIrs, $"Stubbed. AppletResourceUserId: {AppletResourceUserId} - " +
-                                                              $"IrsSensorHandle: {IrsSensorHandle}");
+            Context.Device.Log.PrintStub(LogClass.ServiceIrs, $"Stubbed. AppletResourceUserId: {AppletResourceUserId}");
 
             return 0;
         }
 
+        // DeactivateIrsensor(nn::applet::AppletResourceUserId, pid)
         public long DeactivateIrsensor(ServiceCtx Context)
         {
             long AppletResourceUserId = Context.RequestData.ReadInt64();
-            int  IrsSensorHandle      = Context.RequestData.ReadInt32();
 
-            Context.Device.Log.PrintStub(LogClass.ServiceIrs, $"Stubbed. AppletResourceUserId: {AppletResourceUserId} - " +
-                                                              $"IrsSensorHandle: {IrsSensorHandle}");
+            Context.Device.Log.PrintStub(LogClass.ServiceIrs, $"Stubbed. AppletResourceUserId: {AppletResourceUserId}");
 
             return 0;
         }

@@ -22,8 +22,13 @@ namespace Ryujinx.HLE.HOS.Services.Mm
             };
         }
 
+        // InitializeOld(u32, u32, u32)
         public long InitializeOld(ServiceCtx Context)
         {
+            int Unknown0 = Context.RequestData.ReadInt32();
+            int Unknown1 = Context.RequestData.ReadInt32();
+            int Unknown2 = Context.RequestData.ReadInt32();
+
             Context.Device.Log.PrintStub(LogClass.ServiceMm, "Stubbed.");
 
             return 0;

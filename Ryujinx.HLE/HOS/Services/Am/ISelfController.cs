@@ -150,20 +150,22 @@ namespace Ryujinx.HLE.HOS.Services.Am
             return 0;
         }
 
+        // SetIdleTimeDetectionExtension(u32)
         public long SetIdleTimeDetectionExtension(ServiceCtx Context)
         {
             IdleTimeDetectionExtension = Context.RequestData.ReadInt32();
 
-            Context.Device.Log.PrintStub(LogClass.ServiceAm, $"Stubbed. IdleTimeDetectionExtension = {IdleTimeDetectionExtension}");
+            Context.Device.Log.PrintStub(LogClass.ServiceAm, $"Stubbed. IdleTimeDetectionExtension: {IdleTimeDetectionExtension}");
 
             return 0;
         }
 
+        // GetIdleTimeDetectionExtension() -> u32
         public long GetIdleTimeDetectionExtension(ServiceCtx Context)
         {
             Context.ResponseData.Write(IdleTimeDetectionExtension);
 
-            Context.Device.Log.PrintStub(LogClass.ServiceAm, $"Stubbed. IdleTimeDetectionExtension = {IdleTimeDetectionExtension}");
+            Context.Device.Log.PrintStub(LogClass.ServiceAm, $"Stubbed. IdleTimeDetectionExtension: {IdleTimeDetectionExtension}");
 
             return 0;
         }
