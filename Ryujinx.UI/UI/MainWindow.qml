@@ -36,6 +36,16 @@ ApplicationWindow {
                 }
             }
 
+            MenuItem {
+                id: configMenuItem
+                text: "Configuration"
+                onClicked: {
+                    var component = Qt.createComponent("./Views/Configuration.qml")
+                    var configWindow    = component.createObject(window)
+                    configWindow.show()
+                }
+            }
+
             MenuSeparator{}
 
             MenuItem {
