@@ -12,50 +12,48 @@ Window {
     title: "Configuration"
     modality: Qt.ApplicationModal
 
-    Column{
+    ColumnLayout {
         spacing: 10
         id: contentColumn
-        height: configWindow.height
-        width: configWindow.width
+        anchors.rightMargin: 10
+        anchors.leftMargin: 10
+        anchors.bottomMargin: 10
+        anchors.topMargin: 10
+        anchors.fill: parent
 
         TabBar {
             id: configTabs
+            Layout.fillHeight: false
+            Layout.fillWidth: true
             currentIndex: 0
-            height: 50
-            width: parent.width
 
             TabButton {
                 width: 80
-                height: 50
                 text: qsTr("General")
-                checked: true
             }
 
-            /*TabButton {
+            TabButton {
+                width: 80
                 text: qsTr("Controls")
-            }*/
+            }
 
             TabButton {
-                x: 80
-                y: 0
                 width: 80
                 text: qsTr("Misc")
-                checked: false
-                height: 50
             }
         }
 
         StackLayout {
             id: pagesView
+            Layout.fillHeight: true
+            Layout.fillWidth: true
             currentIndex: configTabs.currentIndex
-            width: contentColumn.width
-            height: contentColumn.height
-                    - configTabs.height
-                    - bottomRow.height
-                    - (contentColumn.spacing * 3)
+
 
             Item {
                 id: genConfigPage
+                Layout.fillHeight: true
+                Layout.fillWidth: true
 
                 Loader {
                     source: "./GeneralSettings.qml"
@@ -66,7 +64,22 @@ Window {
             }
 
             Item {
+                id: controlConfigPage
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+
+                Loader {
+                    source: "./ControlsSettings.qml"
+
+                    width: pagesView.width
+                    height: pagesView.height
+                }
+            }
+
+            Item {
                 id: miscConfigPage
+                Layout.fillHeight: true
+                Layout.fillWidth: true
 
                 Loader {
                     source: "./MiscSettings.qml"
@@ -74,19 +87,13 @@ Window {
                     height: pagesView.height
                 }
             }
-
-            /*onIndexChanged: {
-                if(currentIndex !== configContent.currentIndex){
-                    configContent.currentIndex = currentIndex
-                }
-            }*/
         }
 
-        Row {
+        RowLayout {
             spacing: 20
             id: bottomRow
-            anchors.right: parent.right
-            anchors.rightMargin: 55
+            Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+            Layout.fillWidth: true
 
             Button{
                 id: acceptButton

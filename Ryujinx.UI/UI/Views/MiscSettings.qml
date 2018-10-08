@@ -6,33 +6,40 @@ Frame {
     id: miscSettingsFrame
     width: 500
     height: 480
-    Column{
+    ColumnLayout {
         anchors.fill: parent
 
         GroupBox {
-            anchors.fill: parent
+            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            Layout.fillHeight: false
+            Layout.fillWidth: true
             title: qsTr("Logging")
 
-            Column {
+            ColumnLayout {
                 id: column
                 anchors.fill: parent
                 CheckBox {
                     id: loggingCheckBox
                     text: "Enable Logging"
+                    Layout.fillHeight: false
+                    Layout.fillWidth: true
 
                 }
 
-                Row {
+                RowLayout {
                     id: row
-                    anchors.top: loggingCheckBox.bottom
-                    anchors.topMargin: 0
+                    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                    Layout.fillHeight: false
+                    Layout.fillWidth: true
+
                     GroupBox {
                         id: logLevelsGroup
+                        Layout.fillHeight: true
+                        Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+                        Layout.fillWidth: false
                         title: qsTr("Log Levels")
 
-                        Column {
-                            anchors.fill: parent
-
+                        ColumnLayout {
                             CheckBox {
                                 id: debugLogCheckBox
                                 text: "Debug"
@@ -62,21 +69,16 @@ Frame {
 
                     GroupBox {
                         id: groupBox
-                        anchors.left: logLevelsGroup.right
-                        anchors.leftMargin: 0
                         title: qsTr("Log Classes")
-                        width: Math.min(200, column.width - logLevelsGroup.width) - 20
-                        height: logLevelsGroup.height
+                        Layout.fillHeight: true
+                        Layout.fillWidth: true
 
-                        Column {
-                            id: column1
+                        TextEdit {
+                            id: logClassesTextArea
+                            selectionColor: "#004a80"
+                            renderType: Text.NativeRendering
                             anchors.fill: parent
 
-                            TextArea {
-                                id: logClassesTextArea
-                                anchors.fill: parent
-
-                            }
                         }
                     }
 
@@ -85,8 +87,3 @@ Frame {
         }
     }
 }
-
-/*##^## Designer {
-    D{i:29;anchors_height:-243;anchors_width:-111}D{i:4;anchors_height:0;anchors_width:0}
-}
- ##^##*/
