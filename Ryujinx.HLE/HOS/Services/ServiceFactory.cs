@@ -1,5 +1,6 @@
 using Ryujinx.HLE.HOS.Services.Acc;
 using Ryujinx.HLE.HOS.Services.Am;
+using Ryujinx.HLE.HOS.Services.Aoc;
 using Ryujinx.HLE.HOS.Services.Apm;
 using Ryujinx.HLE.HOS.Services.Aud;
 using Ryujinx.HLE.HOS.Services.Bsd;
@@ -40,7 +41,7 @@ namespace Ryujinx.HLE.HOS.Services
                     return new IAccountService();
 
                 case "aoc:u":
-                    return new IAddOnContentManager();
+                    return new IAddOnContentManager(System);
 
                 case "apm":
                     return new IManager();

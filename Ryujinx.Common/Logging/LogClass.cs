@@ -15,6 +15,7 @@ namespace Ryujinx.Common.Logging
         Service,
         ServiceAcc,
         ServiceAm,
+        ServiceAoc,
         ServiceApm,
         ServiceAudio,
         ServiceBsd,
