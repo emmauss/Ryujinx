@@ -6,15 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OpenTK.NetStandard" Version="1.0.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="OpenTK.NetStandard" Version="1.0.7-prerelease" />
     <PackageReference Include="Qml.Net" Version="0.6.2" />
-    <PackageReference Include="Qml.Net.LinuxBinaries" Version="0.6.2" />
-    <PackageReference Include="Qml.Net.OSXBinaries" Version="0.6.2" />
     <PackageReference Include="Qml.Net.WindowsBinaries" Version="0.6.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="UI\Models\" />
     <Folder Include="UI\Views\" />
   </ItemGroup>
 

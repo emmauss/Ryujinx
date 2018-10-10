@@ -12,8 +12,8 @@ namespace Ryujinx
 {
     public static class Config
     {
-        public static JoyConKeyboard   JoyConKeyboard   { get; private set; }
-        public static JoyConController JoyConController { get; private set; }
+        public static JoyConKeyboard   JoyConKeyboard   { get; set; }
+        public static JoyConController JoyConController { get; set; }
 
         public static void Read(Switch Device)
         {
@@ -138,7 +138,7 @@ namespace Ryujinx
                 });
         }
 
-        private static ControllerInputID ToID(string Key)
+        public static ControllerInputID ToID(string Key)
         {
             switch (Key.ToUpper())
             {

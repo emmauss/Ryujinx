@@ -16,8 +16,9 @@ namespace Ryujinx.UI.Emulation
     [Signal("unloaded")]
     class EmulationController
     {
+        public static Switch Device;
+
         private static GLScreen     RenderScreen;
-        private static Switch       Device;
         private static IAalOutput   AudioOut;
         private static IGalRenderer Renderer;
 

@@ -1,5 +1,7 @@
 ﻿using Qml.Net;
 using Ryujinx.UI.Emulation;
+using Ryujinx.UI.UI.Models;
+using OpenTK.Platform;
 
 using static Qml.Net.Qml;
 
@@ -16,8 +18,11 @@ namespace Ryujinx.UI
                 using (var QmlEngine = new QQmlApplicationEngine())
                 {
                     RegisterType<EmulationController>("Ryujinx");
+                    RegisterType<ConfigurationModel>("Ryujinx");
 
                     QmlEngine.Load("UI/MainWindow.qml");
+
+                    OpenTK.Toolkit.Init();
 
                     return Application.Exec();
                 }

@@ -3,6 +3,7 @@ import QtQuick.Window 2.11
 import QtQuick.Layouts 1.3
 import QtQuick.Templates 2.4
 import QtQuick.Controls 2.3
+import Ryujinx 1.0
 
 Window {
     id: configWindow
@@ -11,6 +12,10 @@ Window {
     color: "#f0efef"
     title: "Configuration"
     modality: Qt.ApplicationModal
+
+    onClosing: {
+        configModel.dispose()
+    }
 
     ColumnLayout {
         spacing: 10
@@ -102,6 +107,7 @@ Window {
                 text: "OK"
 
                 onClicked: {
+                    configModel.save()
 
                     configWindow.close()
                 }
@@ -115,10 +121,15 @@ Window {
                 visible: true
 
                 onClicked: {
+                    configModel.discard()
 
                     configWindow.close()
                 }
             }
        }
+    }
+
+    ConfigurationModel {
+        id: configModel
     }
 }
