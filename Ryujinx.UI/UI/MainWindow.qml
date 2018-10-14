@@ -160,16 +160,20 @@ ApplicationWindow {
         }
     }
 
-
+    MessageDialog {
+        id: alertBox
+        standardButtons: StandardButton.Close
+        icon: StandardIcon.Critical
+    }
 
     EmulationController {
         id: controller
 
-        onFailed: function(result) {
-           // alertBox.title = "Failed to load game"
-           // alertBox.text  = result
+        onFailed: function(error, message) {
+            alertBox.title = error
+            alertBox.text  = message
 
-           // alertBox.open()
+            alertBox.open()
 
             loadGameMenuItem.enabled       = true
             loadGameFolderMenuItem.enabled = true

@@ -10,7 +10,7 @@ using System.Threading;
 
 namespace Ryujinx.UI.Emulation
 {
-    [Signal("failed", NetVariantType.String)]
+    [Signal("failed", NetVariantType.String, NetVariantType.String)]
     [Signal("success")]
     [Signal("loaded")]
     [Signal("unloaded")]
@@ -64,7 +64,7 @@ namespace Ryujinx.UI.Emulation
 
             if (!File.Exists(GameFile))
             {
-                this.ActivateSignal("failed", $"File {GameFile} does not exist.");
+                this.ActivateSignal("failed", "File not found.", $"File {GameFile} does not exist.");
 
                 return;
             }
@@ -104,7 +104,7 @@ namespace Ryujinx.UI.Emulation
         {
             if (!Directory.Exists(ExeFsPath))
             {
-                this.ActivateSignal("failed", $"Directory {ExeFsPath} does not exist.");
+                this.ActivateSignal("failed", "Path not found", $"Directory {ExeFsPath} does not exist.");
 
                 return;
             }

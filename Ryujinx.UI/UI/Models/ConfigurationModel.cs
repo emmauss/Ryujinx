@@ -14,6 +14,7 @@ namespace Ryujinx.UI.UI.Models
 {
     [Signal("waitReleased")]
     [Signal("showWaitDialog")]
+    [Signal("showError", NetVariantType.String, NetVariantType.String)]
     public class ConfigurationModel
     {
         private static Settings   CurrentSettings;
@@ -110,7 +111,7 @@ namespace Ryujinx.UI.UI.Models
             
             while (IsWaiting)
             {
-                await Task.Delay(16);
+                await Task.Delay(17);
 
                 KeyboardState Keyboard = GetState();
 
@@ -149,110 +150,166 @@ namespace Ryujinx.UI.UI.Models
 
         public async Task<string> GetGamePadInput(string SettingKey, int GamePadIndex)
         {
-            float TriggerThreshold = CurrentSettings.GetValue<float>("GamePad_Trigger_Threshold");
+            double TriggerThreshold = CurrentSettings.GetValue<double>("GamePad_Trigger_Threshold");
 
-            while (true)
+            RefreshInputDevices();
+
+            if (GamePadIndex >= GamePadStates.Length)
             {
-                await Task.Delay(33);
+                this.ActivateSignal("showError", "Failed to find GamePad", $"GamePad at Index {GamePadIndex} is not available");
 
-                RefreshInputDevices();
-
-                if (GamePadIndex >= GamePadStates.Length)
-                {
-                    // TODO :throw error here 
-
-                    return string.Empty;
-                }
-
-                if(GamePadStates[GamePadIndex].Buttons.IsAnyButtonPressed)
-                {
-                    if (GamePadStates[GamePadIndex].Buttons.A == ButtonState.Pressed)
-                    {
-                        CurrentSettings.SetValue(SettingKey, "A");
-
-                        return "A";
-                    }
-                    if (GamePadStates[GamePadIndex].Buttons.B == ButtonState.Pressed)
-                    {
-                        CurrentSettings.SetValue(SettingKey, "B");
-
-                        return "B";
-                    }
-                    if (GamePadStates[GamePadIndex].Buttons.X == ButtonState.Pressed)
-                    {
-                        CurrentSettings.SetValue(SettingKey, "X");
-
-                        return "X";
-                    }
-                    if (GamePadStates[GamePadIndex].Buttons.Y == ButtonState.Pressed)
-                    {
-                        CurrentSettings.SetValue(SettingKey, "Y");
-
-                        return "Y";
-                    }
-                    if (GamePadStates[GamePadIndex].Buttons.LeftShoulder == ButtonState.Pressed)
-                    {
-                        CurrentSettings.SetValue(SettingKey, "LShoulder");
-
-                        return "LShoulder";
-                    }
-                    if (GamePadStates[GamePadIndex].Buttons.RightShoulder == ButtonState.Pressed)
-                    {
-                        CurrentSettings.SetValue(SettingKey, "RShoulder");
-
-                        return "RShoulder";
-                    }
-                    if (GamePadStates[GamePadIndex].Buttons.LeftStick == ButtonState.Pressed)
-                    {
-                        CurrentSettings.SetValue(SettingKey, "LStick");
-
-                        return "LStick";
-                    }
-                    if (GamePadStates[GamePadIndex].Buttons.RightStick == ButtonState.Pressed)
-                    {
-                        CurrentSettings.SetValue(SettingKey, "RStick");
-
-                        return "RStick";
-                    }
-                    if (GamePadStates[GamePadIndex].Buttons.Start == ButtonState.Pressed)
-                    {
-                        CurrentSettings.SetValue(SettingKey, "Start");
-
-                        return "Start";
-                    }
-                    if (GamePadStates[GamePadIndex].Buttons.Back == ButtonState.Pressed)
-                    {
-                        CurrentSettings.SetValue(SettingKey, "Back");
-
-                        return "Back";
-                    }
-                }
-                else if (GamePadStates[GamePadIndex].DPad.IsUp)
-                {
-                    CurrentSettings.SetValue(SettingKey, "DPadUp");
-
-                    return "A";
-                }
-                else if (GamePadStates[GamePadIndex].DPad.IsDown)
-                {
-                    CurrentSettings.SetValue(SettingKey, "DPadDown");
-
-                    return "DPadDown";
-                }
-                else if (GamePadStates[GamePadIndex].DPad.IsLeft)
-                {
-                    CurrentSettings.SetValue(SettingKey, "DPadLeft");
-
-                    return "DPadLeft";
-                }
-                else if (GamePadStates[GamePadIndex].DPad.IsRight)
-                {
-                    CurrentSettings.SetValue(SettingKey, "DPadRight");
-
-                    return "DPadRight";
-                }
+                return string.Empty;
             }
 
+            if (IsWaiting)
+            {
+                return string.Empty;
+            }
+
+            this.ActivateSignal("showWaitDialog");
+
+            IsWaiting = true;
+
+            try
+            {
+                while (IsWaiting)
+                {
+                    await Task.Delay(17);
+
+                    RefreshInputDevices();
+
+                    if (GamePadIndex >= GamePadStates.Length)
+                    {
+                        this.ActivateSignal("showError", "Failed to find GamePad", $"GamePad at Index {GamePadIndex} is not available");
+
+                        return string.Empty;
+                    }
+
+                    GamePadState SelectedGamePad = GamePadStates[GamePadIndex];
+
+                    if (SettingKey == "Controls_Left_JoyConController_Stick" || SettingKey == "Controls_Right_JoyConController_Stick")
+                    {
+                        // Check if Sticks have been moved since last update
+                        if (SelectedGamePad.ThumbSticks.Left.Length > 0.1)
+                        {
+                            CurrentSettings.SetValue(SettingKey, "LJoystick");
+
+                            return "LJoystick";
+                        }
+                        else if (SelectedGamePad.ThumbSticks.Right.Length  > 0.1)
+                        {
+                            CurrentSettings.SetValue(SettingKey, "RJoystick");
+
+                            return "RJoystick";
+                        }
+                    }
+                    else if (SelectedGamePad.Buttons.IsAnyButtonPressed)
+                    {
+                        if (SelectedGamePad.Buttons.A == ButtonState.Pressed)
+                        {
+                            CurrentSettings.SetValue(SettingKey, "A");
+
+                            return "A";
+                        }
+                        if (SelectedGamePad.Buttons.B == ButtonState.Pressed)
+                        {
+                            CurrentSettings.SetValue(SettingKey, "B");
+
+                            return "B";
+                        }
+                        if (SelectedGamePad.Buttons.X == ButtonState.Pressed)
+                        {
+                            CurrentSettings.SetValue(SettingKey, "X");
+
+                            return "X";
+                        }
+                        if (SelectedGamePad.Buttons.Y == ButtonState.Pressed)
+                        {
+                            CurrentSettings.SetValue(SettingKey, "Y");
+
+                            return "Y";
+                        }
+                        if (SelectedGamePad.Buttons.LeftShoulder == ButtonState.Pressed)
+                        {
+                            CurrentSettings.SetValue(SettingKey, "LShoulder");
+
+                            return "LShoulder";
+                        }
+                        if (SelectedGamePad.Buttons.RightShoulder == ButtonState.Pressed)
+                        {
+                            CurrentSettings.SetValue(SettingKey, "RShoulder");
+
+                            return "RShoulder";
+                        }
+                        if (SelectedGamePad.Buttons.LeftStick == ButtonState.Pressed)
+                        {
+                            CurrentSettings.SetValue(SettingKey, "LStick");
+
+                            return "LStick";
+                        }
+                        if (SelectedGamePad.Buttons.RightStick == ButtonState.Pressed)
+                        {
+                            CurrentSettings.SetValue(SettingKey, "RStick");
+
+                            return "RStick";
+                        }
+                        if (SelectedGamePad.Buttons.Start == ButtonState.Pressed)
+                        {
+                            CurrentSettings.SetValue(SettingKey, "Start");
+
+                            return "Start";
+                        }
+                        if (SelectedGamePad.Buttons.Back == ButtonState.Pressed)
+                        {
+                            CurrentSettings.SetValue(SettingKey, "Back");
+
+                            return "Back";
+                        }
+                        else if (SelectedGamePad.DPad.IsUp)
+                        {
+                            CurrentSettings.SetValue(SettingKey, "DPadUp");
+
+                            return "A";
+                        }
+                        else if (SelectedGamePad.DPad.IsDown)
+                        {
+                            CurrentSettings.SetValue(SettingKey, "DPadDown");
+
+                            return "DPadDown";
+                        }
+                        else if (SelectedGamePad.DPad.IsLeft)
+                        {
+                            CurrentSettings.SetValue(SettingKey, "DPadLeft");
+
+                            return "DPadLeft";
+                        }
+                        else if (SelectedGamePad.DPad.IsRight)
+                        {
+                            CurrentSettings.SetValue(SettingKey, "DPadRight");
+
+                            return "DPadRight";
+                        }
+                        else if (SelectedGamePad.Triggers.Left > TriggerThreshold)
+                        {
+                            CurrentSettings.SetValue(SettingKey, "LTrigger");
+
+                            return "LTrigger";
+                        }
+                        else if (SelectedGamePad.Triggers.Right > TriggerThreshold)
+                        {
+                            CurrentSettings.SetValue(SettingKey, "RTrigger");
+
+                            return "RTrigger";
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                ReleaseWait();
+            }
+
+            return string.Empty;
         }
     }
 }
