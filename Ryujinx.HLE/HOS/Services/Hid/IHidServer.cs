@@ -23,7 +23,7 @@ namespace Ryujinx.HLE.HOS.Services.Hid
         private bool UsbFullKeyControllerEnabled;
 
         private HidNpadJoyHoldType            NpadJoyHoldType;
-        private HidNpadStyle                  NpadStyleTag;
+        private HidNpadStyle                  NpadStyleSet;
         private HidNpadJoyAssignmentMode      NpadJoyAssignmentMode;
         private HidNpadHandheldActivationMode NpadHandheldActivationMode;
         private HidGyroscopeZeroDriftMode     GyroscopeZeroDriftMode;
@@ -153,7 +153,7 @@ namespace Ryujinx.HLE.HOS.Services.Hid
             PalmaOperationCompleteEvent = new KEvent(System);
 
             NpadJoyHoldType            = HidNpadJoyHoldType.Vertical;
-            NpadStyleTag               = HidNpadStyle.FullKey | HidNpadStyle.Dual | HidNpadStyle.Left | HidNpadStyle.Right;
+            NpadStyleSet               = HidNpadStyle.FullKey | HidNpadStyle.Dual | HidNpadStyle.Left | HidNpadStyle.Right | HidNpadStyle.Handheld;
             NpadJoyAssignmentMode      = HidNpadJoyAssignmentMode.Dual;
             NpadHandheldActivationMode = HidNpadHandheldActivationMode.Dual;
             GyroscopeZeroDriftMode     = HidGyroscopeZeroDriftMode.Standard;
@@ -652,12 +652,12 @@ namespace Ryujinx.HLE.HOS.Services.Hid
         // SetSupportedNpadStyleSet(nn::applet::AppletResourceUserId, nn::hid::NpadStyleTag)
         public long SetSupportedNpadStyleSet(ServiceCtx Context)
         {
-            NpadStyleTag = (HidNpadStyle)Context.RequestData.ReadInt32();
+            NpadStyleSet = (HidNpadStyle)Context.RequestData.ReadInt32();
 
             long AppletResourceUserId = Context.RequestData.ReadInt64();
 
             Logger.PrintStub(LogClass.ServiceHid, $"Stubbed. AppletResourceUserId: {AppletResourceUserId} - " +
-                                                  $"NpadStyleTag: {NpadStyleTag}");
+                                                  $"NpadStyleSet: {NpadStyleSet}");
 
             return 0;
         }
@@ -667,10 +667,10 @@ namespace Ryujinx.HLE.HOS.Services.Hid
         {
             long AppletResourceUserId = Context.RequestData.ReadInt64();
 
-            Context.ResponseData.Write((int)NpadStyleTag);
+            Context.ResponseData.Write((int)NpadStyleSet);
 
             Logger.PrintStub(LogClass.ServiceHid, $"Stubbed. AppletResourceUserId: {AppletResourceUserId} - " +
-                                                  $"NpadStyleTag: {NpadStyleTag}");
+                                                  $"NpadStyleSet: {NpadStyleSet}");
 
             return 0;
         }
