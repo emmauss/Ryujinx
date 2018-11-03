@@ -9,8 +9,8 @@ namespace Ryujinx.HLE.FileSystem
 {
     class FileSystemProvider : IFileSystemProvider
     {
-        private string BasePath;
-        private string RootPath;
+        private readonly string BasePath;
+        private readonly string RootPath;
 
         public FileSystemProvider(string BasePath, string RootPath)
         {
@@ -215,7 +215,7 @@ namespace Ryujinx.HLE.FileSystem
                 }
             }
 
-            throw new InvalidOperationException($"Path {BasePath} is not a child directory of {RootPath}");
+            throw new InvalidOperationException($"Path {Path} is not a child directory of {RootPath}");
         }
     }
 }
