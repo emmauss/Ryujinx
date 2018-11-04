@@ -23,8 +23,8 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             m_Commands = new Dictionary<int, ServiceProcessRequest>()
             {
                 { 1,    SetCurrentProcess                        },
-                { 11,   OpenBisFileSystem                        },
                 { 8,    OpenFileSystemWithId                     },
+                { 11,   OpenBisFileSystem                        },
                 { 18,   OpenSdCardFileSystem                     },
                 { 51,   OpenSaveDataFileSystem                   },
                 { 52,   OpenSaveDataFileSystemBySystemSaveDataId },

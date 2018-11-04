@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using LibHac;
+using Ryujinx.HLE.FileSystem;
 
 namespace Ryujinx.HLE.HOS.Services.Set
 {
@@ -18,6 +20,7 @@ namespace Ryujinx.HLE.HOS.Services.Set
         {
             m_Commands = new Dictionary<int, ServiceProcessRequest>()
             {
+                { 3,  GetFirmwareVersion  },
                 { 4,  GetFirmwareVersion2  },
                 { 23, GetColorSetId        },
                 { 24, SetColorSetId        },
@@ -25,10 +28,24 @@ namespace Ryujinx.HLE.HOS.Services.Set
             };
         }
 
+        public static long GetFirmwareVersion(ServiceCtx Context)
+        {
+            return GetFirmwareVersion2(Context);
+        }
+
         public static long GetFirmwareVersion2(ServiceCtx Context)
         {
             long ReplyPos  = Context.Request.RecvListBuff[0].Position;
             long ReplySize = Context.Request.RecvListBuff[0].Size;
+
+            byte[] FirmwareData = GetFirmwareData(Context.Device);
+
+            if (FirmwareData != null)
+            {
+                Context.Memory.WriteBytes(ReplyPos, FirmwareData);
+
+                return 0;
+            }
 
             const byte MajorFWVersion = 0x03;
             const byte MinorFWVersion = 0x00;
@@ -147,6 +164,49 @@ namespace Ryujinx.HLE.HOS.Services.Set
             }
 
             return 0;
+        }
+
+        public static byte[] GetFirmwareData(Switch Device)
+        {
+            byte[] Data = null;
+
+            long TitleId = 0x0100000000000809;
+
+            string Path = Device.System.ContentManager.GetInstalledPath(TitleId, ContentType.Data, StorageId.NandSystem);
+
+            if(string.IsNullOrWhiteSpace(Path))
+            {
+                return null;
+            }
+
+            FileStream FirmwareStream = File.Open(Path, FileMode.Open, FileAccess.Read);
+
+            Nca FirmwareContent = new Nca(Device.System.KeySet, FirmwareStream, false);
+
+            Stream RomFsStream = FirmwareContent.OpenSection(0, false, Device.System.FsIntegrityCheckLevel);
+
+            if(RomFsStream == null)
+            {
+                return null;
+            }
+
+            Romfs FirmwareRomFs = new Romfs(RomFsStream);
+
+            using(MemoryStream MemoryStream = new MemoryStream())
+            {
+                using (Stream FirmwareFile = FirmwareRomFs.OpenFile("/file"))
+                {
+                    FirmwareFile.CopyTo(MemoryStream);
+                }
+
+                Data = MemoryStream.ToArray();
+            }
+
+            FirmwareContent.Dispose();
+
+            FirmwareStream.Dispose();
+
+            return Data;
         }
     }
 }
