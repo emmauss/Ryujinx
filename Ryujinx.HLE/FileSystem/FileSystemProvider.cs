@@ -1,6 +1,7 @@
 ﻿using Ryujinx.HLE.HOS;
 using Ryujinx.HLE.HOS.Services.FspSrv;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 using static Ryujinx.HLE.HOS.ErrorCode;
@@ -76,26 +77,60 @@ namespace Ryujinx.HLE.FileSystem
             return 0;
         }
 
-        public string[] GetDirectories(string Path)
+        public DirectoryEntry[] GetDirectories(string Path)
         {
-            return Directory.GetDirectories(Path);
+            List<DirectoryEntry> Entries = new List<DirectoryEntry>();
+
+            foreach(string Directory in Directory.EnumerateDirectories(Path))
+            {
+                DirectoryEntry DirectoryEntry = new DirectoryEntry(Directory, DirectoryEntryType.Directory);
+
+                Entries.Add(DirectoryEntry);
+            }
+
+            return Entries.ToArray();
         }
 
-        public string[] GetEntries(string Path)
+        public DirectoryEntry[] GetEntries(string Path)
         {
-            string DirName = GetFullPath(Path);
-
-            if (Directory.Exists(DirName))
+            if (Directory.Exists(Path))
             {
-                return Directory.GetFileSystemEntries(DirName);
+                List<DirectoryEntry> Entries = new List<DirectoryEntry>();
+
+                foreach (string Directory in Directory.EnumerateDirectories(Path))
+                {
+                    DirectoryEntry DirectoryEntry = new DirectoryEntry(Directory, DirectoryEntryType.Directory);
+
+                    Entries.Add(DirectoryEntry);
+                }
+
+                foreach (string File in Directory.EnumerateFiles(Path))
+                {
+                    FileInfo FileInfo = new FileInfo(File);
+
+                    DirectoryEntry DirectoryEntry = new DirectoryEntry(File, DirectoryEntryType.File, FileInfo.Length);
+
+                    Entries.Add(DirectoryEntry);
+                }
             }
 
             return null;
         }
 
-        public string[] GetFiles(string Path)
+        public DirectoryEntry[] GetFiles(string Path)
         {
-            return Directory.GetFiles(Path);
+            List<DirectoryEntry> Entries = new List<DirectoryEntry>();
+
+            foreach (string File in Directory.EnumerateFiles(Path))
+            {
+                FileInfo FileInfo = new FileInfo(File);
+
+                DirectoryEntry DirectoryEntry = new DirectoryEntry(File, DirectoryEntryType.File, FileInfo.Length);
+
+                Entries.Add(DirectoryEntry);
+            }
+
+            return Entries.ToArray();
         }
 
         public long GetFreeSpace(ServiceCtx Context)

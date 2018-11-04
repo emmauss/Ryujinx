@@ -340,15 +340,15 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
                 return MakeError(ErrorModule.Fs, FsErr.PathAlreadyInUse);
             }
 
-            foreach (string Entry in Provider.GetEntries(DirName))
+            foreach (DirectoryEntry Entry in Provider.GetEntries(DirName))
             {
-                if (Provider.DirectoryExists(Entry))
+                if (Provider.DirectoryExists(Entry.Path))
                 {
-                    Provider.DeleteDirectory(Entry, true);
+                    Provider.DeleteDirectory(Entry.Path, true);
                 }
-                else if (Provider.FileExists(Entry))
+                else if (Provider.FileExists(Entry.Path))
                 {
-                   Provider.DeleteFile(Entry);
+                   Provider.DeleteFile(Entry.Path);
                 }
             }
 

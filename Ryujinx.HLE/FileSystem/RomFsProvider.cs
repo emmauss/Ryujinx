@@ -10,11 +10,11 @@ using static Ryujinx.HLE.HOS.ErrorCode;
 
 namespace Ryujinx.HLE.FileSystem
 {
-    class RomFileSystemProvider : IFileSystemProvider
+    class RomFsProvider : IFileSystemProvider
     {
         private Romfs RomFs;
 
-        public RomFileSystemProvider(Stream StorageStream)
+        public RomFsProvider(Stream StorageStream)
         {
             RomFs = new Romfs(StorageStream);
         }
@@ -39,42 +39,50 @@ namespace Ryujinx.HLE.FileSystem
             throw new NotSupportedException();
         }
 
-        public string[] GetDirectories(string Path)
+        public DirectoryEntry[] GetDirectories(string Path)
         {
-            List<string> Directories = new List<string>();
+            List<DirectoryEntry> Directories = new List<DirectoryEntry>();
 
             foreach(RomfsDir Directory in RomFs.Directories)
             {
-                Directories.Add(Directory.Name);
+                DirectoryEntry DirectoryEntry = new DirectoryEntry(Directory.Name, DirectoryEntryType.Directory);
+
+                Directories.Add(DirectoryEntry);
             }
 
             return Directories.ToArray();
         }
 
-        public string[] GetEntries(string Path)
+        public DirectoryEntry[] GetEntries(string Path)
         {
-            List<string> Entries = new List<string>();
+            List<DirectoryEntry> Entries = new List<DirectoryEntry>();
 
             foreach (RomfsDir Directory in RomFs.Directories)
             {
-                Entries.Add(Directory.Name);
+                DirectoryEntry DirectoryEntry = new DirectoryEntry(Directory.Name, DirectoryEntryType.Directory);
+
+                Entries.Add(DirectoryEntry);
             }
 
             foreach (RomfsFile File in RomFs.Files)
             {
-                Entries.Add(File.Name);
+                DirectoryEntry DirectoryEntry = new DirectoryEntry(File.Name, DirectoryEntryType.File, File.DataLength);
+
+                Entries.Add(DirectoryEntry);
             }
 
             return Entries.ToArray();
         }
 
-        public string[] GetFiles(string Path)
+        public DirectoryEntry[] GetFiles(string Path)
         {
-            List<string> Files = new List<string>();
+            List<DirectoryEntry> Files = new List<DirectoryEntry>();
 
             foreach (RomfsFile File in RomFs.Files)
             {
-                Files.Add(File.Name);
+                DirectoryEntry DirectoryEntry = new DirectoryEntry(File.Name, DirectoryEntryType.File, File.DataLength);
+
+                Files.Add(DirectoryEntry);
             }
 
             return Files.ToArray();
@@ -114,6 +122,8 @@ namespace Ryujinx.HLE.FileSystem
             if (Directory != null)
             {
                 DirectoryInterface = new IDirectory(Name, FilterFlags, this);
+
+                return 0;
             }
 
             return MakeError(ErrorModule.Fs, FsErr.PathDoesNotExist);
@@ -123,7 +133,7 @@ namespace Ryujinx.HLE.FileSystem
         {
             FileInterface = null;
 
-            if (File.Exists(Name))
+            if (RomFs.FileExists(Name))
             {
                 Stream Stream = RomFs.OpenFile(Name);
 

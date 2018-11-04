@@ -13,11 +13,11 @@ namespace Ryujinx.HLE.FileSystem
 
         long RenameDirectory(string OldName, string NewName);
 
-        string[] GetEntries(string Path);
+        DirectoryEntry[] GetEntries(string Path);
 
-        string[] GetDirectories(string Path);
+        DirectoryEntry[] GetDirectories(string Path);
 
-        string[] GetFiles(string Path);
+        DirectoryEntry[] GetFiles(string Path);
 
         long DeleteFile(string Name);
 

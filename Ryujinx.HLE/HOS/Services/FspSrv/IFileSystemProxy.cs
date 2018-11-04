@@ -79,23 +79,48 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
 
             long TitleId = Context.RequestData.ReadInt64();
 
-            string Path = ReadUtf8String(Context);
+            string SwitchPath = ReadUtf8String(Context);
 
-            string FullPath = Context.Device.FileSystem.SwitchPathToSystemPath(Path);
+            string FullPath = Context.Device.FileSystem.SwitchPathToSystemPath(SwitchPath);
 
             FileStream FileStream = new FileStream(FullPath, FileMode.Open, FileAccess.Read);
 
-            Nca Nca = new Nca(Context.Device.System.KeySet, FileStream, false);
+            string Extension = Path.GetExtension(FullPath);
 
-            NcaSection RomfsSection = Nca.Sections.FirstOrDefault(x => x?.Type == SectionType.Romfs);
-
-            if (RomfsSection != null)
+            if (Extension == ".nca")
             {
-                Stream RomfsStream = Nca.OpenSection(RomfsSection.SectionNum, false, Context.Device.System.FsIntegrityCheckLevel);
+                Nca Nca = new Nca(Context.Device.System.KeySet, FileStream, false);
 
-                IFileSystem NcaFileSystem = new IFileSystem(Path, new RomFileSystemProvider(RomfsStream));
+                NcaSection RomfsSection = Nca.Sections.FirstOrDefault(x => x?.Type == SectionType.Romfs);
 
-                MakeObject(Context, NcaFileSystem);
+                if (RomfsSection != null)
+                {
+                    Stream RomfsStream = Nca.OpenSection(RomfsSection.SectionNum, false, Context.Device.System.FsIntegrityCheckLevel);
+
+                    IFileSystem NcaFileSystem = new IFileSystem(SwitchPath, new RomFsProvider(RomfsStream));
+
+                    MakeObject(Context, NcaFileSystem);
+
+                    return 0;
+                }
+            }
+            else if (Extension == ".nsp")
+            {
+                Pfs Nsp = new Pfs(FileStream);
+
+                PfsFileEntry TicketFile = Nsp.Files.FirstOrDefault(x => x.Name.EndsWith(".tik"));
+
+                if (TicketFile != null)
+                {
+                    Ticket Ticket = new Ticket(Nsp.OpenFile(TicketFile));
+
+                    Context.Device.System.KeySet.TitleKeys[Ticket.RightsId] =
+                        Ticket.GetTitleKey(Context.Device.System.KeySet);
+                }
+
+                IFileSystem NspFileSystem = new IFileSystem(SwitchPath, new PFsProvider(Nsp));
+
+                MakeObject(Context, NspFileSystem);
 
                 return 0;
             }
