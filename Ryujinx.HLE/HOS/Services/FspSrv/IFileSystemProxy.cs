@@ -83,6 +83,11 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
 
             string FullPath = Context.Device.FileSystem.SwitchPathToSystemPath(SwitchPath);
 
+            if (!File.Exists(FullPath))
+            {
+                return MakeError(ErrorModule.Fs, FsErr.PathDoesNotExist);
+            }
+
             FileStream FileStream = new FileStream(FullPath, FileMode.Open, FileAccess.Read);
 
             string Extension = Path.GetExtension(FullPath);
