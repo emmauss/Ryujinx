@@ -85,6 +85,11 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
 
             if (!File.Exists(FullPath))
             {
+                if (FullPath.Contains("."))
+                {
+                    return OpenFileSystemFromInternalFile(Context, FullPath);
+                }
+
                 return MakeError(ErrorModule.Fs, FsErr.PathDoesNotExist);
             }
 
@@ -94,40 +99,11 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
 
             if (Extension == ".nca")
             {
-                Nca Nca = new Nca(Context.Device.System.KeySet, FileStream, false);
-
-                NcaSection RomfsSection = Nca.Sections.FirstOrDefault(x => x?.Type == SectionType.Romfs);
-
-                if (RomfsSection != null)
-                {
-                    Stream RomfsStream = Nca.OpenSection(RomfsSection.SectionNum, false, Context.Device.System.FsIntegrityCheckLevel);
-
-                    IFileSystem NcaFileSystem = new IFileSystem(SwitchPath, new RomFsProvider(RomfsStream));
-
-                    MakeObject(Context, NcaFileSystem);
-
-                    return 0;
-                }
+                return OpenNcaFs(Context, FullPath, FileStream);
             }
             else if (Extension == ".nsp")
             {
-                Pfs Nsp = new Pfs(FileStream);
-
-                PfsFileEntry TicketFile = Nsp.Files.FirstOrDefault(x => x.Name.EndsWith(".tik"));
-
-                if (TicketFile != null)
-                {
-                    Ticket Ticket = new Ticket(Nsp.OpenFile(TicketFile));
-
-                    Context.Device.System.KeySet.TitleKeys[Ticket.RightsId] =
-                        Ticket.GetTitleKey(Context.Device.System.KeySet);
-                }
-
-                IFileSystem NspFileSystem = new IFileSystem(SwitchPath, new PFsProvider(Nsp));
-
-                MakeObject(Context, NspFileSystem);
-
-                return 0;
+                return OpenNsp(Context, FullPath);
             }
 
             return MakeError(ErrorModule.Fs, FsErr.InvalidInput);
@@ -263,6 +239,101 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             FileSystemProvider FileSystemProvider = new FileSystemProvider(SavePath, Context.Device.FileSystem.GetBasePath());
 
             MakeObject(Context, new IFileSystem(SavePath, FileSystemProvider));
+        }
+
+        private long OpenNsp(ServiceCtx Context, string PfsPath)
+        {
+            FileStream PfsFile = new FileStream(PfsPath, FileMode.Open, FileAccess.Read);
+
+            Pfs Nsp = new Pfs(PfsFile);
+
+            PfsFileEntry TicketFile = Nsp.Files.FirstOrDefault(x => x.Name.EndsWith(".tik"));
+
+            if (TicketFile != null)
+            {
+                Ticket Ticket = new Ticket(Nsp.OpenFile(TicketFile));
+
+                Context.Device.System.KeySet.TitleKeys[Ticket.RightsId] =
+                    Ticket.GetTitleKey(Context.Device.System.KeySet);
+            }
+
+            IFileSystem NspFileSystem = new IFileSystem(PfsPath, new PFsProvider(Nsp));
+
+            MakeObject(Context, NspFileSystem);
+
+            return 0;
+        }
+
+        private long OpenNcaFs(ServiceCtx Context,string NcaPath, Stream NcaStream)
+        {
+            Nca Nca = new Nca(Context.Device.System.KeySet, NcaStream, false);
+
+            NcaSection RomfsSection = Nca.Sections.FirstOrDefault(x => x?.Type == SectionType.Romfs);
+            NcaSection PfsSection   = Nca.Sections.FirstOrDefault(x => x?.Type == SectionType.Pfs0);
+
+            if (RomfsSection != null)
+            {
+                Stream RomfsStream = Nca.OpenSection(RomfsSection.SectionNum, false, Context.Device.System.FsIntegrityCheckLevel);
+
+                IFileSystem NcaFileSystem = new IFileSystem(NcaPath, new RomFsProvider(RomfsStream));
+
+                MakeObject(Context, NcaFileSystem);
+            }
+            else if(PfsSection !=null)
+            {
+                Stream PfsStream = Nca.OpenSection(PfsSection.SectionNum, false, Context.Device.System.FsIntegrityCheckLevel);
+
+                Pfs Pfs = new Pfs(PfsStream);
+
+                IFileSystem NcaFileSystem = new IFileSystem(NcaPath, new PFsProvider(Pfs));
+
+                MakeObject(Context, NcaFileSystem);
+            }
+            else
+            {
+                return MakeError(ErrorModule.Fs, FsErr.PartitionNotFound);
+            }
+
+            return 0;
+        }
+
+        private long OpenFileSystemFromInternalFile(ServiceCtx Context, string FullPath)
+        {
+            DirectoryInfo ArchivePath = new DirectoryInfo(FullPath).Parent;
+
+            while (string.IsNullOrWhiteSpace(ArchivePath.Extension))
+            {
+                ArchivePath = ArchivePath.Parent;
+            }
+
+            if (ArchivePath.Extension == ".nsp" && File.Exists(ArchivePath.FullName))
+            {
+                FileStream PfsFile = new FileStream(
+                    ArchivePath.FullName.TrimEnd(Path.DirectorySeparatorChar),
+                    FileMode.Open,
+                    FileAccess.Read);
+
+                Pfs Nsp = new Pfs(PfsFile);
+
+                PfsFileEntry TicketFile = Nsp.Files.FirstOrDefault(x => x.Name.EndsWith(".tik"));
+
+                if (TicketFile != null)
+                {
+                    Ticket Ticket = new Ticket(Nsp.OpenFile(TicketFile));
+
+                    Context.Device.System.KeySet.TitleKeys[Ticket.RightsId] =
+                        Ticket.GetTitleKey(Context.Device.System.KeySet);
+                }
+
+                string Filename = FullPath.Replace(ArchivePath.FullName, string.Empty);
+
+                if (Nsp.FileExists(Filename))
+                {
+                    return OpenNcaFs(Context, FullPath, Nsp.OpenFile(Filename));
+                }
+            }
+
+            return MakeError(ErrorModule.Fs, FsErr.PathDoesNotExist);
         }
     }
 }

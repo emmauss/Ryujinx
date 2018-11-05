@@ -252,5 +252,17 @@ namespace Ryujinx.HLE.FileSystem
 
             throw new InvalidOperationException($"Path {Path} is not a child directory of {RootPath}");
         }
+
+        public bool Disposed { get; private set; }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            Disposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
     }
 }

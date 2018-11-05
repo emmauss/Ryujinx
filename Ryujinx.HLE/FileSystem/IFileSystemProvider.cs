@@ -1,10 +1,13 @@
 ﻿using Ryujinx.HLE.HOS;
 using Ryujinx.HLE.HOS.Services.FspSrv;
+using System;
 
 namespace Ryujinx.HLE.FileSystem
 {
-    interface IFileSystemProvider
+    interface IFileSystemProvider : IDisposable
     {
+        bool Disposed { get; }
+
         long CreateFile(string Name, long Size);
 
         long CreateDirectory(string Name);
