@@ -325,7 +325,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
                         Ticket.GetTitleKey(Context.Device.System.KeySet);
                 }
 
-                string Filename = FullPath.Replace(ArchivePath.FullName, string.Empty);
+                string Filename = FullPath.Replace(ArchivePath.FullName, string.Empty).TrimStart('\\');
 
                 if (Nsp.FileExists(Filename))
                 {
