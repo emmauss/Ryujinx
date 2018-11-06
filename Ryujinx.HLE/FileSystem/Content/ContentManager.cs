@@ -246,7 +246,13 @@ namespace Ryujinx.HLE.FileSystem.Content
 
                     Nca Nca = new Nca(Device.System.KeySet, File, false);
 
-                    return Nca.Header.ContentType == ContentType;
+                    bool ContentCheck = Nca.Header.ContentType == ContentType;
+
+                    Nca.Dispose();
+
+                    File.Dispose();
+
+                    return ContentCheck;
                 }
             }
 
