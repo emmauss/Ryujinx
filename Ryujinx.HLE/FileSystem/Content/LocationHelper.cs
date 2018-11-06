@@ -14,11 +14,11 @@ namespace Ryujinx.HLE.FileSystem.Content
             switch (SwitchContentPath)
             {
                 case ContentPath.SystemContent:
-                    return Path.Combine(FileSystem.GetBasePath(), SystemNandPath, "Contents", "registered");
+                    return Path.Combine(FileSystem.GetBasePath(), SystemNandPath, "Contents");
                 case ContentPath.UserContent:
-                    return Path.Combine(FileSystem.GetBasePath(), UserNandPath, "Contents", "registered");
+                    return Path.Combine(FileSystem.GetBasePath(), UserNandPath, "Contents");
                 case ContentPath.SdCardContent:
-                    return Path.Combine(FileSystem.GetSdCardPath(), "Nintendo", "Contents", "registered");
+                    return Path.Combine(FileSystem.GetSdCardPath(), "Nintendo", "Contents");
                 case ContentPath.System:
                     return Path.Combine(BasePath, SystemNandPath);
                 case ContentPath.User:
@@ -43,7 +43,7 @@ namespace Ryujinx.HLE.FileSystem.Content
             }
         }
 
-        public static string GetContentPath(StorageId StorageId)
+        public static string GetContentRoot(StorageId StorageId)
         {
             switch (StorageId)
             {
@@ -60,7 +60,9 @@ namespace Ryujinx.HLE.FileSystem.Content
 
         public static StorageId GetStorageId(string ContentPathString)
         {
-            switch (ContentPathString)
+            string CleanedPath = ContentPathString.Split(':')[0];
+
+            switch (CleanedPath)
             {
                 case ContentPath.SystemContent:
                 case ContentPath.System:

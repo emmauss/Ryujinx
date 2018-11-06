@@ -42,20 +42,23 @@ namespace Ryujinx.HLE.FileSystem.Content
 
             foreach (StorageId StorageId in Enum.GetValues(typeof(StorageId)))
             {
-                string ContentInstallationDirectory = null;
-                string ContentPathString            = null;
+                string ContentDirectory    = null;
+                string ContentPathString   = null;
+                string RegisteredDirectory = null;
 
                 try
                 {
-                    ContentPathString            = LocationHelper.GetContentPath(StorageId);
-                    ContentInstallationDirectory = LocationHelper.GetRealPath(Device.FileSystem, ContentPathString);
+                    ContentPathString = LocationHelper.GetContentRoot(StorageId);
+                    ContentDirectory  = LocationHelper.GetRealPath(Device.FileSystem, ContentPathString);
+
+                    RegisteredDirectory = Path.Combine(ContentDirectory, "registered");
                 }
                 catch (NotSupportedException NEx)
                 {
                     continue;
                 }
 
-                Directory.CreateDirectory(ContentInstallationDirectory);
+                Directory.CreateDirectory(RegisteredDirectory);
 
                 LinkedList<LocationEntry> LocationList = new LinkedList<LocationEntry>();
 
@@ -64,7 +67,7 @@ namespace Ryujinx.HLE.FileSystem.Content
                     LocationList.AddLast(Entry);
                 }
 
-                foreach (string DirectoryPath in Directory.EnumerateDirectories(ContentInstallationDirectory))
+                foreach (string DirectoryPath in Directory.EnumerateDirectories(RegisteredDirectory))
                 {
                     if (Directory.GetFiles(DirectoryPath).Length > 0)
                     {
@@ -74,7 +77,13 @@ namespace Ryujinx.HLE.FileSystem.Content
                         {
                             Nca Nca = new Nca(Device.System.KeySet, NcaFile, false);
 
-                            LocationEntry Entry = new LocationEntry(ContentPathString,
+                            string SwitchPath = Path.Combine(ContentPathString + ":",
+                                                              NcaFile.Name.Replace(ContentDirectory, string.Empty).TrimStart('\\'));
+
+                            // Change path format to switch's
+                            SwitchPath = SwitchPath.Replace('\\', '/');
+
+                            LocationEntry Entry = new LocationEntry(SwitchPath,
                                                                     0,
                                                                     (long)Nca.Header.TitleId,
                                                                     Nca.Header.ContentType);
@@ -93,7 +102,7 @@ namespace Ryujinx.HLE.FileSystem.Content
                     }
                 }
 
-                foreach (string FilePath in Directory.EnumerateFiles(ContentInstallationDirectory))
+                foreach (string FilePath in Directory.EnumerateFiles(ContentDirectory))
                 {
                     if (Path.GetExtension(FilePath) == ".nca")
                     {
@@ -103,7 +112,13 @@ namespace Ryujinx.HLE.FileSystem.Content
                         {
                             Nca Nca = new Nca(Device.System.KeySet, NcaFile, false);
 
-                            LocationEntry Entry = new LocationEntry(ContentPathString,
+                            string SwitchPath = Path.Combine(ContentPathString + ":",
+                                                              FilePath.Replace(ContentDirectory, string.Empty).TrimStart('\\'));
+
+                            // Change path format to switch's
+                            SwitchPath = SwitchPath.Replace('\\', '/');
+
+                            LocationEntry Entry = new LocationEntry(SwitchPath,
                                                                     0,
                                                                     (long)Nca.Header.TitleId,
                                                                     Nca.Header.ContentType);
@@ -157,6 +172,24 @@ namespace Ryujinx.HLE.FileSystem.Content
             }
         }
 
+        public bool HasNca(string NcaId, StorageId StorageId)
+        {
+            if (ContentDictionary.ContainsValue(NcaId))
+            {
+                var Content = ContentDictionary.FirstOrDefault(x => x.Value == NcaId);
+
+                long TitleId = (long)Content.Key.Item1;
+
+                ContentType ContentType = Content.Key.Item2;
+
+                StorageId Storage = GetInstalledStorage(TitleId, ContentType, StorageId);
+
+                return Storage == StorageId;
+            }
+
+            return false;
+        }
+
         public UInt128 GetInstalledNcaId(long TitleId, ContentType ContentType)
         {
             if (ContentDictionary.ContainsKey(((ulong)TitleId,ContentType)))
@@ -167,22 +200,6 @@ namespace Ryujinx.HLE.FileSystem.Content
             return new UInt128();
         }
 
-        public string GetInstalledPath(long TitleId, ContentType ContentType, StorageId StorageId)
-        {
-            LocationEntry LocationEntry = GetLocation(TitleId, ContentType, StorageId);
-
-            string ContentPath = LocationHelper.GetRealPath(Device.FileSystem, LocationEntry.ContentPath);
-
-            string NcaPath = Path.Combine(ContentPath, ContentDictionary[((ulong)TitleId, ContentType)]) + ".nca";
-
-            if (!File.Exists(NcaPath))
-            {
-                NcaPath = Path.Combine(NcaPath, "00");
-            }
-
-            return NcaPath;
-        }
-
         public StorageId GetInstalledStorage(long TitleId, ContentType ContentType, StorageId StorageId)
         {
             LocationEntry LocationEntry = GetLocation(TitleId, ContentType, StorageId);
@@ -191,7 +208,7 @@ namespace Ryujinx.HLE.FileSystem.Content
                 LocationHelper.GetStorageId(LocationEntry.ContentPath) : StorageId.None;
         }
 
-        public string GetInstalledContentStorage(long TitleId, StorageId StorageId, ContentType ContentType)
+        public string GetInstalledContentPath(long TitleId, StorageId StorageId, ContentType ContentType)
         {
             LocationEntry LocationEntry = GetLocation(TitleId, ContentType, StorageId);
 
@@ -219,7 +236,7 @@ namespace Ryujinx.HLE.FileSystem.Content
         {
             StorageId StorageId = LocationHelper.GetStorageId(LocationEntry.ContentPath);
 
-            string InstalledPath = GetInstalledPath(LocationEntry.TitleId, ContentType, StorageId);
+            string InstalledPath = Device.FileSystem.SwitchPathToSystemPath(LocationEntry.ContentPath);
 
             if (!string.IsNullOrWhiteSpace(InstalledPath))
             {

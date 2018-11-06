@@ -54,9 +54,11 @@ namespace Ryujinx.HLE.HOS.Font
                 {
                     if (ContentManager.TryGetFontTitle(Name, out long FontTitle))
                     {
-                        string FontContentPath = ContentManager.GetInstalledPath(FontTitle, ContentType.Data, StorageId.NandSystem);
+                        string ContentPath = ContentManager.GetInstalledContentPath(FontTitle, StorageId.NandSystem, ContentType.Data);
 
-                        if (!string.IsNullOrWhiteSpace(FontContentPath))
+                        string FontPath = Device.FileSystem.SwitchPathToSystemPath(ContentPath);
+
+                        if (!string.IsNullOrWhiteSpace(FontPath))
                         {
                             int FileIndex = 0;
 
@@ -66,7 +68,7 @@ namespace Ryujinx.HLE.HOS.Font
                                 FileIndex = 1;
                             }
 
-                            FileStream NcaFileStream = new FileStream(FontContentPath, FileMode.Open, FileAccess.Read);
+                            FileStream NcaFileStream = new FileStream(FontPath, FileMode.Open, FileAccess.Read);
 
                             Nca Nca = new Nca(Device.System.KeySet, NcaFileStream, false);
 

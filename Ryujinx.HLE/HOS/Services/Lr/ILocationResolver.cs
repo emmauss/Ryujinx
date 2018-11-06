@@ -221,7 +221,7 @@ namespace Ryujinx.HLE.HOS.Services.Lr
         {
             ContentManager ContentManager = Context.Device.System.ContentManager;
 
-            string ContentPath = ContentManager.GetInstalledContentStorage(TitleId, StorageId, ContentType.Program);
+            string ContentPath = ContentManager.GetInstalledContentPath(TitleId, StorageId, ContentType.Program);
 
             if (!string.IsNullOrWhiteSpace(ContentPath))
             {
@@ -244,7 +244,7 @@ namespace Ryujinx.HLE.HOS.Services.Lr
         {
             ContentManager ContentManager = Context.Device.System.ContentManager;
 
-            string ContentPath = ContentManager.GetInstalledContentStorage(TitleId, StorageId, ContentType.Manual);
+            string ContentPath = ContentManager.GetInstalledContentPath(TitleId, StorageId, ContentType.Manual);
 
             ContentManager.ClearEntry(TitleId, ContentType.Manual, StorageId);
         }

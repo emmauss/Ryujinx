@@ -160,21 +160,13 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
 
             if (InstalledStorage != StorageId.None)
             {
-                string InstallPath =
-                    Context.Device.System.ContentManager.GetInstalledPath(TitleId, ContentType.AocData, StorageId);
+                string ContentPath = Context.Device.System.ContentManager.GetInstalledContentPath(TitleId, StorageId, ContentType.AocData);
 
-                UInt128 NcaId = Context.Device.System.ContentManager.GetInstalledNcaId(TitleId, ContentType.AocData);
-
-                if (string.IsNullOrWhiteSpace(InstallPath))
+                if (string.IsNullOrWhiteSpace(ContentPath))
                 {
-                    InstallPath =
-                        Context.Device.System.ContentManager.GetInstalledPath(TitleId, ContentType.Data, StorageId);
+                    ContentPath = Context.Device.System.ContentManager.GetInstalledContentPath(TitleId, StorageId, ContentType.AocData);
                 }
-
-                if ((NcaId.High | NcaId.Low) == 0)
-                {
-                    NcaId = Context.Device.System.ContentManager.GetInstalledNcaId(TitleId, ContentType.Data);
-                }
+                string InstallPath = Context.Device.FileSystem.SwitchPathToSystemPath(ContentPath);
 
                 if (!string.IsNullOrWhiteSpace(InstallPath))
                 {

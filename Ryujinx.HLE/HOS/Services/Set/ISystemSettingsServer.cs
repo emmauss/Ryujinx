@@ -172,14 +172,16 @@ namespace Ryujinx.HLE.HOS.Services.Set
 
             long TitleId = 0x0100000000000809;
 
-            string Path = Device.System.ContentManager.GetInstalledPath(TitleId, ContentType.Data, StorageId.NandSystem);
+            string ContentPath = Device.System.ContentManager.GetInstalledContentPath(TitleId, StorageId.NandSystem, ContentType.Data);
 
-            if(string.IsNullOrWhiteSpace(Path))
+            if(string.IsNullOrWhiteSpace(ContentPath))
             {
                 return null;
             }
 
-            FileStream FirmwareStream = File.Open(Path, FileMode.Open, FileAccess.Read);
+            string FirmwareTitlePath = Device.FileSystem.SwitchPathToSystemPath(ContentPath);
+
+            FileStream FirmwareStream = File.Open(FirmwareTitlePath, FileMode.Open, FileAccess.Read);
 
             Nca FirmwareContent = new Nca(Device.System.KeySet, FirmwareStream, false);
 
