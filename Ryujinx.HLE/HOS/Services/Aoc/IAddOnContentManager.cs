@@ -29,9 +29,9 @@ namespace Ryujinx.HLE.HOS.Services.Aoc
         // CountAddOnContent(u64, pid) -> i32
         public static long CountAddOnContent(ServiceCtx Context)
         {
-            Context.ResponseData.Write(0);
+            Context.ResponseData.Write((long)0);
 
-            Logger.PrintStub(LogClass.ServiceAoc, "Stubbed.");
+            Logger.PrintStub(LogClass.ServiceAoc, "Stubbed. Count: 0");
 
             return 0;
         }
@@ -39,16 +39,16 @@ namespace Ryujinx.HLE.HOS.Services.Aoc
         // ListAddOnContent(i32, i32, u64, pid) -> (i32, array<i32, 6>)
         public static long ListAddOnContent(ServiceCtx Context)
         {
-            Logger.PrintStub(LogClass.ServiceAoc, "Stubbed.");
+            Logger.PrintStub(LogClass.ServiceAoc, "Stubbed. Count: 0");
 
-            //TODO: This is supposed to write a u32 array aswell.
-            //It's unknown what it contains.
+            // TODO: This is supposed to write a u32 array aswell.
+            // It's unknown what it contains.
             Context.ResponseData.Write(0);
 
             return 0;
         }
 
-        // GetAddOnContentListChangedEvent()
+        // GetAddOnContentListChangedEvent() -> KObject
         public long GetAddOnContentListChangedEvent(ServiceCtx Context)
         {
             if (Context.Process.HandleTable.GenerateHandle(AddOnContentListChangedEvent, out int Handle) != KernelResult.Success)
