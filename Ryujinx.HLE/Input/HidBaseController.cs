@@ -27,7 +27,7 @@ namespace Ryujinx.HLE.Input
 
             Device.Memory.FillWithZeros(Offset, 0x5000);
 
-            Device.Memory.WriteInt32(Offset + 0x0, (int)HidControllerType);
+            Device.Memory.WriteInt32(Offset + 0x00, (int)HidControllerType);
         }
 
         public abstract void SendInput(
@@ -51,8 +51,8 @@ namespace Ryujinx.HLE.Input
 
             long Timestamp = GetTimestamp();
 
-            Device.Memory.WriteInt64(ControllerOffset + 0x0,  Timestamp);
-            Device.Memory.WriteInt64(ControllerOffset + 0x8,  HidEntryCount);
+            Device.Memory.WriteInt64(ControllerOffset + 0x00, Timestamp);
+            Device.Memory.WriteInt64(ControllerOffset + 0x08, HidEntryCount);
             Device.Memory.WriteInt64(ControllerOffset + 0x10, CurrEntry);
             Device.Memory.WriteInt64(ControllerOffset + 0x18, HidEntryCount - 1);
 
@@ -64,8 +64,8 @@ namespace Ryujinx.HLE.Input
 
             long SampleCounter = Device.Memory.ReadInt64(LastEntryOffset) + 1;
 
-            Device.Memory.WriteInt64(ControllerOffset + 0x0,  SampleCounter);
-            Device.Memory.WriteInt64(ControllerOffset + 0x8,  SampleCounter);
+            Device.Memory.WriteInt64(ControllerOffset + 0x00, SampleCounter);
+            Device.Memory.WriteInt64(ControllerOffset + 0x08, SampleCounter);
             Device.Memory.WriteInt64(ControllerOffset + 0x10, (uint)Buttons);
 
             Device.Memory.WriteInt32(ControllerOffset + 0x18, LeftStick.DX);

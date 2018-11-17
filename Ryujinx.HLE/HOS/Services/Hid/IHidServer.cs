@@ -161,6 +161,9 @@ namespace Ryujinx.HLE.HOS.Services.Hid
             SensorFusionParams  = new HidSensorFusionParameters();
             AccelerometerParams = new HidAccelerometerParameters();
             VibrationValue      = new HidVibrationValue();
+
+            // TODO: signal event at right place
+            XpadIdEvent.ReadableEvent.Signal();
         }
 
         // CreateAppletResource(nn::applet::AppletResourceUserId) -> object<nn::hid::IAppletResource>
@@ -658,6 +661,8 @@ namespace Ryujinx.HLE.HOS.Services.Hid
 
             Logger.PrintStub(LogClass.ServiceHid, $"Stubbed. AppletResourceUserId: {AppletResourceUserId} - " +
                                                   $"NpadStyleSet: {NpadStyleSet}");
+
+            NpadStyleSetUpdateEvent.ReadableEvent.Signal();
 
             return 0;
         }
@@ -1348,6 +1353,8 @@ namespace Ryujinx.HLE.HOS.Services.Hid
 
             Logger.PrintStub(LogClass.ServiceHid, $"Stubbed. PalmaConnectionHandle: {PalmaConnectionHandle}");
 
+            PalmaOperationCompleteEvent.ReadableEvent.Signal();
+
             return 0;
         }
 
@@ -1392,6 +1399,8 @@ namespace Ryujinx.HLE.HOS.Services.Hid
             Logger.PrintStub(LogClass.ServiceHid, $"Stubbed. PalmaConnectionHandle: {PalmaConnectionHandle} - " +
                                                   $"Unknown0: {Unknown0}");
 
+            PalmaOperationCompleteEvent.ReadableEvent.Signal();
+
             return 0;
         }
 
@@ -1403,6 +1412,8 @@ namespace Ryujinx.HLE.HOS.Services.Hid
 
             Logger.PrintStub(LogClass.ServiceHid, $"Stubbed. PalmaConnectionHandle: {PalmaConnectionHandle} - " +
                                                   $"FrModeType: {FrModeType}");
+
+            PalmaOperationCompleteEvent.ReadableEvent.Signal();
 
             return 0;
         }
@@ -1426,6 +1437,8 @@ namespace Ryujinx.HLE.HOS.Services.Hid
             Logger.PrintStub(LogClass.ServiceHid, $"Stubbed. PalmaConnectionHandle: {PalmaConnectionHandle} - " +
                                                   $"EnabledPalmaStep: {EnabledPalmaStep}");
 
+            PalmaOperationCompleteEvent.ReadableEvent.Signal();
+
             return 0;
         }
 
@@ -1436,6 +1449,8 @@ namespace Ryujinx.HLE.HOS.Services.Hid
 
             Logger.PrintStub(LogClass.ServiceHid, $"Stubbed. PalmaConnectionHandle: {PalmaConnectionHandle}");
 
+            PalmaOperationCompleteEvent.ReadableEvent.Signal();
+
             return 0;
         }
 
@@ -1445,6 +1460,8 @@ namespace Ryujinx.HLE.HOS.Services.Hid
             int PalmaConnectionHandle = Context.RequestData.ReadInt32();
 
             Logger.PrintStub(LogClass.ServiceHid, $"Stubbed. PalmaConnectionHandle: {PalmaConnectionHandle}");
+
+            PalmaOperationCompleteEvent.ReadableEvent.Signal();
 
             return 0;
         }
@@ -1474,6 +1491,8 @@ namespace Ryujinx.HLE.HOS.Services.Hid
             Logger.PrintStub(LogClass.ServiceHid, $"Stubbed. PalmaConnectionHandle: {PalmaConnectionHandle} - " +
                                                   $"Unknown0: {Unknown0} - " +
                                                   $"Unknown1: {Unknown1}");
+
+            PalmaOperationCompleteEvent.ReadableEvent.Signal();
 
             return 0;
         }

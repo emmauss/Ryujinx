@@ -51,12 +51,12 @@
             NpadColor SingleColorBody    = NpadColor.Black;
             NpadColor SingleColorButtons = NpadColor.Black;
 
-            Device.Memory.WriteInt32(Offset + 0x4, IsHalf ? 1 : 0);
+            Device.Memory.WriteInt32(Offset + 0x04, IsHalf ? 1 : 0);
 
             if (IsHalf)
             {
-                Device.Memory.WriteInt32(Offset + 0x8,  (int)SingleColorDesc);
-                Device.Memory.WriteInt32(Offset + 0xc,  (int)SingleColorBody);
+                Device.Memory.WriteInt32(Offset + 0x08, (int)SingleColorDesc);
+                Device.Memory.WriteInt32(Offset + 0x0c, (int)SingleColorBody);
                 Device.Memory.WriteInt32(Offset + 0x10, (int)SingleColorButtons);
                 Device.Memory.WriteInt32(Offset + 0x14, (int)SplitColorDesc);
             }

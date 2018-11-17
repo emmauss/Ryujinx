@@ -98,8 +98,8 @@ namespace Ryujinx.HLE.Input
 
             long Timestamp = GetTimestamp();
 
-            Device.Memory.WriteInt64(TouchScreenOffset + 0x0,  Timestamp);
-            Device.Memory.WriteInt64(TouchScreenOffset + 0x8,  HidEntryCount);
+            Device.Memory.WriteInt64(TouchScreenOffset + 0x00, Timestamp);
+            Device.Memory.WriteInt64(TouchScreenOffset + 0x08, HidEntryCount);
             Device.Memory.WriteInt64(TouchScreenOffset + 0x10, CurrEntry);
             Device.Memory.WriteInt64(TouchScreenOffset + 0x18, HidEntryCount - 1);
             Device.Memory.WriteInt64(TouchScreenOffset + 0x20, Timestamp);
@@ -112,8 +112,8 @@ namespace Ryujinx.HLE.Input
 
             TouchEntryOffset += CurrEntry * HidTouchEntrySize;
 
-            Device.Memory.WriteInt64(TouchEntryOffset + 0x0, SampleCounter);
-            Device.Memory.WriteInt64(TouchEntryOffset + 0x8, Points.Length);
+            Device.Memory.WriteInt64(TouchEntryOffset + 0x00, SampleCounter);
+            Device.Memory.WriteInt64(TouchEntryOffset + 0x08, Points.Length);
 
             TouchEntryOffset += HidTouchEntryHeaderSize;
 
@@ -123,9 +123,9 @@ namespace Ryujinx.HLE.Input
 
             foreach (HidTouchPoint Point in Points)
             {
-                Device.Memory.WriteInt64(TouchEntryOffset + 0x0,  SampleCounter);
-                Device.Memory.WriteInt32(TouchEntryOffset + 0x8,  Padding);
-                Device.Memory.WriteInt32(TouchEntryOffset + 0xc,  Index++);
+                Device.Memory.WriteInt64(TouchEntryOffset + 0x00, SampleCounter);
+                Device.Memory.WriteInt32(TouchEntryOffset + 0x08, Padding);
+                Device.Memory.WriteInt32(TouchEntryOffset + 0x0c, Index++);
                 Device.Memory.WriteInt32(TouchEntryOffset + 0x10, Point.X);
                 Device.Memory.WriteInt32(TouchEntryOffset + 0x14, Point.Y);
                 Device.Memory.WriteInt32(TouchEntryOffset + 0x18, Point.DiameterX);
