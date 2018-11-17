@@ -218,7 +218,7 @@ namespace Ryujinx.HLE.HOS.Services.Hid
         {
             long XpadId = Context.RequestData.ReadInt64();
 
-            if (Context.Process.HandleTable.GenerateHandle(XpadIdEvent, out XpadIdEventHandle) != KernelResult.Success)
+            if (Context.Process.HandleTable.GenerateHandle(XpadIdEvent.ReadableEvent, out XpadIdEventHandle) != KernelResult.Success)
             {
                 throw new InvalidOperationException("Out of handles!");
             }
@@ -714,7 +714,7 @@ namespace Ryujinx.HLE.HOS.Services.Hid
             int  NpadId               = Context.RequestData.ReadInt32();
             long NpadStyleSet         = Context.RequestData.ReadInt64();
 
-            if (Context.Process.HandleTable.GenerateHandle(NpadStyleSetUpdateEvent, out int Handle) != KernelResult.Success)
+            if (Context.Process.HandleTable.GenerateHandle(NpadStyleSetUpdateEvent.ReadableEvent, out int Handle) != KernelResult.Success)
             {
                 throw new InvalidOperationException("Out of handles!");
             }
@@ -1356,7 +1356,7 @@ namespace Ryujinx.HLE.HOS.Services.Hid
         {
             int PalmaConnectionHandle = Context.RequestData.ReadInt32();
 
-            if (Context.Process.HandleTable.GenerateHandle(PalmaOperationCompleteEvent, out int Handle) != KernelResult.Success)
+            if (Context.Process.HandleTable.GenerateHandle(PalmaOperationCompleteEvent.ReadableEvent, out int Handle) != KernelResult.Success)
             {
                 throw new InvalidOperationException("Out of handles!");
             }
