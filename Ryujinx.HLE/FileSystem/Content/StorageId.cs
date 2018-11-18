@@ -1,6 +1,6 @@
-﻿namespace Ryujinx.HLE.FileSystem
+﻿namespace Ryujinx.HLE.FileSystem.Content
 {
-    public enum ContentStorageId : byte
+    public enum ContentStorageId
     {
         NandSystem,
         NandUser,

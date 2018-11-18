@@ -1,6 +1,6 @@
 ﻿namespace Ryujinx.HLE.FileSystem
 {
-    enum SaveSpaceId : byte
+    enum SaveSpaceId
     {
         NandSystem,
         NandUser,

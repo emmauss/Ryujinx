@@ -7,7 +7,7 @@ namespace Ryujinx.HLE.FileSystem.Content
 {
     internal static class LocationHelper
     {
-        public static string GetRealPath(VirtualFileSystem FileSystem,string SwitchContentPath)
+        public static string GetRealPath(VirtualFileSystem FileSystem, string SwitchContentPath)
         {
             string BasePath = FileSystem.GetBasePath();
 

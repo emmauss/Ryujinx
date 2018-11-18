@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Ryujinx.HLE.FileSystem.Content
+﻿namespace Ryujinx.HLE.FileSystem.Content
 {
-    enum TitleType : byte
+    enum TitleType
     {
         SystemPrograms     = 0x01,
         SystemDataArchive  = 0x02,

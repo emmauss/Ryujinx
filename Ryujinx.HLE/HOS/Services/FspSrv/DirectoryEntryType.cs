@@ -1,6 +1,6 @@
 ﻿namespace Ryujinx.HLE.HOS.Services.FspSrv
 {
-    public enum DirectoryEntryType : byte
+    public enum DirectoryEntryType
     {
         Directory,
         File
