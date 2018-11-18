@@ -23,6 +23,8 @@ namespace Ryujinx.HLE.FileSystem
 
         public long CreateDirectory(string Name)
         {
+            CheckIfDecendentOfRootPath(Name);
+
             if (Directory.Exists(Name))
             {
                 return MakeError(ErrorModule.Fs, FsErr.PathAlreadyExists);
@@ -35,6 +37,8 @@ namespace Ryujinx.HLE.FileSystem
 
         public long CreateFile(string Name, long Size)
         {
+            CheckIfDecendentOfRootPath(Name);
+
             if (File.Exists(Name))
             {
                 return MakeError(ErrorModule.Fs, FsErr.PathAlreadyExists);
@@ -50,6 +54,8 @@ namespace Ryujinx.HLE.FileSystem
 
         public long DeleteDirectory(string Name, bool Recursive)
         {
+            CheckIfDecendentOfRootPath(Name);
+
             string DirName = Name;
 
             if (!Directory.Exists(DirName))
@@ -64,6 +70,8 @@ namespace Ryujinx.HLE.FileSystem
 
         public long DeleteFile(string Name)
         {
+            CheckIfDecendentOfRootPath(Name);
+
             if (!File.Exists(Name))
             {
                 return MakeError(ErrorModule.Fs, FsErr.PathDoesNotExist);
@@ -78,6 +86,8 @@ namespace Ryujinx.HLE.FileSystem
 
         public DirectoryEntry[] GetDirectories(string Path)
         {
+            CheckIfDecendentOfRootPath(Path);
+
             List<DirectoryEntry> Entries = new List<DirectoryEntry>();
 
             foreach(string Directory in Directory.EnumerateDirectories(Path))
@@ -92,6 +102,8 @@ namespace Ryujinx.HLE.FileSystem
 
         public DirectoryEntry[] GetEntries(string Path)
         {
+            CheckIfDecendentOfRootPath(Path);
+
             if (Directory.Exists(Path))
             {
                 List<DirectoryEntry> Entries = new List<DirectoryEntry>();
@@ -117,6 +129,8 @@ namespace Ryujinx.HLE.FileSystem
 
         public DirectoryEntry[] GetFiles(string Path)
         {
+            CheckIfDecendentOfRootPath(Path);
+
             List<DirectoryEntry> Entries = new List<DirectoryEntry>();
 
             foreach (string File in Directory.EnumerateFiles(Path))
@@ -164,16 +178,22 @@ namespace Ryujinx.HLE.FileSystem
 
         public bool DirectoryExists(string Name)
         {
+            CheckIfDecendentOfRootPath(Name);
+
             return Directory.Exists(Name);
         }
 
         public bool FileExists(string Name)
         {
+            CheckIfDecendentOfRootPath(Name);
+
             return File.Exists(Name);
         }
 
         public long OpenDirectory(string Name, int FilterFlags, out IDirectory DirectoryInterface)
         {
+            CheckIfDecendentOfRootPath(Name);
+
             if (Directory.Exists(Name))
             {
                 DirectoryInterface = new IDirectory(Name, FilterFlags, this);
@@ -188,6 +208,8 @@ namespace Ryujinx.HLE.FileSystem
 
         public long OpenFile(string Name, out IFile FileInterface)
         {
+            CheckIfDecendentOfRootPath(Name);
+
             if (File.Exists(Name))
             {
                 FileStream Stream = new FileStream(Name, FileMode.Open);
@@ -204,6 +226,9 @@ namespace Ryujinx.HLE.FileSystem
 
         public long RenameDirectory(string OldName, string NewName)
         {
+            CheckIfDecendentOfRootPath(OldName);
+            CheckIfDecendentOfRootPath(NewName);
+
             if (Directory.Exists(OldName))
             {
                 Directory.Move(OldName, NewName);
@@ -218,6 +243,9 @@ namespace Ryujinx.HLE.FileSystem
 
         public long RenameFile(string OldName, string NewName)
         {
+            CheckIfDecendentOfRootPath(OldName);
+            CheckIfDecendentOfRootPath(NewName);
+
             if (File.Exists(OldName))
             {
                 File.Move(OldName, NewName);
