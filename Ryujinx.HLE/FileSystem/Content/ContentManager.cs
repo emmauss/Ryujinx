@@ -20,8 +20,7 @@ namespace Ryujinx.HLE.FileSystem.Content
         public ContentManager(Switch Device)
         {
             ContentDictionary = new SortedDictionary<(ulong, ContentType), string>();
-
-            LocationEntries = new Dictionary<StorageId, LinkedList<LocationEntry>>();
+            LocationEntries   = new Dictionary<StorageId, LinkedList<LocationEntry>>();
 
             SharedFontTitleDictionary = new Dictionary<string, long>()
             {
@@ -48,9 +47,8 @@ namespace Ryujinx.HLE.FileSystem.Content
 
                 try
                 {
-                    ContentPathString = LocationHelper.GetContentRoot(StorageId);
-                    ContentDirectory  = LocationHelper.GetRealPath(Device.FileSystem, ContentPathString);
-
+                    ContentPathString   = LocationHelper.GetContentRoot(StorageId);
+                    ContentDirectory    = LocationHelper.GetRealPath(Device.FileSystem, ContentPathString);
                     RegisteredDirectory = Path.Combine(ContentDirectory, "registered");
                 }
                 catch (NotSupportedException NEx)
@@ -87,7 +85,6 @@ namespace Ryujinx.HLE.FileSystem.Content
                                                                     0,
                                                                     (long)Nca.Header.TitleId,
                                                                     Nca.Header.ContentType);
-                            
 
                             AddEntry(Entry);
 
