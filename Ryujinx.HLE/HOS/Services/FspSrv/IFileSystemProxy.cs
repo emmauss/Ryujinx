@@ -22,7 +22,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
         {
             m_Commands = new Dictionary<int, ServiceProcessRequest>()
             {
-                { 1,    SetCurrentProcess                        },
+                { 1,    Initialize                               },
                 { 8,    OpenFileSystemWithId                     },
                 { 11,   OpenBisFileSystem                        },
                 { 18,   OpenSdCardFileSystem                     },
@@ -35,42 +35,14 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             };
         }
 
-        public long SetCurrentProcess(ServiceCtx Context)
+        // Initialize(u64, pid)
+        public long Initialize(ServiceCtx Context)
         {
             return 0;
         }
 
-        public long OpenBisFileSystem(ServiceCtx Context)
-        {
-            int    BisPartitionId  = Context.RequestData.ReadInt32();
-            string PartitionString = ReadUtf8String(Context);
-            string BisPartitonPath = string.Empty;
-
-            switch (BisPartitionId)
-            {
-                case 29:
-                    BisPartitonPath = SafeNandPath;
-                    break;
-                case 30:
-                case 31:
-                    BisPartitonPath = SystemNandPath;
-                    break;
-                case 32:
-                    BisPartitonPath = UserNandPath;
-                    break;
-                default:
-                    return MakeError(ErrorModule.Fs, FsErr.InvalidInput);
-            }
-
-            string FullPath = Context.Device.FileSystem.GetFullPartitionPath(BisPartitonPath);
-
-            FileSystemProvider FileSystemProvider = new FileSystemProvider(FullPath, Context.Device.FileSystem.GetBasePath());
-
-            MakeObject(Context, new IFileSystem(FullPath, FileSystemProvider));
-
-            return 0;
-        }
-
+        // OpenFileSystemWithId(nn::fssrv::sf::FileSystemType filesystem_type, nn::ApplicationId tid, buffer<bytes<0x301>, 0x19, 0x301> path) 
+        // -> object<nn::fssrv::sf::IFileSystem> contentFs
         public long OpenFileSystemWithId(ServiceCtx Context)
         {
             FileSystemType FileSystemType = (FileSystemType)Context.RequestData.ReadInt32();
@@ -103,6 +75,39 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             return MakeError(ErrorModule.Fs, FsErr.InvalidInput);
         }
 
+        // OpenBisFileSystem(nn::fssrv::sf::Partition partitionID, buffer<bytes<0x301>, 0x19, 0x301>) -> object<nn::fssrv::sf::IFileSystem> Bis
+        public long OpenBisFileSystem(ServiceCtx Context)
+        {
+            int    BisPartitionId  = Context.RequestData.ReadInt32();
+            string PartitionString = ReadUtf8String(Context);
+            string BisPartitonPath = string.Empty;
+
+            switch (BisPartitionId)
+            {
+                case 29:
+                    BisPartitonPath = SafeNandPath;
+                    break;
+                case 30:
+                case 31:
+                    BisPartitonPath = SystemNandPath;
+                    break;
+                case 32:
+                    BisPartitonPath = UserNandPath;
+                    break;
+                default:
+                    return MakeError(ErrorModule.Fs, FsErr.InvalidInput);
+            }
+
+            string FullPath = Context.Device.FileSystem.GetFullPartitionPath(BisPartitonPath);
+
+            FileSystemProvider FileSystemProvider = new FileSystemProvider(FullPath, Context.Device.FileSystem.GetBasePath());
+
+            MakeObject(Context, new IFileSystem(FullPath, FileSystemProvider));
+
+            return 0;
+        }
+
+        // OpenSdCardFileSystem() -> object<nn::fssrv::sf::IFileSystem>
         public long OpenSdCardFileSystem(ServiceCtx Context)
         {
             string SdCardPath = Context.Device.FileSystem.GetSdCardPath();
@@ -114,6 +119,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             return 0;
         }
 
+        // OpenSaveDataFileSystem(u8 save_data_space_id, nn::fssrv::sf::SaveStruct saveStruct) -> object<nn::fssrv::sf::IFileSystem> saveDataFs
         public long OpenSaveDataFileSystem(ServiceCtx Context)
         {
             LoadSaveDataFileSystem(Context);
@@ -121,6 +127,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             return 0;
         }
 
+        // OpenSaveDataFileSystemBySystemSaveDataId(u8 save_data_space_id, nn::fssrv::sf::SaveStruct saveStruct) -> object<nn::fssrv::sf::IFileSystem> systemSaveDataFs
         public long OpenSaveDataFileSystemBySystemSaveDataId(ServiceCtx Context)
         {
             LoadSaveDataFileSystem(Context);
@@ -128,6 +135,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             return 0;
         }
 
+        // OpenDataStorageByCurrentProcess() -> object<nn::fssrv::sf::IStorage> dataStorage
         public long OpenDataStorageByCurrentProcess(ServiceCtx Context)
         {
             MakeObject(Context, new IStorage(Context.Device.FileSystem.RomFs));
@@ -135,6 +143,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             return 0;
         }
 
+        // OpenDataStorageByDataId(u8 storageId, nn::ApplicationId tid) -> object<nn::fssrv::sf::IStorage> dataStorage
         public long OpenDataStorageByDataId(ServiceCtx Context)
         {
             StorageId StorageId = (StorageId)Context.RequestData.ReadByte();
@@ -190,6 +199,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             throw new FileNotFoundException($"System archive with titleid {TitleId:x16} was not found on Storage {StorageId}. Found in {InstalledStorage}.");
         }
 
+        // OpenPatchDataStorageByCurrentProcess() -> object<nn::fssrv::sf::IStorage>
         public long OpenPatchDataStorageByCurrentProcess(ServiceCtx Context)
         {
             MakeObject(Context, new IStorage(Context.Device.FileSystem.RomFs));
@@ -197,6 +207,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             return 0;
         }
 
+        // GetGlobalAccessLogMode() -> u32 logMode
         public long GetGlobalAccessLogMode(ServiceCtx Context)
         {
             Context.ResponseData.Write(0);

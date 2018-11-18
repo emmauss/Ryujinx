@@ -113,18 +113,17 @@ namespace Ryujinx.HLE.FileSystem
 
         public long OpenFile(string Name, out IFile FileInterface)
         {
-            FileInterface = null;
-
             Name = Name.TrimStart('/');
 
             if (Pfs.FileExists(Name))
             {
                 Stream Stream = Pfs.OpenFile(Name);
-
                 FileInterface = new IFile(Stream, Name);
 
                 return 0;
             }
+
+            FileInterface = null;
 
             return MakeError(ErrorModule.Fs, FsErr.PathDoesNotExist);
         }

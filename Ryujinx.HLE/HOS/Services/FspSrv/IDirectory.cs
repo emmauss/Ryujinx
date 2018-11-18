@@ -51,6 +51,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             CurrentItemIndex = 0;
         }
 
+        // Read() -> (u64 count, buffer<nn::fssrv::sf::IDirectoryEntry, 6, 0> entries)
         public long Read(ServiceCtx Context)
         {
             long BufferPosition = Context.Request.ReceiveBuff[0].Position;
@@ -88,6 +89,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             Context.Memory.WriteInt64(Position + 0x308, Entry.Size);
         }
 
+        // GetEntryCount() -> u64
         public long GetEntryCount(ServiceCtx Context)
         {
             Context.ResponseData.Write((long)DirectoryEntries.Count);

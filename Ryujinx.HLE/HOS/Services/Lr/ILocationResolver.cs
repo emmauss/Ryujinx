@@ -43,6 +43,7 @@ namespace Ryujinx.HLE.HOS.Services.Lr
             this.StorageId = StorageId;
         }
 
+        // DeleteInfoHtmlNcaPath()
         public long DeleteInfoHtmlNcaPath(ServiceCtx Context)
         {
             long TitleId = Context.RequestData.ReadInt64();
@@ -52,6 +53,7 @@ namespace Ryujinx.HLE.HOS.Services.Lr
             return 0;
         }
 
+        // DeleteDocHtmlNcaPath()
         public long DeleteDocHtmlNcaPath(ServiceCtx Context)
         {
             long TitleId = Context.RequestData.ReadInt64();
@@ -61,6 +63,7 @@ namespace Ryujinx.HLE.HOS.Services.Lr
             return 0;
         }
 
+        // DeleteControlNcaPath()
         public long DeleteControlNcaPath(ServiceCtx Context)
         {
             long TitleId = Context.RequestData.ReadInt64();
@@ -70,6 +73,7 @@ namespace Ryujinx.HLE.HOS.Services.Lr
             return 0;
         }
 
+        // DeleteProgramNcaPath()
         public long DeleteProgramNcaPath(ServiceCtx Context)
         {
             long TitleId = Context.RequestData.ReadInt64();
@@ -79,6 +83,7 @@ namespace Ryujinx.HLE.HOS.Services.Lr
             return 0;
         }
 
+        // ClearLocationResolver2()
         public long ClearLocationResolver2(ServiceCtx Context)
         {
             Context.Device.System.ContentManager.RefreshEntries(StorageId, 1);
@@ -86,6 +91,7 @@ namespace Ryujinx.HLE.HOS.Services.Lr
             return 0;
         }
 
+        // SetProgramNcaPath2()
         public long SetProgramNcaPath2(ServiceCtx Context)
         {
             long TitleId = Context.RequestData.ReadInt64();
@@ -95,6 +101,7 @@ namespace Ryujinx.HLE.HOS.Services.Lr
             return 0;
         }
 
+        // RedirectApplicationControlPath()
         public long RedirectApplicationControlPath(ServiceCtx Context)
         {
             long TitleId = Context.RequestData.ReadInt64();
@@ -104,6 +111,7 @@ namespace Ryujinx.HLE.HOS.Services.Lr
             return 0;
         }
 
+        // RedirectApplicationHtmlDocumentPath()
         public long RedirectApplicationHtmlDocumentPath(ServiceCtx Context)
         {
             long TitleId = Context.RequestData.ReadInt64();
@@ -113,6 +121,7 @@ namespace Ryujinx.HLE.HOS.Services.Lr
             return 0;
         }
 
+        // RedirectApplicationLegalInformationPath()
         public long RedirectApplicationLegalInformationPath(ServiceCtx Context)
         {
             long TitleId = Context.RequestData.ReadInt64();
@@ -122,6 +131,7 @@ namespace Ryujinx.HLE.HOS.Services.Lr
             return 0;
         }
 
+        // ResolveDataPath()
         public long ResolveDataPath(ServiceCtx Context)
         {
             long TitleId = Context.RequestData.ReadInt64();
@@ -136,6 +146,7 @@ namespace Ryujinx.HLE.HOS.Services.Lr
             }
         }
 
+        // ResolveApplicationHtmlDocumentPath()
         public long ResolveApplicationHtmlDocumentPath(ServiceCtx Context)
         {
             long TitleId = Context.RequestData.ReadInt64();
@@ -150,6 +161,7 @@ namespace Ryujinx.HLE.HOS.Services.Lr
             }
         }
 
+        // ResolveApplicationLegalInformationPath()
         public long ResolveApplicationLegalInformationPath(ServiceCtx Context)
         {
             long TitleId = Context.RequestData.ReadInt64();
@@ -164,6 +176,7 @@ namespace Ryujinx.HLE.HOS.Services.Lr
             }
         }
 
+        // ResolveApplicationControlPath()
         public long ResolveApplicationControlPath(ServiceCtx Context)
         {
             long TitleId = Context.RequestData.ReadInt64();
@@ -178,6 +191,7 @@ namespace Ryujinx.HLE.HOS.Services.Lr
             }
         }
 
+        // RedirectProgramPath()
         public long RedirectProgramPath(ServiceCtx Context)
         {
             long TitleId = Context.RequestData.ReadInt64();
@@ -187,6 +201,7 @@ namespace Ryujinx.HLE.HOS.Services.Lr
             return 0;
         }
 
+        // Refresh()
         public long Refresh(ServiceCtx Context)
         {
             Context.Device.System.ContentManager.RefreshEntries(StorageId, 1);
@@ -194,6 +209,7 @@ namespace Ryujinx.HLE.HOS.Services.Lr
             return 0;
         }
 
+        // ResolveProgramPath()
         public long ResolveProgramPath(ServiceCtx Context)
         {
             long TitleId = Context.RequestData.ReadInt64();
@@ -210,8 +226,7 @@ namespace Ryujinx.HLE.HOS.Services.Lr
 
         private void RedirectPath(ServiceCtx Context, long TitleId, int Flag, ContentType ContentType)
         {
-            string ContentPath = ReadUtf8String(Context);
-
+            string        ContentPath = ReadUtf8String(Context);
             LocationEntry NewLocation = new LocationEntry(ContentPath, Flag, TitleId, ContentType);
 
             Context.Device.System.ContentManager.RedirectLocation(NewLocation, StorageId);

@@ -89,7 +89,6 @@ namespace Ryujinx.HLE.HOS.Font
                             }
 
                             NcaFileStream.Dispose();
-
                             Nca.Dispose();
 
                             return Info;

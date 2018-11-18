@@ -28,11 +28,13 @@ namespace Ryujinx.HLE.HOS.Services.Set
             };
         }
 
+        // GetFirmwareVersion() -> buffer<nn::settings::system::FirmwareVersion, 0x1a, 0x100>
         public static long GetFirmwareVersion(ServiceCtx Context)
         {
             return GetFirmwareVersion2(Context);
         }
 
+        // GetFirmwareVersion2() -> buffer<nn::settings::system::FirmwareVersion, 0x1a, 0x100>
         public static long GetFirmwareVersion2(ServiceCtx Context)
         {
             long ReplyPos  = Context.Request.RecvListBuff[0].Position;
@@ -91,6 +93,7 @@ namespace Ryujinx.HLE.HOS.Services.Set
             return 0;
         }
 
+        // GetColorSetId() -> i32
         public static long GetColorSetId(ServiceCtx Context)
         {
             Context.ResponseData.Write((int)Context.Device.System.State.ThemeColor);
@@ -98,6 +101,7 @@ namespace Ryujinx.HLE.HOS.Services.Set
             return 0;
         }
 
+        // GetColorSetId() -> i32
         public static long SetColorSetId(ServiceCtx Context)
         {
             int ColorSetId = Context.RequestData.ReadInt32();
@@ -107,6 +111,7 @@ namespace Ryujinx.HLE.HOS.Services.Set
             return 0;
         }
 
+        // GetSettingsItemValue(buffer<nn::settings::SettingsName, 0x19, 0x48>, buffer<nn::settings::SettingsItemKey, 0x19, 0x48>) -> (u64, buffer<unknown, 6, 0>)
         public static long GetSettingsItemValue(ServiceCtx Context)
         {
             long ClassPos  = Context.Request.PtrBuff[0].Position;

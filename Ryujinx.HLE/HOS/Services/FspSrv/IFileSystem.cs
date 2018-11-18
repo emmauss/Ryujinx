@@ -48,6 +48,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             this.Provider = Provider;
         }
 
+        // CreateFile(u32 mode, u64 size, buffer<bytes<0x301>, 0x19, 0x301> path)
         public long CreateFile(ServiceCtx Context)
         {
             string Name = ReadUtf8String(Context);
@@ -75,6 +76,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             return Provider.CreateFile(FileName, Size);
         }
 
+        // DeleteFile(buffer<bytes<0x301>, 0x19, 0x301> path)
         public long DeleteFile(ServiceCtx Context)
         {
             string Name = ReadUtf8String(Context);
@@ -94,6 +96,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             return Provider.DeleteFile(FileName);
         }
 
+        // CreateDirectory(buffer<bytes<0x301>, 0x19, 0x301> path)
         public long CreateDirectory(ServiceCtx Context)
         {
             string Name = ReadUtf8String(Context);
@@ -120,16 +123,18 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             return 0;
         }
 
+        // DeleteDirectory(buffer<bytes<0x301>, 0x19, 0x301> path)
         public long DeleteDirectory(ServiceCtx Context)
         {
             return DeleteDirectory(Context, false);
         }
 
+        // DeleteDirectoryRecursively(buffer<bytes<0x301>, 0x19, 0x301> path)
         public long DeleteDirectoryRecursively(ServiceCtx Context)
         {
             return DeleteDirectory(Context, true);
         }
-
+        
         private long DeleteDirectory(ServiceCtx Context, bool Recursive)
         {
             string Name = ReadUtf8String(Context);
@@ -151,6 +156,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             return 0;
         }
 
+        // RenameFile(buffer<bytes<0x301>, 0x19, 0x301> oldPath, buffer<bytes<0x301>, 0x19, 0x301> newPath)
         public long RenameFile(ServiceCtx Context)
         {
             string OldName = ReadUtf8String(Context, 0);
@@ -177,6 +183,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             return Provider.RenameFile(OldFileName, NewFileName);
         }
 
+        // RenameDirectory(buffer<bytes<0x301>, 0x19, 0x301> oldPath, buffer<bytes<0x301>, 0x19, 0x301> newPath)
         public long RenameDirectory(ServiceCtx Context)
         {
             string OldName = ReadUtf8String(Context, 0);
@@ -203,6 +210,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             return Provider.RenameDirectory(OldDirName, NewDirName);
         }
 
+        // GetEntryType(buffer<bytes<0x301>, 0x19, 0x301> path) -> nn::fssrv::sf::DirectoryEntryType
         public long GetEntryType(ServiceCtx Context)
         {
             string Name = ReadUtf8String(Context);
@@ -227,6 +235,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             return 0;
         }
 
+        // OpenFile(u32 mode, buffer<bytes<0x301>, 0x19, 0x301> path) -> object<nn::fssrv::sf::IFile> file
         public long OpenFile(ServiceCtx Context)
         {
             int FilterFlags = Context.RequestData.ReadInt32();
@@ -265,6 +274,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             return Error;
         }
 
+        // OpenDirectory(u32 filter_flags, buffer<bytes<0x301>, 0x19, 0x301> path) -> object<nn::fssrv::sf::IDirectory> directory
         public long OpenDirectory(ServiceCtx Context)
         {
             int FilterFlags = Context.RequestData.ReadInt32();
@@ -300,11 +310,13 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             return Error;
         }
 
+        // Commit()
         public long Commit(ServiceCtx Context)
         {
             return 0;
         }
 
+        // GetFreeSpaceSize(buffer<bytes<0x301>, 0x19, 0x301> path) -> u64 totalFreeSpace
         public long GetFreeSpaceSize(ServiceCtx Context)
         {
             string Name = ReadUtf8String(Context);
@@ -314,6 +326,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             return 0;
         }
 
+        // GetTotalSpaceSize(buffer<bytes<0x301>, 0x19, 0x301> path) -> u64 totalSize
         public long GetTotalSpaceSize(ServiceCtx Context)
         {
             string Name = ReadUtf8String(Context);
@@ -323,6 +336,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             return 0;
         }
 
+        // CleanDirectoryRecursively(buffer<bytes<0x301>, 0x19, 0x301> path)
         public long CleanDirectoryRecursively(ServiceCtx Context)
         {
             string Name = ReadUtf8String(Context);

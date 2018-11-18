@@ -115,8 +115,6 @@ namespace Ryujinx.HLE.FileSystem
 
         public long OpenDirectory(string Name, int FilterFlags, out IDirectory DirectoryInterface)
         {
-            DirectoryInterface = null;
-
             RomfsDir Directory = RomFs.Directories.Find(x => x.Name == Name);
 
             if (Directory != null)
@@ -126,13 +124,13 @@ namespace Ryujinx.HLE.FileSystem
                 return 0;
             }
 
+            DirectoryInterface = null;
+
             return MakeError(ErrorModule.Fs, FsErr.PathDoesNotExist);
         }
 
         public long OpenFile(string Name, out IFile FileInterface)
         {
-            FileInterface = null;
-
             if (RomFs.FileExists(Name))
             {
                 Stream Stream = RomFs.OpenFile(Name);
@@ -141,6 +139,8 @@ namespace Ryujinx.HLE.FileSystem
 
                 return 0;
             }
+
+            FileInterface = null;
 
             return MakeError(ErrorModule.Fs, FsErr.PathDoesNotExist);
         }
