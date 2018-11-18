@@ -13,9 +13,9 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
 
         public DirectoryEntry(string Path, DirectoryEntryType DirectoryEntryType, long Size = 0)
         {
-            this.Path               = Path;
-            this.EntryType = DirectoryEntryType;
-            this.Size               = Size;
+            this.Path = Path;
+            EntryType = DirectoryEntryType;
+            this.Size = Size;
         }
     }
 }
