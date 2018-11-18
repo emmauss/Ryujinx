@@ -220,8 +220,7 @@ namespace Ryujinx.HLE.HOS.Services.Lr
         private bool ResolvePath(ServiceCtx Context, long TitleId,ContentType ContentType)
         {
             ContentManager ContentManager = Context.Device.System.ContentManager;
-
-            string ContentPath = ContentManager.GetInstalledContentPath(TitleId, StorageId, ContentType.Program);
+            string         ContentPath    = ContentManager.GetInstalledContentPath(TitleId, StorageId, ContentType.Program);
 
             if (!string.IsNullOrWhiteSpace(ContentPath))
             {
@@ -243,8 +242,7 @@ namespace Ryujinx.HLE.HOS.Services.Lr
         private void DeleteContentPath(ServiceCtx Context, long TitleId, ContentType ContentType)
         {
             ContentManager ContentManager = Context.Device.System.ContentManager;
-
-            string ContentPath = ContentManager.GetInstalledContentPath(TitleId, StorageId, ContentType.Manual);
+            string         ContentPath    = ContentManager.GetInstalledContentPath(TitleId, StorageId, ContentType.Manual);
 
             ContentManager.ClearEntry(TitleId, ContentType.Manual, StorageId);
         }

@@ -91,9 +91,7 @@ namespace Ryujinx.HLE.FileSystem.Content
                             ContentDictionary.Add((Nca.Header.TitleId, Nca.Header.ContentType), NcaName);
 
                             NcaFile.Close();
-
                             Nca.Dispose();
-
                             NcaFile.Dispose();
                         }
                     }
@@ -125,9 +123,7 @@ namespace Ryujinx.HLE.FileSystem.Content
                             ContentDictionary.Add((Nca.Header.TitleId, Nca.Header.ContentType), NcaName);
 
                             NcaFile.Close();
-
                             Nca.Dispose();
-
                             NcaFile.Dispose();
                         }
                     }
@@ -173,13 +169,10 @@ namespace Ryujinx.HLE.FileSystem.Content
         {
             if (ContentDictionary.ContainsValue(NcaId))
             {
-                var Content = ContentDictionary.FirstOrDefault(x => x.Value == NcaId);
-
-                long TitleId = (long)Content.Key.Item1;
-
+                var         Content     = ContentDictionary.FirstOrDefault(x => x.Value == NcaId);
+                long        TitleId     = (long)Content.Key.Item1;
                 ContentType ContentType = Content.Key.Item2;
-
-                StorageId Storage = GetInstalledStorage(TitleId, ContentType, StorageId);
+                StorageId   Storage     = GetInstalledStorage(TitleId, ContentType, StorageId);
 
                 return Storage == StorageId;
             }
@@ -231,22 +224,18 @@ namespace Ryujinx.HLE.FileSystem.Content
 
         private bool VerifyContentType(LocationEntry LocationEntry, ContentType ContentType)
         {
-            StorageId StorageId = LocationHelper.GetStorageId(LocationEntry.ContentPath);
-
-            string InstalledPath = Device.FileSystem.SwitchPathToSystemPath(LocationEntry.ContentPath);
+            StorageId StorageId     = LocationHelper.GetStorageId(LocationEntry.ContentPath);
+            string    InstalledPath = Device.FileSystem.SwitchPathToSystemPath(LocationEntry.ContentPath);
 
             if (!string.IsNullOrWhiteSpace(InstalledPath))
             {
                 if (File.Exists(InstalledPath))
                 {
-                    FileStream File = new FileStream(InstalledPath, FileMode.Open, FileAccess.Read);
-
-                    Nca Nca = new Nca(Device.System.KeySet, File, false);
-
-                    bool ContentCheck = Nca.Header.ContentType == ContentType;
+                    FileStream File         = new FileStream(InstalledPath, FileMode.Open, FileAccess.Read);
+                    Nca        Nca          = new Nca(Device.System.KeySet, File, false);
+                    bool       ContentCheck = Nca.Header.ContentType == ContentType;
 
                     Nca.Dispose();
-
                     File.Dispose();
 
                     return ContentCheck;
@@ -289,7 +278,6 @@ namespace Ryujinx.HLE.FileSystem.Content
             {
                 LocationEntry Entry =
                     LocationList.ToList().Find(x => x.TitleId == TitleId && x.ContentType == ContentType);
-
 
                 if (Entry.ContentPath != null)
                 {

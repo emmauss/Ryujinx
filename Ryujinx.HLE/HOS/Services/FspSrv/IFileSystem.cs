@@ -9,7 +9,7 @@ using static Ryujinx.HLE.Utilities.StringUtils;
 
 namespace Ryujinx.HLE.HOS.Services.FspSrv
 {
-    class IFileSystem : IpcService, IDisposable
+    class IFileSystem : IpcService
     {
         private Dictionary<int, ServiceProcessRequest> m_Commands;
 
@@ -44,8 +44,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
 
             OpenPaths = new HashSet<string>();
 
-            this.Path = Path;
-
+            this.Path     = Path;
             this.Provider = Provider;
         }
 
@@ -385,16 +384,6 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
 
                 OpenPaths.Remove(DirInterface.DirectoryPath);
             }
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            Provider.Dispose();
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
         }
     }
 }

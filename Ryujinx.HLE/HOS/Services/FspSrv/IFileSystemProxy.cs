@@ -42,10 +42,8 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
 
         public long OpenBisFileSystem(ServiceCtx Context)
         {
-            int BisPartitionId = Context.RequestData.ReadInt32();
-
+            int    BisPartitionId  = Context.RequestData.ReadInt32();
             string PartitionString = ReadUtf8String(Context);
-
             string BisPartitonPath = string.Empty;
 
             switch (BisPartitionId)
@@ -76,12 +74,9 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
         public long OpenFileSystemWithId(ServiceCtx Context)
         {
             FileSystemType FileSystemType = (FileSystemType)Context.RequestData.ReadInt32();
-
-            long TitleId = Context.RequestData.ReadInt64();
-
-            string SwitchPath = ReadUtf8String(Context);
-
-            string FullPath = Context.Device.FileSystem.SwitchPathToSystemPath(SwitchPath);
+            long           TitleId        = Context.RequestData.ReadInt64();
+            string         SwitchPath     = ReadUtf8String(Context);
+            string         FullPath       = Context.Device.FileSystem.SwitchPathToSystemPath(SwitchPath);
 
             if (!File.Exists(FullPath))
             {
@@ -94,8 +89,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
             }
 
             FileStream FileStream = new FileStream(FullPath, FileMode.Open, FileAccess.Read);
-
-            string Extension = Path.GetExtension(FullPath);
+            string     Extension  = Path.GetExtension(FullPath);
 
             if (Extension == ".nca")
             {
@@ -144,10 +138,8 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
         public long OpenDataStorageByDataId(ServiceCtx Context)
         {
             StorageId StorageId = (StorageId)Context.RequestData.ReadByte();
-
-            byte[] Padding = Context.RequestData.ReadBytes(7);
-
-            long TitleId = Context.RequestData.ReadInt64();
+            byte[]    Padding   = Context.RequestData.ReadBytes(7);
+            long      TitleId   = Context.RequestData.ReadInt64();
 
             StorageId InstalledStorage =
                 Context.Device.System.ContentManager.GetInstalledStorage(TitleId, ContentType.Data, StorageId);
@@ -166,6 +158,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
                 {
                     ContentPath = Context.Device.System.ContentManager.GetInstalledContentPath(TitleId, StorageId, ContentType.AocData);
                 }
+
                 string InstallPath = Context.Device.FileSystem.SwitchPathToSystemPath(ContentPath);
 
                 if (!string.IsNullOrWhiteSpace(InstallPath))
@@ -174,23 +167,24 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
 
                     if (File.Exists(NcaPath))
                     {
-                        FileStream NcaStream = new FileStream(NcaPath, FileMode.Open, FileAccess.Read);
-
-                        Nca Nca = new Nca(Context.Device.System.KeySet, NcaStream, false);
-
+                        FileStream NcaStream    = new FileStream(NcaPath, FileMode.Open, FileAccess.Read);
+                        Nca        Nca          = new Nca(Context.Device.System.KeySet, NcaStream, false);
                         NcaSection RomfsSection = Nca.Sections.FirstOrDefault(x => x?.Type == SectionType.Romfs);
-
-                        Stream RomfsStream = Nca.OpenSection(RomfsSection.SectionNum, false, Context.Device.System.FsIntegrityCheckLevel);
+                        Stream     RomfsStream  = Nca.OpenSection(RomfsSection.SectionNum, false, Context.Device.System.FsIntegrityCheckLevel);
 
                         MakeObject(Context, new IStorage(RomfsStream));
 
                         return 0;
                     }
                     else
+                    { 
                         throw new FileNotFoundException($"No Nca found in Path `{NcaPath}`.");
+                    }
                 }
                 else
+                { 
                     throw new DirectoryNotFoundException($"Path for title id {TitleId:x16} on Storage {StorageId} was not found in Path {InstallPath}.");
+                }
             }
 
             throw new FileNotFoundException($"System archive with titleid {TitleId:x16} was not found on Storage {StorageId}. Found in {InstalledStorage}.");
@@ -220,14 +214,10 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
                 Context.RequestData.ReadInt64(), 
                 Context.RequestData.ReadInt64());
 
-            long SaveId = Context.RequestData.ReadInt64();
-
-            SaveDataType SaveDataType = (SaveDataType)Context.RequestData.ReadByte();
-
-            SaveInfo SaveInfo = new SaveInfo(TitleId, SaveId, SaveDataType, UserId, SaveSpaceId);
-
-            string SavePath = Context.Device.FileSystem.GetGameSavePath(SaveInfo, Context);
-
+            long               SaveId             = Context.RequestData.ReadInt64();
+            SaveDataType       SaveDataType       = (SaveDataType)Context.RequestData.ReadByte();
+            SaveInfo           SaveInfo           = new SaveInfo(TitleId, SaveId, SaveDataType, UserId, SaveSpaceId);
+            string             SavePath           = Context.Device.FileSystem.GetGameSavePath(SaveInfo, Context);
             FileSystemProvider FileSystemProvider = new FileSystemProvider(SavePath, Context.Device.FileSystem.GetBasePath());
 
             MakeObject(Context, new IFileSystem(SavePath, FileSystemProvider));
@@ -235,10 +225,8 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
 
         private long OpenNsp(ServiceCtx Context, string PfsPath)
         {
-            FileStream PfsFile = new FileStream(PfsPath, FileMode.Open, FileAccess.Read);
-
-            Pfs Nsp = new Pfs(PfsFile);
-
+            FileStream   PfsFile    = new FileStream(PfsPath, FileMode.Open, FileAccess.Read);
+            Pfs          Nsp        = new Pfs(PfsFile);
             PfsFileEntry TicketFile = Nsp.Files.FirstOrDefault(x => x.Name.EndsWith(".tik"));
 
             if (TicketFile != null)
@@ -265,18 +253,15 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
 
             if (RomfsSection != null)
             {
-                Stream RomfsStream = Nca.OpenSection(RomfsSection.SectionNum, false, Context.Device.System.FsIntegrityCheckLevel);
-
+                Stream      RomfsStream   = Nca.OpenSection(RomfsSection.SectionNum, false, Context.Device.System.FsIntegrityCheckLevel);
                 IFileSystem NcaFileSystem = new IFileSystem(NcaPath, new RomFsProvider(RomfsStream));
 
                 MakeObject(Context, NcaFileSystem);
             }
             else if(PfsSection !=null)
             {
-                Stream PfsStream = Nca.OpenSection(PfsSection.SectionNum, false, Context.Device.System.FsIntegrityCheckLevel);
-
-                Pfs Pfs = new Pfs(PfsStream);
-
+                Stream      PfsStream     = Nca.OpenSection(PfsSection.SectionNum, false, Context.Device.System.FsIntegrityCheckLevel);
+                Pfs         Pfs           = new Pfs(PfsStream);
                 IFileSystem NcaFileSystem = new IFileSystem(NcaPath, new PFsProvider(Pfs));
 
                 MakeObject(Context, NcaFileSystem);
@@ -305,8 +290,7 @@ namespace Ryujinx.HLE.HOS.Services.FspSrv
                     FileMode.Open,
                     FileAccess.Read);
 
-                Pfs Nsp = new Pfs(PfsFile);
-
+                Pfs          Nsp        = new Pfs(PfsFile);
                 PfsFileEntry TicketFile = Nsp.Files.FirstOrDefault(x => x.Name.EndsWith(".tik"));
 
                 if (TicketFile != null)

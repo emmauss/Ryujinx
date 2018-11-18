@@ -168,10 +168,8 @@ namespace Ryujinx.HLE.HOS.Services.Set
 
         public static byte[] GetFirmwareData(Switch Device)
         {
-            byte[] Data = null;
-
-            long TitleId = 0x0100000000000809;
-
+            byte[] Data        = null;
+            long   TitleId     = 0x0100000000000809;
             string ContentPath = Device.System.ContentManager.GetInstalledContentPath(TitleId, StorageId.NandSystem, ContentType.Data);
 
             if(string.IsNullOrWhiteSpace(ContentPath))
@@ -179,13 +177,10 @@ namespace Ryujinx.HLE.HOS.Services.Set
                 return null;
             }
 
-            string FirmwareTitlePath = Device.FileSystem.SwitchPathToSystemPath(ContentPath);
-
-            FileStream FirmwareStream = File.Open(FirmwareTitlePath, FileMode.Open, FileAccess.Read);
-
-            Nca FirmwareContent = new Nca(Device.System.KeySet, FirmwareStream, false);
-
-            Stream RomFsStream = FirmwareContent.OpenSection(0, false, Device.System.FsIntegrityCheckLevel);
+            string     FirmwareTitlePath = Device.FileSystem.SwitchPathToSystemPath(ContentPath);
+            FileStream FirmwareStream    = File.Open(FirmwareTitlePath, FileMode.Open, FileAccess.Read);
+            Nca        FirmwareContent   = new Nca(Device.System.KeySet, FirmwareStream, false);
+            Stream     RomFsStream       = FirmwareContent.OpenSection(0, false, Device.System.FsIntegrityCheckLevel);
 
             if(RomFsStream == null)
             {
@@ -205,7 +200,6 @@ namespace Ryujinx.HLE.HOS.Services.Set
             }
 
             FirmwareContent.Dispose();
-
             FirmwareStream.Dispose();
 
             return Data;

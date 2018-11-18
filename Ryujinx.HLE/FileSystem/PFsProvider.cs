@@ -14,8 +14,6 @@ namespace Ryujinx.HLE.FileSystem
     {
         private Pfs Pfs;
 
-        public bool Disposed { get; private set; }
-
         public PFsProvider(Pfs Pfs)
         {
             this.Pfs = Pfs;
@@ -144,16 +142,6 @@ namespace Ryujinx.HLE.FileSystem
         public void CheckIfOutsideBasePath(string Path)
         {
             throw new NotSupportedException();
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
         }
     }
 }

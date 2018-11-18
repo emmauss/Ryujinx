@@ -4,10 +4,8 @@ using System;
 
 namespace Ryujinx.HLE.FileSystem
 {
-    interface IFileSystemProvider : IDisposable
+    interface IFileSystemProvider
     {
-        bool Disposed { get; }
-
         long CreateFile(string Name, long Size);
 
         long CreateDirectory(string Name);

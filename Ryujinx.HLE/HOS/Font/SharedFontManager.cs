@@ -55,8 +55,7 @@ namespace Ryujinx.HLE.HOS.Font
                     if (ContentManager.TryGetFontTitle(Name, out long FontTitle))
                     {
                         string ContentPath = ContentManager.GetInstalledContentPath(FontTitle, StorageId.NandSystem, ContentType.Data);
-
-                        string FontPath = Device.FileSystem.SwitchPathToSystemPath(ContentPath);
+                        string FontPath    = Device.FileSystem.SwitchPathToSystemPath(ContentPath);
 
                         if (!string.IsNullOrWhiteSpace(FontPath))
                         {
@@ -69,16 +68,12 @@ namespace Ryujinx.HLE.HOS.Font
                             }
 
                             FileStream NcaFileStream = new FileStream(FontPath, FileMode.Open, FileAccess.Read);
+                            Nca        Nca           = new Nca(Device.System.KeySet, NcaFileStream, false);
+                            NcaSection RomfsSection  = Nca.Sections.FirstOrDefault(x => x?.Type == SectionType.Romfs);
+                            Romfs      Romfs         = new Romfs(Nca.OpenSection(RomfsSection.SectionNum, false, Device.System.FsIntegrityCheckLevel));
+                            Stream     FontFile      = Romfs.OpenFile(Romfs.Files[FileIndex]);
 
-                            Nca Nca = new Nca(Device.System.KeySet, NcaFileStream, false);
-
-                            NcaSection RomfsSection = Nca.Sections.FirstOrDefault(x => x?.Type == SectionType.Romfs);
-
-                            Romfs Romfs = new Romfs(Nca.OpenSection(RomfsSection.SectionNum, false, Device.System.FsIntegrityCheckLevel));
-
-                            Stream EncryptedFontFile = Romfs.OpenFile(Romfs.Files[FileIndex]);
-
-                            byte[] Data = DecryptFont(EncryptedFontFile);
+                            byte[] Data = DecryptFont(FontFile);
 
                             FontInfo Info = new FontInfo((int)FontOffset, Data.Length);
 

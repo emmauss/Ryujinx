@@ -14,8 +14,6 @@ namespace Ryujinx.HLE.FileSystem
     {
         private Romfs RomFs;
 
-        public bool Disposed { get; private set; }
-
         public RomFsProvider(Stream StorageStream)
         {
             RomFs = new Romfs(StorageStream);
@@ -160,16 +158,6 @@ namespace Ryujinx.HLE.FileSystem
         public void CheckIfOutsideBasePath(string Path)
         {
             throw new NotSupportedException();
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            Disposed = true;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
         }
     }
 }

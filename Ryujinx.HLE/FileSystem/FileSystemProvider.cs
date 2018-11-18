@@ -68,7 +68,6 @@ namespace Ryujinx.HLE.FileSystem
             {
                 return MakeError(ErrorModule.Fs, FsErr.PathDoesNotExist);
             }
-
             else
             {
                 File.Delete(Name);
@@ -106,8 +105,7 @@ namespace Ryujinx.HLE.FileSystem
 
                 foreach (string File in Directory.EnumerateFiles(Path))
                 {
-                    FileInfo FileInfo = new FileInfo(File);
-
+                    FileInfo       FileInfo       = new FileInfo(File);
                     DirectoryEntry DirectoryEntry = new DirectoryEntry(File, DirectoryEntryType.File, FileInfo.Length);
 
                     Entries.Add(DirectoryEntry);
@@ -123,8 +121,7 @@ namespace Ryujinx.HLE.FileSystem
 
             foreach (string File in Directory.EnumerateFiles(Path))
             {
-                FileInfo FileInfo = new FileInfo(File);
-
+                FileInfo       FileInfo       = new FileInfo(File);
                 DirectoryEntry DirectoryEntry = new DirectoryEntry(File, DirectoryEntryType.File, FileInfo.Length);
 
                 Entries.Add(DirectoryEntry);
@@ -251,18 +248,6 @@ namespace Ryujinx.HLE.FileSystem
             }
 
             throw new InvalidOperationException($"Path {Path} is not a child directory of {RootPath}");
-        }
-
-        public bool Disposed { get; private set; }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            Disposed = true;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
         }
     }
 }
