@@ -24,12 +24,12 @@ namespace Ryujinx.HLE.FileSystem.Content
 
             SharedFontTitleDictionary = new Dictionary<string, long>()
             {
-                {"FontStandard",                  0x0100000000000811 },
-                {"FontChineseSimplified",         0x0100000000000814 },
-                {"FontExtendedChineseSimplified", 0x0100000000000814 },
-                {"FontKorean",                    0x0100000000000812 },
-                {"FontChineseTraditional",        0x0100000000000813 },
-                {"FontNintendoExtended" ,         0x0100000000000810 },
+                { "FontStandard",                  0x0100000000000811 },
+                { "FontChineseSimplified",         0x0100000000000814 },
+                { "FontExtendedChineseSimplified", 0x0100000000000814 },
+                { "FontKorean",                    0x0100000000000812 },
+                { "FontChineseTraditional",        0x0100000000000813 },
+                { "FontNintendoExtended" ,         0x0100000000000810 },
             };
 
             this.Device = Device;
@@ -148,8 +148,7 @@ namespace Ryujinx.HLE.FileSystem.Content
 
         public void RefreshEntries(StorageId StorageId, int Flag)
         {
-            LinkedList<LocationEntry> LocationList = LocationEntries[StorageId];
-
+            LinkedList<LocationEntry> LocationList      = LocationEntries[StorageId];
             LinkedListNode<LocationEntry> LocationEntry = LocationList.First;
 
             while (LocationEntry != null)
