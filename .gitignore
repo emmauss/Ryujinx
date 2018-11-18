@@ -162,5 +162,5 @@ $RECYCLE.BIN/
 # VS Launch Settings
 launchSettings.json
 
-% NetCore Publishing Profiles
+# NetCore Publishing Profiles
 PublishProfiles/
