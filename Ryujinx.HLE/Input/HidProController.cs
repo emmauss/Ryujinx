@@ -31,8 +31,8 @@
 
         public override void SendInput(
             HidControllerButtons Buttons,
-            HidJoystickPosition LeftStick,
-            HidJoystickPosition RightStick)
+            HidJoystickPosition  LeftStick,
+            HidJoystickPosition  RightStick)
         {
             long ControllerOffset = WriteInput(Buttons, LeftStick, RightStick, HidControllerLayouts.Pro_Controller);
 

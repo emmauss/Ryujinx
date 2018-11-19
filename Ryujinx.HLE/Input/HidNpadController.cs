@@ -10,8 +10,8 @@
         private bool IsHalf;
 
         public HidNpadController(
-            HidControllerType ControllerType,
-            Switch Device,
+            HidControllerType      ControllerType,
+            Switch                 Device,
             (NpadColor, NpadColor) NpadBodyColors,
             (NpadColor, NpadColor) NpadButtonColors) : base(ControllerType, Device)
         {
@@ -79,7 +79,7 @@
             long ControllerOffset = WriteInput(Buttons, LeftStick, RightStick, CurrentLayout);
 
             Device.Memory.WriteInt64(ControllerOffset + 0x28,
-              Connected ? (uint)HidControllerConnState.Controller_State_Connected : 0 |
+              (Connected ? (uint)HidControllerConnState.Controller_State_Connected : 0) |
               (CurrentLayout == HidControllerLayouts.Handheld_Joined ? (uint)HidControllerConnState.Controller_State_Wired : 0));
         }
     }

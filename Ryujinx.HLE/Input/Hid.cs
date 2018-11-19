@@ -91,12 +91,9 @@ namespace Ryujinx.HLE.Input
         public void SetTouchPoints(params HidTouchPoint[] Points)
         {
             long TouchScreenOffset = HidPosition + HidTouchScreenOffset;
-
-            long LastEntry = Device.Memory.ReadInt64(TouchScreenOffset + 0x10);
-
-            long CurrEntry = (LastEntry + 1) % HidEntryCount;
-
-            long Timestamp = GetTimestamp();
+            long LastEntry         = Device.Memory.ReadInt64(TouchScreenOffset + 0x10);
+            long CurrEntry         = (LastEntry + 1) % HidEntryCount;
+            long Timestamp         = GetTimestamp();
 
             Device.Memory.WriteInt64(TouchScreenOffset + 0x00, Timestamp);
             Device.Memory.WriteInt64(TouchScreenOffset + 0x08, HidEntryCount);
@@ -105,10 +102,8 @@ namespace Ryujinx.HLE.Input
             Device.Memory.WriteInt64(TouchScreenOffset + 0x20, Timestamp);
 
             long TouchEntryOffset = TouchScreenOffset + HidTouchHeaderSize;
-
-            long LastEntryOffset = TouchEntryOffset + LastEntry * HidTouchEntrySize;
-
-            long SampleCounter = Device.Memory.ReadInt64(LastEntryOffset) + 1;
+            long LastEntryOffset  = TouchEntryOffset + LastEntry * HidTouchEntrySize;
+            long SampleCounter    = Device.Memory.ReadInt64(LastEntryOffset) + 1;
 
             TouchEntryOffset += CurrEntry * HidTouchEntrySize;
 

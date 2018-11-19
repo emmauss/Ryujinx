@@ -8,16 +8,15 @@ namespace Ryujinx.HLE.Input
         protected Switch            Device;
         protected HidControllerId   ControllerId;
 
+        public long Offset    { get; private set; }
+        public bool Connected { get; protected set; }
+
         public HidControllerBase(HidControllerType ControllerType, Switch Device)
         {
             this.Device = Device;
 
             HidControllerType = ControllerType;
         }
-
-        public long Offset { get; private set; }
-
-        public bool Connected { get; protected set; }
 
         public virtual void Connect(HidControllerId ControllerId)
         {
@@ -32,8 +31,8 @@ namespace Ryujinx.HLE.Input
 
         public abstract void SendInput(
             HidControllerButtons Buttons,
-            HidJoystickPosition LeftStick,
-            HidJoystickPosition RightStick);
+            HidJoystickPosition  LeftStick,
+            HidJoystickPosition  RightStick);
 
         protected long WriteInput(
             HidControllerButtons Buttons,
@@ -46,9 +45,7 @@ namespace Ryujinx.HLE.Input
             ControllerOffset += (int)ControllerLayout * HidControllerLayoutsSize;
 
             long LastEntry = Device.Memory.ReadInt64(ControllerOffset + 0x10);
-
             long CurrEntry = (LastEntry + 1) % HidEntryCount;
-
             long Timestamp = GetTimestamp();
 
             Device.Memory.WriteInt64(ControllerOffset + 0x00, Timestamp);
