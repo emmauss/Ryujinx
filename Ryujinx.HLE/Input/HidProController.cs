@@ -35,7 +35,7 @@
             HidJoystickPosition  rightStick)
         {
             long controllerOffset = WriteInput(buttons, leftStick, rightStick, HidControllerLayouts.ProController);
-            
+
             Device.Memory.WriteInt64(controllerOffset + 0x28,
               (Connected ? (uint)HidControllerConnState.ControllerStateConnected : 0) |
               (_wired ? (uint)HidControllerConnState.ControllerStateWired : 0));
