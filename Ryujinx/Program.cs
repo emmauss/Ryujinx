@@ -23,8 +23,10 @@ namespace Ryujinx
             Config.Read(device);
 
             Logger.Updated += ConsoleLog.Log;
+            Logger.Updated += FileLog.Log;
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            AppDomain.CurrentDomain.ProcessExit        += CurrentDomain_ProcessExit;
 
             if (args.Length == 1)
             {
@@ -88,16 +90,19 @@ namespace Ryujinx
             audioOut.Dispose();
         }
 
+        private static void CurrentDomain_ProcessExit(object sender, EventArgs e)
+        {
+            FileLog.Close();
+        }
+
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var exception = e.ExceptionObject as Exception;
 
             Logger.PrintError(LogClass.Emulation, $"Unhandled exception caught: {exception}");
-            Logger.PrintInfo(LogClass.Emulation,"Press any key to close the application...");
 
-            Console.ReadKey();
-
-            Environment.Exit(0);
+            if (e.IsTerminating)
+                FileLog.Close();
         }
 
         /// <summary>
