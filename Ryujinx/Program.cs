@@ -23,7 +23,9 @@ namespace Ryujinx
             Config.Read(device);
 
             Logger.Updated += ConsoleLog.Log;
-            Logger.Updated += FileLog.Log;
+
+            if (Logger.EnableFileLog)
+                Logger.Updated += FileLog.Log;
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             AppDomain.CurrentDomain.ProcessExit        += CurrentDomain_ProcessExit;

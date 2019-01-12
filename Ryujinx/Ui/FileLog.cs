@@ -20,6 +20,9 @@ namespace Ryujinx
 
         static FileLog()
         {
+            if (!Logger.EnableFileLog)
+                return;
+
             _path = Path.Combine(Environment.CurrentDirectory, "Ryujinx.log");
 
             if (File.Exists(_path))
@@ -98,6 +101,9 @@ namespace Ryujinx
 
         public static void Close()
         {
+            if (!Logger.EnableFileLog)
+                return;
+
             _messageQueue.CompleteAdding();
 
             _messageThread.Join();
