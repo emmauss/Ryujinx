@@ -1,6 +1,7 @@
 ﻿using Ryujinx.Common.Logging;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -8,27 +9,27 @@ using System.Threading;
 
 namespace Ryujinx
 {
-    static class FileLog
+    static class Log
     {
-        private static string _path;
+        private static readonly string _path;
+
+        private static StreamWriter _logWriter;
 
         private static Thread _messageThread;
 
         private static BlockingCollection<LogEventArgs> _messageQueue;
 
-        private static StreamWriter _logWriter;
+        private static Dictionary<LogLevel, ConsoleColor> _logColors;
 
-        static FileLog()
+        static Log()
         {
-            if (!Logger.EnableFileLog)
-                return;
-
-            _path = Path.Combine(Environment.CurrentDirectory, "Ryujinx.log");
-
-            if (File.Exists(_path))
+            _logColors = new Dictionary<LogLevel, ConsoleColor>()
             {
-                File.Delete(_path);
-            }
+                { LogLevel.Stub,    ConsoleColor.DarkGray },
+                { LogLevel.Info,    ConsoleColor.White    },
+                { LogLevel.Warning, ConsoleColor.Yellow   },
+                { LogLevel.Error,   ConsoleColor.Red      }
+            };
 
             _messageQueue = new BlockingCollection<LogEventArgs>(10);
 
@@ -51,18 +52,15 @@ namespace Ryujinx
                 }
             });
 
-            _logWriter = new StreamWriter(File.OpenWrite(_path));
+            _path = Path.Combine(Environment.CurrentDirectory, "Ryujinx.log");
+
+            if (Logger.EnableFileLog)
+            {
+                _logWriter = new StreamWriter(File.Open(_path,FileMode.Create, FileAccess.Write));
+            }
 
             _messageThread.IsBackground = true;
             _messageThread.Start();
-        }
-
-        public static void Log(object sender, LogEventArgs e)
-        {
-            if (!_messageQueue.IsAddingCompleted)
-            {
-                _messageQueue.Add(e);
-            }
         }
 
         private static void PrintLog(LogEventArgs e)
@@ -96,21 +94,47 @@ namespace Ryujinx
                 }
             }
 
-            _logWriter.WriteLine(sb.ToString());
+            string message = sb.ToString();
+
+            if (_logColors.TryGetValue(e.Level, out ConsoleColor color))
+            {
+                Console.ForegroundColor = color;
+
+                Console.WriteLine(message);
+
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.WriteLine(message);
+            }
+
+            if (Logger.EnableFileLog)
+            {
+                _logWriter.WriteLine(message);
+            }
+        }
+
+        public static void LogMessage(object sender, LogEventArgs e)
+        {
+            if (!_messageQueue.IsAddingCompleted)
+            {
+                _messageQueue.Add(e);
+            }
         }
 
         public static void Close()
         {
-            if (!Logger.EnableFileLog)
-                return;
-
             _messageQueue.CompleteAdding();
 
             _messageThread.Join();
 
-            _logWriter.Flush();
-            _logWriter.Close();
-            _logWriter.Dispose();
+            if (Logger.EnableFileLog)
+            {
+                _logWriter.Flush();
+                _logWriter.Close();
+                _logWriter.Dispose();
+            }
         }
     }
 }

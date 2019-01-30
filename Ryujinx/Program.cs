@@ -22,10 +22,7 @@ namespace Ryujinx
 
             Config.Read(device);
 
-            Logger.Updated += ConsoleLog.Log;
-
-            if (Logger.EnableFileLog)
-                Logger.Updated += FileLog.Log;
+            Logger.Updated += Log.LogMessage;
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             AppDomain.CurrentDomain.ProcessExit        += CurrentDomain_ProcessExit;
@@ -94,7 +91,7 @@ namespace Ryujinx
 
         private static void CurrentDomain_ProcessExit(object sender, EventArgs e)
         {
-            FileLog.Close();
+            Log.Close();
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -104,7 +101,9 @@ namespace Ryujinx
             Logger.PrintError(LogClass.Emulation, $"Unhandled exception caught: {exception}");
 
             if (e.IsTerminating)
-                FileLog.Close();
+            {
+                Log.Close();
+            }
         }
 
         /// <summary>
