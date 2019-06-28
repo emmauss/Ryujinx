@@ -643,7 +643,7 @@ namespace Ryujinx.HLE.HOS.Services.Hid
         public long SetSupportedNpadIdType(ServiceCtx context)
         {
             long appletResourceUserId  = context.RequestData.ReadInt64();
-            HidControllerId npadIdType = (HidControllerId)context.RequestData.ReadInt64();
+            ControllerId npadIdType = (ControllerId)context.RequestData.ReadInt64();
 
             Logger.PrintStub(LogClass.ServiceHid, new { appletResourceUserId, npadIdType });
 
@@ -751,7 +751,7 @@ namespace Ryujinx.HLE.HOS.Services.Hid
         // SetNpadJoyAssignmentModeSingleByDefault(uint HidControllerId, nn::applet::AppletResourceUserId)
         public long SetNpadJoyAssignmentModeSingleByDefault(ServiceCtx context)
         {
-            HidControllerId hidControllerId      = (HidControllerId)context.RequestData.ReadInt32();
+            ControllerId hidControllerId      = (ControllerId)context.RequestData.ReadInt32();
             long            appletResourceUserId = context.RequestData.ReadInt64();
 
             _npadJoyAssignmentMode = HidNpadJoyAssignmentMode.Single;
@@ -764,7 +764,7 @@ namespace Ryujinx.HLE.HOS.Services.Hid
         // SetNpadJoyAssignmentModeSingle(uint HidControllerId, nn::applet::AppletResourceUserId, long HidNpadJoyDeviceType)
         public long SetNpadJoyAssignmentModeSingle(ServiceCtx context)
         {
-            HidControllerId      hidControllerId      = (HidControllerId)context.RequestData.ReadInt32();
+            ControllerId      hidControllerId      = (ControllerId)context.RequestData.ReadInt32();
             long                 appletResourceUserId = context.RequestData.ReadInt64();
             HidNpadJoyDeviceType hidNpadJoyDeviceType = (HidNpadJoyDeviceType)context.RequestData.ReadInt64();
 
@@ -778,7 +778,7 @@ namespace Ryujinx.HLE.HOS.Services.Hid
         // SetNpadJoyAssignmentModeDual(uint HidControllerId, nn::applet::AppletResourceUserId)
         public long SetNpadJoyAssignmentModeDual(ServiceCtx context)
         {
-            HidControllerId hidControllerId      = (HidControllerId)context.RequestData.ReadInt32();
+            ControllerId hidControllerId      = (ControllerId)context.RequestData.ReadInt32();
             long            appletResourceUserId = context.RequestData.ReadInt64();
 
             _npadJoyAssignmentMode = HidNpadJoyAssignmentMode.Dual;
@@ -883,7 +883,7 @@ namespace Ryujinx.HLE.HOS.Services.Hid
         // SetNpadJoyAssignmentModeSingleWithDestination(uint HidControllerId, long HidNpadJoyDeviceType, nn::applet::AppletResourceUserId) -> bool Unknown0, uint Unknown1
         public long SetNpadJoyAssignmentModeSingleWithDestination(ServiceCtx context)
         {
-            HidControllerId      hidControllerId      = (HidControllerId)context.RequestData.ReadInt32();
+            ControllerId      hidControllerId      = (ControllerId)context.RequestData.ReadInt32();
             HidNpadJoyDeviceType hidNpadJoyDeviceType = (HidNpadJoyDeviceType)context.RequestData.ReadInt64();
             long                 appletResourceUserId = context.RequestData.ReadInt64();
 

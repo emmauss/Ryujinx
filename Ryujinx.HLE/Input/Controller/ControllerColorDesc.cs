@@ -3,7 +3,7 @@ using System;
 namespace Ryujinx.HLE.Input
 {
     [Flags]
-    public enum HidControllerColorDesc
+    public enum ControllerColorDesc : int
     {
         ColorDescColorsNonexistent = (1 << 1)
     }
