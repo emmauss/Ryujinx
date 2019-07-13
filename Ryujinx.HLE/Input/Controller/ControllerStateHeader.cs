@@ -1,5 +1,8 @@
-﻿namespace Ryujinx.HLE.Input
+﻿using System.Runtime.InteropServices;
+
+namespace Ryujinx.HLE.Input
 {
+    [StructLayout(LayoutKind.Sequential)]
     public struct ControllerStateHeader
     {
         public long Timestamp;

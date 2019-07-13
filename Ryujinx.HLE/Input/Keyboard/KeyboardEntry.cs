@@ -2,6 +2,7 @@
 
 namespace Ryujinx.HLE.Input
 {
+    [StructLayout(LayoutKind.Sequential)]
     public struct KeyboardEntry
     {
         public long SamplesTimestamp;
