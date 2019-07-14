@@ -99,7 +99,7 @@ namespace Ryujinx.HLE
             *((ulong*)(_ramPtr + position)) = value;
         }
 
-        public unsafe void WriteStructure<T>(long position, T value)
+        public unsafe void WriteStruct<T>(long position, T value)
         {
             Marshal.StructureToPtr(value, (IntPtr)(_ramPtr + position), false);
         }
