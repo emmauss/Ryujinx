@@ -90,8 +90,8 @@ namespace Ryujinx.HLE.Input
                 + ((int)ControllerLayouts.Main * HidControllerLayoutsSize);
 
             Device.Memory.FillWithZeros(Offset, 0x5000);
-            Device.Memory.WriteStructure(Offset, Header);
-            Device.Memory.WriteStructure(DeviceStateOffset, DeviceState);
+            Device.Memory.WriteStruct(Offset, Header);
+            Device.Memory.WriteStruct(DeviceStateOffset, DeviceState);
 
             Connected = true;
         }
@@ -127,14 +127,14 @@ namespace Ryujinx.HLE.Input
                 Timestamp         = GetTimestamp(),
             };
 
-            Device.Memory.WriteStructure(_currentLayoutOffset, newInputStateHeader);
-            Device.Memory.WriteStructure(_mainLayoutOffset,    newInputStateHeader);
+            Device.Memory.WriteStruct(_currentLayoutOffset, newInputStateHeader);
+            Device.Memory.WriteStruct(_mainLayoutOffset,    newInputStateHeader);
 
             long currentInputStateOffset = HidControllersLayoutHeaderSize
                 + newInputStateHeader.CurrentEntryIndex * HidControllersInputEntrySize;
 
-            Device.Memory.WriteStructure(_currentLayoutOffset + currentInputStateOffset, currentInput);
-            Device.Memory.WriteStructure(_mainLayoutOffset + currentInputStateOffset,    currentInput);
+            Device.Memory.WriteStruct(_currentLayoutOffset + currentInputStateOffset, currentInput);
+            Device.Memory.WriteStruct(_mainLayoutOffset + currentInputStateOffset,    currentInput);
 
             LastInputState     = currentInput;
             CurrentStateHeader = newInputStateHeader;

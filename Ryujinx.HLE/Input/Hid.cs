@@ -141,7 +141,7 @@ namespace Ryujinx.HLE.Input
                 TouchCount       = points.Length
             };
 
-            _device.Memory.WriteStructure(currentTouchEntryOffset, touchEntry);
+            _device.Memory.WriteStruct(currentTouchEntryOffset, touchEntry);
 
             currentTouchEntryOffset += HidTouchEntryHeaderSize;
 
@@ -158,11 +158,11 @@ namespace Ryujinx.HLE.Input
                     Y               = points[i].Y
                 };
 
-                _device.Memory.WriteStructure(currentTouchEntryOffset, touch);
+                _device.Memory.WriteStruct(currentTouchEntryOffset, touch);
                 currentTouchEntryOffset += HidTouchEntryTouchSize;
             }
 
-            _device.Memory.WriteStructure(_touchScreenOffset, newTouchHeader);
+            _device.Memory.WriteStruct(_touchScreenOffset, newTouchHeader);
 
             _currentTouchHeader = newTouchHeader;
         }
@@ -179,7 +179,7 @@ namespace Ryujinx.HLE.Input
                 Timestamp         = timestamp,
             };
 
-            _device.Memory.WriteStructure(_keyboardOffset, newKeyboardHeader);
+            _device.Memory.WriteStruct(_keyboardOffset, newKeyboardHeader);
 
             long keyboardEntryOffset = _keyboardOffset + HidKeyboardHeaderSize;
             keyboardEntryOffset += newKeyboardHeader.CurrentEntryIndex * HidKeyboardEntrySize;
@@ -192,7 +192,7 @@ namespace Ryujinx.HLE.Input
                 Modifier          = keyboard.Modifier,
             };
 
-            _device.Memory.WriteStructure(keyboardEntryOffset, newkeyboardEntry);
+            _device.Memory.WriteStruct(keyboardEntryOffset, newkeyboardEntry);
 
             _currentKeyboardEntry  = newkeyboardEntry;
             _currentKeyboardHeader = newKeyboardHeader;
