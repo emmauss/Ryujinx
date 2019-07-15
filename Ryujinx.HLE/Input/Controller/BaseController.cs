@@ -17,17 +17,16 @@ namespace Ryujinx.HLE.Input
         public long Offset    { get; private set; }
         public bool Connected { get; protected set; }
 
-        public ControllerHeader      Header             { get; private set; }
-        public ControllerStateHeader CurrentStateHeader { get; private set; }
-        public ControllerDeviceState DeviceState        { get; private set; }
-        public ControllerLayouts     CurrentLayout      { get; private set; }
-        public ControllerState       LastInputState     { get; set; }
-        public ControllerConnState   ConnectionState    { get; protected set; }
+        public ControllerHeader            Header             { get; private set; }
+        public ControllerStateHeader       CurrentStateHeader { get; private set; }
+        public ControllerDeviceState       DeviceState        { get; private set; }
+        public ControllerLayouts           CurrentLayout      { get; private set; }
+        public ControllerState             LastInputState     { get; set; }
+        public ControllerConnectionState   ConnectionState    { get; protected set; }
 
-        public BaseController(ControllerStatus controllerType, Switch device)
+        public BaseController(Switch device, ControllerStatus controllerType)
         {
-            Device = device;
-
+            Device            = device;
             HidControllerType = controllerType;
         }
 
@@ -35,24 +34,24 @@ namespace Ryujinx.HLE.Input
             bool isHalf,
             (NpadColor left, NpadColor right) bodyColors,
             (NpadColor left, NpadColor right) buttonColors,
-            ControllerColorDesc               singleColorDesc   = 0,
-            ControllerColorDesc               splitColorDesc    = 0,
+            ControllerColorDescription        singleColorDesc   = 0,
+            ControllerColorDescription        splitColorDesc    = 0,
             NpadColor                         singleBodyColor   = 0,
             NpadColor                         singleButtonColor = 0
             )
         {
             Header = new ControllerHeader()
             {
-                IsJoyConHalf      = isHalf ? 1 : 0,
-                LeftBodyColor     = bodyColors.left,
-                LeftButtonColor   = buttonColors.left,
-                RightBodyColor    = bodyColors.right,
-                RightButtonColor  = buttonColors.right,
-                Status            = HidControllerType,
-                SingleBodyColor   = singleBodyColor,
-                SingleButtonColor = singleButtonColor,
-                SplitColorDesc    = splitColorDesc,
-                SingleColorDesc   = singleColorDesc,
+                IsJoyConHalf           = isHalf ? 1 : 0,
+                LeftBodyColor          = bodyColors.left,
+                LeftButtonColor        = buttonColors.left,
+                RightBodyColor         = bodyColors.right,
+                RightButtonColor       = buttonColors.right,
+                Status                 = HidControllerType,
+                SingleBodyColor        = singleBodyColor,
+                SingleButtonColor      = singleButtonColor,
+                SplitColorDescription  = splitColorDesc,
+                SingleColorDescription = singleColorDesc,
             };
 
             CurrentStateHeader = new ControllerStateHeader

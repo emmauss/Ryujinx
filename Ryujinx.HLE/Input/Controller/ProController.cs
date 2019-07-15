@@ -9,7 +9,7 @@
 
         public ProController(Switch    device,
                              NpadColor bodyColor,
-                             NpadColor buttonColor) : base(ControllerStatus.ProController, device)
+                             NpadColor buttonColor) : base(device, ControllerStatus.ProController)
         {
             _wired = true;
 
@@ -19,12 +19,12 @@
 
         public override void Connect(ControllerId controllerId)
         {
-            ControllerColorDesc singleColorDesc =
-                ControllerColorDesc.ColorDescColorsNonexistent;
+            ControllerColorDescription singleColorDesc =
+                ControllerColorDescription.ColorDescriptionColorsNonexistent;
 
-            ControllerColorDesc splitColorDesc = 0;
+            ControllerColorDescription splitColorDesc = 0;
 
-            ConnectionState = ControllerConnState.ControllerStateConnected | ControllerConnState.ControllerStateWired;
+            ConnectionState = ControllerConnectionState.ControllerStateConnected | ControllerConnectionState.ControllerStateWired;
 
             Initialize(false,
                 (0, 0),

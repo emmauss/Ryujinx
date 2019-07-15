@@ -14,6 +14,7 @@ namespace Ryujinx.HLE.Input
         private TouchHeader    _currentTouchHeader;
         private KeyboardHeader _currentKeyboardHeader;
         private KeyboardEntry  _currentKeyboardEntry;
+
         public BaseController PrimaryController { get; private set; }
 
         internal long HidPosition;
@@ -159,6 +160,7 @@ namespace Ryujinx.HLE.Input
                 };
 
                 _device.Memory.WriteStruct(currentTouchEntryOffset, touch);
+
                 currentTouchEntryOffset += HidTouchEntryTouchSize;
             }
 

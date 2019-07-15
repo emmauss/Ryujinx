@@ -109,13 +109,13 @@ namespace Ryujinx.Profiler
         {
             public static ProfileConfig ControllerInput = new ProfileConfig
             {
-                Category = "Input",
+                Category     = "Input",
                 SessionGroup = "ControllerInput"
             };
 
             public static ProfileConfig TouchInput = new ProfileConfig
             {
-                Category = "Input",
+                Category     = "Input",
                 SessionGroup = "TouchInput"
             };
         }

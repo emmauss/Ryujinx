@@ -1,6 +1,6 @@
 namespace Ryujinx.HLE.Input
 {
-    public enum NpadColor : int//Thanks to CTCaer
+    public enum NpadColor : int //Thanks to CTCaer
     {
         Black = 0,
 

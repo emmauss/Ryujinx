@@ -8,10 +8,10 @@
         private bool _isHalf;
 
         public NpadController(
-            ControllerStatus       controllerType,
+            ControllerStatus       controllerStatus,
             Switch                 device,
             (NpadColor, NpadColor) npadBodyColors,
-            (NpadColor, NpadColor) npadButtonColors) : base(controllerType, device)
+            (NpadColor, NpadColor) npadButtonColors) : base(device, controllerStatus)
         {
             _npadBodyColors   = npadBodyColors;
             _npadButtonColors = npadButtonColors;
@@ -24,15 +24,15 @@
                 _isHalf = false;
             }
 
-            ConnectionState = ControllerConnState.ControllerStateConnected;
+            ConnectionState = ControllerConnectionState.ControllerStateConnected;
 
             if (controllerId == ControllerId.ControllerHandheld)
-                ConnectionState |= ControllerConnState.ControllerStateWired;
+                ConnectionState |= ControllerConnectionState.ControllerStateWired;
 
-            ControllerColorDesc singleColorDesc =
-                ControllerColorDesc.ColorDescColorsNonexistent;
+            ControllerColorDescription singleColorDesc =
+                ControllerColorDescription.ColorDescriptionColorsNonexistent;
 
-            ControllerColorDesc splitColorDesc = 0;
+            ControllerColorDescription splitColorDesc = 0;
 
             NpadColor singleBodyColor   = NpadColor.Black;
             NpadColor singleButtonColor = NpadColor.Black;
