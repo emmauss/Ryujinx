@@ -642,8 +642,8 @@ namespace Ryujinx.HLE.HOS.Services.Hid
         // SetSupportedNpadIdType(nn::applet::AppletResourceUserId, array<NpadIdType, 9>)
         public long SetSupportedNpadIdType(ServiceCtx context)
         {
-            long appletResourceUserId  = context.RequestData.ReadInt64();
-            ControllerId npadIdType = (ControllerId)context.RequestData.ReadInt64();
+            long         appletResourceUserId  = context.RequestData.ReadInt64();
+            ControllerId npadIdType            = (ControllerId)context.RequestData.ReadInt64();
 
             Logger.PrintStub(LogClass.ServiceHid, new { appletResourceUserId, npadIdType });
 
