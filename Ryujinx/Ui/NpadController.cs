@@ -135,27 +135,27 @@ namespace Ryujinx.UI.Input
                 return 0;
             }
 
-            JoystickState jsState = Joystick.GetState(Index);
+            JoystickState joystickState = Joystick.GetState(Index);
 
             ControllerButtons buttons = 0;
 
-            if (IsActivated(jsState, LeftJoycon.DPadUp))       buttons |= ControllerButtons.DpadUp;
-            if (IsActivated(jsState, LeftJoycon.DPadDown))     buttons |= ControllerButtons.DpadDown;
-            if (IsActivated(jsState, LeftJoycon.DPadLeft))     buttons |= ControllerButtons.DpadLeft;
-            if (IsActivated(jsState, LeftJoycon.DPadRight))    buttons |= ControllerButtons.DPadRight;
-            if (IsActivated(jsState, LeftJoycon.StickButton))  buttons |= ControllerButtons.StickLeft;
-            if (IsActivated(jsState, LeftJoycon.ButtonMinus))  buttons |= ControllerButtons.Minus;
-            if (IsActivated(jsState, LeftJoycon.ButtonL))      buttons |= ControllerButtons.L;
-            if (IsActivated(jsState, LeftJoycon.ButtonZl))     buttons |= ControllerButtons.Zl;
+            if (IsActivated(joystickState, LeftJoycon.DPadUp))       buttons |= ControllerButtons.DpadUp;
+            if (IsActivated(joystickState, LeftJoycon.DPadDown))     buttons |= ControllerButtons.DpadDown;
+            if (IsActivated(joystickState, LeftJoycon.DPadLeft))     buttons |= ControllerButtons.DpadLeft;
+            if (IsActivated(joystickState, LeftJoycon.DPadRight))    buttons |= ControllerButtons.DPadRight;
+            if (IsActivated(joystickState, LeftJoycon.StickButton))  buttons |= ControllerButtons.StickLeft;
+            if (IsActivated(joystickState, LeftJoycon.ButtonMinus))  buttons |= ControllerButtons.Minus;
+            if (IsActivated(joystickState, LeftJoycon.ButtonL))      buttons |= ControllerButtons.L;
+            if (IsActivated(joystickState, LeftJoycon.ButtonZl))     buttons |= ControllerButtons.Zl;
 
-            if (IsActivated(jsState, RightJoycon.ButtonA))     buttons |= ControllerButtons.A;
-            if (IsActivated(jsState, RightJoycon.ButtonB))     buttons |= ControllerButtons.B;
-            if (IsActivated(jsState, RightJoycon.ButtonX))     buttons |= ControllerButtons.X;
-            if (IsActivated(jsState, RightJoycon.ButtonY))     buttons |= ControllerButtons.Y;
-            if (IsActivated(jsState, RightJoycon.StickButton)) buttons |= ControllerButtons.StickRight;
-            if (IsActivated(jsState, RightJoycon.ButtonPlus))  buttons |= ControllerButtons.Plus;
-            if (IsActivated(jsState, RightJoycon.ButtonR))     buttons |= ControllerButtons.R;
-            if (IsActivated(jsState, RightJoycon.ButtonZr))    buttons |= ControllerButtons.Zr;
+            if (IsActivated(joystickState, RightJoycon.ButtonA))     buttons |= ControllerButtons.A;
+            if (IsActivated(joystickState, RightJoycon.ButtonB))     buttons |= ControllerButtons.B;
+            if (IsActivated(joystickState, RightJoycon.ButtonX))     buttons |= ControllerButtons.X;
+            if (IsActivated(joystickState, RightJoycon.ButtonY))     buttons |= ControllerButtons.Y;
+            if (IsActivated(joystickState, RightJoycon.StickButton)) buttons |= ControllerButtons.StickRight;
+            if (IsActivated(joystickState, RightJoycon.ButtonPlus))  buttons |= ControllerButtons.Plus;
+            if (IsActivated(joystickState, RightJoycon.ButtonR))     buttons |= ControllerButtons.R;
+            if (IsActivated(joystickState, RightJoycon.ButtonZr))    buttons |= ControllerButtons.Zr;
 
             return buttons;
         }
@@ -163,14 +163,16 @@ namespace Ryujinx.UI.Input
         private bool IsActivated(JoystickState joystickState,ControllerInputId controllerInputId)
         {
             if (controllerInputId <= ControllerInputId.Button20)
+            {
                 return joystickState.IsButtonDown((int)controllerInputId);
+            }
             else if (controllerInputId <= ControllerInputId.Axis5)
             {
                 int axis = controllerInputId - ControllerInputId.Axis0;
 
                 return Math.Abs(joystickState.GetAxis(axis)) > Deadzone;
             }
-            else if(controllerInputId <= ControllerInputId.Hat2Right)
+            else if (controllerInputId <= ControllerInputId.Hat2Right)
             {
                 int hat = (controllerInputId - ControllerInputId.Hat0Up) / 4;
 
@@ -178,14 +180,10 @@ namespace Ryujinx.UI.Input
 
                 JoystickHatState hatState = joystickState.GetHat((JoystickHat)hat);
 
-                if (hatState.IsUp    && ((int)controllerInputId % baseHatId == 0))
-                    return true;
-                if (hatState.IsDown  && ((int)controllerInputId % baseHatId == 1))
-                    return true;
-                if (hatState.IsLeft  && ((int)controllerInputId % baseHatId == 2))
-                    return true;
-                if (hatState.IsRight && ((int)controllerInputId % baseHatId == 3))
-                    return true;
+                if (hatState.IsUp    && ((int)controllerInputId % baseHatId == 0)) return true;
+                if (hatState.IsDown  && ((int)controllerInputId % baseHatId == 1)) return true;
+                if (hatState.IsLeft  && ((int)controllerInputId % baseHatId == 2)) return true;
+                if (hatState.IsRight && ((int)controllerInputId % baseHatId == 3)) return true;
             }
 
             return false;
@@ -214,7 +212,9 @@ namespace Ryujinx.UI.Input
         private (short, short) GetStick(ControllerInputId stickInputId)
         {
             if (stickInputId < ControllerInputId.Axis0 || stickInputId > ControllerInputId.Axis5)
+            {
                 return (0, 0);
+            }
 
             JoystickState jsState = Joystick.GetState(Index);
 
