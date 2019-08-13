@@ -6,6 +6,7 @@ using ARMeilleure.Memory;
 using ARMeilleure.State;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading;
 
 using static ARMeilleure.IntermediateRepresentation.OperandHelper;
@@ -19,6 +20,8 @@ namespace ARMeilleure.Translation
         private MemoryManager _memory;
 
         private ConcurrentDictionary<ulong, TranslatedFunction> _funcs;
+
+        private Queue<TranslatedFunction> _oldFunctions;
 
         private PriorityQueue<RejitRequest> _backgroundQueue;
 
@@ -35,6 +38,8 @@ namespace ARMeilleure.Translation
             _backgroundQueue = new PriorityQueue<RejitRequest>(2);
 
             _backgroundTranslatorEvent = new AutoResetEvent(false);
+
+            _oldFunctions = new Queue<TranslatedFunction>();
         }
 
         private void TranslateQueuedSubs()
@@ -45,7 +50,23 @@ namespace ARMeilleure.Translation
                 {
                     TranslatedFunction func = Translate(request.Address, request.Mode, highCq: true);
 
-                    _funcs.AddOrUpdate(request.Address, func, (key, oldFunc) => func);
+                    _funcs.AddOrUpdate(request.Address, func, (key, oldFunc) =>
+                    {
+                        _oldFunctions.Enqueue(oldFunc);
+
+                        return func;
+                    });
+                }
+                else if (_oldFunctions.TryDequeue(out TranslatedFunction function))
+                {
+                    if (Interlocked.CompareExchange(ref function.EntryCount, -1, 0) != 0)
+                    {
+                        _oldFunctions.Enqueue(function);
+                    }
+                    else
+                    {
+                        JitCache.Free(function.Pointer);
+                    }
                 }
                 else
                 {
@@ -161,7 +182,7 @@ namespace ARMeilleure.Translation
 
             GuestFunction func = Compiler.Compile<GuestFunction>(cfg, argTypes, OperandType.I64, options);
 
-            return new TranslatedFunction(func, rejit: !highCq);
+            return new TranslatedFunction(func, address, rejit: !highCq);
         }
 
         private static ControlFlowGraph EmitAndGetCFG(ArmEmitterContext context, Block[] blocks)

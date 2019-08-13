@@ -17,7 +17,7 @@ namespace ARMeilleure.Translation
 
         private static IntPtr _basePointer;
 
-        private static int _offset;
+        private static JitCacheMemoryAllocator _allocator;
 
         private static List<JitCacheEntry> _cacheEntries;
 
@@ -27,13 +27,19 @@ namespace ARMeilleure.Translation
         {
             _basePointer = MemoryManagement.Allocate(CacheSize);
 
+            int startOffset = 0;
+
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 JitUnwindWindows.InstallFunctionTableHandler(_basePointer, CacheSize);
 
                 // The first page is used for the table based SEH structs.
-                _offset = PageSize;
+                startOffset = PageSize;
             }
+
+            ReprotectRange(startOffset, CacheSize - startOffset);
+
+            _allocator = new JitCacheMemoryAllocator(CacheSize, startOffset);
 
             _cacheEntries = new List<JitCacheEntry>();
 
@@ -51,8 +57,6 @@ namespace ARMeilleure.Translation
                 IntPtr funcPtr = _basePointer + funcOffset;
 
                 Marshal.Copy(code, 0, funcPtr, code.Length);
-
-                ReprotectRange(funcOffset, code.Length);
 
                 Add(new JitCacheEntry(funcOffset, code.Length, func.UnwindInfo));
 
@@ -76,16 +80,7 @@ namespace ARMeilleure.Translation
             {
                 IntPtr funcPtr = _basePointer + pageStart;
 
-                MemoryManagement.Reprotect(funcPtr, (ulong)fullPagesSize, MemoryProtection.ReadAndExecute);
-            }
-
-            int remaining = endOffs - pageEnd;
-
-            if (remaining != 0)
-            {
-                IntPtr funcPtr = _basePointer + pageEnd;
-
-                MemoryManagement.Reprotect(funcPtr, (ulong)remaining, MemoryProtection.ReadWriteExecute);
+                MemoryManagement.Reprotect(funcPtr, (ulong)fullPagesSize, MemoryProtection.ReadWriteExecute);
             }
         }
 
@@ -93,16 +88,26 @@ namespace ARMeilleure.Translation
         {
             codeSize = checked(codeSize + (CodeAlignment - 1)) & ~(CodeAlignment - 1);
 
-            int allocOffset = _offset;
-
-            _offset += codeSize;
-
-            if ((ulong)(uint)_offset > CacheSize)
-            {
-                throw new OutOfMemoryException();
-            }
+            int allocOffset = _allocator.Allocate(codeSize);
 
             return allocOffset;
+        }
+
+        public static void Free(ulong address)
+        {
+            ulong offset = address - (ulong)_basePointer;
+
+            lock (_lock)
+            {
+                if (TryFind((int)offset, out JitCacheEntry entry))
+                {
+                    _cacheEntries.Remove(entry);
+
+                    int size = checked(entry.Size + (CodeAlignment - 1)) & ~(CodeAlignment - 1);
+
+                    _allocator.Free((int)entry.Offset, size);
+                }
+            }
         }
 
         private static void Add(JitCacheEntry entry)

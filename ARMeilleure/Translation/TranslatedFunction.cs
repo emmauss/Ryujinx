@@ -1,17 +1,24 @@
+using System;
 using System.Threading;
+using System.Runtime.InteropServices;
 
 namespace ARMeilleure.Translation
 {
     class TranslatedFunction
     {
+        public ulong Pointer => (ulong)Marshal.GetFunctionPointerForDelegate(_func);
+
+        public int EntryCount;
+
         private const int MinCallsForRejit = 100;
 
         private GuestFunction _func;
 
-        private bool _rejit;
-        private int  _callCount;
+        private ulong _address;
+        private bool  _rejit;
+        private int   _callCount;
 
-        public TranslatedFunction(GuestFunction func, bool rejit)
+        public TranslatedFunction(GuestFunction func, ulong address, bool rejit)
         {
             _func  = func;
             _rejit = rejit;
@@ -19,7 +26,16 @@ namespace ARMeilleure.Translation
 
         public ulong Execute(State.ExecutionContext context)
         {
-            return _func(context.NativeContextPtr);
+            if (Interlocked.Increment(ref EntryCount) == 0)
+            {
+                return _address;
+            }
+
+            var nextAddress = _func(context.NativeContextPtr);
+
+            Interlocked.Decrement(ref EntryCount);
+
+            return nextAddress;
         }
 
         public bool ShouldRejit()
