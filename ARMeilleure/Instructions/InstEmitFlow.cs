@@ -21,6 +21,8 @@ namespace ARMeilleure.Instructions
             }
             else
             {
+                context.StoreToContext();
+
                 context.Return(Const(op.Immediate));
             }
         }
@@ -71,6 +73,8 @@ namespace ARMeilleure.Instructions
 
         public static void Ret(ArmEmitterContext context)
         {
+            context.StoreToContext();
+
             context.Return(context.BitwiseOr(GetIntOrZR(context, RegisterAlias.Lr), Const(CallFlag)));
         }
 
@@ -96,11 +100,15 @@ namespace ARMeilleure.Instructions
 
                 if (context.CurrBlock.Next == null)
                 {
+                    context.StoreToContext();
+
                     context.Return(Const(op.Address + 4));
                 }
             }
             else
             {
+                context.StoreToContext();
+
                 Operand lblTaken = Label();
 
                 EmitCondBranch(context, lblTaken, cond);
@@ -132,11 +140,15 @@ namespace ARMeilleure.Instructions
 
                 if (context.CurrBlock.Next == null)
                 {
+                    context.StoreToContext();
+
                     context.Return(Const(op.Address + 4));
                 }
             }
             else
             {
+                context.StoreToContext();
+
                 Operand lblTaken = Label();
 
                 if (onNotZero)

@@ -68,7 +68,7 @@ namespace ARMeilleure.Translation
 
             Statistics.InitializeTimer();
 
-            NativeInterface.RegisterThread(context, _memory);
+            NativeInterface.RegisterThread(context, _memory, this);
 
             do
             {
@@ -97,7 +97,7 @@ namespace ARMeilleure.Translation
             return nextAddr;
         }
 
-        private TranslatedFunction GetOrTranslate(ulong address, ExecutionMode mode)
+        internal TranslatedFunction GetOrTranslate(ulong address, ExecutionMode mode)
         {
             // TODO: Investigate how we should handle code at unaligned addresses.
             // Currently, those low bits are used to store special flags.

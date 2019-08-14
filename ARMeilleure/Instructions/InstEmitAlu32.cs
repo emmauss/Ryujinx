@@ -91,6 +91,8 @@ namespace ARMeilleure.Instructions
                     // TODO: Load SPSR etc.
                     Operand isThumb = GetFlag(PState.TFlag);
 
+                    context.StoreToContext();
+
                     Operand lblThumb = Label();
 
                     context.BranchIfTrue(lblThumb, isThumb);

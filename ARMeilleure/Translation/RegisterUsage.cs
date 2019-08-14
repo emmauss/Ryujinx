@@ -216,7 +216,7 @@ namespace ARMeilleure.Translation
                     block.Operations.RemoveLast();
                 }
 
-                if (EndsWithReturn(block) || hasContextStore)
+                if (hasContextStore)
                 {
                     StoreLocals(block, globalOutputs[block.Index].IntMask, RegisterType.Integer, isCompleteFunction);
                     StoreLocals(block, globalOutputs[block.Index].VecMask, RegisterType.Vector,  isCompleteFunction);

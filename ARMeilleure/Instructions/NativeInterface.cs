@@ -1,5 +1,6 @@
 using ARMeilleure.Memory;
 using ARMeilleure.State;
+using ARMeilleure.Translation;
 using System;
 
 namespace ARMeilleure.Instructions
@@ -12,12 +13,13 @@ namespace ARMeilleure.Instructions
         {
             public ExecutionContext Context { get; }
             public MemoryManager    Memory  { get; }
+            public Translator       Translator { get; }
 
             public ulong ExclusiveAddress   { get; set; }
             public ulong ExclusiveValueLow  { get; set; }
             public ulong ExclusiveValueHigh { get; set; }
 
-            public ThreadContext(ExecutionContext context, MemoryManager memory)
+            public ThreadContext(ExecutionContext context, MemoryManager memory, Translator translator)
             {
                 Context = context;
                 Memory  = memory;
@@ -29,9 +31,9 @@ namespace ARMeilleure.Instructions
         [ThreadStatic]
         private static ThreadContext _context;
 
-        public static void RegisterThread(ExecutionContext context, MemoryManager memory)
+        public static void RegisterThread(ExecutionContext context, MemoryManager memory, Translator translator)
         {
-            _context = new ThreadContext(context, memory);
+            _context = new ThreadContext(context, memory, translator);
         }
 
         public static void UnregisterThread()
@@ -352,6 +354,13 @@ namespace ARMeilleure.Instructions
             GetContext().CheckInterrupt();
 
             Statistics.ResumeTimer();
+        }
+
+        public static ulong GetFunctionAddress(ulong address)
+        {
+            TranslatedFunction func = _context.Translator.GetOrTranslate(address, GetContext().ExecutionMode);
+
+            return (ulong)func.Address.ToInt64();
         }
 
         public static ExecutionContext GetContext()

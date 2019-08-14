@@ -142,7 +142,25 @@ namespace ARMeilleure.Instructions
 
         public static void EmitCall(ArmEmitterContext context, ulong immediate)
         {
-            context.Return(Const(immediate | CallFlag));
+            context.StoreToContext();
+
+            Operand addr = Const(immediate | CallFlag);
+
+            // Assuming we are translating entire functions, we should also have the
+            // code that will be executed after the call. If we don't, then making the
+            // call is not worth it.
+            if (context.CurrBlock.Next != null)
+            {
+                Operand funcAddr = context.Call(new _U64_U64(NativeInterface.GetFunctionAddress), addr);
+
+                Operand retVal = context.Call(funcAddr, OperandType.I64, context.LoadArgument(OperandType.I64, 0));
+
+                EmitContinueOrReturnCheck(context, retVal);
+            }
+            else
+            {
+                context.Return(addr);
+            }
         }
 
         public static void EmitVirtualCall(ArmEmitterContext context, Operand target)
@@ -157,6 +175,8 @@ namespace ARMeilleure.Instructions
 
         private static void EmitVirtualCallOrJump(ArmEmitterContext context, Operand target, bool isJump)
         {
+            context.StoreToContext();
+
             context.Return(context.BitwiseOr(target, Const(target.Type, (long)CallFlag)));
         }
 
@@ -177,6 +197,8 @@ namespace ARMeilleure.Instructions
                 context.Return(Const(nextAddr));
 
                 context.MarkLabel(lblContinue);
+
+                context.LoadFromContext();
             }
             else
             {
