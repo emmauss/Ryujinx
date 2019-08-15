@@ -111,7 +111,7 @@ namespace ARMeilleure.Translation
 
                 _funcs.TryAdd(address, func);
             }
-            else if (isCallTarget && func.ShouldRejit())
+            else if (isCallTarget && !func.IsHighCq)
             {
                 _backgroundQueue.Enqueue(0, address);
 
@@ -124,6 +124,18 @@ namespace ARMeilleure.Translation
         internal bool TryGetTranslatedFunction(ulong address, out TranslatedFunction function)
         {
             return _funcs.TryGetValue(address, out function);
+        }
+
+        internal void QueueTranslate(ulong address)
+        {
+            if (_funcs.TryGetValue(address, out TranslatedFunction translatedFunction) && !translatedFunction.IsHighCq)
+            {
+                return;
+            }
+
+            _backgroundQueue.Enqueue(1, address);
+
+            _backgroundTranslatorEvent.Set();
         }
 
         private TranslatedFunction Translate(ulong address, ExecutionMode mode, bool highCq)

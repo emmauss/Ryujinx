@@ -94,6 +94,11 @@ namespace ARMeilleure.Translation
             _optOpLastFlagSet = null;
         }
 
+        public void TranslateAhead(ulong address)
+        {
+            Translator.QueueTranslate(address);
+        }
+
         public Operand TryGetComparisonResult(Condition condition)
         {
             if (_optOpLastCompare == null || _optOpLastCompare != _optOpLastFlagSet)

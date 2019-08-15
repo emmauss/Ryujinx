@@ -146,19 +146,23 @@ namespace ARMeilleure.Instructions
 
             Operand addr = Const(immediate | CallFlag);
 
+            //context.TranslateAhead(immediate);
+
             // Assuming we are translating entire functions, we should also have the
             // code that will be executed after the call. If we don't, then making the
             // call is not worth it.
-            if (context.CurrBlock.Next != null)
+            /*if (context.CurrBlock.Next != null)
             {
                 Operand retVal;
 
-                if (context.Translator.TryGetTranslatedFunction(immediate, out TranslatedFunction function) && function.IsHighCq)
+                /* if (context.Translator.TryGetTranslatedFunction(immediate, out TranslatedFunction function) && function.IsHighCq)
+                 {
+                     retVal = context.Call(Const((ulong)function.Address.ToInt64()), OperandType.I64, context.LoadArgument(OperandType.I64, 0));
+                 }
+                 else
                 {
-                    retVal = context.Call(Const((ulong)function.Address.ToInt64()), OperandType.I64, context.LoadArgument(OperandType.I64, 0));
-                }
-                else
-                {
+                   // context.IsHighCq = false; 
+
                     Operand funcAddr = context.Call(new _U64_U64(NativeInterface.GetFunctionAddress), addr);
 
                     retVal = context.Call(funcAddr, OperandType.I64, context.LoadArgument(OperandType.I64, 0));
@@ -166,7 +170,7 @@ namespace ARMeilleure.Instructions
 
                 EmitContinueOrReturnCheck(context, retVal);
             }
-            else
+            else*/
             {
                 context.Return(addr);
             }
