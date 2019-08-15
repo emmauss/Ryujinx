@@ -151,9 +151,18 @@ namespace ARMeilleure.Instructions
             // call is not worth it.
             if (context.CurrBlock.Next != null)
             {
-                Operand funcAddr = context.Call(new _U64_U64(NativeInterface.GetFunctionAddress), addr);
+                Operand retVal;
 
-                Operand retVal = context.Call(funcAddr, OperandType.I64, context.LoadArgument(OperandType.I64, 0));
+                if (context.Translator.TryGetTranslatedFunction(immediate, out TranslatedFunction function) && function.IsHighCq)
+                {
+                    retVal = context.Call(Const((ulong)function.Address.ToInt64()), OperandType.I64, context.LoadArgument(OperandType.I64, 0));
+                }
+                else
+                {
+                    Operand funcAddr = context.Call(new _U64_U64(NativeInterface.GetFunctionAddress), addr);
+
+                    retVal = context.Call(funcAddr, OperandType.I64, context.LoadArgument(OperandType.I64, 0));
+                }
 
                 EmitContinueOrReturnCheck(context, retVal);
             }
@@ -194,7 +203,7 @@ namespace ARMeilleure.Instructions
 
                 context.BranchIfTrue(lblContinue, context.ICompareEqual(retVal, Const(nextAddr)));
 
-                context.Return(Const(nextAddr));
+                context.Return(retVal);
 
                 context.MarkLabel(lblContinue);
 
@@ -202,7 +211,7 @@ namespace ARMeilleure.Instructions
             }
             else
             {
-                context.Return(Const(nextAddr));
+                context.Return(retVal);
             }
         }
 

@@ -107,7 +107,7 @@ namespace ARMeilleure.Decoders
                         currBlock.Branch = GetBlock((ulong)op.Immediate);
                     }
 
-                    if (!IsUnconditionalBranch(lastOp) /*|| isCall*/)
+                    if (!IsUnconditionalBranch(lastOp) || isCall)
                     {
                         currBlock.Next = GetBlock(currBlock.EndAddress);
                     }

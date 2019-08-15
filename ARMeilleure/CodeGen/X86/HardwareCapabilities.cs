@@ -1,5 +1,6 @@
 using ARMeilleure.IntermediateRepresentation;
 using ARMeilleure.Translation;
+using System;
 
 namespace ARMeilleure.CodeGen.X86
 {
@@ -44,7 +45,8 @@ namespace ARMeilleure.CodeGen.X86
                 cfg,
                 argTypes,
                 OperandType.I64,
-                CompilerOptions.HighCq);
+                CompilerOptions.HighCq,
+                out IntPtr codePtr);
 
             _featureInfo = getFeatureInfo();
         }

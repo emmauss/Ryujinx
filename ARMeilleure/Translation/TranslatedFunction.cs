@@ -8,6 +8,8 @@ namespace ARMeilleure.Translation
     {
         public IntPtr Address { get; }
 
+        public bool IsHighCq => !_rejit;
+
         private const int MinCallsForRejit = 100;
 
         private GuestFunction _func;
@@ -15,9 +17,9 @@ namespace ARMeilleure.Translation
         private bool _rejit;
         private int  _callCount;
 
-        public TranslatedFunction(GuestFunction func, bool rejit)
+        public TranslatedFunction(GuestFunction func, bool rejit, IntPtr address)
         {
-            Address = Marshal.GetFunctionPointerForDelegate(func);
+            Address = address;
 
             _func  = func;
             _rejit = rejit;

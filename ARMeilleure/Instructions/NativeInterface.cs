@@ -21,8 +21,9 @@ namespace ARMeilleure.Instructions
 
             public ThreadContext(ExecutionContext context, MemoryManager memory, Translator translator)
             {
-                Context = context;
-                Memory  = memory;
+                Context    = context;
+                Memory     = memory;
+                Translator = translator;
 
                 ExclusiveAddress = ulong.MaxValue;
             }

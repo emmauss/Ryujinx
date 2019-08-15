@@ -70,7 +70,8 @@ namespace ARMeilleure.Memory
                     cfg,
                     argTypes,
                     OperandType.V128,
-                    CompilerOptions.HighCq);
+                    CompilerOptions.HighCq,
+                    out IntPtr codePtr);
             }
         }
     }

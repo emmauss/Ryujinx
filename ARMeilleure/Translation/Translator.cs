@@ -121,13 +121,18 @@ namespace ARMeilleure.Translation
             return func;
         }
 
+        internal bool TryGetTranslatedFunction(ulong address, out TranslatedFunction function)
+        {
+            return _funcs.TryGetValue(address, out function);
+        }
+
         private TranslatedFunction Translate(ulong address, ExecutionMode mode, bool highCq)
         {
-            ArmEmitterContext context = new ArmEmitterContext(_memory, Aarch32Mode.User);
+            ArmEmitterContext context = new ArmEmitterContext(_memory, Aarch32Mode.User, this, highCq);
 
             Logger.StartPass(PassName.Decoding);
 
-            Block[] blocks = highCq
+            Block[] blocks = context.IsHighCq
                 ? Decoder.DecodeFunction  (_memory, address, mode)
                 : Decoder.DecodeBasicBlock(_memory, address, mode);
 
@@ -154,13 +159,13 @@ namespace ARMeilleure.Translation
 
             OperandType[] argTypes = new OperandType[] { OperandType.I64 };
 
-            CompilerOptions options = highCq
+            CompilerOptions options = context.IsHighCq
                 ? CompilerOptions.HighCq
                 : CompilerOptions.None;
 
-            GuestFunction func = Compiler.Compile<GuestFunction>(cfg, argTypes, OperandType.I64, options);
+            GuestFunction func = Compiler.Compile<GuestFunction>(cfg, argTypes, OperandType.I64, options, out IntPtr codePtr);
 
-            return new TranslatedFunction(func, rejit: !highCq);
+            return new TranslatedFunction(func, rejit: !context.IsHighCq, codePtr);
         }
 
         private static ControlFlowGraph EmitAndGetCFG(ArmEmitterContext context, Block[] blocks)

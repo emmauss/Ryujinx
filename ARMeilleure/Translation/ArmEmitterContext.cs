@@ -41,10 +41,16 @@ namespace ARMeilleure.Translation
 
         public Aarch32Mode Mode { get; }
 
-        public ArmEmitterContext(MemoryManager memory, Aarch32Mode mode)
+        public Translator Translator { get; }
+
+        public bool IsHighCq { get; set; }
+
+        public ArmEmitterContext(MemoryManager memory, Aarch32Mode mode, Translator translator, bool isHighCq)
         {
-            Memory = memory;
-            Mode   = mode;
+            Memory     = memory;
+            Mode       = mode;
+            IsHighCq   = isHighCq;
+            Translator = translator;
 
             _labels = new Dictionary<ulong, Operand>();
         }

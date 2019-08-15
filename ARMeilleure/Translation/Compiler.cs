@@ -13,7 +13,8 @@ namespace ARMeilleure.Translation
             ControlFlowGraph cfg,
             OperandType[]    funcArgTypes,
             OperandType      funcReturnType,
-            CompilerOptions  options)
+            CompilerOptions  options,
+            out IntPtr       codePtr)
         {
             Logger.StartPass(PassName.Dominance);
 
@@ -39,7 +40,7 @@ namespace ARMeilleure.Translation
 
             CompiledFunction func = CodeGenerator.Generate(cctx);
 
-            IntPtr codePtr = JitCache.Map(func);
+            codePtr = JitCache.Map(func);
 
             return Marshal.GetDelegateForFunctionPointer<T>(codePtr);
         }
