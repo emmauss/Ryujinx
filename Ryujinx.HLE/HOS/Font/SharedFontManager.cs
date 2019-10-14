@@ -44,6 +44,14 @@ namespace Ryujinx.HLE.HOS.Font
             _fontsPath = Path.Combine(device.FileSystem.GetSystemPath(), "fonts");
         }
 
+        public void Initialize(ContentManager contentManager)
+        {
+            _fontData?.Clear();
+            _fontData = null;
+
+            EnsureInitialized(contentManager);
+        }
+
         public void EnsureInitialized(ContentManager contentManager)
         {
             if (_fontData == null)

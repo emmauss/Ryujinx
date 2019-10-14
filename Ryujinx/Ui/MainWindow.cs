@@ -45,6 +45,7 @@ namespace Ryujinx.Ui
         [GUI] CheckMenuItem _fullScreen;
         [GUI] MenuItem      _stopEmulation;
         [GUI] CheckMenuItem _favToggle;
+        [GUI] MenuItem      _firmwareInstall;
         [GUI] CheckMenuItem _iconToggle;
         [GUI] CheckMenuItem _appToggle;
         [GUI] CheckMenuItem _developerToggle;
@@ -295,8 +296,9 @@ namespace Ryujinx.Ui
                 new Thread(CreateGameWindow).Start();
 #endif
 
-                _gameLoaded              = true;
-                _stopEmulation.Sensitive = true;
+                _gameLoaded                = true;
+                _stopEmulation.Sensitive   = true;
+                _firmwareInstall.Sensitive = false;
 
                 DiscordIntegrationModule.SwitchToPlayingState(_device.System.TitleId, _device.System.TitleName);
 
@@ -556,8 +558,193 @@ namespace Ryujinx.Ui
 
             _gameLoaded = false;
         }
+        
+        private void Installer_Pressed(object o, EventArgs args)
+        {
+            FileChooserDialog fileChooser = new FileChooserDialog("Choose the folder to open",
+                                                                    this, 
+                                                                    FileChooserAction.Open,
+                                                                    "Cancel",
+                                                                    ResponseType.Cancel, 
+                                                                    "Open",
+                                                                    ResponseType.Accept);
+            
+            if(fileChooser.Run() == (int)ResponseType.Accept)
+            {
+                MessageDialog dialog = null;
 
-        private void FullScreen_Toggled(object sender, EventArgs args)
+                try
+                {
+                    string filename = fileChooser.Filename;
+
+                    fileChooser.Dispose();
+
+                    var firmwareVersion = _device.System.VerifyFirmwarePackage(filename);
+
+                    if(firmwareVersion== null)
+                    {
+                        dialog = new MessageDialog(this,
+                                        DialogFlags.Modal,
+                                        MessageType.Info,
+                                        ButtonsType.Ok,
+                                        false,
+                                        "");
+
+                        dialog.Text = "Firmware not found.";
+
+                        dialog.SecondaryText = $"A valid system firmware was not found in {filename}.";
+
+                        Logger.PrintError(LogClass.Application, $"A valid system firmware was not found in {filename}.");
+
+                        dialog.Run();
+
+                        dialog.Hide();
+
+                        dialog.Dispose();
+
+                        return;
+                    }
+
+                    var currentVersion  = _device.System.GetCurrentFirmwareVersion();
+
+                    string dialogMessage = $"System version {firmwareVersion.VersionString} will be installed. ";
+
+                    if (currentVersion != null)
+                    {
+                        dialogMessage += $"This will replace the current system version {currentVersion.VersionString}. ";
+                    }
+
+                    dialogMessage += "Do you want to continue?";
+
+                    dialog = new MessageDialog(this,
+                                    DialogFlags.Modal,
+                                    MessageType.Question,
+                                    ButtonsType.YesNo,
+                                    false,
+                                    "");
+
+                    dialog.Text = $"Install Firmware {firmwareVersion.VersionString}";
+                    dialog.SecondaryText = dialogMessage;
+
+                    int response = dialog.Run();
+
+                    dialog.Dispose();
+
+                    dialog = new MessageDialog(this,
+                                    DialogFlags.Modal,
+                                    MessageType.Info,
+                                    ButtonsType.None,
+                                    false,
+                                    "");
+
+                    dialog.Text = $"Install Firmware {firmwareVersion.VersionString}";
+
+                    dialog.SecondaryText = "Installing firmware...";
+
+                    if (response == (int)ResponseType.Yes)
+                    {
+                        Logger.PrintInfo(LogClass.Application, $"Installing firmware {firmwareVersion.VersionString}");
+                        
+                        Thread thread = new Thread(() =>
+                        {
+                            GLib.Idle.Add(new GLib.IdleHandler(() =>
+                            {
+                                dialog.Run();
+                                return false;
+                            }));
+
+                            try
+                            {
+                                _device.System.InstallFirmware(filename);
+
+                                GLib.Idle.Add(new GLib.IdleHandler(() =>
+                                {
+                                    dialog.Dispose();
+
+                                    dialog = new MessageDialog(this,
+                                                    DialogFlags.Modal,
+                                                    MessageType.Info,
+                                                    ButtonsType.Ok,
+                                                    false,
+                                                    "");
+
+                                    dialog.Text = $"Install Firmware {firmwareVersion.VersionString}";
+
+                                    dialog.SecondaryText = $"System version {firmwareVersion.VersionString} successfully installed.";
+
+                                    Logger.PrintInfo(LogClass.Application, $"System version {firmwareVersion.VersionString} successfully installed.");
+
+                                    dialog.Run();
+                                    dialog.Dispose();
+
+                                    return false;
+                                }));
+                            }
+                            catch (Exception ex)
+                            {
+
+                                GLib.Idle.Add(new GLib.IdleHandler(() =>
+                                {
+                                    dialog.Dispose();
+
+                                    dialog = new MessageDialog(this,
+                                                        DialogFlags.Modal,
+                                                        MessageType.Info,
+                                                        ButtonsType.Ok,
+                                                        false,
+                                                        "");
+
+                                    dialog.Text = $"Install Firmware {firmwareVersion.VersionString} Failed.";
+
+                                    dialog.SecondaryText = $"An error occured while installing system version {firmwareVersion.VersionString}." +
+                                     "Please check logs for more info.";
+
+                                    Logger.PrintError(LogClass.Application, ex.Message);
+                                    dialog.Run();
+                                    dialog.Dispose();
+                                    return false;
+                                }));
+                            }
+                        });
+
+                        thread.Start();
+                    }
+                    else
+                        dialog.Dispose();
+                }
+                catch (Exception ex)
+                {
+
+                    if (dialog != null)
+                    {
+                        dialog.Dispose();
+                    }
+
+                    dialog = new MessageDialog(this,
+                                                DialogFlags.Modal,
+                                                MessageType.Info,
+                                                ButtonsType.Ok,
+                                                false,
+                                                "");
+
+                    dialog.Text = "Parsing Firmware Failed.";
+
+                    dialog.SecondaryText = "An error occured while parsing firmware. Please check the logs for more info.";
+
+                    Logger.PrintError(LogClass.Application, ex.Message);
+
+                    dialog.Run();
+
+                    dialog.Dispose();
+                }
+            }
+            else
+            {
+                fileChooser.Dispose();
+            }
+        }
+
+        private void FullScreen_Toggled(object o, EventArgs args)
         {
             if (_fullScreen.Active)
             {
