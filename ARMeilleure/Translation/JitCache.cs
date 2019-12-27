@@ -19,7 +19,7 @@ namespace ARMeilleure.Translation
 
         private static JitCacheMemoryAllocator _allocator;
 
-        private static List<JitCacheEntry> _cacheEntries;
+        private static Dictionary<int, JitCacheEntry> _cacheEntries;
 
         private static object _lock;
 
@@ -41,7 +41,7 @@ namespace ARMeilleure.Translation
 
             _allocator = new JitCacheMemoryAllocator(CacheSize, startOffset);
 
-            _cacheEntries = new List<JitCacheEntry>();
+            _cacheEntries = new Dictionary<int, JitCacheEntry>();
 
             _lock = new object();
         }
@@ -101,7 +101,7 @@ namespace ARMeilleure.Translation
             {
                 if (TryFind((int)offset, out JitCacheEntry entry))
                 {
-                    _cacheEntries.Remove(entry);
+                    _cacheEntries.Remove((int)offset, out entry);
 
                     int size = checked(entry.Size + (CodeAlignment - 1)) & ~(CodeAlignment - 1);
 
@@ -112,23 +112,16 @@ namespace ARMeilleure.Translation
 
         private static void Add(JitCacheEntry entry)
         {
-            _cacheEntries.Add(entry);
+            _cacheEntries.Add(entry.Offset, entry);
         }
 
         public static bool TryFind(int offset, out JitCacheEntry entry)
         {
             lock (_lock)
             {
-                foreach (JitCacheEntry cacheEntry in _cacheEntries)
+                if(_cacheEntries.TryGetValue(offset, out entry))
                 {
-                    int endOffset = cacheEntry.Offset + cacheEntry.Size;
-
-                    if (offset >= cacheEntry.Offset && offset < endOffset)
-                    {
-                        entry = cacheEntry;
-
-                        return true;
-                    }
+                    return true;
                 }
             }
 

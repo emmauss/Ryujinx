@@ -57,19 +57,24 @@ namespace ARMeilleure.Translation
                         return func;
                     });
                 }
-                else if (_oldFunctions.TryDequeue(out TranslatedFunction function))
-                {
-                    if (Interlocked.CompareExchange(ref function.EntryCount, -1, 0) != 0)
-                    {
-                        _oldFunctions.Enqueue(function);
-                    }
-                    else
-                    {
-                        JitCache.Free(function.Pointer);
-                    }
-                }
                 else
                 {
+                    Queue<TranslatedFunction> skippedFunctions = new Queue<TranslatedFunction>();
+
+                    while (_oldFunctions.TryDequeue(out TranslatedFunction function))
+                    {
+                        if (Interlocked.CompareExchange(ref function.EntryCount, -1, 0) != 0)
+                        {
+                            skippedFunctions.Enqueue(function);
+                        }
+                        else
+                        {
+                            JitCache.Free(function.Pointer);
+                        }
+                    }
+
+                    _oldFunctions = skippedFunctions;
+
                     _backgroundTranslatorEvent.WaitOne();
                 }
             }
