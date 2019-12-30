@@ -8,7 +8,7 @@
     <property name="window_position">center</property>
     <property name="default_width">1280</property>
     <property name="default_height">750</property>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child>
@@ -258,11 +258,25 @@
               </object>
             </child>
             <child>
-              <object class="GtkMenuItem" id="ToolsMenu">
+              <object class="GtkMenuItem" id="_toolsMenu">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Tools</property>
                 <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkMenuItem" id="_openDebugger">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Open Debugger</property>
+                        <property name="use_underline">True</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
               </object>
             </child>
             <child>

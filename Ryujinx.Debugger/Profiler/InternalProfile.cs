@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Ryujinx.Common;
 
-namespace Ryujinx.Profiler
+namespace Ryujinx.Debugger.Profiler
 {
     public class InternalProfile
     {

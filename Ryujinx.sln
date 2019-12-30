@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.8
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ryujinx", "Ryujinx\Ryujinx.csproj", "{074045D4-3ED2-4711-9169-E385F2BFB5A0}"
 EndProject
@@ -24,9 +24,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Luea", "Ryujinx.LLE\Luea.cs
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ryujinx.Common", "Ryujinx.Common\Ryujinx.Common.csproj", "{5FD4E4F6-8928-4B3C-BE07-28A675C17226}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ryujinx.Profiler", "Ryujinx.Profiler\Ryujinx.Profiler.csproj", "{4E69B67F-8CA7-42CF-A9E1-CCB0915DFB34}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ARMeilleure", "ARMeilleure\ARMeilleure.csproj", "{ABF09A5E-2D8B-4B6F-A51D-5CE414DDB15A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ryujinx.Debugger", "Ryujinx.Debugger\Ryujinx.Debugger.csproj", "{2E02B7F3-245E-43B1-AE5B-44167A0FDA20}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -124,6 +124,14 @@ Global
 		{ABF09A5E-2D8B-4B6F-A51D-5CE414DDB15A}.Profile Release|Any CPU.Build.0 = Release|Any CPU
 		{ABF09A5E-2D8B-4B6F-A51D-5CE414DDB15A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABF09A5E-2D8B-4B6F-A51D-5CE414DDB15A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E02B7F3-245E-43B1-AE5B-44167A0FDA20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E02B7F3-245E-43B1-AE5B-44167A0FDA20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E02B7F3-245E-43B1-AE5B-44167A0FDA20}.Profile Debug|Any CPU.ActiveCfg = Profile Debug|Any CPU
+		{2E02B7F3-245E-43B1-AE5B-44167A0FDA20}.Profile Debug|Any CPU.Build.0 = Profile Debug|Any CPU
+		{2E02B7F3-245E-43B1-AE5B-44167A0FDA20}.Profile Release|Any CPU.ActiveCfg = Profile Release|Any CPU
+		{2E02B7F3-245E-43B1-AE5B-44167A0FDA20}.Profile Release|Any CPU.Build.0 = Profile Release|Any CPU
+		{2E02B7F3-245E-43B1-AE5B-44167A0FDA20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E02B7F3-245E-43B1-AE5B-44167A0FDA20}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

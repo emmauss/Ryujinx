@@ -5,7 +5,7 @@ using Ryujinx.Graphics.Shader;
 using Ryujinx.Graphics.Texture;
 using System;
 using System.Collections.Generic;
-using Ryujinx.Profiler;
+using Ryujinx.Debugger.Profiler;
 
 namespace Ryujinx.Graphics.Graphics3d
 {
