@@ -1,23 +1,22 @@
 using Gtk;
+using JsonPrettyPrinterPlus;
 using Ryujinx.Audio;
 using Ryujinx.Common.Logging;
+using Ryujinx.Configuration;
+using Ryujinx.Debugger;
 using Ryujinx.Graphics.Gal;
 using Ryujinx.Graphics.Gal.OpenGL;
-using Ryujinx.Profiler;
+using Ryujinx.HLE.FileSystem;
+using Ryujinx.Debugger.Profiler;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using Ryujinx.Configuration;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Utf8Json;
-using JsonPrettyPrinterPlus;
 using Utf8Json.Resolvers;
-using Ryujinx.HLE.FileSystem;
-
-
 using GUI = Gtk.Builder.ObjectAttribute;
 
 namespace Ryujinx.Ui
@@ -37,8 +36,11 @@ namespace Ryujinx.Ui
         private static bool _updatingGameTable;
         private static bool _gameLoaded;
         private static bool _ending;
+        private static bool _debuggerOpened;
 
         private static TreeView _treeView;
+
+        private static Debugger.Debugger _debugger;
 
 #pragma warning disable CS0649
 #pragma warning disable IDE0044
@@ -59,6 +61,8 @@ namespace Ryujinx.Ui
         [GUI] TreeSelection _gameTableSelection;
         [GUI] Label         _progressLabel;
         [GUI] LevelBar      _progressBar;
+        [GUI] MenuItem      _openDebugger;
+        [GUI] MenuItem      _toolsMenu;
 #pragma warning restore CS0649
 #pragma warning restore IDE0044
 
@@ -99,6 +103,15 @@ namespace Ryujinx.Ui
             if (ConfigurationState.Instance.Ui.GuiColumns.FileSizeColumn)   _fileSizeToggle.Active   = true;
             if (ConfigurationState.Instance.Ui.GuiColumns.PathColumn)       _pathToggle.Active       = true;
 
+#if USE_PROFILING
+            _debugger = new Debugger.Debugger();
+
+            _openDebugger.Activated += _openDebugger_Activated;
+#else
+            _openDebugger.Hide();
+            _toolsMenu.Remove(_openDebugger);
+#endif
+
             _gameTable.Model = _tableStore = new ListStore(
                 typeof(bool),
                 typeof(Gdk.Pixbuf),
@@ -120,6 +133,34 @@ namespace Ryujinx.Ui
 #pragma warning disable CS4014
             UpdateGameTable();
 #pragma warning restore CS4014
+
+
+        }
+
+        private void _openDebugger_Activated(object sender, EventArgs e)
+        {
+            if (_debuggerOpened)
+                return;
+            Window debugWindow = new Window("Debugger");
+            debugWindow.SetSizeRequest(1280, 640);
+            debugWindow.Child = _debugger.Widget;
+
+            debugWindow.DeleteEvent += DebugWindow_DeleteEvent;
+
+            debugWindow.ShowAll();
+
+            _debugger.Enable();
+
+            _debuggerOpened = true;
+        }
+
+        private void DebugWindow_DeleteEvent(object o, DeleteEventArgs args)
+        {
+            _debuggerOpened = false;
+
+            _debugger.Disable();
+
+            (_debugger.Widget.Parent as Window)?.Remove(_debugger.Widget);
         }
 
         internal static void ApplyTheme()

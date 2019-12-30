@@ -44,8 +44,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Ryujinx.Audio\Ryujinx.Audio.csproj" />
     <ProjectReference Include="..\Ryujinx.Common\Ryujinx.Common.csproj" />
+    <ProjectReference Include="..\Ryujinx.Debugger\Ryujinx.Debugger.csproj" />
     <ProjectReference Include="..\Ryujinx.Graphics\Ryujinx.Graphics.csproj" />
-    <ProjectReference Include="..\Ryujinx.Profiler\Ryujinx.Profiler.csproj" />
     <ProjectReference Include="..\ARMeilleure\ARMeilleure.csproj" />
   </ItemGroup>
 

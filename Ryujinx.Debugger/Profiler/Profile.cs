@@ -4,14 +4,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
-namespace Ryujinx.Profiler
+namespace Ryujinx.Debugger.Profiler
 {
     public static class Profile
     {
         public static float UpdateRate    => _settings.UpdateRate;
         public static long  HistoryLength => _settings.History;
-
-        public static ProfilerKeyboardHandler Controls      => _settings.Controls;
 
         private static InternalProfile  _profileInstance;
         private static ProfilerSettings _settings;
@@ -29,7 +27,6 @@ namespace Ryujinx.Profiler
                 UpdateRate      = (config.UpdateRate <= 0) ? -1 : 1.0f / config.UpdateRate,
                 History         = (long)(config.History * PerformanceCounter.TicksPerSecond),
                 MaxLevel        = config.MaxLevel,
-                Controls        = config.Controls,
                 MaxFlags        = config.MaxFlags,
             };
         }
