@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Ryujinx.Common;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Ryujinx.Common;
 
 namespace Ryujinx.Debugger.Profiler
 {
@@ -26,17 +26,17 @@ namespace Ryujinx.Debugger.Profiler
 
         // Cleanup thread
         private readonly Thread _cleanupThread;
-        private bool _cleanupRunning;
-        private readonly long _history;
-        private long _preserve;
+        private bool            _cleanupRunning;
+        private readonly long   _history;
+        private long            _preserve;
 
         // Timing flags
         private TimingFlag[] _timingFlags;
-        private long[] _timingFlagAverages;
-        private long[] _timingFlagLast;
-        private long[] _timingFlagLastDelta;
-        private int _timingFlagCount;
-        private int _timingFlagIndex;
+        private long[]       _timingFlagAverages;
+        private long[]       _timingFlagLast;
+        private long[]       _timingFlagLastDelta;
+        private int          _timingFlagCount;
+        private int          _timingFlagIndex;
 
         private int _maxFlags;
 

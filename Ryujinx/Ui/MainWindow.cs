@@ -119,14 +119,11 @@ namespace Ryujinx.Ui
             if (ConfigurationState.Instance.Ui.GuiColumns.FileSizeColumn)   _fileSizeToggle.Active   = true;
             if (ConfigurationState.Instance.Ui.GuiColumns.PathColumn)       _pathToggle.Active       = true;
 
-#if USE_PROFILING
+#if USE_DEBUGGING
             _debugger = new Debugger.Debugger();
+#endif
 
             _openDebugger.Activated += _openDebugger_Activated;
-#else
-            _openDebugger.Hide();
-            _toolsMenu.Remove(_openDebugger);
-#endif
 
             _gameTable.Model = _tableStore = new ListStore(
                 typeof(bool),
@@ -155,6 +152,7 @@ namespace Ryujinx.Ui
 
         private void _openDebugger_Activated(object sender, EventArgs e)
         {
+#if USE_DEBUGGING
             if (_debuggerOpened)
                 return;
             Window debugWindow = new Window("Debugger");
@@ -168,6 +166,15 @@ namespace Ryujinx.Ui
             _debugger.Enable();
 
             _debuggerOpened = true;
+#else
+            MessageDialog dialog = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Error, ButtonsType.Ok, "");
+            dialog.Title = "Debugging Not Enabled";
+            dialog.SecondaryText = "Debugging is not enabled in this build.";
+            if (dialog.Run() == (int)ResponseType.Ok)
+            {
+                dialog.Dispose();
+            }
+#endif
         }
 
         private void DebugWindow_DeleteEvent(object o, DeleteEventArgs args)
@@ -390,6 +397,11 @@ namespace Ryujinx.Ui
 
         private static void End()
         {
+
+#if USE_DEBUGGING
+            _debugger.Dispose();
+#endif
+
             if (_ending)
             {
                 return;

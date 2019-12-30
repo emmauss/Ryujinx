@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Gtk;
-
+﻿using Gtk;
+using System;
 using GUI = Gtk.Builder.ObjectAttribute;
 
 namespace Ryujinx.Debugger.UI

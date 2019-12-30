@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Gtk;
+﻿using SkiaSharp;
 using SkiaSharp.Views.Gtk;
-using SkiaSharp;
-using Gdk;
-using Microcharts;
+using System;
 
 namespace Ryujinx.Debugger.UI
 {
     public class SkRenderer : SKDrawingArea
     {
-        public Chart Chart { get; set; }
         public event EventHandler DrawGraphs;
 
         public SkRenderer()
@@ -22,16 +16,8 @@ namespace Ryujinx.Debugger.UI
         private void SkRenderer_PaintSurface(object sender, SkiaSharp.Views.Desktop.SKPaintSurfaceEventArgs e)
         {
             e.Surface.Canvas.Clear(SKColors.Black);
-            if(Chart != null)
-            {
-                Chart.Draw(e.Surface.Canvas, e.Info.Width, e.Info.Height);
-            }
-           else
-            {
-                DrawGraphs.Invoke(this, e);
-            }
+
+            DrawGraphs.Invoke(this, e);
         }
-
-
     }
 }

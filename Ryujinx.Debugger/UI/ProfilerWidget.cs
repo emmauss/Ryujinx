@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Gtk;
+﻿using Gtk;
+using Ryujinx.Common;
 using Ryujinx.Debugger.Profiler;
-using System.ComponentModel;
-using System.Linq;
-using System.Text.RegularExpressions;
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
-using Ryujinx.Common;
-
-//using static Ryujinx.Debugger.Profiler.Profile;
 
 using GUI = Gtk.Builder.ObjectAttribute;
 
@@ -21,46 +17,26 @@ namespace Ryujinx.Debugger.UI
     {
         private Thread _profilerThread;
         private double _prevTime;
-        private bool _profilerRunning;
-        private enum ButtonIndex
-        {
-            TagTitle = 0,
-            InstantTitle = 1,
-            AverageTitle = 2,
-            TotalTitle = 3,
-            FilterBar = 4,
-            ShowHideInactive = 5,
-            Pause = 6,
-            ChangeDisplay = 7,
-
-            // Don't automatically draw after here
-            ToggleFlags = 8,
-            Step = 9,
-
-            // Update this when new buttons are added.
-            // These are indexes to the enum list
-            Autodraw = 8,
-            Count = 10,
-        }
-
+        private bool   _profilerRunning;
+        
         private TimingFlag[] _timingFlags;
 
-        private bool _initComplete = false;
+        private bool _initComplete  = false;
         private bool _redrawPending = true;
-        private bool _doStep = false;
+        private bool _doStep        = false;
 
         // Layout
-        private const int LineHeight = 16;
+        private const int LineHeight         = 16;
         private const int MinimumColumnWidth = 200;
-        private const int TitleHeight = 24;
-        private const int TitleFontHeight = 16;
-        private const int LinePadding = 2;
-        private const int ColumnSpacing = 15;
-        private const int FilterHeight = 24;
-        private const int BottomBarHeight = FilterHeight + LineHeight;
+        private const int TitleHeight        = 24;
+        private const int TitleFontHeight    = 16;
+        private const int LinePadding        = 2;
+        private const int ColumnSpacing      = 15;
+        private const int FilterHeight       = 24;
+        private const int BottomBarHeight    = FilterHeight + LineHeight;
 
         // Sorting
-        private List<KeyValuePair<ProfileConfig, TimingInfo>> _unsortedProfileData;
+        private List<KeyValuePair<ProfileConfig, TimingInfo>>      _unsortedProfileData;
         private IComparer<KeyValuePair<ProfileConfig, TimingInfo>> _sortAction = new ProfileSorters.TagAscending();
 
         // Flag data
@@ -69,7 +45,7 @@ namespace Ryujinx.Debugger.UI
 
         // Filtering
         private string _filterText = "";
-        private bool _regexEnabled = false;
+        private bool   _regexEnabled = false;
 
         // Scrolling
         private float _scrollPos = 0;
@@ -91,32 +67,32 @@ namespace Ryujinx.Debugger.UI
         private float _graphZoom = 1;
         private float _graphPosition = 0;
         private int _rendererHeight => _renderer.AllocatedHeight;
-        private int _rendererWidth => _renderer.AllocatedWidth;
+        private int _rendererWidth  => _renderer.AllocatedWidth;
 
         // F35 used as no key
         //private Key _graphControlKey = Key.F35;
 
         // Event management
-        private long _lastOutputUpdate;
-        private long _lastOutputDraw;
-        private long _lastOutputUpdateDuration;
-        private long _lastOutputDrawDuration;
-        private double _lastFrameTimeMs;
-        private double _updateTimer;
-        private bool _profileUpdated = false;
+        private long            _lastOutputUpdate;
+        private long            _lastOutputDraw;
+        private long            _lastOutputUpdateDuration;
+        private long            _lastOutputDrawDuration;
+        private double          _lastFrameTimeMs;
+        private double          _updateTimer;
+        private bool            _profileUpdated = false;
         private readonly object _profileDataLock = new object();
 
         private SkRenderer _renderer;
 
         [GUI] ScrolledWindow _scrollview;
         [GUI] CheckButton    _enableCheckbutton;
-        [GUI] Scrollbar _outputScrollbar;
-        [GUI] Entry _filterBox;
-        [GUI] ComboBox _modeBox;
-        [GUI] CheckButton _showFlags;
-        [GUI] CheckButton _showInactive;
-        [GUI] Button _stepButton;
-        [GUI] CheckButton _pauseCheckbutton;
+        [GUI] Scrollbar      _outputScrollbar;
+        [GUI] Entry          _filterBox;
+        [GUI] ComboBox       _modeBox;
+        [GUI] CheckButton    _showFlags;
+        [GUI] CheckButton    _showInactive;
+        [GUI] Button         _stepButton;
+        [GUI] CheckButton    _pauseCheckbutton;
 
         public ProfilerWidget() : this(new Builder("Ryujinx.Debugger.UI.ProfilerWidget.glade")) { }
 
@@ -130,11 +106,13 @@ namespace Ryujinx.Debugger.UI
 
             _renderer = new SkRenderer();
             _renderer.Expand = true;
+
             _outputScrollbar.ValueChanged += _outputScrollbar_ValueChanged;
 
             _renderer.DrawGraphs += _renderer_DrawGraphs;
 
             _filterBox.Changed += _filterBox_Changed;
+
             _stepButton.Clicked += _stepButton_Clicked;
 
             _scrollview.Add(_renderer);
@@ -156,18 +134,19 @@ namespace Ryujinx.Debugger.UI
         {
             if (_pauseCheckbutton.Active)
                 _doStep = true;
+
             _profileUpdated = true;
         }
 
         private void _filterBox_Changed(object sender, EventArgs e)
         {
-            _filterText = _filterBox.Text;
+            _filterText     = _filterBox.Text;
             _profileUpdated = true;
         }
 
         private void _outputScrollbar_ValueChanged(object sender, EventArgs e)
         {
-            _scrollPos = -(float)Math.Max(0, _outputScrollbar.Value);
+            _scrollPos      = -(float)Math.Max(0, _outputScrollbar.Value);
             _profileUpdated = true;
         }
 
@@ -181,13 +160,14 @@ namespace Ryujinx.Debugger.UI
 
         public void RegisterParentDebugger(DebuggerWidget debugger)
         {
-            debugger.DebuggerEnabled += Debugger_DebuggerAttached;
+            debugger.DebuggerEnabled  += Debugger_DebuggerAttached;
             debugger.DebuggerDisabled += Debugger_DebuggerDettached;
         }
 
         private void Debugger_DebuggerDettached(object sender, EventArgs e)
         {
             _profilerRunning = false;
+
             if (_profilerThread != null)
             {
                 _profilerThread.Join();
@@ -203,7 +183,7 @@ namespace Ryujinx.Debugger.UI
             }
 
             _profilerRunning = true;
-            _profilerThread = new Thread(UpdateLoop);
+            _profilerThread  = new Thread(UpdateLoop);
             _profilerThread.Start();
         }
 
@@ -233,7 +213,7 @@ namespace Ryujinx.Debugger.UI
         public void UpdateLoop()
         {
             _lastOutputUpdate = PerformanceCounter.ElapsedTicks;
-            _lastOutputDraw = PerformanceCounter.ElapsedTicks;
+            _lastOutputDraw   = PerformanceCounter.ElapsedTicks;
             while (_profilerRunning)
             {
                 _lastOutputUpdate = PerformanceCounter.ElapsedTicks;
@@ -242,6 +222,7 @@ namespace Ryujinx.Debugger.UI
                 {
                     double time = (double)PerformanceCounter.ElapsedTicks / PerformanceCounter.TicksPerSecond;
                     Update(time - _prevTime);
+
                     _lastOutputUpdateDuration = PerformanceCounter.ElapsedTicks - _lastOutputUpdate;
                     _prevTime = time;
 
@@ -263,10 +244,10 @@ namespace Ryujinx.Debugger.UI
             _updateTimer += frameTime;
             if (_doStep || ((Profile.UpdateRate > 0) && (!_pauseCheckbutton.Active && (_updateTimer > Profile.UpdateRate))))
             {
-                _updateTimer = 0;
-                _captureTime = PerformanceCounter.ElapsedTicks;
-                _timingFlags = Profile.GetTimingFlags();
-                _doStep = false;
+                _updateTimer    = 0;
+                _captureTime    = PerformanceCounter.ElapsedTicks;
+                _timingFlags    = Profile.GetTimingFlags();
+                _doStep         = false;
                 _profileUpdated = true;
 
                 _unsortedProfileData = Profile.GetProfilingData();
@@ -309,8 +290,8 @@ namespace Ryujinx.Debugger.UI
                 }
 
                 _profileUpdated = false;
-                _redrawPending = true;
-                _initComplete = true;
+                _redrawPending  = true;
+                _initComplete   = true;
             }
         }
 
@@ -340,8 +321,8 @@ namespace Ryujinx.Debugger.UI
         public void Draw(SKCanvas canvas)
         {
             _lastOutputDraw = PerformanceCounter.ElapsedTicks;
-            if (!Visible ||
-                !_initComplete ||
+            if (!Visible                   ||
+                !_initComplete             ||
                 !_enableCheckbutton.Active ||
                 !_redrawPending)
             {
@@ -350,39 +331,38 @@ namespace Ryujinx.Debugger.UI
 
             //canvas.Clear();
 
-            int verticalIndex = 0;
-
             float GetY(float yOffset)
             {
                 return _rendererHeight - yOffset;
             }
 
-            float viewTop = TitleHeight + 5;
+            float viewTop    = TitleHeight + 5;
             float viewBottom = _rendererHeight - FilterHeight - LineHeight;
 
             float columnWidth;
             float maxColumnWidth = MinimumColumnWidth;
-            float yOffset = _scrollPos + viewTop;
-            float xOffset = 10;
+            float yOffset        = _scrollPos + viewTop;
+            float xOffset        = 10;
+
             float timingDataLeft;
             float timingWidth;
 
             float contentHeight = GetLineY(0, LineHeight, LinePadding, false, _sortedProfileData.Count - 1);
 
-            _outputScrollbar.Adjustment.Upper = contentHeight;
-            _outputScrollbar.Adjustment.Lower = 0;
+            _outputScrollbar.Adjustment.Upper    = contentHeight;
+            _outputScrollbar.Adjustment.Lower    = 0;
             _outputScrollbar.Adjustment.PageSize = viewBottom - viewTop;
 
 
             SKPaint textFont = new SKPaint()
             {
-                Color = SKColors.White,
+                Color    = SKColors.White,
                 TextSize = LineHeight
             };
 
             SKPaint titleFont = new SKPaint()
             {
-                Color = SKColors.White,
+                Color    = SKColors.White,
                 TextSize = TitleFontHeight
             };
 
@@ -396,7 +376,7 @@ namespace Ryujinx.Debugger.UI
 
             for (int i = 1; i < _sortedProfileData.Count; i += 2)
             {
-                float top = GetLineY(yOffset, LineHeight, LinePadding, false, i - 1);
+                float top    = GetLineY(yOffset, LineHeight, LinePadding, false, i - 1);
                 float bottom = GetLineY(yOffset, LineHeight, LinePadding, false, i);
 
                 canvas.DrawRect(new SKRect(0, top, _rendererWidth, bottom), evenItemBackground);
@@ -405,16 +385,18 @@ namespace Ryujinx.Debugger.UI
             lock (_profileDataLock)
             {
                 // Display category
-                verticalIndex = 0;
-                foreach (var entry in _sortedProfileData)
+
+                for (int verticalIndex = 0; verticalIndex < _sortedProfileData.Count; verticalIndex++)
                 {
+                    KeyValuePair<ProfileConfig, TimingInfo> entry = _sortedProfileData[verticalIndex];
+
                     if (entry.Key.Category == null)
                     {
-                        verticalIndex++;
                         continue;
                     }
 
-                    float y = GetLineY(yOffset, LineHeight, LinePadding, true, verticalIndex++);
+                    float y = GetLineY(yOffset, LineHeight, LinePadding, true, verticalIndex);
+
                     canvas.DrawText(entry.Key.Category, new SKPoint(xOffset, y), textFont);
 
                     columnWidth = textFont.MeasureText(entry.Key.Category);
@@ -439,19 +421,21 @@ namespace Ryujinx.Debugger.UI
 
                 // Display session group
                 maxColumnWidth = MinimumColumnWidth;
-                verticalIndex = 0;
 
                 canvas.Save();
                 canvas.ClipRect(new SKRect(0, viewTop, _rendererWidth, viewBottom), SKClipOperation.Intersect);
-                foreach (var entry in _sortedProfileData)
+
+                for (int verticalIndex = 0; verticalIndex < _sortedProfileData.Count; verticalIndex++)
                 {
+                    KeyValuePair<ProfileConfig, TimingInfo> entry = _sortedProfileData[verticalIndex];
+
                     if (entry.Key.SessionGroup == null)
                     {
-                        verticalIndex++;
                         continue;
                     }
 
-                    float y = GetLineY(yOffset, LineHeight, LinePadding, true, verticalIndex++);
+                    float y = GetLineY(yOffset, LineHeight, LinePadding, true, verticalIndex);
+
                     canvas.DrawText(entry.Key.SessionGroup, new SKPoint(xOffset, y), textFont);
 
                     columnWidth = textFont.MeasureText(entry.Key.SessionGroup);
@@ -476,19 +460,20 @@ namespace Ryujinx.Debugger.UI
 
                 // Display session item
                 maxColumnWidth = MinimumColumnWidth;
-                verticalIndex = 0;
 
                 canvas.Save();
                 canvas.ClipRect(new SKRect(0, viewTop, _rendererWidth, viewBottom), SKClipOperation.Intersect);
-                foreach (var entry in _sortedProfileData)
+
+                for (int verticalIndex = 0; verticalIndex < _sortedProfileData.Count; verticalIndex++)
                 {
+                    KeyValuePair<ProfileConfig, TimingInfo> entry = _sortedProfileData[verticalIndex];
+
                     if (entry.Key.SessionItem == null)
                     {
-                        verticalIndex++;
                         continue;
                     }
 
-                    float y = GetLineY(yOffset, LineHeight, LinePadding, true, verticalIndex++);
+                    float y = GetLineY(yOffset, LineHeight, LinePadding, true, verticalIndex);
 
                     canvas.DrawText(entry.Key.SessionGroup, new SKPoint(xOffset, y), textFont);
 
@@ -511,7 +496,6 @@ namespace Ryujinx.Debugger.UI
                 xOffset += maxColumnWidth + ColumnSpacing;
 
                 timingWidth = _rendererWidth - xOffset - 370;
-                timingDataLeft = xOffset;
 
                 canvas.Save();
                 canvas.ClipRect(new SKRect(0, viewTop, _rendererWidth, viewBottom), SKClipOperation.Intersect);
@@ -539,14 +523,16 @@ namespace Ryujinx.Debugger.UI
                 xOffset = _rendererWidth - 360;
 
                 // Display timestamps
-                verticalIndex = 0;
                 long totalInstant = 0;
                 long totalAverage = 0;
-                long totalTime = 0;
-                long totalCount = 0;
-                foreach (var entry in _sortedProfileData)
+                long totalTime    = 0;
+                long totalCount   = 0;
+
+                for (int verticalIndex = 0; verticalIndex < _sortedProfileData.Count; verticalIndex++)
                 {
-                    float y = GetLineY(yOffset, LineHeight, LinePadding, true, verticalIndex++);
+                    KeyValuePair<ProfileConfig, TimingInfo> entry = _sortedProfileData[verticalIndex];
+
+                    float y = GetLineY(yOffset, LineHeight, LinePadding, true, verticalIndex);
 
                     canvas.DrawText($"{GetTimeString(entry.Value.Instant)} ({entry.Value.InstantCount})", new SKPoint(xOffset, y), textFont);
 
@@ -556,8 +542,8 @@ namespace Ryujinx.Debugger.UI
 
                     totalInstant += entry.Value.Instant;
                     totalAverage += entry.Value.AverageTime;
-                    totalTime += entry.Value.TotalTime;
-                    totalCount += entry.Value.InstantCount;
+                    totalTime    += entry.Value.TotalTime;
+                    totalCount   += entry.Value.InstantCount;
                 }
 
                 canvas.Restore();
@@ -574,6 +560,7 @@ namespace Ryujinx.Debugger.UI
 
                 // Totals
                 yHeight = _rendererHeight - FilterHeight + 3;
+
                 int textHeight = LineHeight - 2;
 
                 SKPaint detailFont = new SKPaint()
@@ -618,26 +605,24 @@ namespace Ryujinx.Debugger.UI
         {
             if (_sortedProfileData.Count != 0)
             {
-                int left, right;
-                float top, bottom;
+                int   left, right;
+                float top,  bottom;
 
-                int verticalIndex = 0;
-                float graphRight = xOffset + width;
-                float barHeight = (LineHeight - LinePadding);
-                long history = Profile.HistoryLength;
-                double timeWidthTicks = history / (double)_graphZoom;
-                long graphPositionTicks = (long)(_graphPosition * PerformanceCounter.TicksPerMillisecond);
-                long ticksPerPixel = (long)(timeWidthTicks / width);
+                float  graphRight         = xOffset + width;
+                float  barHeight          = (LineHeight - LinePadding);
+                long   history            = Profile.HistoryLength;
+                double timeWidthTicks     = history / (double)_graphZoom;
+                long   graphPositionTicks = (long)(_graphPosition * PerformanceCounter.TicksPerMillisecond);
+                long   ticksPerPixel      = (long)(timeWidthTicks / width);
 
                 // Reset start point if out of bounds
                 if (timeWidthTicks + graphPositionTicks > history)
                 {
                     graphPositionTicks = history - (long)timeWidthTicks;
-                    _graphPosition = (float)graphPositionTicks / PerformanceCounter.TicksPerMillisecond;
+                    _graphPosition     = (float)graphPositionTicks / PerformanceCounter.TicksPerMillisecond;
                 }
 
                 graphPositionTicks = _captureTime - graphPositionTicks;
-
 
                 // Draw timing flags
                 if (_showFlags.Active)
@@ -672,17 +657,17 @@ namespace Ryujinx.Debugger.UI
                 };
 
                 // Draw bars
-                foreach (var entry in _sortedProfileData)
+                for (int verticalIndex = 0; verticalIndex < _sortedProfileData.Count; verticalIndex++)
                 {
+                    KeyValuePair<ProfileConfig, TimingInfo> entry = _sortedProfileData[verticalIndex];
                     long furthest = 0;
 
                     bottom = GetLineY(yOffset, LineHeight, LinePadding, false, verticalIndex);
-                    top = bottom + barHeight;
+                    top    = bottom + barHeight;
 
                     // Skip rendering out of bounds bars
                     if (top < 0 || bottom > _rendererHeight)
                     {
-                        verticalIndex++;
                         continue;
                     }
 
@@ -695,8 +680,8 @@ namespace Ryujinx.Debugger.UI
                             continue;
                         furthest = timestamp.EndTime + ticksPerPixel;
 
-                        left = (int)(graphRight - ((graphPositionTicks - timestamp.BeginTime) / timeWidthTicks) * width);
-                        right = (int)(graphRight - ((graphPositionTicks - timestamp.EndTime) / timeWidthTicks) * width);
+                        left  = (int)(graphRight - ((graphPositionTicks - timestamp.BeginTime) / timeWidthTicks) * width);
+                        right = (int)(graphRight - ((graphPositionTicks - timestamp.EndTime)   / timeWidthTicks) * width);
 
                         left = (int)Math.Max(xOffset +1, left);
 
@@ -710,6 +695,7 @@ namespace Ryujinx.Debugger.UI
                     barPaint.Color = SKColors.Red;
 
                     long entryBegin = entry.Value.BeginTime;
+
                     if (entryBegin != -1)
                     {
                         left = (int)(graphRight - ((graphPositionTicks - entryBegin) / timeWidthTicks) * width);
@@ -721,15 +707,13 @@ namespace Ryujinx.Debugger.UI
 
                         canvas.DrawRect(new SKRect(left, top, graphRight, bottom), barPaint);
                     }
-
-                    verticalIndex++;
                 }
 
                 string label = $"-{MathF.Round(_graphPosition, 2)} ms";
 
                 SKPaint labelPaint = new SKPaint()
                 {
-                    Color = SKColors.White,
+                    Color    = SKColors.White,
                     TextSize = LineHeight
                 };
 
@@ -749,7 +733,6 @@ namespace Ryujinx.Debugger.UI
                 long maxAverage;
                 long maxTotal;
 
-                int verticalIndex = 0;
                 float barHeight = (LineHeight - LinePadding) / 3.0f;
 
                 // Get max values
@@ -758,7 +741,7 @@ namespace Ryujinx.Debugger.UI
                 {
                     maxInstant = Math.Max(maxInstant, kvp.Value.Instant);
                     maxAverage = Math.Max(maxAverage, kvp.Value.AverageTime);
-                    maxTotal = Math.Max(maxTotal, kvp.Value.TotalTime);
+                    maxTotal   = Math.Max(maxTotal, kvp.Value.TotalTime);
                 }
 
                 SKPaint barPaint = new SKPaint()
@@ -766,13 +749,15 @@ namespace Ryujinx.Debugger.UI
                     Color = SKColors.Blue
                 };
 
-                foreach (var entry in _sortedProfileData)
+                for (int verticalIndex = 0; verticalIndex < _sortedProfileData.Count; verticalIndex++)
                 {
+                    KeyValuePair<ProfileConfig, TimingInfo> entry = _sortedProfileData[verticalIndex];
                     // Instant
                     barPaint.Color = SKColors.Blue;
-                    float bottom = GetLineY(yOffset, LineHeight, LinePadding, false, verticalIndex++);
-                    float top = bottom + barHeight;
-                    float right = (float)entry.Value.Instant / maxInstant * width + xOffset;
+
+                    float bottom = GetLineY(yOffset, LineHeight, LinePadding, false, verticalIndex);
+                    float top    = bottom + barHeight;
+                    float right  = (float)entry.Value.Instant / maxInstant * width + xOffset;
 
                     // Skip rendering out of bounds bars
                     if (top < 0 || bottom > _rendererHeight)
@@ -782,17 +767,19 @@ namespace Ryujinx.Debugger.UI
 
                     // Average
                     barPaint.Color = SKColors.Green;
-                    top += barHeight;
+
+                    top    += barHeight;
                     bottom += barHeight;
-                    right = (float)entry.Value.AverageTime / maxAverage * width + xOffset;
+                    right   = (float)entry.Value.AverageTime / maxAverage * width + xOffset;
 
                     canvas.DrawRect(new SKRect(xOffset, top, right, bottom), barPaint);
 
                     // Total
                     barPaint.Color = SKColors.Red;
-                    top += barHeight;
+
+                    top    += barHeight;
                     bottom += barHeight;
-                    right = (float)entry.Value.TotalTime / maxTotal * width + xOffset;
+                    right   = (float)entry.Value.TotalTime / maxTotal * width + xOffset;
 
                     canvas.DrawRect(new SKRect(xOffset, top, right, bottom), barPaint);
                 }

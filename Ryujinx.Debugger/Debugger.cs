@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Reflection;
-using System.Runtime;
-using Gtk;
 using Ryujinx.Debugger.UI;
 
 namespace Ryujinx.Debugger
 {
-    public class Debugger
+    public class Debugger : IDisposable
     {
-        private DebuggerWidget _widget;
+        public DebuggerWidget Widget { get; set; }
 
         public Debugger()
         {
@@ -25,6 +22,11 @@ namespace Ryujinx.Debugger
             Widget.Disable();
         }
 
-        public DebuggerWidget Widget { get => _widget; set => _widget = value; }
+        public void Dispose()
+        {
+            Disable();
+
+            Widget.Dispose();
+        }
     }
 }

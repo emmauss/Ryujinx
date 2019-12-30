@@ -6,11 +6,11 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile Debug|AnyCPU'">
-    <DefineConstants>TRACE;USE_PROFILING</DefineConstants>
+    <DefineConstants>TRACE;USE_DEBUGGING</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile Release|AnyCPU'">
-    <DefineConstants>TRACE;USE_PROFILING</DefineConstants>
+    <DefineConstants>TRACE;USE_DEBUGGING</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,7 +25,6 @@
 
   <ItemGroup>
     <PackageReference Include="GtkSharp" Version="3.22.25.56" />
-    <PackageReference Include="Microcharts" Version="0.8.5-pre" />
     <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="1.68.1.1" />
     <PackageReference Include="SkiaSharp.Views.Gtk3" Version="1.68.1.1" />
   </ItemGroup>
