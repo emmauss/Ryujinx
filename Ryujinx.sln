@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ARMeilleure", "ARMeilleure\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ryujinx.Debugger", "Ryujinx.Debugger\Ryujinx.Debugger.csproj", "{2E02B7F3-245E-43B1-AE5B-44167A0FDA20}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gee.External.Capstone", "Gee.External.Capstone\Gee.External.Capstone.csproj", "{9A509AC5-0F11-470B-B73D-03691CFF67BC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -121,6 +123,14 @@ Global
 		{2E02B7F3-245E-43B1-AE5B-44167A0FDA20}.Profile Release|Any CPU.Build.0 = Profile Release|Any CPU
 		{2E02B7F3-245E-43B1-AE5B-44167A0FDA20}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E02B7F3-245E-43B1-AE5B-44167A0FDA20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A509AC5-0F11-470B-B73D-03691CFF67BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A509AC5-0F11-470B-B73D-03691CFF67BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A509AC5-0F11-470B-B73D-03691CFF67BC}.Profile Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A509AC5-0F11-470B-B73D-03691CFF67BC}.Profile Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A509AC5-0F11-470B-B73D-03691CFF67BC}.Profile Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A509AC5-0F11-470B-B73D-03691CFF67BC}.Profile Release|Any CPU.Build.0 = Debug|Any CPU
+		{9A509AC5-0F11-470B-B73D-03691CFF67BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A509AC5-0F11-470B-B73D-03691CFF67BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

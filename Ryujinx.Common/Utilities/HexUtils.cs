@@ -86,5 +86,10 @@ namespace Ryujinx.Common
 
             return result.ToString();
         }
+
+        public static string ToHex(byte[] data)
+        {
+            return BitConverter.ToString(data).Replace('-', ' ');
+        }
     }
 }

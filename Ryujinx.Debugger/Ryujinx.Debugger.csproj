@@ -14,11 +14,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="UI\CodeWidget.glade" />
     <None Remove="UI\DebbugerWidget.glade" />
     <None Remove="UI\ProfilerWidget.glade" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="UI\CodeWidget.glade" />
     <EmbeddedResource Include="UI\DebbugerWidget.glade" />
     <EmbeddedResource Include="UI\ProfilerWidget.glade" />
   </ItemGroup>
@@ -30,7 +32,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ARMeilleure\ARMeilleure.csproj" />
     <ProjectReference Include="..\Ryujinx.Common\Ryujinx.Common.csproj" />
+    <ProjectReference Include="..\Gee.External.Capstone\Gee.External.Capstone.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -83,6 +83,7 @@
     <ProjectReference Include="..\Ryujinx.Graphics\Ryujinx.Graphics.csproj" />
     <ProjectReference Include="..\Ryujinx.HLE\Ryujinx.HLE.csproj" />
     <ProjectReference Include="..\ARMeilleure\ARMeilleure.csproj" />
+    <ProjectReference Include="..\Gee.External.Capstone\Gee.External.Capstone.csproj" />
   </ItemGroup>
 
   <ItemGroup>

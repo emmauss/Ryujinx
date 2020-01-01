@@ -1,6 +1,7 @@
 using ARMeilleure.Memory;
 using Ryujinx.Common;
 using Ryujinx.Common.Logging;
+using Ryujinx.Debugger.CodeViewer;
 using Ryujinx.HLE.HOS.Kernel.Common;
 using Ryujinx.HLE.HOS.Kernel.Memory;
 using Ryujinx.HLE.HOS.Kernel.Process;
@@ -222,6 +223,8 @@ namespace Ryujinx.HLE.HOS
                 metaData.Aci0.KernelAccessControl.Capabilities,
                 resourceLimit,
                 memoryRegion);
+
+            CodeViewer.LoadMemory(CodeType.Aarch64, process.CpuMemory, (long)creationInfo.CodeAddress);
 
             if (result != KernelResult.Success)
             {
