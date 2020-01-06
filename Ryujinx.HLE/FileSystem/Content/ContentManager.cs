@@ -56,7 +56,7 @@ namespace Ryujinx.HLE.FileSystem.Content
             _device = device;
         }
 
-        public void LoadEntries()
+        public void LoadEntries(bool ignoreMissingFonts = false)
         {
             _contentDictionary = new SortedDictionary<(ulong, NcaContentType), string>();
             _locationEntries   = new Dictionary<StorageId, LinkedList<LocationEntry>>();
@@ -154,7 +154,7 @@ namespace Ryujinx.HLE.FileSystem.Content
 
             TimeManager.Instance.InitializeTimeZone(_device);
 
-            _device.System.Font.Initialize(this);
+            _device.System.Font.Initialize(this, ignoreMissingFonts);
         }
 
         public void ClearEntry(long titleId, NcaContentType contentType, StorageId storageId)
@@ -815,7 +815,7 @@ namespace Ryujinx.HLE.FileSystem.Content
 
         public SystemVersion GetCurrentFirmwareVersion()
         {
-            LoadEntries();
+            LoadEntries(true);
 
             var locationEnties = _locationEntries[StorageId.NandSystem];
 
