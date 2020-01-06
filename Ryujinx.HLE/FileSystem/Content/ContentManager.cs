@@ -746,11 +746,20 @@ namespace Ryujinx.HLE.FileSystem.Content
                 {
                     if (updateNcas.TryGetValue(metaEntry.TitleId, out var ncaEntry))
                     {
-                        var metaNcaEntry    = ncaEntry.Find(x => x.Item1 == NcaContentType.Meta);
-                        var contentNcaEntry = ncaEntry.Find(x => x.Item1 != NcaContentType.Meta);
+                        var metaNcaEntry   = ncaEntry.Find(x => x.Item1 == NcaContentType.Meta);
+                        string contentPath = ncaEntry.Find(x => x.Item1 != NcaContentType.Meta).Item2;
+
+
+                        // Nintendo in 9.0.0, removed PPC and only kept the meta nca of it.
+                        // This is a perfect valid case, so we should just ignore the missing content nca and continue.
+                        if (contentPath == null)
+                        {
+                            updateNcas.Remove(metaEntry.TitleId);
+                            continue;
+                        }
 
                         IStorage metaStorage = OpenPossibleFragmentedFile(filesystem, metaNcaEntry.Item2, OpenMode.Read).AsStorage();
-                        IStorage contentStorage = OpenPossibleFragmentedFile(filesystem, contentNcaEntry.Item2, OpenMode.Read).AsStorage();
+                        IStorage contentStorage = OpenPossibleFragmentedFile(filesystem, contentPath, OpenMode.Read).AsStorage();
 
                         Nca metaNca = new Nca(_device.System.KeySet, metaStorage);
 

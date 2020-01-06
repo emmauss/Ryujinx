@@ -45,7 +45,8 @@ namespace Ryujinx.Ui
         [GUI] CheckMenuItem _fullScreen;
         [GUI] MenuItem      _stopEmulation;
         [GUI] CheckMenuItem _favToggle;
-        [GUI] MenuItem      _firmwareInstall;
+        [GUI] MenuItem      _firmwareInstallFile;
+        [GUI] MenuItem      _firmwareInstallDirectory;
         [GUI] CheckMenuItem _iconToggle;
         [GUI] CheckMenuItem _appToggle;
         [GUI] CheckMenuItem _developerToggle;
@@ -298,7 +299,9 @@ namespace Ryujinx.Ui
 
                 _gameLoaded                = true;
                 _stopEmulation.Sensitive   = true;
-                _firmwareInstall.Sensitive = false;
+
+                _firmwareInstallFile.Sensitive      = false;
+                _firmwareInstallDirectory.Sensitive = false;
 
                 DiscordIntegrationModule.SwitchToPlayingState(_device.System.TitleId, _device.System.TitleName);
 
@@ -558,18 +561,40 @@ namespace Ryujinx.Ui
 
             _gameLoaded = false;
         }
-        
-        private void Installer_Pressed(object o, EventArgs args)
+
+        private void Installer_File_Pressed(object o, EventArgs args)
         {
-            FileChooserDialog fileChooser = new FileChooserDialog("Choose the folder to open",
-                                                                    this, 
+            FileChooserDialog fileChooser = new FileChooserDialog("Choose the firmware file to open",
+                                                                    this,
                                                                     FileChooserAction.Open,
                                                                     "Cancel",
-                                                                    ResponseType.Cancel, 
+                                                                    ResponseType.Cancel,
                                                                     "Open",
                                                                     ResponseType.Accept);
-            
-            if(fileChooser.Run() == (int)ResponseType.Accept)
+
+            fileChooser.Filter = new FileFilter();
+            fileChooser.Filter.AddPattern("*.zip");
+            fileChooser.Filter.AddPattern("*.xci");
+
+            HandleInstallerDialog(fileChooser);
+        }
+
+        private void Installer_Directory_Pressed(object o, EventArgs args)
+        {
+            FileChooserDialog directoryChooser = new FileChooserDialog("Choose the firmware directory to open",
+                                                                    this,
+                                                                    FileChooserAction.SelectFolder,
+                                                                    "Cancel",
+                                                                    ResponseType.Cancel,
+                                                                    "Open",
+                                                                    ResponseType.Accept);
+
+            HandleInstallerDialog(directoryChooser);
+        }
+
+        private void HandleInstallerDialog(FileChooserDialog fileChooser)
+        {
+            if (fileChooser.Run() == (int)ResponseType.Accept)
             {
                 MessageDialog dialog = null;
 
@@ -581,7 +606,7 @@ namespace Ryujinx.Ui
 
                     var firmwareVersion = _device.System.VerifyFirmwarePackage(filename);
 
-                    if(firmwareVersion== null)
+                    if(firmwareVersion == null)
                     {
                         dialog = new MessageDialog(this,
                                         DialogFlags.Modal,

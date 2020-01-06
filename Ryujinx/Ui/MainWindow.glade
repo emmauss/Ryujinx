@@ -268,12 +268,35 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkMenuItem" id="_firmwareInstall">
+                      <object class="GtkMenuItem" id="FirmwareSubMenu">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Install Firmware</property>
                         <property name="use_underline">True</property>
-                        <signal name="activate" handler="Installer_Pressed" swapped="no"/>
+                        <child type="submenu">
+                          <object class="GtkMenu">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <child>
+                              <object class="GtkMenuItem" id="_firmwareInstallFile">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Install a firmware from XCI or ZIP</property>
+                                <property name="use_underline">True</property>
+                                <signal name="activate" handler="Installer_File_Pressed" swapped="no"/>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkMenuItem" id="_firmwareInstallDirectory">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes">Install a firmware from a directory</property>
+                                <property name="use_underline">True</property>
+                                <signal name="activate" handler="Installer_Directory_Pressed" swapped="no"/>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
                       </object>
                     </child>
                   </object>
