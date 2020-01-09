@@ -120,7 +120,7 @@ namespace Ryujinx.HLE.HOS.Font
 
                         return info;
                     }
-                    else if(!ignoreMissingFonts)
+                    else if (!ignoreMissingFonts)
                     {
                         throw new InvalidSystemResourceException($"Font \"{name}.ttf\" not found. Please provide it in \"{_fontsPath}\".");
                     }

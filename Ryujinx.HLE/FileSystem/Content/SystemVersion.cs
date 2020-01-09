@@ -6,19 +6,19 @@ namespace Ryujinx.HLE.FileSystem.Content
 {
     public class SystemVersion
     {
-        public byte   Major          { get; set; }
-        public byte   Minor          { get; set; }
-        public byte   Micro          { get; set; }
-        public byte   RevisionMajor  { get; set; }
-        public byte   RevisionMinor  { get; set; }
-        public string PlatformString { get; set; }
-        public string Hex            { get; set; }
-        public string VersionString  { get; set; }
-        public string VersionTitle   { get; set; }
+        public byte   Major          { get; }
+        public byte   Minor          { get; }
+        public byte   Micro          { get; }
+        public byte   RevisionMajor  { get; }
+        public byte   RevisionMinor  { get; }
+        public string PlatformString { get; }
+        public string Hex            { get; }
+        public string VersionString  { get; }
+        public string VersionTitle   { get; }
 
         public SystemVersion(Stream systemVersionFile)
         {
-            using(BinaryReader reader = new BinaryReader(systemVersionFile))
+            using (BinaryReader reader = new BinaryReader(systemVersionFile))
             {
                 Major = reader.ReadByte();
                 Minor = reader.ReadByte();

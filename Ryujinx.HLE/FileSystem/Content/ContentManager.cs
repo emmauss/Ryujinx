@@ -19,6 +19,9 @@ namespace Ryujinx.HLE.FileSystem.Content
 {
     internal class ContentManager
     {
+        private const ulong SystemVersionTitleId = 0x0100000000000809;
+        private const ulong SystemUpdateTitleId  = 0x0100000000000816;
+
         private Dictionary<StorageId, LinkedList<LocationEntry>> _locationEntries;
 
         private Dictionary<string, long>   _sharedFontTitleDictionary;
@@ -184,11 +187,11 @@ namespace Ryujinx.HLE.FileSystem.Content
         {
             if (_contentDictionary.ContainsValue(ncaId))
             {
-                var content  = _contentDictionary.FirstOrDefault(x => x.Value == ncaId);
+                var  content = _contentDictionary.FirstOrDefault(x => x.Value == ncaId);
                 long titleId = (long)content.Key.Item1;
 
                 NcaContentType contentType = content.Key.Item2;
-                StorageId storage = GetInstalledStorage(titleId, contentType, storageId);
+                StorageId      storage     = GetInstalledStorage(titleId, contentType, storageId);
 
                 return storage == storageId;
             }
@@ -327,22 +330,25 @@ namespace Ryujinx.HLE.FileSystem.Content
             string contentPathString   = LocationHelper.GetContentRoot(StorageId.NandSystem);
             string contentDirectory    = LocationHelper.GetRealPath(_device.FileSystem, contentPathString);
             string registeredDirectory = Path.Combine(contentDirectory, "registered");
-            string temporalDirectory   = Path.Combine(contentDirectory, "temp");
+            string temporaryDirectory  = Path.Combine(contentDirectory, "temp");
 
-            if (Directory.Exists(temporalDirectory))
+            if (Directory.Exists(temporaryDirectory))
             {
-                new DirectoryInfo(temporalDirectory).Delete(true);
+                Directory.Delete(temporaryDirectory, true);
             }
 
             if (Directory.Exists(firmwareSource))
             {
-                InstallFromDirectory(firmwareSource,  temporalDirectory);
-                FinishInstallation(temporalDirectory, registeredDirectory);
+                InstallFromDirectory(firmwareSource, temporaryDirectory);
+                FinishInstallation(temporaryDirectory, registeredDirectory);
+
                 return;
             }
 
             if (!File.Exists(firmwareSource))
+            {
                 throw new FileNotFoundException("Firmware file does not exist.");
+            }
 
             FileInfo info = new FileInfo(firmwareSource);
 
@@ -353,18 +359,18 @@ namespace Ryujinx.HLE.FileSystem.Content
                     case ".zip":
                         using (ZipArchive archive = ZipFile.OpenRead(firmwareSource))
                         {
-                            InstallFromZip(archive, temporalDirectory);
+                            InstallFromZip(archive, temporaryDirectory);
                         }
                         break;
                     case ".xci":
                         Xci xci = new Xci(_device.System.KeySet, file.AsStorage());
-                        InstallFromCart(xci, temporalDirectory);
+                        InstallFromCart(xci, temporaryDirectory);
                         break;
                     default:
                         throw new FormatException("Input file is not a valid firmware package");
                 }
 
-                FinishInstallation(temporalDirectory, registeredDirectory);
+                FinishInstallation(temporaryDirectory, registeredDirectory);
             }
         }
 
@@ -404,7 +410,9 @@ namespace Ryujinx.HLE.FileSystem.Content
                 InstallFromPartition(partition, temporalDirectory);
             }
             else
+            {
                 throw new Exception("Update not found in xci file.");
+            }
         }
 
         private void InstallFromZip(ZipArchive archive, string temporalDirectory)
@@ -461,7 +469,9 @@ namespace Ryujinx.HLE.FileSystem.Content
                 filesystem.OpenFile(out file, $"{path}/00", mode);
             }
             else
+            {
                 filesystem.OpenFile(out file, path, mode);
+            }
 
             return file;
         }
@@ -480,16 +490,17 @@ namespace Ryujinx.HLE.FileSystem.Content
 
         public SystemVersion VerifyFirmwarePackage(string firmwarePackage)
         {
-            ulong systemVersionTitleId = 0x0100000000000809;
-            ulong systemUpdateTitleId  = 0x0100000000000816;
-
             Dictionary<ulong, List<(NcaContentType, string)>> updateNcas = new Dictionary<ulong, List<(NcaContentType, string)>>();
 
             if (Directory.Exists(firmwarePackage))
+            {
                 return VerifyAndGetVersionDirectory(firmwarePackage);
+            }
 
             if (!File.Exists(firmwarePackage))
+            {
                 throw new FileNotFoundException("Firmware file does not exist.");
+            }
 
             FileInfo info = new FileInfo(firmwarePackage);
 
@@ -550,9 +561,9 @@ namespace Ryujinx.HLE.FileSystem.Content
                     }
                 }
 
-                if (updateNcas.ContainsKey(systemUpdateTitleId))
+                if (updateNcas.ContainsKey(SystemUpdateTitleId))
                 {
-                    var ncaEntry = updateNcas[systemUpdateTitleId];
+                    var ncaEntry = updateNcas[SystemUpdateTitleId];
 
                     string metaPath = ncaEntry.Find(x => x.Item1 == NcaContentType.Meta).Item2;
 
@@ -576,7 +587,7 @@ namespace Ryujinx.HLE.FileSystem.Content
                             {
                                 metaEntries = meta.MetaEntries;
 
-                                updateNcas.Remove(systemUpdateTitleId);
+                                updateNcas.Remove(SystemUpdateTitleId);
                             };
                         }
                     }
@@ -586,9 +597,9 @@ namespace Ryujinx.HLE.FileSystem.Content
                         throw new FileNotFoundException("System update title was not found in the firmware package.");
                     }
 
-                    if (updateNcas.ContainsKey(systemVersionTitleId))
+                    if (updateNcas.ContainsKey(SystemVersionTitleId))
                     {
-                        string versionEntry = updateNcas[systemVersionTitleId].Find(x => x.Item1 != NcaContentType.Meta).Item2;
+                        string versionEntry = updateNcas[SystemVersionTitleId].Find(x => x.Item1 != NcaContentType.Meta).Item2;
 
                         using (Stream ncaStream = GetZipStream(archive.GetEntry(versionEntry)))
                         {
@@ -608,6 +619,7 @@ namespace Ryujinx.HLE.FileSystem.Content
                         if (updateNcas.TryGetValue(metaEntry.TitleId, out ncaEntry))
                         {
                             metaPath = ncaEntry.Find(x => x.Item1 == NcaContentType.Meta).Item2;
+
                             string contentPath = ncaEntry.Find(x => x.Item1 != NcaContentType.Meta).Item2;
 
                             // Nintendo in 9.0.0, removed PPC and only kept the meta nca of it.
@@ -615,6 +627,7 @@ namespace Ryujinx.HLE.FileSystem.Content
                             if (contentPath == null)
                             {
                                 updateNcas.Remove(metaEntry.TitleId);
+
                                 continue;
                             }
 
@@ -633,7 +646,6 @@ namespace Ryujinx.HLE.FileSystem.Content
 
                                     if (fs.OpenFile(out IFile metaFile, cnmtPath, OpenMode.Read) == Result.Success)
                                     {
-
                                         var meta = new Cnmt(metaFile.AsStream());
 
                                         IStorage contentStorage = contentNcaStream.AsStorage();
@@ -656,7 +668,6 @@ namespace Ryujinx.HLE.FileSystem.Content
                                         }
                                     }
                                 }
-
                             }
                         }
                     }
@@ -696,7 +707,7 @@ namespace Ryujinx.HLE.FileSystem.Content
 
                     Nca nca = new Nca(_device.System.KeySet, ncaStorage);
 
-                    if (nca.Header.TitleId == systemUpdateTitleId && nca.Header.ContentType == NcaContentType.Meta)
+                    if (nca.Header.TitleId == SystemUpdateTitleId && nca.Header.ContentType == NcaContentType.Meta)
                     {
                         IFileSystem fs = nca.OpenFileSystem(NcaSectionType.Data, _device.System.FsIntegrityCheckLevel);
 
@@ -714,7 +725,7 @@ namespace Ryujinx.HLE.FileSystem.Content
 
                         continue;
                     }
-                    else if (nca.Header.TitleId == systemVersionTitleId && nca.Header.ContentType == NcaContentType.Data)
+                    else if (nca.Header.TitleId == SystemVersionTitleId && nca.Header.ContentType == NcaContentType.Data)
                     {
                         var romfs = nca.OpenFileSystem(NcaSectionType.Data, _device.System.FsIntegrityCheckLevel);
 
@@ -746,15 +757,15 @@ namespace Ryujinx.HLE.FileSystem.Content
                 {
                     if (updateNcas.TryGetValue(metaEntry.TitleId, out var ncaEntry))
                     {
-                        var metaNcaEntry   = ncaEntry.Find(x => x.Item1 == NcaContentType.Meta);
-                        string contentPath = ncaEntry.Find(x => x.Item1 != NcaContentType.Meta).Item2;
-
+                        var    metaNcaEntry = ncaEntry.Find(x => x.Item1 == NcaContentType.Meta);
+                        string contentPath  = ncaEntry.Find(x => x.Item1 != NcaContentType.Meta).Item2;
 
                         // Nintendo in 9.0.0, removed PPC and only kept the meta nca of it.
                         // This is a perfect valid case, so we should just ignore the missing content nca and continue.
                         if (contentPath == null)
                         {
                             updateNcas.Remove(metaEntry.TitleId);
+
                             continue;
                         }
 
@@ -769,7 +780,6 @@ namespace Ryujinx.HLE.FileSystem.Content
 
                         if (fs.OpenFile(out IFile metaFile, cnmtPath, OpenMode.Read) == Result.Success)
                         {
-
                             var meta = new Cnmt(metaFile.AsStream());
 
                             if (contentStorage.GetSize(out long size) == Result.Success)
@@ -792,6 +802,7 @@ namespace Ryujinx.HLE.FileSystem.Content
                         }
                     }
                 }
+
                 if (updateNcas.Count > 0)
                 {
                     string extraNcas = string.Empty;
@@ -829,7 +840,7 @@ namespace Ryujinx.HLE.FileSystem.Content
                     {
                         Nca nca = new Nca(_device.System.KeySet, ncaStorage);
 
-                        if (nca.Header.TitleId == 0x0100000000000809 && nca.Header.ContentType == NcaContentType.Data)
+                        if (nca.Header.TitleId == SystemVersionTitleId && nca.Header.ContentType == NcaContentType.Data)
                         {
                             var romfs = nca.OpenFileSystem(NcaSectionType.Data, _device.System.FsIntegrityCheckLevel);
 
