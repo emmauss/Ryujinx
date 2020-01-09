@@ -1,10 +1,9 @@
 using LibHac;
 using LibHac.Fs;
-using LibHac.FsService;
 using LibHac.FsSystem;
 using LibHac.FsSystem.NcaUtils;
 using LibHac.Ncm;
-using Ryujinx.HLE.HOS.Font;
+using Ryujinx.HLE.Exceptions;
 using Ryujinx.HLE.HOS.Services.Time;
 using Ryujinx.HLE.Utilities;
 using System;
@@ -12,8 +11,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-
-using static Ryujinx.Common.HexUtils;
 
 namespace Ryujinx.HLE.FileSystem.Content
 {
@@ -367,7 +364,7 @@ namespace Ryujinx.HLE.FileSystem.Content
                         InstallFromCart(xci, temporaryDirectory);
                         break;
                     default:
-                        throw new FormatException("Input file is not a valid firmware package");
+                        throw new InvalidFirmwarePackageException("Input file is not a valid firmware package");
                 }
 
                 FinishInstallation(temporaryDirectory, registeredDirectory);
@@ -523,7 +520,10 @@ namespace Ryujinx.HLE.FileSystem.Content
                             return VerifyAndGetVersion(partition);
                         }
                         else
-                            throw new InvalidDataException("Update not found in xci file.");
+                        {
+                            throw new InvalidFirmwarePackageException("Update not found in xci file.");
+                        }
+
                     default:
                         break;
                 }
@@ -684,7 +684,7 @@ namespace Ryujinx.HLE.FileSystem.Content
                             }
                         }
 
-                        throw new InvalidDataException($"Firmware package contains unrelated archives. Please remove these paths: \n{extraNcas}");
+                        throw new InvalidFirmwarePackageException($"Firmware package contains unrelated archives. Please remove these paths: \n{extraNcas}");
                     }
                 }
                 else
@@ -815,7 +815,7 @@ namespace Ryujinx.HLE.FileSystem.Content
                         }
                     }
 
-                    throw new InvalidDataException($"Firmware package contains unrelated archives. Please remove these paths: \n{extraNcas}");
+                    throw new InvalidFirmwarePackageException($"Firmware package contains unrelated archives. Please remove these paths: \n{extraNcas}");
                 }
 
                 return systemVersion;
