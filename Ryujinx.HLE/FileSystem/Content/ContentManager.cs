@@ -523,7 +523,6 @@ namespace Ryujinx.HLE.FileSystem.Content
                         {
                             throw new InvalidFirmwarePackageException("Update not found in xci file.");
                         }
-
                     default:
                         break;
                 }
@@ -684,7 +683,7 @@ namespace Ryujinx.HLE.FileSystem.Content
                             }
                         }
 
-                        throw new InvalidFirmwarePackageException($"Firmware package contains unrelated archives. Please remove these paths: \n{extraNcas}");
+                        throw new InvalidFirmwarePackageException($"Firmware package contains unrelated archives. Please remove these paths: {Environment.NewLine}{extraNcas}");
                     }
                 }
                 else
@@ -815,7 +814,7 @@ namespace Ryujinx.HLE.FileSystem.Content
                         }
                     }
 
-                    throw new InvalidFirmwarePackageException($"Firmware package contains unrelated archives. Please remove these paths: \n{extraNcas}");
+                    throw new InvalidFirmwarePackageException($"Firmware package contains unrelated archives. Please remove these paths: {Environment.NewLine}{extraNcas}");
                 }
 
                 return systemVersion;
