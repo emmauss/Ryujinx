@@ -24,7 +24,7 @@ namespace Ryujinx.HLE.FileSystem.Content
         private Dictionary<string, long>   _sharedFontTitleDictionary;
         private Dictionary<string, string> _sharedFontFilenameDictionary;
 
-        private SortedDictionary<(ulong, NcaContentType), string> _contentDictionary;
+        private SortedDictionary<(ulong titleId, NcaContentType type), string> _contentDictionary;
 
         private Switch _device;
 
@@ -187,7 +187,7 @@ namespace Ryujinx.HLE.FileSystem.Content
                 var  content = _contentDictionary.FirstOrDefault(x => x.Value == ncaId);
                 long titleId = (long)content.Key.Item1;
 
-                NcaContentType contentType = content.Key.Item2;
+                NcaContentType contentType = content.Key.type;
                 StorageId      storage     = GetInstalledStorage(titleId, contentType, storageId);
 
                 return storage == storageId;
@@ -371,40 +371,40 @@ namespace Ryujinx.HLE.FileSystem.Content
             }
         }
 
-        private void FinishInstallation(string temporalDirectory, string registeredDirectory)
+        private void FinishInstallation(string temporaryDirectory, string registeredDirectory)
         {
             if (Directory.Exists(registeredDirectory))
             {
                 new DirectoryInfo(registeredDirectory).Delete(true);
             }
 
-            Directory.Move(temporalDirectory, registeredDirectory);
+            Directory.Move(temporaryDirectory, registeredDirectory);
 
             LoadEntries();
         }
 
-        private void InstallFromDirectory(string firmwareDirectory, string temporalDirectory)
+        private void InstallFromDirectory(string firmwareDirectory, string temporaryDirectory)
         {
-            InstallFromPartition(new LocalFileSystem(firmwareDirectory), temporalDirectory);
+            InstallFromPartition(new LocalFileSystem(firmwareDirectory), temporaryDirectory);
         }
 
-        private void InstallFromPartition(IFileSystem filesystem, string temporalDirectory)
+        private void InstallFromPartition(IFileSystem filesystem, string temporaryDirectory)
         {
-            foreach (var entry in filesystem.EnumerateEntries("./", "*.nca"))
+            foreach (var entry in filesystem.EnumerateEntries("/", "*.nca"))
             {
                 Nca nca = new Nca(_device.System.KeySet, OpenPossibleFragmentedFile(filesystem, entry.FullPath, OpenMode.Read).AsStorage());
 
-                SaveNca(nca, entry.Name.Remove(entry.Name.IndexOf('.')), temporalDirectory);
+                SaveNca(nca, entry.Name.Remove(entry.Name.IndexOf('.')), temporaryDirectory);
             }
         }
 
-        private void InstallFromCart(Xci gameCard, string temporalDirectory)
+        private void InstallFromCart(Xci gameCard, string temporaryDirectory)
         {
             if (gameCard.HasPartition(XciPartitionType.Update))
             {
                 XciPartition partition = gameCard.OpenPartition(XciPartitionType.Update);
 
-                InstallFromPartition(partition, temporalDirectory);
+                InstallFromPartition(partition, temporaryDirectory);
             }
             else
             {
@@ -412,7 +412,7 @@ namespace Ryujinx.HLE.FileSystem.Content
             }
         }
 
-        private void InstallFromZip(ZipArchive archive, string temporalDirectory)
+        private void InstallFromZip(ZipArchive archive, string temporaryDirectory)
         {
             using (archive)
             {
@@ -434,7 +434,7 @@ namespace Ryujinx.HLE.FileSystem.Content
 
                         if (ncaId.Contains(".nca"))
                         {
-                            string newPath = Path.Combine(temporalDirectory, ncaId);
+                            string newPath = Path.Combine(temporaryDirectory, ncaId);
 
                             Directory.CreateDirectory(newPath);
 
@@ -445,9 +445,9 @@ namespace Ryujinx.HLE.FileSystem.Content
             }
         }
 
-        public void SaveNca(Nca nca, string ncaId, string temporalDirectory)
+        public void SaveNca(Nca nca, string ncaId, string temporaryDirectory)
         {
-            string newPath = Path.Combine(temporalDirectory, ncaId + ".nca");
+            string newPath = Path.Combine(temporaryDirectory, ncaId + ".nca");
 
             Directory.CreateDirectory(newPath);
 
@@ -487,7 +487,7 @@ namespace Ryujinx.HLE.FileSystem.Content
 
         public SystemVersion VerifyFirmwarePackage(string firmwarePackage)
         {
-            Dictionary<ulong, List<(NcaContentType, string)>> updateNcas = new Dictionary<ulong, List<(NcaContentType, string)>>();
+            Dictionary<ulong, List<(NcaContentType type, string path)>> updateNcas = new Dictionary<ulong, List<(NcaContentType, string)>>();
 
             if (Directory.Exists(firmwarePackage))
             {
@@ -564,7 +564,7 @@ namespace Ryujinx.HLE.FileSystem.Content
                 {
                     var ncaEntry = updateNcas[SystemUpdateTitleId];
 
-                    string metaPath = ncaEntry.Find(x => x.Item1 == NcaContentType.Meta).Item2;
+                    string metaPath = ncaEntry.Find(x => x.type == NcaContentType.Meta).path;
 
                     CnmtContentMetaEntry[] metaEntries = null;
 
@@ -576,9 +576,9 @@ namespace Ryujinx.HLE.FileSystem.Content
 
                         IFileSystem fs = metaNca.OpenFileSystem(NcaSectionType.Data, _device.System.FsIntegrityCheckLevel);
 
-                        string cnmtPath = fs.EnumerateEntries("./", "*.cnmt").Single().FullPath;
+                        string cnmtPath = fs.EnumerateEntries("/", "*.cnmt").Single().FullPath;
 
-                        if (fs.OpenFile(out IFile metaFile, cnmtPath, OpenMode.Read) == Result.Success)
+                        if (fs.OpenFile(out IFile metaFile, cnmtPath, OpenMode.Read).IsSuccess())
                         {
                             var meta = new Cnmt(metaFile.AsStream());
 
@@ -598,7 +598,7 @@ namespace Ryujinx.HLE.FileSystem.Content
 
                     if (updateNcas.ContainsKey(SystemVersionTitleId))
                     {
-                        string versionEntry = updateNcas[SystemVersionTitleId].Find(x => x.Item1 != NcaContentType.Meta).Item2;
+                        string versionEntry = updateNcas[SystemVersionTitleId].Find(x => x.type != NcaContentType.Meta).path;
 
                         using (Stream ncaStream = GetZipStream(archive.GetEntry(versionEntry)))
                         {
@@ -606,7 +606,7 @@ namespace Ryujinx.HLE.FileSystem.Content
 
                             var romfs = nca.OpenFileSystem(NcaSectionType.Data, _device.System.FsIntegrityCheckLevel);
 
-                            if (romfs.OpenFile(out IFile systemVersionFile, "/file", OpenMode.Read) == Result.Success)
+                            if (romfs.OpenFile(out IFile systemVersionFile, "/file", OpenMode.Read).IsSuccess())
                             {
                                 systemVersion = new SystemVersion(systemVersionFile.AsStream());
                             }
@@ -617,9 +617,9 @@ namespace Ryujinx.HLE.FileSystem.Content
                     {
                         if (updateNcas.TryGetValue(metaEntry.TitleId, out ncaEntry))
                         {
-                            metaPath = ncaEntry.Find(x => x.Item1 == NcaContentType.Meta).Item2;
+                            metaPath = ncaEntry.Find(x => x.type == NcaContentType.Meta).path;
 
-                            string contentPath = ncaEntry.Find(x => x.Item1 != NcaContentType.Meta).Item2;
+                            string contentPath = ncaEntry.Find(x => x.type != NcaContentType.Meta).path;
 
                             // Nintendo in 9.0.0, removed PPC and only kept the meta nca of it.
                             // This is a perfect valid case, so we should just ignore the missing content nca and continue.
@@ -641,14 +641,14 @@ namespace Ryujinx.HLE.FileSystem.Content
 
                                     IFileSystem fs = metaNca.OpenFileSystem(NcaSectionType.Data, _device.System.FsIntegrityCheckLevel);
 
-                                    string cnmtPath = fs.EnumerateEntries("./", "*.cnmt").Single().FullPath;
+                                    string cnmtPath = fs.EnumerateEntries("/", "*.cnmt").Single().FullPath;
 
-                                    if (fs.OpenFile(out IFile metaFile, cnmtPath, OpenMode.Read) == Result.Success)
+                                    if (fs.OpenFile(out IFile metaFile, cnmtPath, OpenMode.Read).IsSuccess())
                                     {
                                         var meta = new Cnmt(metaFile.AsStream());
 
                                         IStorage contentStorage = contentNcaStream.AsStorage();
-                                        if (contentStorage.GetSize(out long size) == Result.Success)
+                                        if (contentStorage.GetSize(out long size).IsSuccess())
                                         {
                                             byte[] contentData = new byte[size];
 
@@ -679,7 +679,7 @@ namespace Ryujinx.HLE.FileSystem.Content
                         {
                             foreach (var nca in entry.Value)
                             {
-                                extraNcas += nca.Item2 + Environment.NewLine;
+                                extraNcas += nca.path + Environment.NewLine;
                             }
                         }
 
@@ -700,7 +700,7 @@ namespace Ryujinx.HLE.FileSystem.Content
 
                 CnmtContentMetaEntry[] metaEntries = null;
 
-                foreach (var entry in filesystem.EnumerateEntries("./", "*.nca"))
+                foreach (var entry in filesystem.EnumerateEntries("/", "*.nca"))
                 {
                     IStorage ncaStorage = OpenPossibleFragmentedFile(filesystem, entry.FullPath, OpenMode.Read).AsStorage();
 
@@ -710,9 +710,9 @@ namespace Ryujinx.HLE.FileSystem.Content
                     {
                         IFileSystem fs = nca.OpenFileSystem(NcaSectionType.Data, _device.System.FsIntegrityCheckLevel);
 
-                        string cnmtPath = fs.EnumerateEntries("./", "*.cnmt").Single().FullPath;
+                        string cnmtPath = fs.EnumerateEntries("/", "*.cnmt").Single().FullPath;
 
-                        if (fs.OpenFile(out IFile metaFile, cnmtPath, OpenMode.Read) == Result.Success)
+                        if (fs.OpenFile(out IFile metaFile, cnmtPath, OpenMode.Read).IsSuccess())
                         {
                             var meta = new Cnmt(metaFile.AsStream());
 
@@ -728,7 +728,7 @@ namespace Ryujinx.HLE.FileSystem.Content
                     {
                         var romfs = nca.OpenFileSystem(NcaSectionType.Data, _device.System.FsIntegrityCheckLevel);
 
-                        if (romfs.OpenFile(out IFile systemVersionFile, "/file", OpenMode.Read) == Result.Success)
+                        if (romfs.OpenFile(out IFile systemVersionFile, "/file", OpenMode.Read).IsSuccess())
                         {
                             systemVersion = new SystemVersion(systemVersionFile.AsStream());
                         }
@@ -756,8 +756,8 @@ namespace Ryujinx.HLE.FileSystem.Content
                 {
                     if (updateNcas.TryGetValue(metaEntry.TitleId, out var ncaEntry))
                     {
-                        var    metaNcaEntry = ncaEntry.Find(x => x.Item1 == NcaContentType.Meta);
-                        string contentPath  = ncaEntry.Find(x => x.Item1 != NcaContentType.Meta).Item2;
+                        var    metaNcaEntry = ncaEntry.Find(x => x.type == NcaContentType.Meta);
+                        string contentPath  = ncaEntry.Find(x => x.type != NcaContentType.Meta).path;
 
                         // Nintendo in 9.0.0, removed PPC and only kept the meta nca of it.
                         // This is a perfect valid case, so we should just ignore the missing content nca and continue.
@@ -768,20 +768,20 @@ namespace Ryujinx.HLE.FileSystem.Content
                             continue;
                         }
 
-                        IStorage metaStorage = OpenPossibleFragmentedFile(filesystem, metaNcaEntry.Item2, OpenMode.Read).AsStorage();
+                        IStorage metaStorage = OpenPossibleFragmentedFile(filesystem, metaNcaEntry.path, OpenMode.Read).AsStorage();
                         IStorage contentStorage = OpenPossibleFragmentedFile(filesystem, contentPath, OpenMode.Read).AsStorage();
 
                         Nca metaNca = new Nca(_device.System.KeySet, metaStorage);
 
                         IFileSystem fs = metaNca.OpenFileSystem(NcaSectionType.Data, _device.System.FsIntegrityCheckLevel);
 
-                        string cnmtPath = fs.EnumerateEntries("./", "*.cnmt").Single().FullPath;
+                        string cnmtPath = fs.EnumerateEntries("/", "*.cnmt").Single().FullPath;
 
-                        if (fs.OpenFile(out IFile metaFile, cnmtPath, OpenMode.Read) == Result.Success)
+                        if (fs.OpenFile(out IFile metaFile, cnmtPath, OpenMode.Read).IsSuccess())
                         {
                             var meta = new Cnmt(metaFile.AsStream());
 
-                            if (contentStorage.GetSize(out long size) == Result.Success)
+                            if (contentStorage.GetSize(out long size).IsSuccess())
                             {
                                 byte[] contentData = new byte[size];
 
@@ -810,7 +810,7 @@ namespace Ryujinx.HLE.FileSystem.Content
                     {
                         foreach (var nca in entry.Value)
                         {
-                            extraNcas += nca.Item2 + Environment.NewLine;
+                            extraNcas += nca.path + Environment.NewLine;
                         }
                     }
 
@@ -843,7 +843,7 @@ namespace Ryujinx.HLE.FileSystem.Content
                         {
                             var romfs = nca.OpenFileSystem(NcaSectionType.Data, _device.System.FsIntegrityCheckLevel);
 
-                            if (romfs.OpenFile(out IFile systemVersionFile, "/file", OpenMode.Read) == Result.Success)
+                            if (romfs.OpenFile(out IFile systemVersionFile, "/file", OpenMode.Read).IsSuccess())
                             {
                                 return new SystemVersion(systemVersionFile.AsStream());
                             }
