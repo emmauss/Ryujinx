@@ -59,6 +59,7 @@ namespace Ryujinx.Ui
         [GUI] TreeView      _gameTable;
         [GUI] TreeSelection _gameTableSelection;
         [GUI] Label         _progressLabel;
+        [GUI] Label         _firmwareVersionLabel;
         [GUI] LevelBar      _progressBar;
 #pragma warning restore CS0649
 #pragma warning restore IDE0044
@@ -137,6 +138,8 @@ namespace Ryujinx.Ui
 #pragma warning disable CS4014
             UpdateGameTable();
 #pragma warning restore CS4014
+
+            Task.Run(RefreshFirmwareLabel);
         }
 
         internal static void ApplyTheme()
@@ -592,6 +595,18 @@ namespace Ryujinx.Ui
             HandleInstallerDialog(directoryChooser);
         }
 
+        private void RefreshFirmwareLabel()
+        {
+            var currentFirmware = _device.System.GetCurrentFirmwareVersion();
+
+            GLib.Idle.Add(new GLib.IdleHandler(() =>
+            {
+                _firmwareVersionLabel.Text = currentFirmware != null ? currentFirmware.VersionString : "0.0.0";
+
+                return false;
+            }));
+        }
+
         private void HandleInstallerDialog(FileChooserDialog fileChooser)
         {
             if (fileChooser.Run() == (int)ResponseType.Accept)
@@ -629,7 +644,7 @@ namespace Ryujinx.Ui
 
                     if (currentVersion != null)
                     {
-                        dialogMessage += $"This will replace the current system version {currentVersion.VersionString}.";
+                        dialogMessage += $"This will replace the current system version {currentVersion.VersionString}. ";
                     }
 
                     dialogMessage += "Do you want to continue?";
@@ -694,7 +709,7 @@ namespace Ryujinx.Ui
                                     dialog.Text = $"Install Firmware {firmwareVersion.VersionString} Failed.";
 
                                     dialog.SecondaryText = $"An error occured while installing system version {firmwareVersion.VersionString}." +
-                                     "Please check logs for more info.";
+                                     " Please check logs for more info.";
 
                                     Logger.PrintError(LogClass.Application, ex.Message);
 
@@ -703,6 +718,10 @@ namespace Ryujinx.Ui
 
                                     return false;
                                 }));
+                            }
+                            finally
+                            {
+                                RefreshFirmwareLabel();
                             }
                         });
 
