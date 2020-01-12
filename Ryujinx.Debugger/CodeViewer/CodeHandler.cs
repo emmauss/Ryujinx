@@ -47,18 +47,16 @@ namespace Ryujinx.Debugger.CodeViewer
             Initialized = true;
         }
 
-        public Dictionary<long, CodeInstruction> DisassembleBlock(MemoryManager memory, long offset = 0, int length = 100)
+        public List<CodeInstruction> DisassembleBlock(MemoryManager memory, long offset, int length = 100)
         {
-            Dictionary<long, CodeInstruction> disassembledCode = new Dictionary<long, CodeInstruction>();
+            List<CodeInstruction> disassembledCode = new List<CodeInstruction>();
 
             if (offset >= 0 && length > 0)
             {
-                long location = _address + offset;
-
                 switch (CodeType)
                 {
                     case CodeType.Aarch64:
-                        byte[] region = memory.ReadBytes(location, length * Arch64InstructionSize);
+                        byte[] region = memory.ReadBytes(offset, length * Arch64InstructionSize);
 
                         var str = HexUtils.ToHex(region);
 
@@ -66,9 +64,9 @@ namespace Ryujinx.Debugger.CodeViewer
 
                         foreach (Arm64Instruction instruction in disassembled)
                         {
-                            disassembledCode.Add( instruction.Address,new CodeInstruction()
+                            disassembledCode.Add(new CodeInstruction()
                             {
-                                Address = instruction.Address, //Capstone's dumb
+                                Address = instruction.Address + offset, //Capstone's dumb
                                 Data = instruction.Bytes,
                                 Instruction = $"{instruction.Mnemonic} {instruction.Operand}"
                             });

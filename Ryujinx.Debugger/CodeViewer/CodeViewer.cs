@@ -10,7 +10,8 @@ namespace Ryujinx.Debugger.CodeViewer
     {
         public static event EventHandler Update;
 
-        public static long ArmCodeOffset { get; set; }
+        public static long ArmStartAddress { get; set; }
+        public static long ArmEndAddress { get; set; }
 
         private static CodeHandler _arch64CodeHandler;
         private static CodeHandler _x86_64CodeHandler;
@@ -26,25 +27,26 @@ namespace Ryujinx.Debugger.CodeViewer
             _x86_64CodeHandler = new CodeHandler(CodeType.X86_64);
         }
 
-        public static void LoadMemory(CodeType codeType,MemoryManager memory, long codeAddress)
+        public static void LoadMemory(CodeType codeType, MemoryManager memory, long startAddress, long endAddress)
         {
             switch (codeType)
             {
                 case CodeType.Aarch64:
                     _armMemory = memory;
-                    _arch64CodeHandler.Initialize(codeAddress);
-                    ArmCodeOffset = codeAddress;
+                    _arch64CodeHandler.Initialize(startAddress);
+                    ArmStartAddress = startAddress;
+                    ArmEndAddress = endAddress;
                     break;
                 case CodeType.X86_64:
                     _jitMemory = memory;
-                    _x86_64CodeHandler.Initialize(codeAddress);
+                    _x86_64CodeHandler.Initialize(startAddress);
                     break;
             }
 
             Update?.Invoke(null, null);
         }
 
-        public static Dictionary<long, CodeInstruction> GetData(CodeType codeType, long offset, int length)
+        public static List<CodeInstruction> GetData(CodeType codeType, long offset, int length)
         {
             switch (codeType)
             {

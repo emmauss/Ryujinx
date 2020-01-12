@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.21.0 -->
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <object class="GtkTextBuffer" id="_armCodeBuffer"/>
+  <object class="GtkListStore" id="_codeModel">
+    <columns>
+      <!-- column-name Address -->
+      <column type="gchararray"/>
+      <!-- column-name Data -->
+      <column type="gchararray"/>
+      <!-- column-name Instruction -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkCheckButton" id="_enableAllBreakpointCheck">
+    <property name="visible">True</property>
+    <property name="can_focus">True</property>
+    <property name="receives_default">False</property>
+    <property name="draw_indicator">True</property>
+  </object>
+  <object class="GtkTextBuffer" id="_jitEquivCodeBuffer"/>
+  <object class="GtkAdjustment" id="_scrollAdjustment">
+    <property name="upper">100</property>
+    <property name="step_increment">16</property>
+    <property name="page_increment">80</property>
+  </object>
+  <object class="GtkBox" id="_mainBox">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="margin_left">5</property>
+    <property name="margin_right">5</property>
+    <property name="margin_top">5</property>
+    <property name="margin_bottom">5</property>
+    <property name="orientation">vertical</property>
+    <property name="spacing">10</property>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="margin_left">5</property>
+        <property name="margin_right">5</property>
+        <property name="margin_top">5</property>
+        <property name="margin_bottom">5</property>
+        <child>
+          <object class="GtkFrame" id="_armAsmFrame">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_right">5</property>
+            <property name="margin_bottom">5</property>
+            <property name="label_xalign">0</property>
+            <property name="shadow_type">in</property>
+            <child>
+              <object class="GtkAlignment">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="left_padding">12</property>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkScrolledWindow" id="_scrolledWindow">
+                        <property name="height_request">601</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="vscrollbar_policy">external</property>
+                        <property name="shadow_type">in</property>
+                        <child>
+                          <object class="GtkTreeView" id="_armAsmView">
+                            <property name="height_request">600</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="valign">start</property>
+                            <property name="model">_codeModel</property>
+                            <property name="enable_search">False</property>
+                            <property name="fixed_height_mode">True</property>
+                            <property name="enable_grid_lines">horizontal</property>
+                            <child internal-child="selection">
+                              <object class="GtkTreeSelection"/>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn">
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">150</property>
+                                <property name="title" translatable="yes">Address</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="_addressRenderer"/>
+                                  <attributes>
+                                    <attribute name="text">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn">
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">200</property>
+                                <property name="title" translatable="yes">Data</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="_dataRenderer"/>
+                                  <attributes>
+                                    <attribute name="text">1</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkTreeViewColumn">
+                                <property name="sizing">fixed</property>
+                                <property name="fixed_width">200</property>
+                                <property name="title" translatable="yes">Instruction</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="_instructionRenderer"/>
+                                  <attributes>
+                                    <attribute name="text">2</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScrollbar" id="_scrollbar">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="orientation">vertical</property>
+                        <property name="adjustment">_scrollAdjustment</property>
+                        <property name="lower_stepper_sensitivity">on</property>
+                        <property name="upper_stepper_sensitivity">on</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkTextView" id="_jitEquivBox">
+                        <property name="width_request">200</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="editable">False</property>
+                        <property name="buffer">_jitEquivCodeBuffer</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child type="label">
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">ARM Code</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+        <property name="expand">False</property>
+        <property name="fill">True</property>
+        <property name="position">0</property>
+      </packing>
+    </child>
+  </object>
+  <object class="GtkListStore" id="breakpointModel">
+    <columns>
+      <!-- column-name Enabled -->
+      <column type="gboolean"/>
+      <!-- column-name Address -->
+      <column type="gint64"/>
+    </columns>
+  </object>
+  <object class="GtkListStore" id="registerModel">
+    <columns>
+      <!-- column-name Name -->
+      <column type="gchararray"/>
+      <!-- column-name Value -->
+      <column type="gint64"/>
+    </columns>
+  </object>
+</interface>

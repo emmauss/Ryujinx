@@ -28,11 +28,15 @@ namespace Ryujinx.Debugger.UI
 
             _widgetNotebook.AppendPage(widget, new Label("Profiler"));
 
-            CodeWidget codeWidget = new CodeWidget();
+            Notebook codeNotebook = new Notebook();
 
-            codeWidget.RegisterParentDebugger(this);
+            ArmCodeWidget armCodeWidget = new ArmCodeWidget();
 
-            _widgetNotebook.AppendPage(codeWidget, new Label("Code"));
+            armCodeWidget.RegisterParentDebugger(this);
+
+            _widgetNotebook.AppendPage(codeNotebook, new Label("Code"));
+
+            codeNotebook.AppendPage(armCodeWidget, new Label("Arm"));
         }
 
         public void Enable()

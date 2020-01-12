@@ -14,13 +14,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="UI\CodeWidget.glade" />
+    <None Remove="UI\ArmAsmWidget.glade" />
     <None Remove="UI\DebbugerWidget.glade" />
     <None Remove="UI\ProfilerWidget.glade" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="UI\CodeWidget.glade" />
+    <EmbeddedResource Include="UI\ArmAsmWidget.glade" />
     <EmbeddedResource Include="UI\DebbugerWidget.glade" />
     <EmbeddedResource Include="UI\ProfilerWidget.glade" />
   </ItemGroup>

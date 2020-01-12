@@ -224,8 +224,6 @@ namespace Ryujinx.HLE.HOS
                 resourceLimit,
                 memoryRegion);
 
-            CodeViewer.LoadMemory(CodeType.Aarch64, process.CpuMemory, (long)creationInfo.CodeAddress);
-
             if (result != KernelResult.Success)
             {
                 Logger.PrintError(LogClass.Loader, $"Process initialization returned error \"{result}\".");
@@ -257,6 +255,11 @@ namespace Ryujinx.HLE.HOS
 
                 return false;
             }
+
+            CodeViewer.LoadMemory(CodeType.Aarch64, 
+                                process.CpuMemory, 
+                                (long)creationInfo.CodeAddress,
+                                (long)creationInfo.CodeAddress + codeSize);
 
             system.Processes.Add(process.Pid, process);
 
