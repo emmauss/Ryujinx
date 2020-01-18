@@ -38,17 +38,8 @@ namespace Ryujinx.Ui
         private bool _titleEvent;
 
         private string _newTitle;
-<<<<<<< HEAD
-
-#if USE_PROFILING
-        private ProfileWindowManager _profileWindow;
-#endif
 
         public GlScreen(Switch device)
-=======
-        
-        public GlScreen(Switch device, Renderer renderer)
->>>>>>> move profiler output to gui
             : base(1280, 720,
             new GraphicsMode(), "Ryujinx", 0,
             DisplayDevice.Default, 3, 3,

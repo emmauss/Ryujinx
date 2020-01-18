@@ -11,9 +11,9 @@ namespace Ryujinx.Debugger.UI
 
         [GUI] Notebook _widgetNotebook;
 
-        public DebuggerWidget() : this(new Builder("Ryujinx.Debugger.UI.DebbugerWidget.glade")) { }
+        public DebuggerWidget() : this(new Builder("Ryujinx.Debugger.UI.DebuggerWidget.glade")) { }
 
-        public DebuggerWidget(Builder builder) : base(builder.GetObject("_debbugerBox").Handle)
+        public DebuggerWidget(Builder builder) : base(builder.GetObject("_debuggerBox").Handle)
         {
             builder.Autoconnect(this);
 

@@ -14,12 +14,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="UI\DebbugerWidget.glade" />
+    <None Remove="UI\DebuggerWidget.glade" />
     <None Remove="UI\ProfilerWidget.glade" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="UI\DebbugerWidget.glade" />
+    <EmbeddedResource Include="UI\DebuggerWidget.glade" />
     <EmbeddedResource Include="UI\ProfilerWidget.glade" />
   </ItemGroup>
 

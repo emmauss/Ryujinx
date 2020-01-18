@@ -21,7 +21,7 @@
     </data>
   </object>
   <object class="GtkBox" id="_profilerBox">
-    <property name="name">DebbugerBox</property>
+    <property name="name">ProfilerBox</property>
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="margin_left">5</property>

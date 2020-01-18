@@ -125,9 +125,10 @@ namespace Ryujinx.Ui
 
 #if USE_DEBUGGING
             _debugger = new Debugger.Debugger();
-#endif
-
             _openDebugger.Activated += _openDebugger_Activated;
+#else
+            _openDebugger.Visible = false;
+#endif
 
             _gameTable.Model = _tableStore = new ListStore(
                 typeof(bool),
@@ -158,26 +159,20 @@ namespace Ryujinx.Ui
         {
 #if USE_DEBUGGING
             if (_debuggerOpened)
+            {
                 return;
+            }
+
             Window debugWindow = new Window("Debugger");
+            
             debugWindow.SetSizeRequest(1280, 640);
             debugWindow.Child = _debugger.Widget;
-
             debugWindow.DeleteEvent += DebugWindow_DeleteEvent;
-
             debugWindow.ShowAll();
 
             _debugger.Enable();
 
             _debuggerOpened = true;
-#else
-            MessageDialog dialog = new MessageDialog(this, DialogFlags.DestroyWithParent, MessageType.Error, ButtonsType.Ok, "");
-            dialog.Title = "Debugging Not Enabled";
-            dialog.SecondaryText = "Debugging is not enabled in this build.";
-            if (dialog.Run() == (int)ResponseType.Ok)
-            {
-                dialog.Dispose();
-            }
 #endif
         }
 
@@ -350,7 +345,10 @@ namespace Ryujinx.Ui
 #if MACOS_BUILD
                 CreateGameWindow(device);
 #else
-                var windowThread = new Thread(CreateGameWindow)
+                var windowThread = new Thread(() =>
+                {
+                    CreateGameWindow(device);
+                })
                 {
                     Name = "GUI.WindowThread"
                 };
