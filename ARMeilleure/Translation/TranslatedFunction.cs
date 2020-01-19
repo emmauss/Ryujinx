@@ -6,7 +6,7 @@ namespace ARMeilleure.Translation
 {
     class TranslatedFunction
     {
-        public ulong Pointer => (ulong)Marshal.GetFunctionPointerForDelegate(_func);
+        public IntPtr Pointer => Marshal.GetFunctionPointerForDelegate(_func);
 
         public int EntryCount;
 
@@ -20,8 +20,9 @@ namespace ARMeilleure.Translation
 
         public TranslatedFunction(GuestFunction func, ulong address, bool rejit)
         {
-            _func  = func;
+            _func = func;
             _rejit = rejit;
+            _address = address;
         }
 
         public ulong Execute(State.ExecutionContext context)

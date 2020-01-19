@@ -93,9 +93,9 @@ namespace ARMeilleure.Translation
             return allocOffset;
         }
 
-        public static void Free(ulong address)
+        public static void Free(IntPtr address)
         {
-            ulong offset = address - (ulong)_basePointer;
+            ulong offset = (ulong)address - (ulong)_basePointer;
 
             lock (_lock)
             {
@@ -119,7 +119,7 @@ namespace ARMeilleure.Translation
         {
             lock (_lock)
             {
-                if(_cacheEntries.TryGetValue(offset, out entry))
+                if (_cacheEntries.TryGetValue(offset, out entry))
                 {
                     return true;
                 }
