@@ -77,7 +77,7 @@ namespace ARMeilleure.Translation
         {
             if ((uint)offset >= (ulong)_size)
             {
-                throw new ArgumentOutOfRangeException("offset");
+                throw new ArgumentOutOfRangeException(nameof(offset));
             }
 
             var node = _memoryRanges.First;
@@ -86,7 +86,7 @@ namespace ARMeilleure.Translation
             {
                 if (node == null)
                 {
-                    throw new ArgumentOutOfRangeException("offset");
+                    throw new ArgumentOutOfRangeException(nameof(offset));
                 }
 
                 if (offset <= node.Value.End)
@@ -103,6 +103,5 @@ namespace ARMeilleure.Translation
 
             node.Value = (node.Value.Start, offset - 1);
         }
-
     }
 }
