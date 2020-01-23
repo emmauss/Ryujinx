@@ -263,7 +263,6 @@ namespace Ryujinx.Debugger.UI
                 _unsortedProfileData = Profile.GetProfilingData();
 
                 (_timingFlagsAverages, _timingFlagsLast) = Profile.GetTimingAveragesAndLast();
-
             }
 
             // Filtering
@@ -526,7 +525,6 @@ namespace Ryujinx.Debugger.UI
 
                         canvas.DrawText("Blue: Instant,  Green: Avg,  Red: Total", 
                                         new SKPoint(xOffset, _rendererHeight - TitleFontHeight), titleFont);
-
                         break;
                 }
 
@@ -773,7 +771,9 @@ namespace Ryujinx.Debugger.UI
 
                     // Skip rendering out of bounds bars
                     if (top < 0 || bottom > _rendererHeight)
+                    {
                         continue;
+                    }
 
                     canvas.DrawRect(new SKRect(xOffset, top, right, bottom), barPaint);
 

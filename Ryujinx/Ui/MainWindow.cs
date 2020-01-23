@@ -125,7 +125,7 @@ namespace Ryujinx.Ui
 
 #if USE_DEBUGGING
             _debugger = new Debugger.Debugger();
-            _openDebugger.Activated += _openDebugger_Activated;
+            _openDebugger.Activated += _openDebugger_Opened;
 #else
             _openDebugger.Visible = false;
 #endif
@@ -155,9 +155,9 @@ namespace Ryujinx.Ui
             Task.Run(RefreshFirmwareLabel);
         }
 
-        private void _openDebugger_Activated(object sender, EventArgs e)
-        {
 #if USE_DEBUGGING
+        private void _openDebugger_Opened(object sender, EventArgs e)
+        {
             if (_debuggerOpened)
             {
                 return;
@@ -173,7 +173,6 @@ namespace Ryujinx.Ui
             _debugger.Enable();
 
             _debuggerOpened = true;
-#endif
         }
 
         private void DebugWindow_DeleteEvent(object o, DeleteEventArgs args)
@@ -184,6 +183,7 @@ namespace Ryujinx.Ui
 
             (_debugger.Widget.Parent as Window)?.Remove(_debugger.Widget);
         }
+#endif
 
         internal static void ApplyTheme()
         {
