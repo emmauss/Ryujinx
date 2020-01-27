@@ -46,6 +46,7 @@
     <None Remove="Ui\assets\TwitterLogo.png" />
     <None Remove="Ui\GameTableContextMenu.glade" />
     <None Remove="Ui\MainWindow.glade" />
+    <None Remove="Ui\RendererWidget.glade" />
     <None Remove="Ui\SwitchSettings.glade" />
   </ItemGroup>
 
@@ -67,6 +68,7 @@
     <EmbeddedResource Include="Ui\assets\TwitterLogo.png" />
     <EmbeddedResource Include="Ui\GameTableContextMenu.glade" />
     <EmbeddedResource Include="Ui\MainWindow.glade" />
+    <EmbeddedResource Include="Ui\RendererWidget.glade" />
     <EmbeddedResource Include="Ui\SwitchSettings.glade" />
   </ItemGroup>
 
