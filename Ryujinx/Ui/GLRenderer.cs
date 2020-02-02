@@ -4,7 +4,9 @@ using System.Threading;
 using Ryujinx.HLE;
 using Ryujinx.Graphics.OpenGL;
 using System.Text;
+using OpenTK.Input;
 using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 using Gdk;
 
 namespace Ryujinx.Ui
@@ -73,7 +75,7 @@ namespace Ryujinx.Ui
 
             IsActive = true;
 
-             GLib.Idle.Add(Render, GLib.Priority.HighIdle);
+             GLib.Idle.Add(Render, GLib.Priority.DefaultIdle);
         }
 
         public void Exit()
@@ -106,6 +108,8 @@ namespace Ryujinx.Ui
             {
                 return false;
             }
+
+            GL.ClearColor(Color4.Black);
 
             _ticks += _chrono.ElapsedTicks;
 

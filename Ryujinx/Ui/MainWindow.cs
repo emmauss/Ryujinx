@@ -48,28 +48,29 @@ namespace Ryujinx.Ui
 
 #pragma warning disable CS0649
 #pragma warning disable IDE0044
-        [GUI] Window        _mainWin;
-        [GUI] CheckMenuItem _fullScreen;
-        [GUI] MenuItem      _stopEmulation;
-        [GUI] CheckMenuItem _favToggle;
-        [GUI] MenuItem      _firmwareInstallFile;
-        [GUI] MenuItem      _firmwareInstallDirectory;
-        [GUI] CheckMenuItem _iconToggle;
-        [GUI] CheckMenuItem _appToggle;
-        [GUI] CheckMenuItem _developerToggle;
-        [GUI] CheckMenuItem _versionToggle;
-        [GUI] CheckMenuItem _timePlayedToggle;
-        [GUI] CheckMenuItem _lastPlayedToggle;
-        [GUI] CheckMenuItem _fileExtToggle;
-        [GUI] CheckMenuItem _fileSizeToggle;
-        [GUI] CheckMenuItem _pathToggle;
-        [GUI] TreeView      _gameTable;
-        [GUI] TreeSelection _gameTableSelection;
-        [GUI] Label         _progressLabel;
-        [GUI] Label         _firmwareVersionLabel;
-        [GUI] LevelBar      _progressBar;
-        [GUI] MenuItem      _openDebugger;
-        [GUI] MenuItem      _toolsMenu;
+
+        [GUI] Window         _mainWin;
+        [GUI] CheckMenuItem  _fullScreen;
+        [GUI] MenuItem       _stopEmulation;
+        [GUI] CheckMenuItem  _favToggle;
+        [GUI] MenuItem       _firmwareInstallFile;
+        [GUI] MenuItem       _firmwareInstallDirectory;
+        [GUI] CheckMenuItem  _iconToggle;
+        [GUI] CheckMenuItem  _appToggle;
+        [GUI] CheckMenuItem  _developerToggle;
+        [GUI] CheckMenuItem  _versionToggle;
+        [GUI] CheckMenuItem  _timePlayedToggle;
+        [GUI] CheckMenuItem  _lastPlayedToggle;
+        [GUI] CheckMenuItem  _fileExtToggle;
+        [GUI] CheckMenuItem  _fileSizeToggle;
+        [GUI] CheckMenuItem  _pathToggle;
+        [GUI] TreeView       _gameTable;
+        [GUI] ScrolledWindow _gameTableWindow;
+        [GUI] TreeSelection  _gameTableSelection;
+        [GUI] Label          _progressLabel;
+        [GUI] Label          _firmwareVersionLabel;
+        [GUI] LevelBar       _progressBar;
+        [GUI] Box            _viewBox;
 #pragma warning restore CS0649
 #pragma warning restore IDE0044
 
@@ -391,26 +392,30 @@ namespace Ryujinx.Ui
 
             Application.Invoke(delegate
             {
-                Window window = new Window("Test");
-
-                window.HeightRequest = 720;
-                window.WidthRequest = 1280;
+                _viewBox.Remove(_gameTableWindow);
                 _gLWigdet.Expand = true;
-                window.Child = _gLWigdet;
+                _viewBox.Child = _gLWigdet;
 
-                window.ShowAll();
+                _gLWigdet.ShowAll();
             });
 
             _gLWigdet.waitEvent.WaitOne();
 
             Application.Invoke(delegate
             {
+                _viewBox.Remove(_gLWigdet);
                 _gLWigdet.Dispose();
 
                 if(_gLWigdet.Window != this.Window && _gLWigdet.Window != null)
                 {
                     _gLWigdet.Window.Dispose();
                 }
+
+                _viewBox.Add(_gameTableWindow);
+
+                _gameTableWindow.Expand = true;
+
+                this.Window.Title = "Ryujinx";
             });
 
             device.Dispose();

@@ -138,7 +138,13 @@ namespace Ryujinx.Ui
 		{
 			if (disposing)
 			{
-				_graphicsContext.MakeCurrent(_windowInfo);
+				try
+				{
+					_graphicsContext.MakeCurrent(_windowInfo);
+				}catch(Exception ex)
+				{
+
+				}
 
 				OnShuttingDown();
 				
