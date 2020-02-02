@@ -30,7 +30,8 @@ namespace Ryujinx.Ui
 
         private static HLE.Switch _emulationContext;
 
-        private static GlScreen _screen;
+        // private static GlScreen _screen;
+        private static GLRenderer _gLWigdet;
 
         private static AutoResetEvent _screenExitStatus = new AutoResetEvent(false);
 
@@ -384,15 +385,37 @@ namespace Ryujinx.Ui
         {
             device.Hid.InitializePrimaryController(ConfigurationState.Instance.Hid.ControllerType);
 
-            using (_screen = new GlScreen(device))
+            _gLWigdet?.Exit();
+            _gLWigdet?.Dispose();
+            _gLWigdet = new GLRenderer(_emulationContext);
+
+            Application.Invoke(delegate
             {
-                _screen.MainLoop();
-            }
+                Window window = new Window("Test");
+
+                window.HeightRequest = 720;
+                window.WidthRequest = 1280;
+                _gLWigdet.Expand = true;
+                window.Child = _gLWigdet;
+
+                window.ShowAll();
+            });
+
+            _gLWigdet.waitEvent.WaitOne();
+
+            Application.Invoke(delegate
+            {
+                _gLWigdet.Dispose();
+
+                if(_gLWigdet.Window != this.Window && _gLWigdet.Window != null)
+                {
+                    _gLWigdet.Window.Dispose();
+                }
+            });
 
             device.Dispose();
 
             _emulationContext = null;
-            _screen           = null;
             _gameLoaded       = false;
 
             DiscordIntegrationModule.SwitchToMainMenu();
@@ -595,17 +618,21 @@ namespace Ryujinx.Ui
 
         private void Exit_Pressed(object sender, EventArgs args)
         {
+            _gLWigdet?.Exit();
+
             End(_emulationContext);
         }
 
         private void Window_Close(object sender, DeleteEventArgs args)
         {
+            _gLWigdet?.Exit();
+            
             End(_emulationContext);
         }
 
         private void StopEmulation_Pressed(object sender, EventArgs args)
         {
-            _screen?.Exit();
+            _gLWigdet?.Exit();
         }
 
         private void Installer_File_Pressed(object o, EventArgs args)
