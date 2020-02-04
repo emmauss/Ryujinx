@@ -401,6 +401,8 @@ namespace Ryujinx.Ui
 
             _gLWigdet.waitEvent.WaitOne();
 
+            _gLWigdet.Start();
+
             Application.Invoke(delegate
             {
                 _viewBox.Remove(_gLWigdet);

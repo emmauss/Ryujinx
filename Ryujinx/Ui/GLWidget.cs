@@ -51,6 +51,8 @@ namespace Ryujinx.Ui
 		private static int _graphicsContextCount;
 		private static bool _sharedContextInitialized;
 
+		public bool IsRenderHandler { get; set; } = false;
+
 		#endregion
 
 		#region Attributes
@@ -140,7 +142,7 @@ namespace Ryujinx.Ui
 			{
 				try
 				{
-					_graphicsContext.MakeCurrent(_windowInfo);
+					GraphicsContext.MakeCurrent(WindowInfo);
 				}catch(Exception ex)
 				{
 
@@ -148,13 +150,13 @@ namespace Ryujinx.Ui
 
 				OnShuttingDown();
 				
-				if (GraphicsContext.ShareContexts && (Interlocked.Decrement(ref _graphicsContextCount) == 0))
+				if (OpenTK.Graphics.GraphicsContext.ShareContexts && (Interlocked.Decrement(ref _graphicsContextCount) == 0))
 				{
 					OnGraphicsContextShuttingDown();
 					_sharedContextInitialized = false;
 				}
 				
-				_graphicsContext.Dispose();
+				GraphicsContext.Dispose();
 			}
 		}
 
@@ -228,8 +230,8 @@ namespace Ryujinx.Ui
 		{
 			if (!_initialized)
 				Initialize();
-			else
-				_graphicsContext.MakeCurrent(_windowInfo);
+			else if(!IsRenderHandler)
+				GraphicsContext.MakeCurrent(WindowInfo);
 
 			return true;
 		}
@@ -237,9 +239,9 @@ namespace Ryujinx.Ui
 		// Called on Resize
 		protected override bool OnConfigureEvent(Gdk.EventConfigure evnt)
 		{
-			if (_graphicsContext != null)
+			if (GraphicsContext != null)
 			{
-				_graphicsContext.Update(_windowInfo);
+				GraphicsContext.Update(WindowInfo);
 			}
 
 			return true;
@@ -290,35 +292,35 @@ namespace Ryujinx.Ui
 			// IWindowInfo
 			if (OpenTK.Configuration.RunningOnWindows)
 			{
-				_windowInfo = InitializeWindows();
+				WindowInfo = InitializeWindows();
 			}
 			else if (OpenTK.Configuration.RunningOnMacOS)
 			{
-				_windowInfo = InitializeOSX();
+				WindowInfo = InitializeOSX();
 			}
 			else
 			{
-				_windowInfo = InitializeX(graphicsMode);
+				WindowInfo = InitializeX(graphicsMode);
 			}
 
 			// GraphicsContext
-			_graphicsContext = new GraphicsContext(graphicsMode, _windowInfo, GLVersionMajor, GLVersionMinor, GraphicsContextFlags);
-			_graphicsContext.MakeCurrent(_windowInfo);
+			GraphicsContext = new GraphicsContext(graphicsMode, WindowInfo, GLVersionMajor, GLVersionMinor, GraphicsContextFlags);
+			GraphicsContext.MakeCurrent(WindowInfo);
 
-			if (GraphicsContext.ShareContexts)
+			if (OpenTK.Graphics.GraphicsContext.ShareContexts)
 			{
 				Interlocked.Increment(ref _graphicsContextCount);
 
 				if (!_sharedContextInitialized)
 				{
 					_sharedContextInitialized = true;
-					((IGraphicsContextInternal)_graphicsContext).LoadAll();
+					((IGraphicsContextInternal)GraphicsContext).LoadAll();
 					OnGraphicsContextInitialized();
 				}
 			}
 			else
 			{
-				((IGraphicsContextInternal)_graphicsContext).LoadAll();
+				((IGraphicsContextInternal)GraphicsContext).LoadAll();
 				OnGraphicsContextInitialized();
 			}
 
@@ -526,6 +528,9 @@ namespace Ryujinx.Ui
 				return attributeList;
 			}
 		}
+
+		public IGraphicsContext GraphicsContext { get => _graphicsContext; set => _graphicsContext = value; }
+		public IWindowInfo WindowInfo { get => _windowInfo; set => _windowInfo = value; }
 
 		[DllImport(UnixLibX11Name, EntryPoint = "XGetVisualInfo")]
 		private static extern IntPtr XGetVisualInfoInternal(IntPtr display, IntPtr vinfo_mask, ref XVisualInfo template, out int nitems);
