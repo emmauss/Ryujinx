@@ -399,7 +399,7 @@ namespace Ryujinx.Ui
                 _gLWigdet.ShowAll();
             });
 
-            _gLWigdet.waitEvent.WaitOne();
+            _gLWigdet.WaitEvent.WaitOne();
 
             _gLWigdet.Start();
 
