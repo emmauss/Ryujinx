@@ -26,7 +26,7 @@ namespace Ryujinx.Ui
 
         public bool IsActive   { get; set; }
         public bool IsStopped  { get; set; }
-        public bool IsFocussed { get; set; } = false;
+        public bool IsFocused { get; set; } = false;
 
         private double _mouseX;
         private double _mouseY;
@@ -52,7 +52,8 @@ namespace Ryujinx.Ui
 
         private Input.NpadController _primaryController;
 
-        public GLRenderer(Switch device) :base (new GraphicsMode(), 3, 3, GraphicsContextFlags.ForwardCompatible)
+        public GLRenderer(Switch device) :
+                    base (new GraphicsMode(), 3, 3, GraphicsContextFlags.ForwardCompatible)
         {
             WaitEvent = new ManualResetEvent(false);
 
@@ -78,12 +79,12 @@ namespace Ryujinx.Ui
 
         private void Parent_FocusOutEvent(object o, Gtk.FocusOutEventArgs args)
         {
-            IsFocussed = false;
+            IsFocused = false;
         }
 
         private void Parent_FocusInEvent(object o, Gtk.FocusInEventArgs args)
         {
-            IsFocussed = true;
+            IsFocused = true;
         }
 
         private void GLRenderer_Destroyed(object sender, EventArgs e)
@@ -106,7 +107,7 @@ namespace Ryujinx.Ui
 
             _toggleFullscreen = toggleFullscreen;
 
-            if (IsFocussed)
+            if (IsFocused)
             {
                 if (this.ParentWindow.State.HasFlag(Gdk.WindowState.Fullscreen) )
                 {
@@ -142,7 +143,7 @@ namespace Ryujinx.Ui
 
         protected override bool OnConfigureEvent(EventConfigure evnt)
         {
-            var result  = base.OnConfigureEvent(evnt);
+            var result = base.OnConfigureEvent(evnt);
 
             _renderer.Window.SetSize(AllocatedWidth, AllocatedHeight);
 
@@ -247,6 +248,10 @@ namespace Ryujinx.Ui
             using (ScopedGLContext scopedGLContext = new ScopedGLContext(WindowInfo, GraphicsContext))
             {
                 _renderer.Initialize();
+
+                GL.Disable(EnableCap.AlphaTest);
+
+                SwapBuffers();
             }
 
             while (IsActive)
@@ -256,17 +261,8 @@ namespace Ryujinx.Ui
                     return;
                 }
 
-<<<<<<< HEAD
                 using (ScopedGLContext scopedGLContext = new ScopedGLContext(WindowInfo, GraphicsContext))
                 {
-                    GL.ClearColor(Color4.Black);
-=======
-                GraphicsContext.MakeCurrent(WindowInfo);
-
-                GL.Disable(EnableCap.AlphaTest);
-
-                SwapBuffers();
->>>>>>> add fullscreen,  enable input on focus, disable aplha
 
                     _ticks += _chrono.ElapsedTicks;
 
@@ -325,7 +321,7 @@ namespace Ryujinx.Ui
                         this.ParentWindow.Title = _newTitle;
                     });
                 }
-                if (IsFocussed)
+                if (IsFocused)
                 {
                     UpdateFrame();
                 }
@@ -417,26 +413,26 @@ namespace Ryujinx.Ui
 
             // Get screen touch position from left mouse click
             // OpenTK always captures mouse events, even if out of focus, so check if window is focused.
-            if (IsFocussed && _mousePressed)
+            if (IsFocused && _mousePressed)
             {
-                int scrnWidth = AllocatedWidth;
-                int scrnHeight = AllocatedHeight;
+                int screenWidth = AllocatedWidth;
+                int screenHeight = AllocatedHeight;
 
                 if (AllocatedWidth > (AllocatedHeight * TouchScreenWidth) / TouchScreenHeight)
                 {
-                    scrnWidth = (AllocatedHeight * TouchScreenWidth) / TouchScreenHeight;
+                    screenWidth = (AllocatedHeight * TouchScreenWidth) / TouchScreenHeight;
                 }
                 else
                 {
-                    scrnHeight = (AllocatedWidth * TouchScreenHeight) / TouchScreenWidth;
+                    screenHeight = (AllocatedWidth * TouchScreenHeight) / TouchScreenWidth;
                 }
 
 
-                int startX = (AllocatedWidth - scrnWidth) >> 1;
-                int startY = (AllocatedHeight - scrnHeight) >> 1;
+                int startX = (AllocatedWidth - screenWidth) >> 1;
+                int startY = (AllocatedHeight - screenHeight) >> 1;
 
-                int endX = startX + scrnWidth;
-                int endY = startY + scrnHeight;
+                int endX = startX + screenWidth;
+                int endY = startY + screenHeight;
 
 
                 if (_mouseX >= startX &&
@@ -444,11 +440,11 @@ namespace Ryujinx.Ui
                     _mouseX < endX &&
                     _mouseY < endY)
                 {
-                    int scrnMouseX = (int)_mouseX - startX;
-                    int scrnMouseY = (int)_mouseY - startY;
+                    int screenMouseX = (int)_mouseX - startX;
+                    int screenMouseY = (int)_mouseY - startY;
 
-                    int mX = (scrnMouseX * TouchScreenWidth) / scrnWidth;
-                    int mY = (scrnMouseY * TouchScreenHeight) / scrnHeight;
+                    int mX = (screenMouseX * TouchScreenWidth) / screenWidth;
+                    int mY = (screenMouseY * TouchScreenHeight) / screenHeight;
 
                     TouchPoint currentPoint = new TouchPoint
                     {

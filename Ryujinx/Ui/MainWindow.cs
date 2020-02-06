@@ -56,6 +56,7 @@ namespace Ryujinx.Ui
         [GUI] CheckMenuItem  _favToggle;
         [GUI] MenuItem       _firmwareInstallFile;
         [GUI] MenuItem       _firmwareInstallDirectory;
+        [GUI] MenuItem      _openDebugger;
         [GUI] CheckMenuItem  _iconToggle;
         [GUI] CheckMenuItem  _appToggle;
         [GUI] CheckMenuItem  _developerToggle;
@@ -73,6 +74,7 @@ namespace Ryujinx.Ui
         [GUI] LevelBar       _progressBar;
         [GUI] Box            _viewBox;
         [GUI] Box            _listStatusBox;
+        
 #pragma warning restore CS0649
 #pragma warning restore IDE0044
 
@@ -133,6 +135,8 @@ namespace Ryujinx.Ui
 #if USE_DEBUGGING
             _debugger = new Debugger.Debugger();
             _openDebugger.Activated += _openDebugger_Opened;
+#else
+            _openDebugger.Hide();
 #endif
 
             _gameTable.Model = _tableStore = new ListStore(
@@ -432,6 +436,7 @@ namespace Ryujinx.Ui
 
             _emulationContext = null;
             _gameLoaded       = false;
+            _gLWigdet         = null;
 
             DiscordIntegrationModule.SwitchToMainMenu();
 
@@ -862,10 +867,14 @@ namespace Ryujinx.Ui
             if (_fullScreen.Active)
             {
                 Fullscreen();
+
+                ToggleExtraWidgets(false);
             }
             else
             {
                 Unfullscreen();
+
+                ToggleExtraWidgets(true);
             }
         }
 
