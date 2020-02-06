@@ -292,12 +292,6 @@ namespace Ryujinx.Ui
             int rightJoystickDx = 0;
             int rightJoystickDy = 0;
 
-            // Keyboard Input
-#if USE_PROFILING
-                // Profiler input, lets the profiler get access to the main windows keyboard state
-            _profileWindow.UpdateKeyInput(keyboard);
-#endif
-
             // Normal Input
             currentHotkeyButtons = KeyboardControls.GetHotkeyButtons(ConfigurationState.Instance.Hid.KeyboardControls, keyboard);
             currentButton = KeyboardControls.GetButtons(ConfigurationState.Instance.Hid.KeyboardControls, keyboard);

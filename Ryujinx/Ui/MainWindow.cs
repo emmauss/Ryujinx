@@ -418,6 +418,11 @@ namespace Ryujinx.Ui
                 _gameTableWindow.Expand = true;
 
                 this.Window.Title = "Ryujinx";
+
+                UpdateColumns();
+                UpdateGameTable();
+
+                Task.Run(RefreshFirmwareLabel);
             });
 
             device.Dispose();
