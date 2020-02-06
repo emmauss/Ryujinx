@@ -53,7 +53,7 @@ namespace Ryujinx.Ui
         private Input.NpadController _primaryController;
 
         public GLRenderer(Switch device) :
-                    base (new GraphicsMode(), 3, 3, GraphicsContextFlags.ForwardCompatible)
+                    base (new GraphicsMode(new ColorFormat(24)), 3, 3, GraphicsContextFlags.ForwardCompatible)
         {
             WaitEvent = new ManualResetEvent(false);
 
@@ -249,8 +249,6 @@ namespace Ryujinx.Ui
             {
                 _renderer.Initialize();
 
-                GL.Disable(EnableCap.AlphaTest);
-
                 SwapBuffers();
             }
 
@@ -263,7 +261,6 @@ namespace Ryujinx.Ui
 
                 using (ScopedGLContext scopedGLContext = new ScopedGLContext(WindowInfo, GraphicsContext))
                 {
-
                     _ticks += _chrono.ElapsedTicks;
 
                     _chrono.Restart();
