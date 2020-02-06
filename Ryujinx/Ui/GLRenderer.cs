@@ -3,6 +3,7 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
+using OpenTK.Platform;
 using Ryujinx.Configuration;
 using Ryujinx.Graphics.OpenGL;
 using Ryujinx.HLE;
@@ -88,7 +89,9 @@ namespace Ryujinx.Ui
 
         private void GLRenderer_Initialized(object sender, EventArgs e)
         {
+            // Release the GL exclusivity that OpenTK gave us.
             GraphicsContext.MakeCurrent(null);
+
             WaitEvent.Set();
         }
 
@@ -168,10 +171,18 @@ namespace Ryujinx.Ui
 
         public void Exit()
         {
-            _device.DisposeGpu();
+            if (IsStopped)
+            {
+                return;
+            }
 
             IsStopped = true;
             IsActive = false;
+
+            using (ScopedGLContext scopedGLContext = new ScopedGLContext(WindowInfo, GraphicsContext))
+            {
+                _device.DisposeGpu();
+            }
 
             WaitEvent.Set();
         }
@@ -188,8 +199,10 @@ namespace Ryujinx.Ui
 
         public void Render()
         {
-            GraphicsContext.MakeCurrent(WindowInfo);
-            _renderer.Initialize();
+            using (ScopedGLContext scopedGLContext = new ScopedGLContext(WindowInfo, GraphicsContext))
+            {
+                _renderer.Initialize();
+            }
 
             while (IsActive)
             {
@@ -198,44 +211,45 @@ namespace Ryujinx.Ui
                     return;
                 }
 
-                GraphicsContext.MakeCurrent(WindowInfo);
-
-                GL.ClearColor(Color4.Black);
-
-                _ticks += _chrono.ElapsedTicks;
-
-                _chrono.Restart();
-
-                if (_device.WaitFifo())
+                using (ScopedGLContext scopedGLContext = new ScopedGLContext(WindowInfo, GraphicsContext))
                 {
-                    _device.ProcessFrame();
-                }
+                    GL.ClearColor(Color4.Black);
 
-                if (_ticks >= _ticksPerFrame)
-                {
-                    _device.PresentFrame(SwapBuffers);
+                    _ticks += _chrono.ElapsedTicks;
 
-                    _device.Statistics.RecordSystemFrameTime();
+                    _chrono.Restart();
 
-                    double hostFps = _device.Statistics.GetSystemFrameRate();
-                    double gameFps = _device.Statistics.GetGameFrameRate();
+                    if (_device.WaitFifo())
+                    {
+                        _device.ProcessFrame();
+                    }
 
-                    string titleNameSection = string.IsNullOrWhiteSpace(_device.System.TitleName) ? string.Empty
-                        : " | " + _device.System.TitleName;
+                    if (_ticks >= _ticksPerFrame)
+                    {
+                        _device.PresentFrame(SwapBuffers);
 
-                    string titleIdSection = string.IsNullOrWhiteSpace(_device.System.TitleIdText) ? string.Empty
-                        : " | " + _device.System.TitleIdText.ToUpper();
+                        _device.Statistics.RecordSystemFrameTime();
 
-                    _newTitle = $"Ryujinx{titleNameSection}{titleIdSection} | Host FPS: {hostFps:0.0} | Game FPS: {gameFps:0.0} | " +
-                        $"Game Vsync: {(_device.EnableDeviceVsync ? "On" : "Off")}";
+                        double hostFps = _device.Statistics.GetSystemFrameRate();
+                        double gameFps = _device.Statistics.GetGameFrameRate();
 
-                    _titleEvent = true;
+                        string titleNameSection = string.IsNullOrWhiteSpace(_device.System.TitleName) ? string.Empty
+                            : " | " + _device.System.TitleName;
 
-                    _device.System.SignalVsync();
+                        string titleIdSection = string.IsNullOrWhiteSpace(_device.System.TitleIdText) ? string.Empty
+                            : " | " + _device.System.TitleIdText.ToUpper();
 
-                    _device.VsyncEvent.Set();
+                        _newTitle = $"Ryujinx{titleNameSection}{titleIdSection} | Host FPS: {hostFps:0.0} | Game FPS: {gameFps:0.0} | " +
+                            $"Game Vsync: {(_device.EnableDeviceVsync ? "On" : "Off")}";
 
-                    _ticks = Math.Min(_ticks - _ticksPerFrame, _ticksPerFrame);
+                        _titleEvent = true;
+
+                        _device.System.SignalVsync();
+
+                        _device.VsyncEvent.Set();
+
+                        _ticks = Math.Min(_ticks - _ticksPerFrame, _ticksPerFrame);
+                    }
                 }
             }
         }
@@ -244,7 +258,6 @@ namespace Ryujinx.Ui
         {
             OpenTK.Graphics.GraphicsContext.CurrentContext.SwapBuffers();
         }
-
 
         public void MainLoop()
         {

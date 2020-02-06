@@ -433,14 +433,15 @@ namespace Ryujinx.Ui
 
             DiscordIntegrationModule.SwitchToMainMenu();
 
-            _screenExitStatus.Set();
-
             Application.Invoke(delegate
             {
                 _stopEmulation.Sensitive            = false;
                 _firmwareInstallFile.Sensitive      = true;
                 _firmwareInstallDirectory.Sensitive = true;
+
             });
+
+            _screenExitStatus.Set();
         }
 
         private static void UpdateGameMetadata(string titleId)
@@ -475,7 +476,11 @@ namespace Ryujinx.Ui
             {
                 UpdateGameMetadata(device.System.TitleIdText);
 
-                _gLWigdet?.Exit();
+                if (_gLWigdet != null)
+                {
+                    _gLWigdet.Exit();
+                    _screenExitStatus.WaitOne();
+                }
             }
 
             Dispose();
@@ -627,15 +632,11 @@ namespace Ryujinx.Ui
 
         private void Exit_Pressed(object sender, EventArgs args)
         {
-            _gLWigdet?.Exit();
-
             End(_emulationContext);
         }
 
         private void Window_Close(object sender, DeleteEventArgs args)
         {
-            _gLWigdet?.Exit();
-            
             End(_emulationContext);
         }
 
