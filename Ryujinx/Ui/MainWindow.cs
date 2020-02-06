@@ -49,6 +49,8 @@ namespace Ryujinx.Ui
 #pragma warning disable IDE0044
 
         [GUI] Window         _mainWin;
+        [GUI] MenuBar        _menuBar;
+        [GUI] Box            _footerBox;
         [GUI] CheckMenuItem  _fullScreen;
         [GUI] MenuItem       _stopEmulation;
         [GUI] CheckMenuItem  _favToggle;
@@ -442,6 +444,23 @@ namespace Ryujinx.Ui
             });
 
             _screenExitStatus.Set();
+        }
+
+        public void ToggleExtraWidgets(bool show)
+        {
+            Gtk.Application.Invoke(delegate
+            {
+                if (show)
+                {
+                    _menuBar.ShowAll();
+                    _footerBox.ShowAll();
+                }
+                else
+                {
+                    _menuBar.Hide();
+                    _footerBox.Hide();
+                }
+            });
         }
 
         private static void UpdateGameMetadata(string titleId)

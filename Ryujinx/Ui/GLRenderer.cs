@@ -34,6 +34,8 @@ namespace Ryujinx.Ui
 
         private bool _titleEvent;
 
+        private bool _toggleFullscreen;
+
         private string _newTitle;
 
         private readonly long _ticksPerFrame;
@@ -67,7 +69,11 @@ namespace Ryujinx.Ui
 
             _primaryController = new Input.NpadController(ConfigurationState.Instance.Hid.JoystickControls);
 
-            AddEvents((int)(Gdk.EventMask.ButtonPressMask | Gdk.EventMask.ButtonReleaseMask | Gdk.EventMask.PointerMotionMask));
+            AddEvents((int)(Gdk.EventMask.ButtonPressMask |
+                          Gdk.EventMask.ButtonReleaseMask |
+                          Gdk.EventMask.PointerMotionMask | 
+                          Gdk.EventMask.KeyPressMask      |
+                          Gdk.EventMask.KeyReleaseMask));
         }
 
         private void Parent_FocusOutEvent(object o, Gtk.FocusOutEventArgs args)
@@ -85,6 +91,45 @@ namespace Ryujinx.Ui
             Exit();
 
             this.Dispose();
+        }
+
+        public void HandleScreenState(KeyboardState keyboard)
+        {
+            bool toggleFullscreen = keyboard.IsKeyDown(OpenTK.Input.Key.F11) ||
+                ((keyboard.IsKeyDown(OpenTK.Input.Key.AltLeft) || keyboard.IsKeyDown(OpenTK.Input.Key.AltRight)) 
+                && keyboard.IsKeyDown(OpenTK.Input.Key.Enter));
+
+            if (toggleFullscreen == _toggleFullscreen)
+            {
+                return;
+            }
+
+            _toggleFullscreen = toggleFullscreen;
+
+            if (IsFocussed)
+            {
+                if (this.ParentWindow.State.HasFlag(Gdk.WindowState.Fullscreen) )
+                {
+                    if (keyboard.IsKeyDown(OpenTK.Input.Key.Escape) || _toggleFullscreen)
+                    {
+                        this.ParentWindow.Unfullscreen();
+                        (this.Toplevel as MainWindow)?.ToggleExtraWidgets(true);
+                    }
+                }
+                else
+                {
+                    if (keyboard.IsKeyDown(OpenTK.Input.Key.Escape))
+                    {
+                        Exit();
+                    }
+
+                    if (_toggleFullscreen)
+                    {
+                        this.ParentWindow.Fullscreen();
+                        (this.Toplevel as MainWindow)?.ToggleExtraWidgets(false);
+                    }
+                }
+            }
         }
 
         private void GLRenderer_Initialized(object sender, EventArgs e)
@@ -211,9 +256,17 @@ namespace Ryujinx.Ui
                     return;
                 }
 
+<<<<<<< HEAD
                 using (ScopedGLContext scopedGLContext = new ScopedGLContext(WindowInfo, GraphicsContext))
                 {
                     GL.ClearColor(Color4.Black);
+=======
+                GraphicsContext.MakeCurrent(WindowInfo);
+
+                GL.Disable(EnableCap.AlphaTest);
+
+                SwapBuffers();
+>>>>>>> add fullscreen,  enable input on focus, disable aplha
 
                     _ticks += _chrono.ElapsedTicks;
 
@@ -272,7 +325,10 @@ namespace Ryujinx.Ui
                         this.ParentWindow.Title = _newTitle;
                     });
                 }
-                UpdateFrame();
+                if (IsFocussed)
+                {
+                    UpdateFrame();
+                }
 
                 // Polling becomes expensive if it's not slept
                 Thread.Sleep(1);
@@ -298,6 +354,11 @@ namespace Ryujinx.Ui
             HLE.Input.Keyboard? hidKeyboard = null;
 
             KeyboardState keyboard = OpenTK.Input.Keyboard.GetState();
+
+            Gtk.Application.Invoke(delegate
+            {
+                HandleScreenState(keyboard);
+            });
 
             int leftJoystickDx = 0;
             int leftJoystickDy = 0;
