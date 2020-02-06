@@ -8,7 +8,6 @@ using Ryujinx.Graphics.GAL;
 using Ryujinx.Graphics.OpenGL;
 using Ryujinx.HLE.FileSystem;
 using Ryujinx.HLE.FileSystem.Content;
-using Ryujinx.HLE.FileSystem;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -44,7 +43,7 @@ namespace Ryujinx.Ui
 
         private static TreeView _treeView;
 
-        private static Debugger.Debugger _debugger;
+        private static Ryujinx.Debugger.Debugger _debugger;
 
 #pragma warning disable CS0649
 #pragma warning disable IDE0044
@@ -71,6 +70,7 @@ namespace Ryujinx.Ui
         [GUI] Label          _firmwareVersionLabel;
         [GUI] LevelBar       _progressBar;
         [GUI] Box            _viewBox;
+        [GUI] Box            _listStatusBox;
 #pragma warning restore CS0649
 #pragma warning restore IDE0044
 
@@ -131,8 +131,6 @@ namespace Ryujinx.Ui
 #if USE_DEBUGGING
             _debugger = new Debugger.Debugger();
             _openDebugger.Activated += _openDebugger_Opened;
-#else
-            _openDebugger.Visible = false;
 #endif
 
             _gameTable.Model = _tableStore = new ListStore(
@@ -397,6 +395,7 @@ namespace Ryujinx.Ui
                 _viewBox.Child = _gLWigdet;
 
                 _gLWigdet.ShowAll();
+                _listStatusBox.Hide();
             });
 
             _gLWigdet.WaitEvent.WaitOne();
@@ -418,6 +417,8 @@ namespace Ryujinx.Ui
                 _gameTableWindow.Expand = true;
 
                 this.Window.Title = "Ryujinx";
+
+                _listStatusBox.ShowAll();
 
                 UpdateColumns();
                 UpdateGameTable();
@@ -474,11 +475,7 @@ namespace Ryujinx.Ui
             {
                 UpdateGameMetadata(device.System.TitleIdText);
 
-                if (_screen != null)
-                {
-                    _screen.Exit();
-                    _screenExitStatus.WaitOne();
-                }
+                _gLWigdet?.Exit();
             }
 
             Dispose();

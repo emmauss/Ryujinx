@@ -7,7 +7,6 @@ using Ryujinx.Configuration;
 using Ryujinx.Graphics.OpenGL;
 using Ryujinx.HLE;
 using Ryujinx.HLE.Input;
-using Ryujinx.Profiler.UI;
 using Ryujinx.Ui;
 using System;
 using System.Collections.Generic;
