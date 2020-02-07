@@ -5,13 +5,13 @@ using System.Threading;
 
 namespace Ryujinx.Ui
 {
-    class ScopedGLContext : IDisposable
+    class ScopedGlContext : IDisposable
     {
         private IGraphicsContext _graphicsContext;
 
         private static readonly object _lock = new object();
 
-        public ScopedGLContext(IWindowInfo windowInfo, IGraphicsContext graphicsContext)
+        public ScopedGlContext(IWindowInfo windowInfo, IGraphicsContext graphicsContext)
         {
             _graphicsContext = graphicsContext;
 

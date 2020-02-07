@@ -29,7 +29,6 @@ namespace Ryujinx.Ui
 
         private static HLE.Switch _emulationContext;
 
-        // private static GlScreen _screen;
         private static GLRenderer _gLWigdet;
 
         private static AutoResetEvent _screenExitStatus = new AutoResetEvent(false);
@@ -51,12 +50,12 @@ namespace Ryujinx.Ui
         [GUI] Window         _mainWin;
         [GUI] MenuBar        _menuBar;
         [GUI] Box            _footerBox;
-        [GUI] CheckMenuItem  _fullScreen;
+        [GUI] MenuItem       _fullScreen;
         [GUI] MenuItem       _stopEmulation;
         [GUI] CheckMenuItem  _favToggle;
         [GUI] MenuItem       _firmwareInstallFile;
         [GUI] MenuItem       _firmwareInstallDirectory;
-        [GUI] MenuItem      _openDebugger;
+        [GUI] MenuItem       _openDebugger;
         [GUI] CheckMenuItem  _iconToggle;
         [GUI] CheckMenuItem  _appToggle;
         [GUI] CheckMenuItem  _developerToggle;
@@ -74,7 +73,7 @@ namespace Ryujinx.Ui
         [GUI] LevelBar       _progressBar;
         [GUI] Box            _viewBox;
         [GUI] Box            _listStatusBox;
-        
+
 #pragma warning restore CS0649
 #pragma warning restore IDE0044
 
@@ -160,6 +159,8 @@ namespace Ryujinx.Ui
             UpdateGameTable();
 
             Task.Run(RefreshFirmwareLabel);
+
+            _fullScreen.Activated += FullScreen_Toggled;
         }
 
 #if USE_DEBUGGING
@@ -411,7 +412,7 @@ namespace Ryujinx.Ui
             Application.Invoke(delegate
             {
                 _viewBox.Remove(_gLWigdet);
-                _gLWigdet.Dispose();
+                _gLWigdet.Exit();
 
                 if(_gLWigdet.Window != this.Window && _gLWigdet.Window != null)
                 {
@@ -445,7 +446,6 @@ namespace Ryujinx.Ui
                 _stopEmulation.Sensitive            = false;
                 _firmwareInstallFile.Sensitive      = true;
                 _firmwareInstallDirectory.Sensitive = true;
-
             });
 
             _screenExitStatus.Set();
@@ -453,7 +453,7 @@ namespace Ryujinx.Ui
 
         public void ToggleExtraWidgets(bool show)
         {
-            Gtk.Application.Invoke(delegate
+            if (_gLWigdet != null)
             {
                 if (show)
                 {
@@ -465,7 +465,11 @@ namespace Ryujinx.Ui
                     _menuBar.Hide();
                     _footerBox.Hide();
                 }
-            });
+            }
+
+            bool fullScreenToggled = this.Window.State.HasFlag(Gdk.WindowState.Fullscreen);
+
+            _fullScreen.Label = !fullScreenToggled ? "Exit Fullscreen" : "Enter Fullscreen";
         }
 
         private static void UpdateGameMetadata(string titleId)
@@ -864,15 +868,21 @@ namespace Ryujinx.Ui
 
         private void FullScreen_Toggled(object o, EventArgs args)
         {
-            if (_fullScreen.Active)
+            bool fullScreenToggled = this.Window.State.HasFlag(Gdk.WindowState.Fullscreen);
+
+            if (!fullScreenToggled)
             {
                 Fullscreen();
+
+                _fullScreen.Label = "Exit Fullscreen";
 
                 ToggleExtraWidgets(false);
             }
             else
             {
                 Unfullscreen();
+
+                _fullScreen.Label = "Enter Fullscreen";
 
                 ToggleExtraWidgets(true);
             }

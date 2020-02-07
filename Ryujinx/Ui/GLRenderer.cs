@@ -26,7 +26,7 @@ namespace Ryujinx.Ui
 
         public bool IsActive   { get; set; }
         public bool IsStopped  { get; set; }
-        public bool IsFocused { get; set; } = false;
+        public bool IsFocused  { get; set; }
 
         private double _mouseX;
         private double _mouseY;
@@ -70,11 +70,13 @@ namespace Ryujinx.Ui
 
             _primaryController = new Input.NpadController(ConfigurationState.Instance.Hid.JoystickControls);
 
-            AddEvents((int)(Gdk.EventMask.ButtonPressMask |
-                          Gdk.EventMask.ButtonReleaseMask |
-                          Gdk.EventMask.PointerMotionMask | 
-                          Gdk.EventMask.KeyPressMask      |
-                          Gdk.EventMask.KeyReleaseMask));
+            AddEvents((int)(Gdk.EventMask.ButtonPressMask 
+                          | Gdk.EventMask.ButtonReleaseMask 
+                          | Gdk.EventMask.PointerMotionMask 
+                          | Gdk.EventMask.KeyPressMask
+                          | Gdk.EventMask.KeyReleaseMask));
+
+            this.Shown += Renderer_Shown;
         }
 
         private void Parent_FocusOutEvent(object o, Gtk.FocusOutEventArgs args)
@@ -94,11 +96,17 @@ namespace Ryujinx.Ui
             this.Dispose();
         }
 
+        protected void Renderer_Shown(object sender, EventArgs e)
+        {
+            IsFocused = this.ParentWindow.State.HasFlag(Gdk.WindowState.Focused);
+        }
+
         public void HandleScreenState(KeyboardState keyboard)
         {
-            bool toggleFullscreen = keyboard.IsKeyDown(OpenTK.Input.Key.F11) ||
-                ((keyboard.IsKeyDown(OpenTK.Input.Key.AltLeft) || keyboard.IsKeyDown(OpenTK.Input.Key.AltRight)) 
-                && keyboard.IsKeyDown(OpenTK.Input.Key.Enter));
+            bool toggleFullscreen = keyboard.IsKeyDown(OpenTK.Input.Key.F11) 
+                               || ((keyboard.IsKeyDown(OpenTK.Input.Key.AltLeft) 
+                               ||   keyboard.IsKeyDown(OpenTK.Input.Key.AltRight)) 
+                               &&   keyboard.IsKeyDown(OpenTK.Input.Key.Enter));
 
             if (toggleFullscreen == _toggleFullscreen)
             {
@@ -107,9 +115,9 @@ namespace Ryujinx.Ui
 
             _toggleFullscreen = toggleFullscreen;
 
-            if (IsFocused)
+            Gtk.Application.Invoke(delegate
             {
-                if (this.ParentWindow.State.HasFlag(Gdk.WindowState.Fullscreen) )
+                if (this.ParentWindow.State.HasFlag(Gdk.WindowState.Fullscreen))
                 {
                     if (keyboard.IsKeyDown(OpenTK.Input.Key.Escape) || _toggleFullscreen)
                     {
@@ -130,7 +138,7 @@ namespace Ryujinx.Ui
                         (this.Toplevel as MainWindow)?.ToggleExtraWidgets(false);
                     }
                 }
-            }
+            });
         }
 
         private void GLRenderer_Initialized(object sender, EventArgs e)
@@ -225,7 +233,7 @@ namespace Ryujinx.Ui
             IsStopped = true;
             IsActive = false;
 
-            using (ScopedGLContext scopedGLContext = new ScopedGLContext(WindowInfo, GraphicsContext))
+            using (ScopedGlContext scopedGLContext = new ScopedGlContext(WindowInfo, GraphicsContext))
             {
                 _device.DisposeGpu();
             }
@@ -245,7 +253,7 @@ namespace Ryujinx.Ui
 
         public void Render()
         {
-            using (ScopedGLContext scopedGLContext = new ScopedGLContext(WindowInfo, GraphicsContext))
+            using (ScopedGlContext scopedGLContext = new ScopedGlContext(WindowInfo, GraphicsContext))
             {
                 _renderer.Initialize();
 
@@ -259,7 +267,7 @@ namespace Ryujinx.Ui
                     return;
                 }
 
-                using (ScopedGLContext scopedGLContext = new ScopedGLContext(WindowInfo, GraphicsContext))
+                using (ScopedGlContext scopedGLContext = new ScopedGlContext(WindowInfo, GraphicsContext))
                 {
                     _ticks += _chrono.ElapsedTicks;
 
@@ -318,6 +326,7 @@ namespace Ryujinx.Ui
                         this.ParentWindow.Title = _newTitle;
                     });
                 }
+
                 if (IsFocused)
                 {
                     UpdateFrame();
@@ -423,7 +432,6 @@ namespace Ryujinx.Ui
                 {
                     screenHeight = (AllocatedWidth * TouchScreenHeight) / TouchScreenWidth;
                 }
-
 
                 int startX = (AllocatedWidth - screenWidth) >> 1;
                 int startY = (AllocatedHeight - screenHeight) >> 1;

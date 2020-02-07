@@ -97,13 +97,11 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkCheckMenuItem" id="_fullScreen">
+                      <object class="GtkMenuItem" id="_fullScreen">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="tooltip_text" translatable="yes">Fullscreens the window</property>
-                        <property name="label" translatable="yes">Fullscreen</property>
+                        <property name="label" translatable="yes">Enter Fullscreen</property>
                         <property name="use_underline">True</property>
-                        <signal name="toggled" handler="FullScreen_Toggled" swapped="no"/>
                       </object>
                     </child>
                     <child>
@@ -405,9 +403,6 @@
               <object class="GtkBox" id="_footerBox">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <child>
-                  <placeholder/>
-                </child>
                 <child>
                   <object class="GtkBox" id="_listStatusBox">
                     <property name="visible">True</property>
