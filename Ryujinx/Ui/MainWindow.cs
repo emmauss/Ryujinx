@@ -29,7 +29,7 @@ namespace Ryujinx.Ui
 
         private static HLE.Switch _emulationContext;
 
-        private static GLRenderer _gLWigdet;
+        private static GLRenderer _gLWidget;
 
         private static AutoResetEvent _screenExitStatus = new AutoResetEvent(false);
 
@@ -391,32 +391,32 @@ namespace Ryujinx.Ui
         {
             device.Hid.InitializePrimaryController(ConfigurationState.Instance.Hid.ControllerType);
 
-            _gLWigdet?.Exit();
-            _gLWigdet?.Dispose();
-            _gLWigdet = new GLRenderer(_emulationContext);
+            _gLWidget?.Exit();
+            _gLWidget?.Dispose();
+            _gLWidget = new GLRenderer(_emulationContext);
 
             Application.Invoke(delegate
             {
                 _viewBox.Remove(_gameTableWindow);
-                _gLWigdet.Expand = true;
-                _viewBox.Child = _gLWigdet;
+                _gLWidget.Expand = true;
+                _viewBox.Child = _gLWidget;
 
-                _gLWigdet.ShowAll();
+                _gLWidget.ShowAll();
                 _listStatusBox.Hide();
             });
 
-            _gLWigdet.WaitEvent.WaitOne();
+            _gLWidget.WaitEvent.WaitOne();
 
-            _gLWigdet.Start();
+            _gLWidget.Start();
 
             Application.Invoke(delegate
             {
-                _viewBox.Remove(_gLWigdet);
-                _gLWigdet.Exit();
+                _viewBox.Remove(_gLWidget);
+                _gLWidget.Exit();
 
-                if(_gLWigdet.Window != this.Window && _gLWigdet.Window != null)
+                if(_gLWidget.Window != this.Window && _gLWidget.Window != null)
                 {
-                    _gLWigdet.Window.Dispose();
+                    _gLWidget.Window.Dispose();
                 }
 
                 _viewBox.Add(_gameTableWindow);
@@ -437,7 +437,7 @@ namespace Ryujinx.Ui
 
             _emulationContext = null;
             _gameLoaded       = false;
-            _gLWigdet         = null;
+            _gLWidget         = null;
 
             DiscordIntegrationModule.SwitchToMainMenu();
 
@@ -453,7 +453,7 @@ namespace Ryujinx.Ui
 
         public void ToggleExtraWidgets(bool show)
         {
-            if (_gLWigdet != null)
+            if (_gLWidget != null)
             {
                 if (show)
                 {
@@ -504,9 +504,9 @@ namespace Ryujinx.Ui
             {
                 UpdateGameMetadata(device.System.TitleIdText);
 
-                if (_gLWigdet != null)
+                if (_gLWidget != null)
                 {
-                    _gLWigdet.Exit();
+                    _gLWidget.Exit();
                     _screenExitStatus.WaitOne();
                 }
             }
@@ -670,7 +670,7 @@ namespace Ryujinx.Ui
 
         private void StopEmulation_Pressed(object sender, EventArgs args)
         {
-            _gLWigdet?.Exit();
+            _gLWidget?.Exit();
         }
 
         private void Installer_File_Pressed(object o, EventArgs args)
