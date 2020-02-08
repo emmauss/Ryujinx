@@ -153,6 +153,8 @@ namespace Ryujinx.HLE.HOS.Services.SurfaceFlinger
                 context.Device.VsyncEvent.WaitOne();
             }
 
+            context.Device.NextSwapInterval = queueBufferObject.SwapInterval;
+
             return MakeReplyParcel(context, 1280, 720, 0, 0, 0);
         }
 
