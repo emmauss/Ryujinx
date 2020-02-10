@@ -52,8 +52,10 @@ namespace Ryujinx.Ui
 
         private Input.NpadController _primaryController;
 
-        public GLRenderer(Switch device) :
-                    base (new GraphicsMode(new ColorFormat(24)), 3, 3, GraphicsContextFlags.ForwardCompatible)
+        public GLRenderer(Switch device) 
+            : base (new GraphicsMode(new ColorFormat(24)), 
+            3, 3, 
+            GraphicsContextFlags.ForwardCompatible)
         {
             WaitEvent = new ManualResetEvent(false);
 
