@@ -150,10 +150,11 @@ namespace Ryujinx.HLE.HOS.Services.SurfaceFlinger
 
             if (context.Device.EnableDeviceVsync)
             {
-                context.Device.VsyncEvent.WaitOne();
+                for (int i = 0; i < queueBufferObject.SwapInterval; i++)
+                {
+                    context.Device.VsyncEvent.WaitOne();
+                }
             }
-
-            context.Device.NextSwapInterval = queueBufferObject.SwapInterval;
 
             return MakeReplyParcel(context, 1280, 720, 0, 0, 0);
         }

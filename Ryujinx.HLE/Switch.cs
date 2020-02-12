@@ -34,8 +34,6 @@ namespace Ryujinx.HLE
 
         public AutoResetEvent VsyncEvent { get; private set; }
 
-        public int NextSwapInterval { get; set; }
-
         public event EventHandler Finish;
 
         public Switch(VirtualFileSystem fileSystem, ContentManager contentManager, IRenderer renderer, IAalOutput audioOut)
