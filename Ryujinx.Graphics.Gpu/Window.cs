@@ -61,6 +61,8 @@ namespace Ryujinx.Graphics.Gpu
 
         private readonly ConcurrentQueue<PresentationTexture> _frameQueue;
 
+        private PresentationTexture _currentPresentationTexture;
+
         /// <summary>
         /// Creates a new instance of the GPU presentation window.
         /// </summary>
@@ -134,16 +136,29 @@ namespace Ryujinx.Graphics.Gpu
 
             if (_frameQueue.TryDequeue(out PresentationTexture pt))
             {
-                Texture texture = _context.Methods.TextureManager.FindOrCreateTexture(pt.Info);
-
-                texture.SynchronizeMemory();
-
-                _context.Renderer.Window.Present(texture.HostTexture, pt.Crop);
-
-                swapBuffersCallback();
+                PresentTexture(pt);
 
                 pt.Callback(pt.UserObj);
+
+                _currentPresentationTexture = pt;
+
+                swapBuffersCallback();
             }
+            else if(_currentPresentationTexture.Callback != null)
+            {
+                PresentTexture(_currentPresentationTexture);
+
+                swapBuffersCallback();
+            }
+        }
+
+        private void PresentTexture(PresentationTexture pt)
+        {
+            Texture texture = _context.Methods.TextureManager.FindOrCreateTexture(pt.Info);
+
+            texture.SynchronizeMemory();
+
+            _context.Renderer.Window.Present(texture.HostTexture, pt.Crop);
         }
     }
 }

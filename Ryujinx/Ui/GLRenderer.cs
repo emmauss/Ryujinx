@@ -37,7 +37,7 @@ namespace Ryujinx.Ui
 
         private string _newTitle;
 
-        private readonly long _ticksPerFrame;
+        private long _ticksPerFrame;
 
         private long _ticks = 0;
 
@@ -298,7 +298,11 @@ namespace Ryujinx.Ui
 
                     _device.System.SignalVsync();
 
-                    _targetFps = 60 / _device.SwapInterval;
+                    int swapInterval = Math.Max(1, _device.SwapInterval);
+
+                    _targetFps = 60 / swapInterval;
+
+                    _ticksPerFrame = System.Diagnostics.Stopwatch.Frequency / _targetFps;
 
                     _ticks = Math.Min(_ticks - _ticksPerFrame, _ticksPerFrame);
                 }
