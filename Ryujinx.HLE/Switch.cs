@@ -32,7 +32,7 @@ namespace Ryujinx.HLE
 
         public bool EnableDeviceVsync { get; set; } = true;
 
-        public AutoResetEvent VsyncEvent { get; private set; }
+        public int SwapInterval { get; set; } = 1;
 
         public event EventHandler Finish;
 
@@ -61,8 +61,6 @@ namespace Ryujinx.HLE
             Statistics = new PerformanceStatistics();
 
             Hid = new Hid(this, System.HidBaseAddress);
-
-            VsyncEvent = new AutoResetEvent(true);
         }
 
         public void Initialize()
@@ -155,7 +153,6 @@ namespace Ryujinx.HLE
             if (disposing)
             {
                 System.Dispose();
-                VsyncEvent.Dispose();
                 AudioOut.Dispose();
             }
         }

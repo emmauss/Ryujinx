@@ -768,12 +768,6 @@ namespace Ryujinx.HLE.HOS
 
                 terminationThread.Start();
 
-                // Signal the vsync event to avoid issues of KThread waiting on it.
-                if (Device.EnableDeviceVsync)
-                {
-                    Device.VsyncEvent.Set();
-                }
-
                 // This is needed as the IPC Dummy KThread is also counted in the ThreadCounter.
                 ThreadCounter.Signal();
 

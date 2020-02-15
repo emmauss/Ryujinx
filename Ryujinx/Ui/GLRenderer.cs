@@ -20,7 +20,6 @@ namespace Ryujinx.Ui
     {
         private const int TouchScreenWidth = 1280;
         private const int TouchScreenHeight = 720;
-        private const int TargetFps = 60;
 
         public ManualResetEvent WaitEvent { get; set; }
 
@@ -41,6 +40,8 @@ namespace Ryujinx.Ui
         private readonly long _ticksPerFrame;
 
         private long _ticks = 0;
+
+        private int _targetFps = 60;
 
         private System.Diagnostics.Stopwatch _chrono;
 
@@ -69,7 +70,7 @@ namespace Ryujinx.Ui
 
             _chrono = new System.Diagnostics.Stopwatch();
 
-            _ticksPerFrame = System.Diagnostics.Stopwatch.Frequency / TargetFps;
+            _ticksPerFrame = System.Diagnostics.Stopwatch.Frequency / _targetFps;
 
             _primaryController = new Input.NpadController(ConfigurationState.Instance.Hid.JoystickControls);
 
@@ -297,7 +298,7 @@ namespace Ryujinx.Ui
 
                     _device.System.SignalVsync();
 
-                    _device.VsyncEvent.Set();
+                    _targetFps = 60 / _device.SwapInterval;
 
                     _ticks = Math.Min(_ticks - _ticksPerFrame, _ticksPerFrame);
                 }

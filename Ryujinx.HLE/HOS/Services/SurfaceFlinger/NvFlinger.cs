@@ -133,7 +133,7 @@ namespace Ryujinx.HLE.HOS.Services.SurfaceFlinger
             context.Device.Statistics.RecordGameFrameTime();
 
             // TODO: Errors.
-            int slot            = parcelReader.ReadInt32();
+            int slot = parcelReader.ReadInt32();
 
             long Position = parcelReader.BaseStream.Position;
 
@@ -146,12 +146,9 @@ namespace Ryujinx.HLE.HOS.Services.SurfaceFlinger
 
             _bufferQueue[slot].State = BufferState.Queued;
 
-            SendFrameBuffer(context, slot);
+            context.Device.SwapInterval = queueBufferObject.SwapInterval;
 
-            if (context.Device.EnableDeviceVsync)
-            {
-                context.Device.VsyncEvent.WaitOne();
-            }
+            SendFrameBuffer(context, slot);
 
             return MakeReplyParcel(context, 1280, 720, 0, 0, 0);
         }
