@@ -1,6 +1,6 @@
-﻿namespace Ryujinx.HLE.FileSystem.Content
+﻿namespace Ryujinx.HLE.HOS.Services.Fs
 {
-    static class ContentPath
+    static class FsMountPoints
     {
         public const string SystemContent    = "@SystemContent";
         public const string UserContent      = "@UserContent";
@@ -12,7 +12,7 @@
         public const string System           = "@System";
         public const string Host             = "@Host";
         public const string GamecardApp      = "@GcApp";
-        public const string GamecardContents = "@GcS00000001";
+        public const string GamecardContents = "@GcXYYYYYYYY";
         public const string GamecardUpdate   = "@upp";
         public const string RegisteredUpdate = "@RegUpdate";
     }

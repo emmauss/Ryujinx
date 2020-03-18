@@ -41,7 +41,7 @@ namespace Ryujinx.HLE.HOS.Services.Fs
             string switchPath = ReadUtf8String(context);
             string fullPath = context.Device.FileSystem.SwitchPathToSystemPath(switchPath);
 
-            if (!File.Exists(fullPath))
+            if (!FsMountPoints.Exists(fullPath))
             {
                 if (fullPath.Contains("."))
                 {
@@ -394,7 +394,7 @@ namespace Ryujinx.HLE.HOS.Services.Fs
                 {
                     string ncaPath = installPath;
 
-                    if (File.Exists(ncaPath))
+                    if (FsMountPoints.Exists(ncaPath))
                     {
                         try
                         {

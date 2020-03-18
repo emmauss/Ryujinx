@@ -4,6 +4,7 @@ using LibHac.FsService;
 using LibHac.FsSystem;
 using Ryujinx.HLE.FileSystem.Content;
 using Ryujinx.HLE.HOS;
+using Ryujinx.HLE.HOS.Services.Fs;
 using System;
 using System.IO;
 
@@ -149,28 +150,60 @@ namespace Ryujinx.HLE.FileSystem
             return null;
         }
 
+        public string SystemPathtoContentPath(string systemPath)
+        {
+            string pathToRemove = string.Empty;
+            string pathtoAppend = string.Empty;
+            if (systemPath.ToLower().StartsWith(MakeFullPath(FsMountPoints.SystemContent).ToLower()))
+            {
+                pathToRemove = MakeFullPath(FsMountPoints.SystemContent);
+                pathtoAppend = FsMountPoints.SystemContent;
+            }
+            else if (systemPath.ToLower().StartsWith(MakeFullPath(FsMountPoints.UserContent).ToLower()))
+            {
+                pathToRemove = MakeFullPath(FsMountPoints.UserContent);
+                pathtoAppend = FsMountPoints.UserContent;
+            }
+            else if (systemPath.ToLower().StartsWith(MakeFullPath(FsMountPoints.SdCardContent).ToLower()))
+            {
+                pathToRemove = MakeFullPath(FsMountPoints.SdCardContent);
+                pathtoAppend = FsMountPoints.SdCardContent;
+            }
+            else
+            {
+                return "@" + SystemPathToSwitchPath(systemPath);
+            }
+
+            return RemoveAndPrepend(systemPath, pathToRemove, 0, pathtoAppend);
+
+            string RemoveAndPrepend(string baseString, string toRemove, int removeIndex, string toAppend)
+            {
+                return $"@{toAppend}:/{baseString.Remove(removeIndex, toRemove.Length)}";
+            }
+        }
+
         private string MakeFullPath(string path, bool isDirectory = true)
         {
             // Handles Common Switch Content Paths
             switch (path)
             {
-                case ContentPath.SdCard:
+                case FsMountPoints.SdCard:
                 case "@Sdcard":
                     path = SdCardPath;
                     break;
-                case ContentPath.User:
+                case FsMountPoints.User:
                     path = UserNandPath;
                     break;
-                case ContentPath.System:
+                case FsMountPoints.System:
                     path = SystemNandPath;
                     break;
-                case ContentPath.SdCardContent:
+                case FsMountPoints.SdCardContent:
                     path = Path.Combine(SdCardPath, "Nintendo", "Contents");
                     break;
-                case ContentPath.UserContent:
+                case FsMountPoints.UserContent:
                     path = Path.Combine(UserNandPath, "Contents");
                     break;
-                case ContentPath.SystemContent:
+                case FsMountPoints.SystemContent:
                     path = Path.Combine(SystemNandPath, "Contents");
                     break;
             }

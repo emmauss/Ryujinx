@@ -42,6 +42,17 @@ namespace Ryujinx.HLE.Utilities
             binaryWriter.Write(High);
         }
 
+        public byte[] ToBytes()
+        {
+            using (BinaryWriter writer = new BinaryWriter(new MemoryStream()))
+            {
+                writer.Write(Low);
+                writer.Write(High);
+
+                return (writer.BaseStream as MemoryStream).ToArray();
+            }
+        }
+
         public override string ToString()
         {
             return High.ToString("x16") + Low.ToString("x16");
@@ -70,6 +81,33 @@ namespace Ryujinx.HLE.Utilities
         public override int GetHashCode()
         {
             return HashCode.Combine(Low, High);
+        }
+
+        public static UInt128 GenerateUuid()
+        {
+            byte reserved = 0x8;
+
+            UInt128 uuid = new UInt128(0, 0);
+
+            using (BinaryWriter writer = new BinaryWriter(new MemoryStream()))
+            {
+                Random randomGenerater = new Random();
+
+                byte[] randomUid = new byte[16];
+
+                randomGenerater.NextBytes(randomUid);
+
+                writer.Write(randomUid);
+
+                writer.Seek(1, SeekOrigin.Begin);
+
+                writer.Write((ushort)UuidVersion.v4);
+                writer.Write(reserved);
+
+                uuid.Write(writer);
+
+                return uuid;
+            }
         }
     }
 }
