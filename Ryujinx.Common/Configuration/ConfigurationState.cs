@@ -3,7 +3,6 @@ using Ryujinx.Common.Configuration.Hid;
 using Ryujinx.Common.Logging;
 using Ryujinx.Configuration.Hid;
 using Ryujinx.Configuration.System;
-using Ryujinx.Configuration.Ui;
 using Ryujinx.UI.Input;
 using System;
 using System.Collections.Generic;
@@ -17,39 +16,6 @@ namespace Ryujinx.Configuration
         /// </summary>
         public class UiSection
         {
-            public class Columns
-            {
-                public ReactiveObject<bool> FavColumn        { get; private set; }
-                public ReactiveObject<bool> IconColumn       { get; private set; }
-                public ReactiveObject<bool> AppColumn        { get; private set; }
-                public ReactiveObject<bool> DevColumn        { get; private set; }
-                public ReactiveObject<bool> VersionColumn    { get; private set; }
-                public ReactiveObject<bool> TimePlayedColumn { get; private set; }
-                public ReactiveObject<bool> LastPlayedColumn { get; private set; } 
-                public ReactiveObject<bool> FileExtColumn    { get; private set; }
-                public ReactiveObject<bool> FileSizeColumn   { get; private set; }
-                public ReactiveObject<bool> PathColumn       { get; private set; }
-
-                public Columns()
-                {
-                    FavColumn        = new ReactiveObject<bool>();
-                    IconColumn       = new ReactiveObject<bool>();
-                    AppColumn        = new ReactiveObject<bool>();
-                    DevColumn        = new ReactiveObject<bool>();
-                    VersionColumn    = new ReactiveObject<bool>();
-                    TimePlayedColumn = new ReactiveObject<bool>();
-                    LastPlayedColumn = new ReactiveObject<bool>();
-                    FileExtColumn    = new ReactiveObject<bool>();
-                    FileSizeColumn   = new ReactiveObject<bool>();
-                    PathColumn       = new ReactiveObject<bool>();
-                }
-            }
-
-            /// <summary>
-            /// Used to toggle columns in the GUI
-            /// </summary>
-            public Columns GuiColumns { get; private set; }
-
             /// <summary>
             /// A list of directories containing games to be used to load games into the games list
             /// </summary>
@@ -67,7 +33,6 @@ namespace Ryujinx.Configuration
 
             public UiSection()
             {
-                GuiColumns        = new Columns();
                 GameDirs          = new ReactiveObject<List<string>>();
                 EnableCustomTheme = new ReactiveObject<bool>();
                 CustomThemePath   = new ReactiveObject<string>();
@@ -330,19 +295,6 @@ namespace Ryujinx.Configuration
                 FsGlobalAccessLogMode     = System.FsGlobalAccessLogMode,
                 IgnoreMissingServices     = System.IgnoreMissingServices,
                 ControllerType            = Hid.ControllerType,
-                GuiColumns                = new GuiColumns()
-                {
-                    FavColumn        = Ui.GuiColumns.FavColumn,
-                    IconColumn       = Ui.GuiColumns.IconColumn,
-                    AppColumn        = Ui.GuiColumns.AppColumn,
-                    DevColumn        = Ui.GuiColumns.DevColumn,
-                    VersionColumn    = Ui.GuiColumns.VersionColumn,
-                    TimePlayedColumn = Ui.GuiColumns.TimePlayedColumn,
-                    LastPlayedColumn = Ui.GuiColumns.LastPlayedColumn,
-                    FileExtColumn    = Ui.GuiColumns.FileExtColumn,
-                    FileSizeColumn   = Ui.GuiColumns.FileSizeColumn,
-                    PathColumn       = Ui.GuiColumns.PathColumn,
-                },
                 GameDirs                  = Ui.GameDirs,
                 EnableCustomTheme         = Ui.EnableCustomTheme,
                 CustomThemePath           = Ui.CustomThemePath,
@@ -378,16 +330,6 @@ namespace Ryujinx.Configuration
             System.FsGlobalAccessLogMode.Value     = 0;
             System.IgnoreMissingServices.Value     = false;
             Hid.ControllerType.Value               = ControllerType.Handheld;
-            Ui.GuiColumns.FavColumn.Value          = true;
-            Ui.GuiColumns.IconColumn.Value         = true;
-            Ui.GuiColumns.AppColumn.Value          = true;
-            Ui.GuiColumns.DevColumn.Value          = true;
-            Ui.GuiColumns.VersionColumn.Value      = true;
-            Ui.GuiColumns.TimePlayedColumn.Value   = true;
-            Ui.GuiColumns.LastPlayedColumn.Value   = true;
-            Ui.GuiColumns.FileExtColumn.Value      = true;
-            Ui.GuiColumns.FileSizeColumn.Value     = true;
-            Ui.GuiColumns.PathColumn.Value         = true;
             Ui.GameDirs.Value                      = new List<string>();
             Ui.EnableCustomTheme.Value             = false;
             Ui.CustomThemePath.Value               = "";
@@ -527,16 +469,6 @@ namespace Ryujinx.Configuration
             System.FsGlobalAccessLogMode.Value     = configurationFileFormat.FsGlobalAccessLogMode;
             System.IgnoreMissingServices.Value     = configurationFileFormat.IgnoreMissingServices;
             Hid.ControllerType.Value               = configurationFileFormat.ControllerType;
-            Ui.GuiColumns.FavColumn.Value          = configurationFileFormat.GuiColumns.FavColumn;
-            Ui.GuiColumns.IconColumn.Value         = configurationFileFormat.GuiColumns.IconColumn;
-            Ui.GuiColumns.AppColumn.Value          = configurationFileFormat.GuiColumns.AppColumn;
-            Ui.GuiColumns.DevColumn.Value          = configurationFileFormat.GuiColumns.DevColumn;
-            Ui.GuiColumns.VersionColumn.Value      = configurationFileFormat.GuiColumns.VersionColumn;
-            Ui.GuiColumns.TimePlayedColumn.Value   = configurationFileFormat.GuiColumns.TimePlayedColumn;
-            Ui.GuiColumns.LastPlayedColumn.Value   = configurationFileFormat.GuiColumns.LastPlayedColumn;
-            Ui.GuiColumns.FileExtColumn.Value      = configurationFileFormat.GuiColumns.FileExtColumn;
-            Ui.GuiColumns.FileSizeColumn.Value     = configurationFileFormat.GuiColumns.FileSizeColumn;
-            Ui.GuiColumns.PathColumn.Value         = configurationFileFormat.GuiColumns.PathColumn;
             Ui.GameDirs.Value                      = configurationFileFormat.GameDirs;
             Ui.EnableCustomTheme.Value             = configurationFileFormat.EnableCustomTheme;
             Ui.CustomThemePath.Value               = configurationFileFormat.CustomThemePath;

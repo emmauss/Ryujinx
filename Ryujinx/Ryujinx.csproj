@@ -7,14 +7,27 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Configurations>Debug;Release;Profile Debug;Profile Release</Configurations>
     <Version>1.0.0-dirty</Version>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile Release|AnyCPU'">
     <DefineConstants>TRACE;USE_DEBUGGING</DefineConstants>
     <Optimize>true</Optimize>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile Release|x64'">
+    <DefineConstants>TRACE;USE_DEBUGGING</DefineConstants>
+    <Optimize>true</Optimize>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile Debug|AnyCPU'">
+    <DefineConstants>TRACE;USE_DEBUGGING</DefineConstants>
+    <Optimize>false</Optimize>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile Debug|x64'">
     <DefineConstants>TRACE;USE_DEBUGGING</DefineConstants>
     <Optimize>false</Optimize>
   </PropertyGroup>
@@ -29,8 +42,17 @@
     <DefineConstants>MACOS_BUILD</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Remove="Ui\AboutWindow.glade" />
+    <None Remove="Ui\ApplicationList\ApplicationList.glade" />
     <None Remove="Ui\assets\BlueCon.png" />
     <None Remove="Ui\assets\ProCon.png" />
     <None Remove="Ui\assets\RedCon.png" />
@@ -52,6 +74,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Ui\AboutWindow.glade" />
+    <EmbeddedResource Include="Ui\ApplicationList\ApplicationList.glade" />
     <EmbeddedResource Include="Ui\assets\BlueCon.png" />
     <EmbeddedResource Include="Ui\assets\ProCon.png" />
     <EmbeddedResource Include="Ui\assets\RedCon.png" />
@@ -72,11 +95,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DiscordRichPresence" Version="1.0.147" />
+    <PackageReference Include="DiscordRichPresence" Version="1.0.150" />
     <PackageReference Include="GLWidget" Version="1.0.1" />
-    <PackageReference Include="GtkSharp" Version="3.22.25.56" />
+    <PackageReference Include="GtkSharp" Version="3.22.25.74" />
     <PackageReference Include="GtkSharp.Dependencies" Version="1.1.0" Condition="'$(RuntimeIdentifier)' != 'linux-x64' AND '$(RuntimeIdentifier)' != 'osx-x64'" />
     <PackageReference Include="OpenTK.NetStandard" Version="1.0.5.12" />
+    <PackageReference Include="SkiaTextRenderer" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>

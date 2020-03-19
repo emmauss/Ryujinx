@@ -78,6 +78,8 @@ namespace Ryujinx.Ui
                           | Gdk.EventMask.KeyReleaseMask));
 
             this.Shown += Renderer_Shown;
+
+            this.Expand = true;
         }
 
         private static GraphicsMode GetGraphicsMode()
@@ -351,6 +353,8 @@ namespace Ryujinx.Ui
                     _ticks = Math.Min(_ticks - _ticksPerFrame, _ticksPerFrame);
                 }
             }
+
+            GraphicsContext.MakeCurrent(null);
         }
 
         public void SwapBuffers()
