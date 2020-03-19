@@ -7,22 +7,22 @@ namespace Ryujinx.Ui
 {
     public class SkRenderer : SKDrawingArea
     {
-        public event EventHandler DrawGraphs;
+        public event EventHandler DrawObjects;
 
-        private SKColor _backgroundColor;
+        private readonly SKColor _backgroundColor;
 
         public SkRenderer(SKColor backgroundColor)
         {
             _backgroundColor = backgroundColor;
 
-            PaintSurface += SkRenderer_PaintSurface;
+            this.PaintSurface += SkRenderer_PaintSurface;
         }
 
         private void SkRenderer_PaintSurface(object sender, SKPaintSurfaceEventArgs e)
         {
             e.Surface.Canvas.Clear(_backgroundColor);
 
-            DrawGraphs.Invoke(this, e);
+            DrawObjects?.Invoke(this, e);
         }
     }
 }

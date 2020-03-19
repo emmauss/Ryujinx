@@ -78,6 +78,8 @@ namespace Ryujinx.Ui
                           | Gdk.EventMask.KeyReleaseMask));
 
             this.Shown += Renderer_Shown;
+
+            this.Expand = true;
         }
 
         private static GraphicsMode GetGraphicsMode()

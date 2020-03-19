@@ -10,7 +10,6 @@ using Ryujinx.Configuration.System;
 using Ryujinx.Configuration.Hid;
 using Ryujinx.Common.Configuration.Hid;
 using Ryujinx.UI.Input;
-using Ryujinx.Configuration.Ui;
 
 namespace Ryujinx.Configuration
 {
@@ -112,11 +111,6 @@ namespace Ryujinx.Configuration
         ///  The primary controller's type
         /// </summary>
         public ControllerType ControllerType { get; set; }
-
-        /// <summary>
-        /// Used to toggle columns in the GUI
-        /// </summary>
-        public GuiColumns GuiColumns { get; set; }
 
         /// <summary>
         /// A list of directories containing games to be used to load games into the games list

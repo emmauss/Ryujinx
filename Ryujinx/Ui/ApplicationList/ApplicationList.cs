@@ -2,26 +2,21 @@
 using SkiaSharp;
 using SkiaSharp.Views.Desktop;
 using System;
-using System.Drawing;
-using System.IO;
-using System.Reflection;
 using System.Threading;
-using System.Threading.Tasks;
 
-using GUI = Gtk.Builder.ObjectAttribute;
+using Color = System.Drawing.Color;
 
 namespace Ryujinx.Ui
 {
     public class ApplicationList : ScrolledWindow
     {
-        public event EventHandler<ItemActivatedArgs> ItemActivated;
-        private const int LIST_PADDING = 200;
-        private const int ITEM_PADDING = 20;
-        private const int ITEM_LIMIT = 6;
+        public ApplicationListItem[] ListItems = Array.Empty<ApplicationListItem>();
+
+        private const int ListPadding = 75;
+        private const int ItemPadding = 20;
+        private const int ItemLimit   = 6;
 
         private bool _lockScroll;
-
-        public ApplicationListItem[] _listItems = new ApplicationListItem[0];
 
         private SkRenderer _renderer;
 
@@ -29,32 +24,28 @@ namespace Ryujinx.Ui
 
         private SKBitmap _overlayBitmap;
 
-        private int _draw_counts;
+        private int _drawCounts;
 
-        public AutoResetEvent _waitRenderingEvent;
+        private AutoResetEvent _waitRenderingEvent;
 
         private int _mouseX, _mouseY;
 
         private float _scrollPos;
 
-        private string testText = "";
-
-        int animationValue;
-        bool animationRequested;
-
         public ApplicationList() : this(new Builder("Ryujinx.Ui.ApplicationList.ApplicationList.glade")) { }
 
-        public ApplicationList(Builder builder) : base(builder.GetObject("_applicationList").Handle)
+        private ApplicationList(Builder builder) : base(builder.GetObject("_applicationList").Handle)
         {
             builder.Autoconnect(this);
 
+            this.Expand = true;
+
             _renderer = new SkRenderer(Color.Transparent.ToSKColor());
 
-            _renderer.DrawGraphs += Renderer_Draw;
+            _renderer.DrawObjects += Renderer_Draw;
 
             AddEvents((int)Gdk.EventMask.AllEventsMask);
 
-            ButtonReleaseEvent += Item_Clicked;
             MotionNotifyEvent += Cursor_Moved;
             SizeAllocated += Size_Allocated;
 
@@ -63,8 +54,6 @@ namespace Ryujinx.Ui
             Add(_renderer);
 
             _waitRenderingEvent = new AutoResetEvent(false);
-
-            //AnimationLoop(300);
         }
 
         private void Renderer_Draw(object sender, EventArgs e)
@@ -78,46 +67,25 @@ namespace Ryujinx.Ui
                 se.Surface.Canvas.DrawBitmap(_listBitmap, se.Info.Rect);
             }
         }
-        async Task AnimationLoop(int maxValue)
-        {
-            if (!animationRequested)
-            {
-                animationRequested = true;
-                animationValue = 0;
-
-                while (animationValue < maxValue)
-                {
-                    animationValue += 15;
-
-                    _renderer.QueueDraw();
-
-                    await Task.Delay(10);
-                }
-
-                animationRequested = false;
-
-                ClearBitmap();
-            }
-        }
 
         public void Draw(SKImageInfo info)
         {
-            if (_listBitmap != null && _draw_counts == 2)
+            if (_listBitmap != null && _drawCounts == 2)
             {
                 return;
             }
 
-            _draw_counts++;
+            _drawCounts++;
 
             SKPaint itemPaint = new SKPaint
             {
                 ImageFilter = SKImageFilter.CreateDropShadow(4, 4, 4, 4, new SKColor(0, 0, 0, 128), SKDropShadowImageFilterShadowMode.DrawShadowAndForeground)
             };
 
-            int itemSize = ((Window.Width - LIST_PADDING) / ITEM_LIMIT) - ITEM_PADDING;
+            int itemSize = ((Window.Width - ListPadding) / ItemLimit) - ItemPadding;
 
-            int x = (Window.Width - ((itemSize + ITEM_PADDING) * ITEM_LIMIT)) / 2;
-            int y = ITEM_PADDING;
+            int x = (Window.Width - ((itemSize + ItemPadding) * ItemLimit)) / 2;
+            int y = ItemPadding;
 
             int itemCount = 0;
             int rowHeight = 0;
@@ -134,38 +102,38 @@ namespace Ryujinx.Ui
             {
                 canvas.Clear();
 
-                for (int i = 0; i < _listItems.Length; i++)
+                foreach (ApplicationListItem item in ListItems)
                 {
-                    _listItems[i].Image.ScalePixels(itemResizedBitmap, SKFilterQuality.High);
+                    item.Image.ScalePixels(itemResizedBitmap, SKFilterQuality.High);
 
                     canvas.DrawBitmap(itemResizedBitmap, x, y, itemPaint);
 
-                    _listItems[i].Coords.X = x;
-                    _listItems[i].Coords.Y = y;
-                    _listItems[i].ResizedSize.Width = itemSize;
-                    _listItems[i].ResizedSize.Height = itemSize;
+                    item.Coords.X = x;
+                    item.Coords.Y = y;
+                    item.ResizedSize.Width  = itemSize;
+                    item.ResizedSize.Height = itemSize;
 
                     itemCount++;
 
-                    rowHeight = Math.Max(rowHeight, itemResizedBitmap.Height + ITEM_PADDING);
+                    rowHeight = Math.Max(rowHeight, itemResizedBitmap.Height + ItemPadding);
 
-                    if (itemCount == ITEM_LIMIT)
+                    if (itemCount == ItemLimit)
                     {
                         itemCount = 0;
 
-                        x = (Window.Width - ((itemSize + ITEM_PADDING) * ITEM_LIMIT)) / 2;
+                        x = (Window.Width - ((itemSize + ItemPadding) * ItemLimit)) / 2;
                         y += rowHeight;
 
                         rowHeight = 0;
                     }
                     else
                     {
-                        x += itemResizedBitmap.Width + ITEM_PADDING;
+                        x += itemResizedBitmap.Width + ItemPadding;
                     }
 
-                    if (_listItems[i].Selected)
+                    if (item.Selected)
                     {
-                        selectedItem = _listItems[i];
+                        selectedItem = item;
                     }
                 }
 
@@ -174,11 +142,11 @@ namespace Ryujinx.Ui
                     // Draw selection rectangle
                     SKRect selectRect = SKRect.Create(selectedItem.Coords.X - 5, selectedItem.Coords.Y - 5, selectedItem.ResizedSize.Width + 10, selectedItem.ResizedSize.Height + 10);
 
-                    var selectRectPaint = new SKPaint
+                    SKPaint selectRectPaint = new SKPaint
                     {
-                        Style = SKPaintStyle.Stroke,
+                        Style       = SKPaintStyle.Stroke,
                         StrokeWidth = 4,
-                        Color = SKColor.Parse("8AF6F8"),
+                        Color       = SKColor.Parse("8AF6F8"),
                         IsAntialias = true
                     };
 
@@ -194,8 +162,8 @@ namespace Ryujinx.Ui
 
                     SKPaint tooltipTrianglePaint = new SKPaint()
                     {
-                        Style = SKPaintStyle.StrokeAndFill,
-                        Color = SKColor.Parse("505050").WithAlpha(250),
+                        Style       = SKPaintStyle.StrokeAndFill,
+                        Color       = SKColor.Parse("505050").WithAlpha(250),
                         StrokeWidth = 10,
                         IsAntialias = true
                     };
@@ -205,17 +173,17 @@ namespace Ryujinx.Ui
                     // Draw tooltip rectangle
                     SKPaint tooltipRectPaint = new SKPaint
                     {
-                        Style = SKPaintStyle.Fill,
+                        Style       = SKPaintStyle.Fill,
                         StrokeWidth = 4,
-                        Color = SKColor.Parse("505050").WithAlpha(250),
+                        Color       = SKColor.Parse("505050").WithAlpha(250),
                         ImageFilter = SKImageFilter.CreateDropShadow(4, 4, 4, 4, new SKColor(0, 0, 0, 128), SKDropShadowImageFilterShadowMode.DrawShadowAndForeground)
                     };
 
                     SKPaint tooltipTextPaint = new SKPaint
                     {
-                        TextSize = 24,
-                        Color = SKColor.Parse("39AEDD"),
-                        Typeface = SKTypeface.FromFamilyName("MS Gothic"),
+                        TextSize    = 24,
+                        Color       = SKColor.Parse("39AEDD"),
+                        Typeface    = SKTypeface.FromFamilyName("MS Gothic"),
                         IsAntialias = true
                     };
 
@@ -238,142 +206,6 @@ namespace Ryujinx.Ui
                 itemResizedBitmap.Dispose();
             }
 
-            /*if (animationRequested)
-            {
-                var rect = SKRect.Create(20, 256 + 20 + 20, Window.Width - 41, animationValue);
-
-                // the brush (fill with blue)
-                var paint = new SKPaint
-                {
-                    Style = SKPaintStyle.Fill,
-                    Color = Color.Gray.ToSKColor()
-                };
-
-                // draw fill
-                canvas.DrawRect(rect, paint);
-
-                // change the brush (stroke with red)
-                paint.Style = SKPaintStyle.Stroke;
-                paint.Color = Color.DarkGray.ToSKColor();
-
-                // draw stroke
-                canvas.DrawRect(rect, paint);
-            }
-            else
-            {
-                var rect = SKRect.Create(20, 256 + 20 + 20, Window.Width - 41, 300);
-
-                // the brush (fill with blue)
-                var paint = new SKPaint
-                {
-                    Style = SKPaintStyle.Fill,
-                    Color = Color.Gray.ToSKColor()
-                };
-
-                // draw fill
-                canvas.DrawRect(rect, paint);
-
-                // change the brush (stroke with red)
-                paint.Style = SKPaintStyle.Stroke;
-                paint.Color = Color.DarkGray.ToSKColor();
-
-                // draw stroke
-                canvas.DrawRect(rect, paint);
-
-                var painttext = new SKPaint
-                {
-                    TextSize = 24,
-                    Color = Color.Black.ToSKColor(),
-                    Typeface = SKTypeface.FromFamilyName("Arial"),
-                    IsAntialias = true
-                };
-
-                canvas.DrawText(_listItems[0].Data.TitleName, 40, 256 + 20 + 20 + 20 + 14, painttext);
-            }*/
-
-            /*int x = 20, y = 20;
-            int itemCounter = 0;
-
-            int limit = (Window.Width / 256) - 1;
-            int padding = (Window.Width - (limit * 256) - 20) / limit;
-
-            int rowHeight = 0;
-
-            for (int i = 0; i < _listItems.Length; i++)
-            {
-                float ratio = 1.0f;
-
-                if (i != 2)
-                {
-                    ratio = 1.5f;
-                }
-
-                if (i == 2)
-                {
-                    y = 100;
-                }
-                else
-                {
-                    y = (_listItems[i].Image.Height + 100) - (int)(_listItems[i].Image.Height / ratio);
-                }
-
-                SKBitmap test = new SKBitmap((int)(_listItems[i].Image.Width / ratio), (int)(_listItems[i].Image.Height / ratio));
-
-                _listItems[i].Image.ScalePixels(test, SKFilterQuality.High);
-
-                SKPaint paint = new SKPaint();
-                SKColor shadowColor = new SKColor(0, 0, 0, 90);
-
-                paint.ImageFilter = SKImageFilter.CreateDropShadow(2, 2, 4, 4, shadowColor, SKDropShadowImageFilterShadowMode.DrawShadowAndForeground);
-
-                if (i != 2)
-                {
-                    for (int j = 0; j < 100; j++)
-                    {
-                        canvas.DrawBitmap(test, x, y + j, paint);
-                    }
-                }
-                else
-                {
-                    canvas.DrawBitmap(test, x, y, paint);
-                }
-
-                _listItems[i].Coords.X = x;
-                _listItems[i].Coords.Y = y;
-
-
-                itemCounter++;
-
-                rowHeight = Math.Max(rowHeight, _listItems[i].Image.Height + 20);
-
-                x += test.Width + 20;
-
-                if (itemCounter == limit)
-                {
-                    itemCounter = 0;
-
-                    x = 20;
-                    y += rowHeight;
-
-                    rowHeight = 0;
-                }
-                else
-                {
-                    x += (int)_listItems[i].Size.Height + padding;
-                }
-            }
-
-            //_renderer.HeightRequest = y + rowHeight + 10;
-
-            var painttext = new SKPaint
-            {
-                TextSize = 24,
-                Color = SKColors.Red,
-                Typeface = SKTypeface.FromFamilyName("Arial")
-            };
-
-            canvas.DrawText(testText, 30, 30, painttext);
-            */
             _waitRenderingEvent.Set();
         }
 
@@ -387,18 +219,9 @@ namespace Ryujinx.Ui
             _listBitmap?.Dispose();
             _listBitmap = null;
 
-            _draw_counts = 0;
+            _drawCounts = 0;
 
             _renderer.QueueDraw();
-        }
-
-        private void Item_Clicked(object sender, ButtonReleaseEventArgs args)
-        {
-            _lockScroll = !_lockScroll;
-            
-            CheckBounds();
-
-            //AnimationLoop(300);
         }
 
         private void Cursor_Moved(object sender, MotionNotifyEventArgs args)
@@ -415,90 +238,42 @@ namespace Ryujinx.Ui
 
         private void List_VScrolled(object sender, EventArgs args)
         {
-            /*if (args.Event.DeltaY == 1)
-            {
-                _listItems = shiftLeft(_listItems);
-            }
-            else
-            {
-                _listItems = shiftRight(_listItems);
-            }*/
             _scrollPos = (int)((Adjustment)sender).Value;
 
             CheckBounds();
-
-            //AnimationLoop(300);
-        }
-
-        public ApplicationListItem[] shiftLeft(ApplicationListItem[] arr)
-        {
-            ApplicationListItem[] demo = new ApplicationListItem[arr.Length];
-
-            for (int i = 0; i < arr.Length - 1; i++)
-            {
-                demo[i] = arr[i + 1];
-            }
-
-            demo[demo.Length - 1] = arr[0];
-
-            return demo;
-        }
-
-        public ApplicationListItem[] shiftRight(ApplicationListItem[] arr)
-        {
-            ApplicationListItem[] demo = new ApplicationListItem[arr.Length];
-
-            for (int i = 1; i < arr.Length; i++)
-            {
-                demo[i] = arr[i - 1];
-            }
-
-            demo[0] = arr[demo.Length - 1];
-
-            return demo;
         }
 
         private void CheckBounds()
         {
-            for (int i = 0; i < _listItems.Length; i++)
+            foreach (ApplicationListItem item in ListItems)
             {
-                _listItems[i].Selected = false;
+                item.Selected = false;
             }
 
-            for (int i = 0; i < _listItems.Length; i++)
+            foreach (ApplicationListItem item in ListItems)
             {
-                if (_mouseX > _listItems[i].Coords.X && _mouseX < _listItems[i].Coords.X + _listItems[i].ResizedSize.Width &&
-                    _mouseY + _scrollPos > _listItems[i].Coords.Y && _mouseY + _scrollPos < _listItems[i].Coords.Y + _listItems[i].ResizedSize.Height)
+                if (_mouseX > item.Coords.X && _mouseX < item.Coords.X + item.ResizedSize.Width &&
+                    _mouseY + _scrollPos > item.Coords.Y && _mouseY + _scrollPos < item.Coords.Y + item.ResizedSize.Height)
                 {
-                    _listItems[i].Selected = true;
+                    item.Selected = true;
                 }
             }
 
             ClearBitmap();
         }
 
-        private static byte[] GetResourceBytes(string resourceName)
-        {
-            Stream resourceStream = Assembly.GetCallingAssembly().GetManifestResourceStream(resourceName);
-            byte[] resourceByteArray = new byte[resourceStream.Length];
-
-            resourceStream.Read(resourceByteArray);
-
-            return resourceByteArray;
-        }
-
         public void AddItem(ApplicationData applicationData)
         {
             SKBitmap itemImage = SKBitmap.Decode(applicationData.Icon);
 
-            Array.Resize(ref _listItems, _listItems.Length + 1);
+            Array.Resize(ref ListItems, ListItems.Length + 1);
 
-            _listItems[_listItems.Length - 1] = new ApplicationListItem()
+            ListItems[^1] = new ApplicationListItem
             {
-                Data = applicationData,
-                Image = itemImage,
+                Data        = applicationData,
+                Image       = itemImage,
                 ResizedSize = new SKSize(itemImage.Width, itemImage.Height),
-                Coords = new SKPoint()
+                Coords      = new SKPoint()
             };
 
             ClearBitmap();
@@ -506,7 +281,7 @@ namespace Ryujinx.Ui
 
         public void ClearItems()
         {
-            _listItems = new ApplicationListItem[0];
+            ListItems = Array.Empty<ApplicationListItem>();
 
             ClearBitmap();
         }
