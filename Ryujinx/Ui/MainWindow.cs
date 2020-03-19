@@ -9,6 +9,7 @@ using Ryujinx.Graphics.OpenGL;
 using Ryujinx.HLE.FileSystem;
 using Ryujinx.HLE.FileSystem.Content;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -31,16 +32,17 @@ namespace Ryujinx.Ui
 
         private static GLRenderer _gLWidget;
 
+        private static ApplicationWidget _applicationWidget;
+
         private static AutoResetEvent _deviceExitStatus = new AutoResetEvent(false);
 
-        private static ListStore _tableStore;
+        //private static ListStore _tableStore;
+        private static List<ApplicationData> applicationsData = new List<ApplicationData>();
 
         private static bool _updatingGameTable;
         private static bool _gameLoaded;
         private static bool _ending;
         private static bool _debuggerOpened;
-
-        private static TreeView _treeView;
 
         private static Ryujinx.Debugger.Debugger _debugger;
 
@@ -68,7 +70,7 @@ namespace Ryujinx.Ui
         [GUI] CheckMenuItem  _fileSizeToggle;
         [GUI] CheckMenuItem  _pathToggle;
         [GUI] Label          _gameStatus;
-        [GUI] TreeView       _gameTable;
+        /*[GUI] TreeView       _gameTable;*/
         [GUI] ScrolledWindow _gameTableWindow;
         [GUI] TreeSelection  _gameTableSelection;
         [GUI] Label          _progressLabel;
@@ -94,7 +96,7 @@ namespace Ryujinx.Ui
             ApplicationLibrary.ApplicationCountUpdated += ApplicationCount_Updated;
             GLRenderer.StatusUpdatedEvent              += Update_StatusBar;
 
-            _gameTable.ButtonReleaseEvent += Row_Clicked;
+            //_gameTable.ButtonReleaseEvent += Row_Clicked;
 
             // First we check that a migration isn't needed. (because VirtualFileSystem will create the new directory otherwise)
             bool continueWithStartup = Migration.PromptIfMigrationNeededForStartup(this, out bool migrationNeeded);
@@ -119,8 +121,6 @@ namespace Ryujinx.Ui
             // Make sure that everything is loaded.
             _virtualFileSystem.Reload();
 
-            _treeView = _gameTable;
-
             ApplyTheme();
 
             _mainWin.Icon            = new Gdk.Pixbuf(Assembly.GetExecutingAssembly(), "Ryujinx.Ui.assets.Icon.png");
@@ -138,6 +138,11 @@ namespace Ryujinx.Ui
             if (ConfigurationState.Instance.Ui.GuiColumns.FileSizeColumn)   _fileSizeToggle.Active   = true;
             if (ConfigurationState.Instance.Ui.GuiColumns.PathColumn)       _pathToggle.Active       = true;
 
+            _applicationWidget = new ApplicationWidget();
+
+            _viewBox.Add(_applicationWidget.Widget);
+            _viewBox.ShowAll();
+
 #if USE_DEBUGGING
             _debugger = new Debugger.Debugger();
             _openDebugger.Activated += _openDebugger_Opened;
@@ -145,7 +150,7 @@ namespace Ryujinx.Ui
             _openDebugger.Hide();
 #endif
 
-            _gameTable.Model = _tableStore = new ListStore(
+            /*_gameTable.Model = _tableStore = new ListStore(
                 typeof(bool),
                 typeof(Gdk.Pixbuf),
                 typeof(string),
@@ -160,9 +165,9 @@ namespace Ryujinx.Ui
             _tableStore.SetSortFunc(5, TimePlayedSort);
             _tableStore.SetSortFunc(6, LastPlayedSort);
             _tableStore.SetSortFunc(8, FileSizeSort);
-            _tableStore.SetSortColumnId(0, SortType.Descending);
+            _tableStore.SetSortColumnId(0, SortType.Descending);*/
 
-            UpdateColumns();
+            //UpdateColumns();
             UpdateGameTable();
 
             Task.Run(RefreshFirmwareLabel);
@@ -220,7 +225,7 @@ namespace Ryujinx.Ui
                 Logger.PrintWarning(LogClass.Application, $"The \"custom_theme_path\" section in \"Config.json\" contains an invalid path: \"{ConfigurationState.Instance.Ui.CustomThemePath}\".");
             }
         }
-
+        /*
         private void UpdateColumns()
         {
             foreach (TreeViewColumn column in _gameTable.Columns)
@@ -255,6 +260,7 @@ namespace Ryujinx.Ui
                 else if (column.Title == "Path"        && ConfigurationState.Instance.Ui.GuiColumns.PathColumn)       column.SortColumnId = 9;
             }
         }
+        */
 
         private HLE.Switch InitializeSwitchInstance()
         {
@@ -276,7 +282,8 @@ namespace Ryujinx.Ui
 
             _updatingGameTable = true;
 
-            _tableStore.Clear();
+            applicationsData.Clear();
+            _applicationWidget.Clear();
 
             Thread applicationLibraryThread = new Thread(() =>
             {
@@ -444,7 +451,7 @@ namespace Ryujinx.Ui
 
                 RecreateFooterForMenu();
 
-                UpdateColumns();
+                //UpdateColumns();
                 UpdateGameTable();
 
                 Task.Run(RefreshFirmwareLabel);
@@ -533,6 +540,8 @@ namespace Ryujinx.Ui
 
             Dispose();
 
+            _applicationWidget.Dispose();
+
             Profile.FinishProfiling();
             DiscordIntegrationModule.Exit();
             Logger.Shutdown();
@@ -569,7 +578,9 @@ namespace Ryujinx.Ui
         {
             Application.Invoke(delegate
             {
-                _tableStore.AppendValues(
+                applicationsData.Add(args.AppData);
+                _applicationWidget.Update(args.AppData);
+                /*_tableStore.AppendValues(
                     args.AppData.Favorite,
                     new Gdk.Pixbuf(args.AppData.Icon, 75, 75),
                     $"{args.AppData.TitleName}\n{args.AppData.TitleId.ToUpper()}",
@@ -579,7 +590,7 @@ namespace Ryujinx.Ui
                     args.AppData.LastPlayed,
                     args.AppData.FileExtension,
                     args.AppData.FileSize,
-                    args.AppData.Path);
+                    args.AppData.Path);*/
             });
         }
 
@@ -619,6 +630,7 @@ namespace Ryujinx.Ui
             });
         }
 
+        /*
         private void FavToggle_Toggled(object sender, ToggledArgs args)
         {
             _tableStore.GetIter(out TreeIter treeIter, new TreePath(args.Path));
@@ -654,7 +666,7 @@ namespace Ryujinx.Ui
             GameTableContextMenu contextMenu = new GameTableContextMenu(_tableStore, treeIter, _virtualFileSystem);
             contextMenu.ShowAll();
             contextMenu.PopupAtPointer(null);
-        }
+        }*/
 
         private void Load_Application_File(object sender, EventArgs args)
         {
@@ -950,6 +962,7 @@ namespace Ryujinx.Ui
             aboutWin.Show();
         }
 
+        /*
         private void Fav_Toggled(object sender, EventArgs args)
         {
             ConfigurationState.Instance.Ui.GuiColumns.FavColumn.Value = _favToggle.Active;
@@ -1029,11 +1042,12 @@ namespace Ryujinx.Ui
             SaveConfig();
             UpdateColumns();
         }
-
+*/
         private void RefreshList_Pressed(object sender, ButtonReleaseEventArgs args)
         {
             UpdateGameTable();
         }
+
 
         private static int TimePlayedSort(ITreeModel model, TreeIter a, TreeIter b)
         {

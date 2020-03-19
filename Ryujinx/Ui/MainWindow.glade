@@ -366,30 +366,6 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="orientation">vertical</property>
-                <child>
-                  <object class="GtkScrolledWindow" id="_gameTableWindow">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="shadow_type">in</property>
-                    <child>
-                      <object class="GtkTreeView" id="_gameTable">
-                        <property name="visible">True</property>
-                        <property name="can_focus">True</property>
-                        <property name="reorderable">True</property>
-                        <property name="hover_selection">True</property>
-                        <signal name="row-activated" handler="Row_Activated" swapped="no"/>
-                        <child internal-child="selection">
-                          <object class="GtkTreeSelection" id="_gameTableSelection"/>
-                        </child>
-                      </object>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">True</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
               </object>
               <packing>
                 <property name="expand">True</property>

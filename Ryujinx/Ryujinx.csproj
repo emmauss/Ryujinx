@@ -69,6 +69,7 @@
     <EmbeddedResource Include="Ui\GameTableContextMenu.glade" />
     <EmbeddedResource Include="Ui\MainWindow.glade" />
     <EmbeddedResource Include="Ui\SwitchSettings.glade" />
+    <EmbeddedResource Include="Ui\ApplicationList\ApplicationList.glade" />
   </ItemGroup>
 
   <ItemGroup>
