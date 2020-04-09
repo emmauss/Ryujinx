@@ -29,6 +29,7 @@ namespace Ryujinx.Ui
 
         private int _frameBuffer;
         private int _texture;
+        private int _targetFps = 15;
 
         public bool _initialized;
         public bool _resized;
@@ -70,10 +71,17 @@ namespace Ryujinx.Ui
 
         public void RenderLoop()
         {
+            var chrono = new System.Diagnostics.Stopwatch();
+            chrono.Start();
+
+            int timeToWait = 16;
+
             while (IsRendering)
             {
-                _resetEvent.WaitOne();
+                _resetEvent.WaitOne(timeToWait);
                 _resetEvent.Reset();
+
+                long currentTickCount = chrono.ElapsedTicks;
 
                 if (!IsRendering)
                 {
@@ -81,6 +89,12 @@ namespace Ryujinx.Ui
                 }
 
                 Render();
+
+                long timeSpentMs = (chrono.ElapsedTicks - currentTickCount) / (System.Diagnostics.Stopwatch.Frequency / 1000);
+
+                int nextFrameTime = 1000 / _targetFps;
+
+                timeToWait = (int)Math.Max(nextFrameTime - timeSpentMs, 0);
             }
         }
 
@@ -102,9 +116,6 @@ namespace Ryujinx.Ui
             {
                 GraphicsContext.MakeCurrent(WindowInfo);
 
-                GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.StencilBufferBit);
-                GL.ClearColor(Color.Black);
-
                 _surface?.Dispose();
                 _renderTarget?.Dispose();
 
@@ -118,9 +129,13 @@ namespace Ryujinx.Ui
                     RenderView(canvas);
 
                     canvas.Flush();
-                    _contextOpenGL.Flush();
 
                     DrawBuffers();
+
+                    if(!IsRendering)
+                    {
+                        return;
+                    }
 
                     SwapBuffers();
 
@@ -128,7 +143,7 @@ namespace Ryujinx.Ui
                 }
 
                 DeleteBuffers();
-                
+
                 GraphicsContext.MakeCurrent(null);
             }
         }
@@ -150,7 +165,8 @@ namespace Ryujinx.Ui
                 {
                     _rendererThread.Start();
                 }
-                _resetEvent.Set();
+
+                _targetFps = 60;
             }
         }
 
@@ -190,6 +206,8 @@ namespace Ryujinx.Ui
             };
 
             DrawObjects?.Invoke(this, drawEvent);
+
+            _targetFps = 15;
 
             if(drawEvent.QueueRender)
             {

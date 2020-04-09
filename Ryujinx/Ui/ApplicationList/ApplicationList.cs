@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-
+using System.Timers;
 using Color = System.Drawing.Color;
 
 namespace Ryujinx.Ui
@@ -25,13 +25,14 @@ namespace Ryujinx.Ui
 
         private const int ListPadding          = 75;
         private const int ItemPadding          = 20;
-        private const int ItemLimit            = 6;
         private const int TransitionFrameLimit = 10;
         private const int ScrollbarWidth       = 10;
         private const int ScrollRegionMargin   = 5;
         private const int ScrollStep           = 20;
+        private const int ItemBitmapSize       = 150;
 
         private SkRenderer _renderer;
+        private System.Timers.Timer   _clickTimer;
 
         private bool _overlayActive = false;
 
@@ -46,7 +47,9 @@ namespace Ryujinx.Ui
                                  && _canvasHeight > _viewBounds.Height;
 
         private bool _queueDraw;
+        private bool _scrollbarVisible;
         private bool _isFadeIn;
+        private bool _buttonPressed;
         private bool IsScrolling { get; set; }
 
         private AutoResetEvent _waitRenderingEvent;
@@ -104,6 +107,26 @@ namespace Ryujinx.Ui
             Add(_renderer);
 
             _waitRenderingEvent = new AutoResetEvent(false);
+
+            _clickTimer = new System.Timers.Timer(250);
+            _clickTimer.AutoReset = false;
+            _clickTimer.Stop();
+            _clickTimer.Elapsed += _clickTimer_Elapsed;
+        }
+
+        private void _clickTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (_buttonPressed)
+            {
+                _buttonPressed = false;
+                if(!OverlayActive)
+                {
+                    _overlayActive = true;
+                    ShowOverlay();
+
+                    _currentFrame = 0;
+                }
+            }
         }
 
         private void ApplicationList_Destroyed(object sender, EventArgs e)
@@ -201,12 +224,13 @@ namespace Ryujinx.Ui
 
             SKPaint itemPaint = new SKPaint
             {
+                IsAntialias = true,
                 ImageFilter = SKImageFilter.CreateDropShadow(4, 4, 4, 4, new SKColor(0, 0, 0, 128), SKDropShadowImageFilterShadowMode.DrawShadowAndForeground)
             };
 
-            int itemSize = ((Window.Width - ListPadding) / ItemLimit) - ItemPadding;
+            int itemLimit = (int)(_viewBounds.Width - ListPadding) / (ItemBitmapSize + ItemPadding);
 
-            int x = (Window.Width - ((itemSize + ItemPadding) * ItemLimit)) / 2;
+            int x = (Window.Width - ((ItemBitmapSize + ItemPadding) * itemLimit)) / 2; ;
             int y = ItemPadding - (int)_viewPos;
 
             int itemCount = 0;
@@ -228,10 +252,10 @@ namespace Ryujinx.Ui
                 SKRect imageBounds = new SKRect(x, y, x + item.Image.Width, y + item.Image.Height);
                 if (IsInBounds(imageBounds))
                 {
-                    if (item.ResizedImage == null || item.ResizedImage.Width != itemSize)
+                    if (item.ResizedImage == null || item.ResizedImage.Width != ItemBitmapSize)
                     {
                         item.ResizedImage?.Dispose();
-                        item.ResizedImage = new SKBitmap(itemSize, itemSize);
+                        item.ResizedImage = new SKBitmap(ItemBitmapSize, ItemBitmapSize);
                         item.Image.ScalePixels(item.ResizedImage, SKFilterQuality.High);
                     }
                     canvas.DrawBitmap(item.ResizedImage, x, y, itemPaint);
@@ -242,25 +266,25 @@ namespace Ryujinx.Ui
                 }
                 item.Coords.X = x;
                 item.Coords.Y = y;
-                item.ResizedSize.Width = itemSize;
-                item.ResizedSize.Height = itemSize;
+                item.ResizedSize.Width = ItemBitmapSize;
+                item.ResizedSize.Height = ItemBitmapSize;
 
                 itemCount++;
 
-                rowHeight = Math.Max(rowHeight, itemSize + ItemPadding);
+                rowHeight = Math.Max(rowHeight, ItemBitmapSize + ItemPadding);
 
-                if (itemCount == ItemLimit)
+                if (itemCount == itemLimit)
                 {
                     itemCount = 0;
 
-                    x = (Window.Width - ((itemSize + ItemPadding) * ItemLimit)) / 2;
+                    x = (Window.Width - ((ItemBitmapSize + ItemPadding) * itemLimit)) / 2;
                     y += rowHeight;
 
                     rowHeight = 0;
                 }
                 else
                 {
-                    x += itemSize + ItemPadding;
+                    x += ItemBitmapSize + ItemPadding;
                 }
             }
 
@@ -279,12 +303,24 @@ namespace Ryujinx.Ui
 
                 canvas.DrawRoundRect(selectRect, 2, 2, selectRectPaint);
 
+                canvas.Save();
+
+                SKSize itemSize = SelectedItem.ResizedSize;
+                SKPoint itemPosition = SelectedItem.Coords;
+
+
+                bool reverseTooltip = itemPosition.Y + itemSize.Height + 50 > _viewBounds.Bottom;
+
+                SKMatrix matrix = SKMatrix.MakeTranslation(itemPosition.X + itemSize.Height / 2, itemPosition.Y + itemSize.Width / 2);
+                matrix.ScaleY = reverseTooltip ? -1 : 1;
+                canvas.SetMatrix(matrix);
+
                 // Draw tooltip triangle
                 SKPath tooltipTrianglePath = new SKPath();
 
-                tooltipTrianglePath.MoveTo((SelectedItem.Coords.X + SelectedItem.ResizedSize.Width / 2) - 10, SelectedItem.Coords.Y + SelectedItem.ResizedSize.Width + 30);
-                tooltipTrianglePath.LineTo(SelectedItem.Coords.X + SelectedItem.ResizedSize.Width / 2, SelectedItem.Coords.Y + SelectedItem.ResizedSize.Width + 13);
-                tooltipTrianglePath.LineTo((SelectedItem.Coords.X + SelectedItem.ResizedSize.Width / 2) + 10, SelectedItem.Coords.Y + SelectedItem.ResizedSize.Width + 30);
+                tooltipTrianglePath.MoveTo(-10, itemSize.Height / 2 + 30);
+                tooltipTrianglePath.LineTo(0, itemSize.Height / 2 + 15);
+                tooltipTrianglePath.LineTo(10, itemSize.Height / 2 + 30);
                 tooltipTrianglePath.Close();
 
                 SKPaint tooltipTrianglePaint = new SKPaint()
@@ -300,6 +336,7 @@ namespace Ryujinx.Ui
                 // Draw tooltip rectangle
                 SKPaint tooltipRectPaint = new SKPaint
                 {
+                    IsAntialias = true,
                     Style = SKPaintStyle.Fill,
                     StrokeWidth = 4,
                     Color = SKColor.Parse("505050").WithAlpha(250),
@@ -319,17 +356,34 @@ namespace Ryujinx.Ui
 
                 int tooltipWidth = (int)tooltipTextBounds.Width + 20;
 
-                int midpoint = (int)(SelectedItem.Coords.X + SelectedItem.ResizedSize.Width / 2);
+                int midpoint = 0;
 
-                SKRect tooltipRect = SKRect.Create(midpoint - tooltipWidth / 2, SelectedItem.Coords.Y + SelectedItem.ResizedSize.Width + 30, tooltipWidth, tooltipTextBounds.Height + 20);
+                float tooltipX = Math.Max(midpoint - (tooltipWidth / 2) + itemPosition.X + itemSize.Width / 2, _viewBounds.Left);
+                tooltipX = Math.Min(tooltipX + tooltipWidth, _viewBounds.Right);
+                tooltipX -= tooltipWidth;
+                tooltipX -= itemPosition.X + itemSize.Width / 2;
+                SKRect tooltipRect = SKRect.Create(tooltipX, itemSize.Height / 2 + 30, tooltipWidth, tooltipTextBounds.Height + 20);
 
                 canvas.DrawRect(tooltipRect, tooltipRectPaint);
-                canvas.DrawText(SelectedItem.Data.TitleName, midpoint - (tooltipWidth / 2) + 10, SelectedItem.Coords.Y + SelectedItem.ResizedSize.Width + 58, tooltipTextPaint);
+
+                matrix.ScaleY = 1;
+                canvas.SetMatrix(matrix);
+
+                float tooltipY = itemSize.Height / 2 + 58;
+
+                if (reverseTooltip)
+                {
+                    tooltipY = tooltipY * -1 + tooltipTextBounds.Height;
+                }
+
+                canvas.DrawText(SelectedItem.Data.TitleName, tooltipX + 10, tooltipY, tooltipTextPaint);
 
                 selectRectPaint.Dispose();
                 tooltipRectPaint.Dispose();
                 tooltipTextPaint.Dispose();
                 tooltipTrianglePaint.Dispose();
+
+                canvas.Restore();
             }
 
            _canvasHeight = y + rowHeight + _viewPos;
@@ -398,8 +452,8 @@ namespace Ryujinx.Ui
 
                 canvas.DrawRect(CurrentOverlayBounds, paint);
 
-                float x = CurrentOverlayBounds.Left + ItemPadding;
-                float y = CurrentOverlayBounds.Top + 50;
+                float x = fullOverlayBounds.Left + ItemPadding;
+                float y = CurrentOverlayBounds.Top + 30;
 
                 if (SelectedItem != null)
                 {
@@ -407,10 +461,13 @@ namespace Ryujinx.Ui
                     {
                         textPaint.Color = Color.White.ToSKColor().WithAlpha(opacity);
                         textPaint.Typeface = SKTypeface.FromFamilyName("Calibri");
-                        textPaint.TextSize = 40;
+                        textPaint.TextSize = 30;
+                        textPaint.IsAntialias = true;
 
-                        canvas.DrawText(SelectedItem.Data.TitleName, x, y, textPaint);
-                        y += 20;
+                        Font font = new Font(textPaint.Typeface, textPaint.TextSize, FontStyle.Bold);
+
+                        SKSize size = DrawText(canvas, SelectedItem.Data.TitleName, y, textPaint, x, fullOverlayBounds.Width - ItemPadding, font);
+                        y += size.Height - 10;
 
                         canvas.DrawLine(x, y, CurrentOverlayBounds.Right - ItemPadding, y, textPaint);
                         canvas.DrawLine(x, CurrentOverlayBounds.Bottom - 70, CurrentOverlayBounds.Right - ItemPadding, CurrentOverlayBounds.Bottom - 70, textPaint);
@@ -433,10 +490,10 @@ namespace Ryujinx.Ui
 
                         float maxInfoWidth = fullOverlayBounds.Width - textX;
 
-                        Font font = new Font(textPaint.Typeface, textPaint.TextSize);
+                        font = new Font(textPaint.Typeface, textPaint.TextSize);
                         
                         canvas.DrawText("Title Id", x + 5, y, textPaint);
-                        SKSize size = DrawText(canvas, SelectedItem.Data.TitleId, y, textPaint, textX, maxInfoWidth, font);
+                        size = DrawText(canvas, SelectedItem.Data.TitleId.ToUpper(), y, textPaint, textX, maxInfoWidth, font);
                         y += size.Height + ItemPadding / 2;
 
                         canvas.DrawText("Developer", x + 5, y, textPaint);
@@ -531,6 +588,7 @@ namespace Ryujinx.Ui
         {
             if (_canvasHeight > _viewBounds.Height)
             {
+                _scrollbarVisible = true;
                 int x = (int)_viewBounds.Right - ScrollbarWidth - ScrollRegionMargin;
                 float y = 0 + ScrollRegionMargin;
                 int barRadius = ScrollbarWidth / 2;
@@ -552,8 +610,14 @@ namespace Ryujinx.Ui
                     y = Math.Clamp(y - barHeight / 2, 0, _regionHeight - barHeight);
                     _viewPos = y / _regionHeight * _canvasHeight;
 
+                    _viewPos = (float)Math.Round(_viewPos, MidpointRounding.ToEven);
+
                     canvas.DrawRoundRect(x, y + ScrollRegionMargin, ScrollbarWidth, barHeight, barRadius, barRadius, paint);
                 }
+            }
+            else
+            {
+                _scrollbarVisible = false;
             }
         }
 
@@ -563,13 +627,10 @@ namespace Ryujinx.Ui
             {
                 if (!OverlayActive)
                 {
-                    if (eventType == Gdk.EventType.ButtonRelease)
+                    if (eventType == Gdk.EventType.ButtonRelease && IsScrolling)
                     {
-                        if (IsScrolling)
-                        {
-                            IsScrolling = false;
-                            _scrollPos = Math.Clamp((float)_mouseY / _viewBounds.Height * _regionHeight, 0, _regionHeight);
-                        }
+                        IsScrolling = false;
+                        _scrollPos = Math.Clamp((float)_mouseY / _viewBounds.Height * _regionHeight, 0, _regionHeight);
                     }
                     else
                     {
@@ -594,10 +655,24 @@ namespace Ryujinx.Ui
                             {
                                 if (!OverlayActive)
                                 {
-                                    _overlayActive = true;
-                                    ShowOverlay();
+                                    if (eventType == Gdk.EventType.DoubleButtonPress && button == 1)
+                                    {
+                                        _buttonPressed = false;
+                                        _clickTimer.Stop();
 
-                                    _currentFrame = 0;
+                                        if (!OverlayActive)
+                                        {
+                                            IsActionTriggered = true;
+                                            ActionTriggered?.Invoke(this, new UIActionEventArgs() { UIAction = UIAction.Launch, Item = SelectedItem });
+                                        }
+
+                                    }
+                                    else if (eventType == Gdk.EventType.ButtonRelease && button == 1 && !_clickTimer.Enabled)
+                                    {
+                                        _buttonPressed = true;
+                                        _clickTimer.Stop();
+                                        _clickTimer.Start();
+                                    }
                                 }
                             }
                         }
@@ -703,7 +778,7 @@ namespace Ryujinx.Ui
 
         private void Mouse_Scroll(object sender, ScrollEventArgs args)
         {
-            if (!IsScrolling && !OverlayActive)
+            if (!IsScrolling && !OverlayActive && _scrollbarVisible)
             {
                 float barHeight = _viewBounds.Height / _canvasHeight * _regionHeight;
 
@@ -741,7 +816,7 @@ namespace Ryujinx.Ui
             {
                 ApplicationListItem _old = SelectedItem;
 
-                if (!IsActionTriggered)
+                if (!IsActionTriggered && !_buttonPressed)
                 {
                     if (!OverlayActive)
                     {

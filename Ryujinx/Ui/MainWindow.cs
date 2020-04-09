@@ -661,19 +661,6 @@ namespace Ryujinx.Ui
 
         private void ApplicationLibrary_Button_Pressed(object sender, ButtonPressEventArgs args)
         {
-            if (args.Event.Type == Gdk.EventType.DoubleButtonPress)
-            {
-                if (!_applicationList.OverlayActive)
-                {
-                    if (_applicationList.SelectedItem != null)
-                    {
-                        LoadApplication(_applicationList.SelectedItem.Data.Path);
-                    }
-
-                    return;
-                }
-            }
-
             _applicationList.HandleClick(args.Event.Type, args.Event.Button);
         }
 
