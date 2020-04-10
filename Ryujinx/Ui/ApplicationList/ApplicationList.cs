@@ -53,7 +53,9 @@ namespace Ryujinx.Ui
         private bool IsScrolling { get; set; }
 
         private AutoResetEvent _waitRenderingEvent;
-        private int _mouseX, _mouseY, _currentFrame, _drawCount;
+        private int _mouseX, _mouseY, _currentFrame;
+
+        private int _regionHeight;
 
         private float _scrollPos;
         private float _viewPos;
@@ -92,6 +94,7 @@ namespace Ryujinx.Ui
             SizeAllocated += Size_Allocated;
 
             Destroyed += ApplicationList_Destroyed;
+            DeleteEvent += ApplicationList_DeleteEvent;
 
             _elements = new Dictionary<UIAction, UIElement>();
 
@@ -108,10 +111,15 @@ namespace Ryujinx.Ui
 
             _waitRenderingEvent = new AutoResetEvent(false);
 
-            _clickTimer = new System.Timers.Timer(250);
+            _clickTimer = new System.Timers.Timer(200);
             _clickTimer.AutoReset = false;
             _clickTimer.Stop();
             _clickTimer.Elapsed += _clickTimer_Elapsed;
+        }
+
+        private void ApplicationList_DeleteEvent(object o, DeleteEventArgs args)
+        {
+            _renderer.CleanUp();
         }
 
         private void _clickTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -134,13 +142,9 @@ namespace Ryujinx.Ui
             _renderer.CleanUp();
         }
 
-        System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
-        private int _regionHeight;
-
         private void Renderer_Draw(object sender, EventArgs e)
         {
             _viewBounds = new SKRect(0, 0, _renderer.AllocatedWidth, _renderer.AllocatedHeight);
-            watch.Restart();
             if (e is DrawEventArgs de)
             {
                 var canvas = de.Canvas;
@@ -152,16 +156,6 @@ namespace Ryujinx.Ui
                     {
                         Draw(canvas);
                         DrawScrollbar(canvas);
-
-                        if (_currentFrame == 0)
-                        {
-                            watch.Restart();
-                        }
-
-                        if (_currentFrame >= 60)
-                        {
-                            var passed = watch.ElapsedMilliseconds;
-                        }
 
                         using (SKPaint paint = new SKPaint())
                         {
@@ -180,7 +174,6 @@ namespace Ryujinx.Ui
                         {
                             de.QueueRender = _queueDraw;
                             _queueDraw = false;
-                            _drawCount = 0;
                         }
                     }
 
@@ -208,20 +201,10 @@ namespace Ryujinx.Ui
                     }
                 }
             }
-
-           // var elapsed = watch.ElapsedMilliseconds;
-           // Console.WriteLine(elapsed);
         }
 
         public void Draw(SKCanvas canvas)
         {
-            if (_drawCount <= 2)
-            {
-                _queueDraw = false;
-            }
-
-            _drawCount++;
-
             SKPaint itemPaint = new SKPaint
             {
                 IsAntialias = true,
@@ -250,15 +233,18 @@ namespace Ryujinx.Ui
             foreach (ApplicationListItem item in ListItems)
             {
                 SKRect imageBounds = new SKRect(x, y, x + item.Image.Width, y + item.Image.Height);
-                if (IsInBounds(imageBounds))
+                if (IsInBounds(imageBounds) && !IsOverlayCovered(imageBounds))
                 {
                     if (item.ResizedImage == null || item.ResizedImage.Width != ItemBitmapSize)
                     {
+                        SKImageInfo info = new SKImageInfo(ItemBitmapSize, ItemBitmapSize);
                         item.ResizedImage?.Dispose();
-                        item.ResizedImage = new SKBitmap(ItemBitmapSize, ItemBitmapSize);
-                        item.Image.ScalePixels(item.ResizedImage, SKFilterQuality.High);
+                        var img = SKImage.FromBitmap(item.Image);
+                        item.ResizedImage = SKImage.Create(info);
+                        img.ScalePixels(item.ResizedImage.PeekPixels(), SKFilterQuality.Low);
+                        img.Dispose();
                     }
-                    canvas.DrawBitmap(item.ResizedImage, x, y, itemPaint);
+                    canvas.DrawImage(item.ResizedImage, x, y, itemPaint);
                 }
                 else
                 {
@@ -396,6 +382,23 @@ namespace Ryujinx.Ui
                     _viewBounds.Contains(bounds.Right, bounds.Top) ||
                     _viewBounds.Contains(bounds.Left, bounds.Bottom) ||
                     _viewBounds.Contains(bounds.Right, bounds.Bottom);
+            }
+
+            bool IsOverlayCovered(SKRect bounds)
+            {
+                SKRect fullOverlayBounds = new SKRect()
+                {
+                    Left = _viewBounds.Left + ListPadding,
+                    Right = _viewBounds.Right - ListPadding,
+                    Top = _viewBounds.Top + ListPadding,
+                    Bottom = _viewBounds.Bottom - ListPadding,
+                };
+
+                return CurrentOverlayBounds.Contains(bounds.Left, bounds.Top) &&
+                   CurrentOverlayBounds.Contains(bounds.Right, bounds.Top) &&
+                   CurrentOverlayBounds.Contains(bounds.Left, bounds.Bottom) &&
+                   CurrentOverlayBounds.Contains(bounds.Right, bounds.Bottom) &&
+                   OverlayActive && CurrentOverlayBounds == fullOverlayBounds;
             }
         }
 
@@ -903,6 +906,7 @@ namespace Ryujinx.Ui
 
         protected override void Dispose(bool disposing)
         {
+            _renderer.CleanUp();
             base.Dispose(disposing);
             _waitRenderingEvent.Set();
             _renderer.Dispose();

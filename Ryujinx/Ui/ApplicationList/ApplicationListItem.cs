@@ -6,7 +6,7 @@ namespace Ryujinx.Ui
     public class ApplicationListItem : IDisposable
     {
         public SKBitmap        Image;
-        public SKBitmap        ResizedImage;
+        public SKImage         ResizedImage;
         public ApplicationData Data;
         public SKPoint         Coords;
         public SKSize          ResizedSize;

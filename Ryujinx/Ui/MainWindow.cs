@@ -719,6 +719,7 @@ namespace Ryujinx.Ui
 
         private void Window_Close(object sender, DeleteEventArgs args)
         {
+            _applicationList?.Dispose();
             End(_emulationContext);
         }
 

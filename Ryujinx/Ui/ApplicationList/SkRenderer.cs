@@ -7,6 +7,7 @@ using SkiaSharp.Views.Desktop;
 using SkiaSharp.Views.Gtk;
 using System;
 using System.Threading;
+using Cairo;
 
 namespace Ryujinx.Ui
 {
@@ -50,8 +51,6 @@ namespace Ryujinx.Ui
             OpenTK.Toolkit.Init();
 
             _resetEvent = new ManualResetEvent(false);
-
-            // this.RenderFrame += Render_Frame;
 
             _rendererThread = new Thread(RenderLoop)
             {
@@ -100,20 +99,29 @@ namespace Ryujinx.Ui
 
         private void Render()
         {
-            if(!_initialized || !IsRendering)
+            if (!_initialized || !IsRendering)
             {
                 return;
             }
 
-            if(_resized)
+            if (_resized)
             {
                 _resized = false;
 
                 ResizeRenderTarget();
             }
 
+            if (!IsRendering)
+            {
+                return;
+            }
+
             lock (GraphicsContext)
             {
+                if (this.InDestruction())
+                {
+                    return;
+                }
                 GraphicsContext.MakeCurrent(WindowInfo);
 
                 _surface?.Dispose();
@@ -132,14 +140,23 @@ namespace Ryujinx.Ui
 
                     DrawBuffers();
 
-                    if(!IsRendering)
+                    if (!IsRendering)
                     {
                         return;
                     }
 
+                    if (this.InDestruction())
+                    {
+                        return;
+                    }
                     SwapBuffers();
 
                     canvas.Dispose();
+                }
+
+                if (this.InDestruction())
+                {
+                    return;
                 }
 
                 DeleteBuffers();
@@ -224,6 +241,10 @@ namespace Ryujinx.Ui
             _interface = GRGlInterface.CreateNativeGlInterface();
             _contextOpenGL = GRContext.Create(GRBackend.OpenGL, _interface);
 
+            _contextOpenGL.GetResourceCacheLimits(out int max, out long res);
+
+            _contextOpenGL.SetResourceCacheLimits(max * 2, res * 2);
+
             _initialized = true;
 
             GraphicsContext.SwapInterval = 0;
@@ -247,8 +268,6 @@ namespace Ryujinx.Ui
             DeleteBuffers();
 
             _renderTarget = CreateRenderTarget(_info, _contextOpenGL, out _frameBuffer, out _texture, out _rbo);
-
-            Bind();
 
             return SKSurface.Create(_contextOpenGL, _renderTarget, GRSurfaceOrigin.BottomLeft, ColorType);
         }
