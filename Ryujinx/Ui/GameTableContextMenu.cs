@@ -21,6 +21,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using static LibHac.Fs.ApplicationSaveDataManagement;
+using static Ryujinx.Ui.LocaleHelper;
 using GUI = Gtk.Builder.ObjectAttribute;
 
 namespace Ryujinx.Ui
@@ -48,7 +49,7 @@ namespace Ryujinx.Ui
 #pragma warning restore IDE0044
 
         public GameTableContextMenu(ListStore gameTableStore, BlitStruct<ApplicationControlProperty> controlData, TreeIter rowIter, VirtualFileSystem virtualFileSystem)
-            : this(new Builder("Ryujinx.Ui.GameTableContextMenu.glade"), gameTableStore, controlData, rowIter, virtualFileSystem) { }
+            : this(new LocaleBuilder("Ryujinx.Ui.GameTableContextMenu.glade"), gameTableStore, controlData, rowIter, virtualFileSystem) { }
 
         private GameTableContextMenu(Builder builder, ListStore gameTableStore, BlitStruct<ApplicationControlProperty> controlData, TreeIter rowIter, VirtualFileSystem virtualFileSystem) : base(builder.GetObject("_contextMenu").Handle)
         {
@@ -93,8 +94,8 @@ namespace Ryujinx.Ui
                 {
                     Title          = "Ryujinx",
                     Icon           = new Gdk.Pixbuf(Assembly.GetExecutingAssembly(), "Ryujinx.Ui.assets.Icon.png"),
-                    Text           = $"There is no savedata for {titleName} [{titleId:x16}]",
-                    SecondaryText  = "Would you like to create savedata for this game?",
+                    Text           = GetText($"There is no savedata for {titleName} [{titleId:x16}]"),
+                    SecondaryText  = GetText("Would you like to create savedata for this game?"),
                     WindowPosition = WindowPosition.Center
                 };
 
@@ -125,7 +126,7 @@ namespace Ryujinx.Ui
 
                 if (result.IsFailure())
                 {
-                    GtkDialog.CreateErrorDialog($"There was an error creating the specified savedata: {result.ToStringWithName()}");
+                    GtkDialog.CreateErrorDialog(GetText($"There was an error creating the specified savedata: {result.ToStringWithName()}"));
 
                     return false;
                 }
@@ -141,7 +142,7 @@ namespace Ryujinx.Ui
                 return true;
             }
 
-            GtkDialog.CreateErrorDialog($"There was an error finding the specified savedata: {result.ToStringWithName()}");
+            GtkDialog.CreateErrorDialog(GetText($"There was an error finding the specified savedata: {result.ToStringWithName()}"));
 
             return false;
         }
@@ -177,7 +178,13 @@ namespace Ryujinx.Ui
 
         private void ExtractSection(NcaSectionType ncaSectionType)
         {
-            FileChooserDialog fileChooser = new FileChooserDialog("Choose the folder to extract into", null, FileChooserAction.SelectFolder, "Cancel", ResponseType.Cancel, "Extract", ResponseType.Accept);
+            FileChooserDialog fileChooser = new FileChooserDialog(GetText("Choose the folder to extract into"), 
+                                                                  null, 
+                                                                  FileChooserAction.SelectFolder, 
+                                                                  GetText("Cancel"), 
+                                                                  ResponseType.Cancel,
+                                                                  GetText("Extract"), 
+                                                                  ResponseType.Accept);
             fileChooser.SetPosition(WindowPosition.Center);
 
             int    response    = fileChooser.Run();
@@ -195,9 +202,9 @@ namespace Ryujinx.Ui
                     {
                         _dialog = new MessageDialog(null, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Cancel, null)
                         {
-                            Title          = "Ryujinx - NCA Section Extractor",
+                            Title          = GetText("Ryujinx - NCA Section Extractor"),
                             Icon           = new Gdk.Pixbuf(Assembly.GetExecutingAssembly(), "Ryujinx.Ui.assets.Icon.png"),
-                            SecondaryText  = $"Extracting {ncaSectionType} section from {System.IO.Path.GetFileName(sourceFile)}...",
+                            SecondaryText  = GetText($"Extracting {ncaSectionType} section from {System.IO.Path.GetFileName(sourceFile)}..."),
                             WindowPosition = WindowPosition.Center
                         };
 
@@ -263,7 +270,7 @@ namespace Ryujinx.Ui
 
                             Gtk.Application.Invoke(delegate
                             {
-                                GtkDialog.CreateErrorDialog("Extraction failed. The main NCA was not present in the selected file.");
+                                GtkDialog.CreateErrorDialog(GetText("Extraction failed. The main NCA was not present in the selected file."));
                             });
 
                             return;
@@ -326,7 +333,7 @@ namespace Ryujinx.Ui
                                 {
                                     _dialog?.Dispose();
 
-                                    GtkDialog.CreateErrorDialog("Extraction failed. Read the log file for further information.");
+                                    GtkDialog.CreateErrorDialog(GetText("Extraction failed. Read the log file for further information."));
                                 });
                             }
                             else if (resultCode.Value.IsSuccess())
@@ -337,9 +344,9 @@ namespace Ryujinx.Ui
 
                                     MessageDialog dialog = new MessageDialog(null, DialogFlags.DestroyWithParent, MessageType.Info, ButtonsType.Ok, null)
                                     {
-                                        Title          = "Ryujinx - NCA Section Extractor",
+                                        Title          = GetText("Ryujinx - NCA Section Extractor"),
                                         Icon           = new Gdk.Pixbuf(Assembly.GetExecutingAssembly(), "Ryujinx.Ui.assets.Icon.png"),
-                                        SecondaryText  = "Extraction has completed successfully.",
+                                        SecondaryText  = GetText("Extraction has completed successfully."),
                                         WindowPosition = WindowPosition.Center
                                     };
 
@@ -456,7 +463,7 @@ namespace Ryujinx.Ui
 
             if (!ulong.TryParse(titleId, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ulong titleIdNumber))
             {
-                GtkDialog.CreateErrorDialog("UI error: The selected game did not have a valid title ID");
+                GtkDialog.CreateErrorDialog(GetText("UI error: The selected game did not have a valid title ID"));
 
                 return;
             }
@@ -493,7 +500,7 @@ namespace Ryujinx.Ui
 
             if (!ulong.TryParse(titleId, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ulong titleIdNumber))
             {
-                GtkDialog.CreateErrorDialog("UI error: The selected game did not have a valid title ID");
+                GtkDialog.CreateErrorDialog(GetText("UI error: The selected game did not have a valid title ID"));
 
                 return;
             }
@@ -511,7 +518,7 @@ namespace Ryujinx.Ui
 
             if (!ulong.TryParse(titleId, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ulong titleIdNumber))
             {
-                GtkDialog.CreateErrorDialog("UI error: The selected game did not have a valid title ID");
+                GtkDialog.CreateErrorDialog(GetText("UI error: The selected game did not have a valid title ID"));
 
                 return;
             }

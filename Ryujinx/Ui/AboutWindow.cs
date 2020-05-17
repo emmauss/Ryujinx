@@ -21,7 +21,7 @@ namespace Ryujinx.Ui
 #pragma warning restore CS0649
 #pragma warning restore IDE0044
 
-        public AboutWindow() : this(new Builder("Ryujinx.Ui.AboutWindow.glade")) { }
+        public AboutWindow() : this(new LocaleBuilder("Ryujinx.Ui.AboutWindow.glade")) { }
 
         private AboutWindow(Builder builder) : base(builder.GetObject("_aboutWin").Handle)
         {

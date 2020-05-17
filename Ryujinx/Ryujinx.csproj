@@ -31,6 +31,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Ui\locale\ja\**" />
+    <EmbeddedResource Remove="Ui\locale\ja\**" />
+    <None Remove="Ui\locale\ja\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Ui\AboutWindow.glade" />
     <None Remove="Ui\assets\JoyConLeft.svg" />
     <None Remove="Ui\assets\JoyConPair.svg" />
@@ -97,8 +103,33 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="UI\locale\strings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>strings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="UI\locale\strings.fr.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="UI\locale\strings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>strings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Config.json" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Profile Debug'">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="UI\locale\fr\LC_MESSAGES\ryujinx.mo">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="UI\locale\ja.po">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CustomToolNamespace>locale/jp/</CustomToolNamespace>
     </None>
   </ItemGroup>
 

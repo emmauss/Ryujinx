@@ -171,8 +171,7 @@
                       <object class="GtkLabel" id="disclaimer">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Ryujinx is not affiliated with Nintendo,
-or any of its partners, in any way</property>
+                        <property name="label" translatable="yes">Ryujinx is not affiliated with Nintendo, or any of its partners, in any way</property>
                         <property name="justify">center</property>
                         <attributes>
                           <attribute name="scale" value="0.80000000000000004"/>
@@ -428,10 +427,7 @@ or any of its partners, in any way</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="margin_left">10</property>
-                    <property name="label" translatable="yes">Ryujinx is an emulator for the Nintendo Switch.
-Please support us on Patreon.
-Get all the latest news on our Twitter or Discord.
-Developers interested in contributing can find out more on our Discord.</property>
+                    <property name="label" translatable="yes">Ryujinx is an emulator for the Nintendo Switch. Please support us on Patreon. Get all the latest news on our Twitter or Discord. Developers interested in contributing can find out more on our Discord.</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -482,10 +478,8 @@ Developers interested in contributing can find out more on our Discord.</propert
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
-                                    <property name="label" translatable="yes">gdkchan
-LDj3SNuD
-Ac_K
-Thog</property>
+                                    <property name="xpad">5</property>
+                                    <property name="label" translatable="yes">gdkchan, LDj3SNuD, Ac_K, Thog</property>
                                     <property name="yalign">0</property>
                                   </object>
                                   <packing>
@@ -499,10 +493,7 @@ Thog</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
-                                    <property name="label" translatable="yes">»jD«
-emmaus
-Thealexbarney
-Andy A (BaronKiko)</property>
+                                    <property name="label" translatable="yes">jD, emmaus, Thealexbarney, Andy A (BaronKiko)</property>
                                     <property name="yalign">0</property>
                                   </object>
                                   <packing>

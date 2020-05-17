@@ -294,6 +294,11 @@ namespace Ryujinx.Configuration
         /// </summary>
         public ReactiveObject<bool> EnableDiscordIntegration { get; private set; }
 
+        /// <summary>
+        /// Changes the UI language
+        /// </summary>
+        public ReactiveObject<string> UILanguage { get; private set; }
+
         private ConfigurationState()
         {
             Ui                       = new UiSection();
@@ -302,6 +307,7 @@ namespace Ryujinx.Configuration
             Graphics                 = new GraphicsSection();
             Hid                      = new HidSection();
             EnableDiscordIntegration = new ReactiveObject<bool>();
+            UILanguage               = new ReactiveObject<string>();
         }
 
         public ConfigurationFileFormat ToFileFormat()
@@ -341,6 +347,7 @@ namespace Ryujinx.Configuration
                 SystemTimeOffset          = System.SystemTimeOffset,
                 DockedMode                = System.EnableDockedMode,
                 EnableDiscordIntegration  = EnableDiscordIntegration,
+                UILanguage                = UILanguage,
                 EnableVsync               = Graphics.EnableVsync,
                 EnableMulticoreScheduling = System.EnableMulticoreScheduling,
                 EnablePtc                 = System.EnablePtc,
@@ -390,6 +397,7 @@ namespace Ryujinx.Configuration
             System.SystemTimeOffset.Value          = 0;
             System.EnableDockedMode.Value          = false;
             EnableDiscordIntegration.Value         = true;
+            UILanguage.Value                       = "en";
             Graphics.EnableVsync.Value             = true;
             System.EnableMulticoreScheduling.Value = true;
             System.EnablePtc.Value                 = false;
@@ -564,11 +572,18 @@ namespace Ryujinx.Configuration
                 configurationFileUpdated = true;
             }
 
+            if (configurationFileFormat.Version < 8)
+            {
+                Common.Logging.Logger.PrintWarning(LogClass.Application, $"Outdated configuration version {configurationFileFormat.Version}, migrating to version 8.");
+
+                configurationFileFormat.UILanguage = "en";
+
+                configurationFileUpdated = true;
+            }
+
             // Only needed for version 6 configurations.
             if (configurationFileFormat.Version == 6)
             {
-                Common.Logging.Logger.PrintWarning(LogClass.Application, $"Outdated configuration version {configurationFileFormat.Version}, migrating to version 7.");
-
                 for (int i = 0; i < configurationFileFormat.KeyboardConfig.Count; i++)
                 {
                     if (configurationFileFormat.KeyboardConfig[i].Index != KeyboardConfig.AllKeyboardsIndex)
@@ -615,6 +630,7 @@ namespace Ryujinx.Configuration
             System.EnableDockedMode.Value          = configurationFileFormat.DockedMode;
             System.EnableDockedMode.Value          = configurationFileFormat.DockedMode;
             EnableDiscordIntegration.Value         = configurationFileFormat.EnableDiscordIntegration;
+            UILanguage.Value                       = configurationFileFormat.UILanguage;
             Graphics.EnableVsync.Value             = configurationFileFormat.EnableVsync;
             System.EnableMulticoreScheduling.Value = configurationFileFormat.EnableMulticoreScheduling;
             System.EnablePtc.Value                 = configurationFileFormat.EnablePtc;

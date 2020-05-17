@@ -88,6 +88,11 @@ namespace Ryujinx.Configuration
         public string SystemTimeZone { get; set; }
 
         /// <summary>
+        /// Change UI Language
+        /// </summary>
+        public string UILanguage { get; set; }
+
+        /// <summary>
         /// Change System Time Offset in seconds
         /// </summary>
         public long SystemTimeOffset { get; set; }

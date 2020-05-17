@@ -16,6 +16,8 @@ using System.IO;
 using GUI = Gtk.Builder.ObjectAttribute;
 using JsonHelper = Ryujinx.Common.Utilities.JsonHelper;
 
+using static Ryujinx.Ui.LocaleHelper;
+
 namespace Ryujinx.Ui
 {
     public class TitleUpdateWindow : Window
@@ -32,7 +34,7 @@ namespace Ryujinx.Ui
         [GUI] RadioButton _noUpdateRadioButton;
 #pragma warning restore CS0649, IDE0044
 
-        public TitleUpdateWindow(string titleId, string titleName, VirtualFileSystem virtualFileSystem) : this(new Builder("Ryujinx.Ui.TitleUpdateWindow.glade"), titleId, titleName, virtualFileSystem) { }
+        public TitleUpdateWindow(string titleId, string titleName, VirtualFileSystem virtualFileSystem) : this(new LocaleBuilder("Ryujinx.Ui.TitleUpdateWindow.glade"), titleId, titleName, virtualFileSystem) { }
 
         private TitleUpdateWindow(Builder builder, string titleId, string titleName, VirtualFileSystem virtualFileSystem) : base(builder.GetObject("_titleUpdateWindow").Handle)
         {
@@ -56,7 +58,7 @@ namespace Ryujinx.Ui
                 };
             }
 
-            _baseTitleInfoLabel.Text = $"Updates Available for {titleName} [{titleId}]";
+            _baseTitleInfoLabel.Text = GetText($"Updates Available for {titleName} [{titleId}]");
 
             foreach (string path in _titleUpdateWindowData.Paths)
             {
@@ -112,7 +114,7 @@ namespace Ryujinx.Ui
                             }
                             else
                             {
-                                GtkDialog.CreateErrorDialog("The specified file does not contain an update for the selected title!");
+                                GtkDialog.CreateErrorDialog(GetText("The specified file does not contain an update for the selected title!"));
                                 
                                 break;
                             }
@@ -123,7 +125,7 @@ namespace Ryujinx.Ui
 
                             if (showErrorDialog)
                             {
-                                GtkDialog.CreateInfoDialog("Ryujinx - Error", "Add Update Failed!", "The NCA header content type check has failed. This is usually because the header key is incorrect or missing.");
+                                GtkDialog.CreateInfoDialog(GetText("Ryujinx - Error"), GetText("Add Update Failed!"), GetText("The NCA header content type check has failed. This is usually because the header key is incorrect or missing."));
                             }
                             
                             break;
@@ -134,7 +136,7 @@ namespace Ryujinx.Ui
 
                             if (showErrorDialog)
                             {
-                                GtkDialog.CreateInfoDialog("Ryujinx - Error", "Add Update Failed!", $"Your key set is missing a key with the name: {exception.Name}");
+                                GtkDialog.CreateInfoDialog(GetText("Ryujinx - Error"), GetText("Add Update Failed!"), GetText($"Your key set is missing a key with the name: {exception.Name}"));
                             }
 
                             break;
@@ -146,7 +148,7 @@ namespace Ryujinx.Ui
 
         private void AddButton_Clicked(object sender, EventArgs args)
         {
-            FileChooserDialog fileChooser = new FileChooserDialog("Select update files", this, FileChooserAction.Open, "Cancel", ResponseType.Cancel, "Add", ResponseType.Accept)
+            FileChooserDialog fileChooser = new FileChooserDialog(GetText("Select update files"), this, FileChooserAction.Open, GetText("Cancel"), ResponseType.Cancel, GetText("Add"), ResponseType.Accept)
             {
                 SelectMultiple = true,
                 Filter         = new FileFilter()
@@ -169,7 +171,7 @@ namespace Ryujinx.Ui
         {
             foreach (RadioButton radioButton in _noUpdateRadioButton.Group)
             {
-                if (radioButton.Label != "No Update" && radioButton.Active)
+                if (radioButton.Label != GetText("No Update") && radioButton.Active)
                 {
                     _availableUpdatesBox.Remove(radioButton);
                     _radioButtonToPathDictionary.Remove(radioButton);

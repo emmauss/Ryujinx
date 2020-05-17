@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using Ryujinx.Common.Configuration.Hid;
 using GUI = Gtk.Builder.ObjectAttribute;
+using static Ryujinx.Ui.LocaleHelper;
 
 namespace Ryujinx.Ui
 {
@@ -42,6 +43,7 @@ namespace Ryujinx.Ui
         [GUI] ComboBoxText _systemLanguageSelect;
         [GUI] ComboBoxText _systemRegionSelect;
         [GUI] ComboBoxText _systemTimeZoneSelect;
+        [GUI] ComboBoxText _uiLanguageSelect;
         [GUI] SpinButton   _systemTimeYearSpin;
         [GUI] SpinButton   _systemTimeMonthSpin;
         [GUI] SpinButton   _systemTimeDaySpin;
@@ -71,7 +73,7 @@ namespace Ryujinx.Ui
         [GUI] ToggleButton _configureControllerH;
 #pragma warning restore CS0649, IDE0044
 
-        public SettingsWindow(VirtualFileSystem virtualFileSystem, HLE.FileSystem.Content.ContentManager contentManager) : this(new Builder("Ryujinx.Ui.SettingsWindow.glade"), virtualFileSystem, contentManager) { }
+        public SettingsWindow(VirtualFileSystem virtualFileSystem, HLE.FileSystem.Content.ContentManager contentManager) : this(new LocaleBuilder("Ryujinx.Ui.SettingsWindow.glade"), virtualFileSystem, contentManager) { }
 
         private SettingsWindow(Builder builder, VirtualFileSystem virtualFileSystem, HLE.FileSystem.Content.ContentManager contentManager) : base(builder.GetObject("_settingsWin").Handle)
         {
@@ -195,6 +197,7 @@ namespace Ryujinx.Ui
             _systemRegionSelect.SetActiveId(ConfigurationState.Instance.System.Region.Value.ToString());
             _systemTimeZoneSelect.SetActiveId(timeZoneContentManager.SanityCheckDeviceLocationName());
             _anisotropy.SetActiveId(ConfigurationState.Instance.Graphics.MaxAnisotropy.Value.ToString());
+            _uiLanguageSelect.SetActiveId(ConfigurationState.Instance.UILanguage.Value);
 
             _custThemePath.Buffer.Text           = ConfigurationState.Instance.Ui.CustomThemePath;
             _graphicsShadersDumpPath.Buffer.Text = ConfigurationState.Instance.Graphics.ShadersDumpPath;
@@ -289,7 +292,7 @@ namespace Ryujinx.Ui
             }
             else
             {
-                FileChooserDialog fileChooser = new FileChooserDialog("Choose the game directory to add to the list", this, FileChooserAction.SelectFolder, "Cancel", ResponseType.Cancel, "Add", ResponseType.Accept);
+                FileChooserDialog fileChooser = new FileChooserDialog(GetText("Choose the game directory to add to the list"), this, FileChooserAction.SelectFolder, GetText("Cancel"), ResponseType.Cancel, GetText("Add"), ResponseType.Accept);
 
                 if (fileChooser.Run() == (int)ResponseType.Accept)
                 {
@@ -325,7 +328,7 @@ namespace Ryujinx.Ui
 
         private void BrowseThemeDir_Pressed(object sender, EventArgs args)
         {
-            FileChooserDialog fileChooser = new FileChooserDialog("Choose the theme to load", this, FileChooserAction.Open, "Cancel", ResponseType.Cancel, "Select", ResponseType.Accept);
+            FileChooserDialog fileChooser = new FileChooserDialog(GetText("Choose the theme to load"), this, FileChooserAction.Open, GetText("Cancel"), ResponseType.Cancel, GetText("Select"), ResponseType.Accept);
 
             fileChooser.Filter = new FileFilter();
             fileChooser.Filter.AddPattern("*.css");
@@ -385,6 +388,7 @@ namespace Ryujinx.Ui
             ConfigurationState.Instance.Logger.EnableFileLog.Value             = _fileLogToggle.Active;
             ConfigurationState.Instance.System.EnableDockedMode.Value          = _dockedModeToggle.Active;
             ConfigurationState.Instance.EnableDiscordIntegration.Value         = _discordToggle.Active;
+            ConfigurationState.Instance.UILanguage.Value                       = _uiLanguageSelect.ActiveId;
             ConfigurationState.Instance.Graphics.EnableVsync.Value             = _vSyncToggle.Active;
             ConfigurationState.Instance.System.EnableMulticoreScheduling.Value = _multiSchedToggle.Active;
             ConfigurationState.Instance.System.EnablePtc.Value                 = _ptcToggle.Active;

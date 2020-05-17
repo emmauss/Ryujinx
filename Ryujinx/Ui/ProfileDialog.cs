@@ -4,6 +4,8 @@ using System.Reflection;
 
 using GUI = Gtk.Builder.ObjectAttribute;
 
+using static Ryujinx.Ui.LocaleHelper;
+
 namespace Ryujinx.Ui
 {
     public class ProfileDialog : Dialog
@@ -15,7 +17,7 @@ namespace Ryujinx.Ui
         [GUI] Label _errorMessage;
 #pragma warning restore CS0649, IDE0044
 
-        public ProfileDialog() : this(new Builder("Ryujinx.Ui.ProfileDialog.glade")) { }
+        public ProfileDialog() : this(new LocaleBuilder("Ryujinx.Ui.ProfileDialog.glade")) { }
 
         private ProfileDialog(Builder builder) : base(builder.GetObject("_profileDialog").Handle)
         {
@@ -46,7 +48,7 @@ namespace Ryujinx.Ui
             }
             else
             {
-                _errorMessage.Text = "The file name contains invalid characters. Please try again.";
+                _errorMessage.Text = GetText("The file name contains invalid characters. Please try again.");
             }
         }
 

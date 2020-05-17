@@ -1,5 +1,6 @@
 using Gtk;
 using System.Reflection;
+using static Ryujinx.Ui.LocaleHelper;
 
 namespace Ryujinx.Ui
 {
@@ -32,17 +33,17 @@ namespace Ryujinx.Ui
 
         internal static void CreateWarningDialog(string mainText, string secondaryText)
         {
-            new GtkDialog("Ryujinx - Warning", mainText, secondaryText, MessageType.Warning).Run();
+            new GtkDialog(GetText("Ryujinx - Warning"), mainText, secondaryText, MessageType.Warning).Run();
         }
 
         internal static void CreateErrorDialog(string errorMessage)
         {
-            new GtkDialog("Ryujinx - Error", "Ryujinx has encountered an error", errorMessage, MessageType.Error).Run();
+            new GtkDialog(GetText("Ryujinx - Error"), GetText("Ryujinx has encountered an error"), errorMessage, MessageType.Error).Run();
         }
 
         internal static MessageDialog CreateConfirmationDialog(string mainText, string secondaryText = "")
         {
-            return new GtkDialog("Ryujinx - Confirmation", mainText, secondaryText, MessageType.Question, ButtonsType.YesNo);
+            return new GtkDialog(GetText("Ryujinx - Confirmation"), mainText, secondaryText, MessageType.Question, ButtonsType.YesNo);
         }
 
         internal static bool CreateExitDialog()
@@ -53,8 +54,8 @@ namespace Ryujinx.Ui
             }
 
             _isExitDialogOpen = true;
-            ResponseType res  = (ResponseType)new GtkDialog("Ryujinx - Exit", "Are you sure you want to stop emulation?", 
-                "All unsaved data will be lost", MessageType.Question, ButtonsType.YesNo).Run();
+            ResponseType res  = (ResponseType)new GtkDialog(GetText("Ryujinx - Exit"), GetText("Are you sure you want to stop emulation?"),
+                GetText("All unsaved data will be lost"), MessageType.Question, ButtonsType.YesNo).Run();
             _isExitDialogOpen = false;
             
             return res == ResponseType.Yes;

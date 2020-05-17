@@ -9,6 +9,8 @@ using OpenTK;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Globalization;
+using System.Threading;
 
 namespace Ryujinx
 {
@@ -34,7 +36,6 @@ namespace Ryujinx
             Environment.SetEnvironmentVariable("Path", $"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin")};{systemPath}");
 
             GLib.ExceptionManager.UnhandledException += Glib_UnhandledException;
-
             // Initialize the configuration
             ConfigurationState.Initialize();
 
@@ -82,6 +83,11 @@ namespace Ryujinx
             Logger.PrintInfo(LogClass.Application, $"Operating System: {SystemInfo.Instance.OsDescription}");
             Logger.PrintInfo(LogClass.Application, $"CPU: {SystemInfo.Instance.CpuName}");
             Logger.PrintInfo(LogClass.Application, $"Total RAM: {SystemInfo.Instance.RamSizeInMB}");
+
+
+            CultureInfo ci = new CultureInfo(ConfigurationState.Instance.UILanguage.Value);
+            Thread.CurrentThread.CurrentCulture   = ci;
+            Thread.CurrentThread.CurrentUICulture = ci;
 
             Profile.Initialize();
 

@@ -13,6 +13,8 @@ using System.Threading;
 using GUI = Gtk.Builder.ObjectAttribute;
 using Key = Ryujinx.Configuration.Hid.Key;
 
+using static Ryujinx.Ui.LocaleHelper;
+
 namespace Ryujinx.Ui
 {
     public class ControllerWindow : Window
@@ -79,7 +81,7 @@ namespace Ryujinx.Ui
         [GUI] Image        _controllerImage;
 #pragma warning restore CS0649, IDE0044
 
-        public ControllerWindow(PlayerIndex controllerId, VirtualFileSystem virtualFileSystem) : this(new Builder("Ryujinx.Ui.ControllerWindow.glade"), controllerId, virtualFileSystem) { }
+        public ControllerWindow(PlayerIndex controllerId, VirtualFileSystem virtualFileSystem) : this(new LocaleBuilder("Ryujinx.Ui.ControllerWindow.glade"), controllerId, virtualFileSystem) { }
 
         private ControllerWindow(Builder builder, PlayerIndex controllerId, VirtualFileSystem virtualFileSystem) : base(builder.GetObject("_controllerWin").Handle)
         {
@@ -139,7 +141,7 @@ namespace Ryujinx.Ui
             _inputDevice.Append("disabled", "Disabled");
             _inputDevice.SetActiveId("disabled");
 
-            _inputDevice.Append($"keyboard/{KeyboardConfig.AllKeyboardsIndex}", "All keyboards");
+            _inputDevice.Append($"keyboard/{KeyboardConfig.AllKeyboardsIndex}", GetText("All keyboards"));
 
             for (int i = 0; i < 20; i++)
             {
@@ -502,7 +504,7 @@ namespace Ryujinx.Ui
 
             if (!_inputDevice.ActiveId.StartsWith("disabled"))
             {
-                GtkDialog.CreateErrorDialog("Some fields entered where invalid and therefore your config was not saved.");
+                GtkDialog.CreateErrorDialog(GetText("Some fields entered where invalid and therefore your config was not saved."));
             }
 
             return null;
@@ -883,7 +885,7 @@ namespace Ryujinx.Ui
 
             if (_inputDevice.ActiveId == "disabled" || _profile.ActiveId == "default" || _profile.ActiveId == null) return;
 
-            MessageDialog confirmDialog = GtkDialog.CreateConfirmationDialog("Deleting Profile", "This action is irreversible, are your sure you want to continue?");
+            MessageDialog confirmDialog = GtkDialog.CreateConfirmationDialog(GetText("Deleting Profile"), GetText("This action is irreversible, are your sure you want to continue?"));
 
             if (confirmDialog.Run() == (int)ResponseType.Yes)
             {

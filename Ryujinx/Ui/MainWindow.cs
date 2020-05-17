@@ -16,10 +16,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
 using GUI = Gtk.Builder.ObjectAttribute;
+
+using static Ryujinx.Ui.LocaleHelper;
 
 namespace Ryujinx.Ui
 {
@@ -82,7 +85,7 @@ namespace Ryujinx.Ui
 
 #pragma warning restore CS0649, IDE0044, CS0169
 
-        public MainWindow() : this(new Builder("Ryujinx.Ui.MainWindow.glade")) { }
+        public MainWindow() : this(new LocaleBuilder("Ryujinx.Ui.MainWindow.glade")) { }
 
         private MainWindow(Builder builder) : base(builder.GetObject("_mainWin").Handle)
         {
@@ -241,28 +244,28 @@ namespace Ryujinx.Ui
             CellRendererToggle favToggle = new CellRendererToggle();
             favToggle.Toggled += FavToggle_Toggled;
 
-            if (ConfigurationState.Instance.Ui.GuiColumns.FavColumn)        _gameTable.AppendColumn("Fav",         favToggle,                "active", 0);
-            if (ConfigurationState.Instance.Ui.GuiColumns.IconColumn)       _gameTable.AppendColumn("Icon",        new CellRendererPixbuf(), "pixbuf", 1);
-            if (ConfigurationState.Instance.Ui.GuiColumns.AppColumn)        _gameTable.AppendColumn("Application", new CellRendererText(),   "text",   2);
-            if (ConfigurationState.Instance.Ui.GuiColumns.DevColumn)        _gameTable.AppendColumn("Developer",   new CellRendererText(),   "text",   3);
-            if (ConfigurationState.Instance.Ui.GuiColumns.VersionColumn)    _gameTable.AppendColumn("Version",     new CellRendererText(),   "text",   4);
-            if (ConfigurationState.Instance.Ui.GuiColumns.TimePlayedColumn) _gameTable.AppendColumn("Time Played", new CellRendererText(),   "text",   5);
-            if (ConfigurationState.Instance.Ui.GuiColumns.LastPlayedColumn) _gameTable.AppendColumn("Last Played", new CellRendererText(),   "text",   6);
-            if (ConfigurationState.Instance.Ui.GuiColumns.FileExtColumn)    _gameTable.AppendColumn("File Ext",    new CellRendererText(),   "text",   7);
-            if (ConfigurationState.Instance.Ui.GuiColumns.FileSizeColumn)   _gameTable.AppendColumn("File Size",   new CellRendererText(),   "text",   8);
-            if (ConfigurationState.Instance.Ui.GuiColumns.PathColumn)       _gameTable.AppendColumn("Path",        new CellRendererText(),   "text",   9);
+            if (ConfigurationState.Instance.Ui.GuiColumns.FavColumn)        _gameTable.AppendColumn(GetText("Fav"),         favToggle,                "active", 0);
+            if (ConfigurationState.Instance.Ui.GuiColumns.IconColumn)       _gameTable.AppendColumn(GetText("Icon"),        new CellRendererPixbuf(), "pixbuf", 1);
+            if (ConfigurationState.Instance.Ui.GuiColumns.AppColumn)        _gameTable.AppendColumn(GetText("Application"), new CellRendererText(),   "text",   2);
+            if (ConfigurationState.Instance.Ui.GuiColumns.DevColumn)        _gameTable.AppendColumn(GetText("Developer"),   new CellRendererText(),   "text",   3);
+            if (ConfigurationState.Instance.Ui.GuiColumns.VersionColumn)    _gameTable.AppendColumn(GetText("Version"),     new CellRendererText(),   "text",   4);
+            if (ConfigurationState.Instance.Ui.GuiColumns.TimePlayedColumn) _gameTable.AppendColumn(GetText("Time Played"), new CellRendererText(),   "text",   5);
+            if (ConfigurationState.Instance.Ui.GuiColumns.LastPlayedColumn) _gameTable.AppendColumn(GetText("Last Played"), new CellRendererText(),   "text",   6);
+            if (ConfigurationState.Instance.Ui.GuiColumns.FileExtColumn)    _gameTable.AppendColumn(GetText("File Ext"),    new CellRendererText(),   "text",   7);
+            if (ConfigurationState.Instance.Ui.GuiColumns.FileSizeColumn)   _gameTable.AppendColumn(GetText("File Size"),   new CellRendererText(),   "text",   8);
+            if (ConfigurationState.Instance.Ui.GuiColumns.PathColumn)       _gameTable.AppendColumn(GetText("Path"),        new CellRendererText(),   "text",   9);
 
             foreach (TreeViewColumn column in _gameTable.Columns)
             {
-                if      (column.Title == "Fav"         && ConfigurationState.Instance.Ui.GuiColumns.FavColumn)        column.SortColumnId = 0;
-                else if (column.Title == "Application" && ConfigurationState.Instance.Ui.GuiColumns.AppColumn)        column.SortColumnId = 2;
-                else if (column.Title == "Developer"   && ConfigurationState.Instance.Ui.GuiColumns.DevColumn)        column.SortColumnId = 3;
-                else if (column.Title == "Version"     && ConfigurationState.Instance.Ui.GuiColumns.VersionColumn)    column.SortColumnId = 4;
-                else if (column.Title == "Time Played" && ConfigurationState.Instance.Ui.GuiColumns.TimePlayedColumn) column.SortColumnId = 5;
-                else if (column.Title == "Last Played" && ConfigurationState.Instance.Ui.GuiColumns.LastPlayedColumn) column.SortColumnId = 6;
-                else if (column.Title == "File Ext"    && ConfigurationState.Instance.Ui.GuiColumns.FileExtColumn)    column.SortColumnId = 7;
-                else if (column.Title == "File Size"   && ConfigurationState.Instance.Ui.GuiColumns.FileSizeColumn)   column.SortColumnId = 8;
-                else if (column.Title == "Path"        && ConfigurationState.Instance.Ui.GuiColumns.PathColumn)       column.SortColumnId = 9;
+                if      (column.Title == GetText("Fav")         && ConfigurationState.Instance.Ui.GuiColumns.FavColumn)        column.SortColumnId = 0;
+                else if (column.Title == GetText("Application") && ConfigurationState.Instance.Ui.GuiColumns.AppColumn)        column.SortColumnId = 2;
+                else if (column.Title == GetText("Developer")   && ConfigurationState.Instance.Ui.GuiColumns.DevColumn)        column.SortColumnId = 3;
+                else if (column.Title == GetText("Version")     && ConfigurationState.Instance.Ui.GuiColumns.VersionColumn)    column.SortColumnId = 4;
+                else if (column.Title == GetText("Time Played") && ConfigurationState.Instance.Ui.GuiColumns.TimePlayedColumn) column.SortColumnId = 5;
+                else if (column.Title == GetText("Last Played") && ConfigurationState.Instance.Ui.GuiColumns.LastPlayedColumn) column.SortColumnId = 6;
+                else if (column.Title == GetText("File Ext")    && ConfigurationState.Instance.Ui.GuiColumns.FileExtColumn)    column.SortColumnId = 7;
+                else if (column.Title == GetText("File Size")   && ConfigurationState.Instance.Ui.GuiColumns.FileSizeColumn)   column.SortColumnId = 8;
+                else if (column.Title == GetText("Path")        && ConfigurationState.Instance.Ui.GuiColumns.PathColumn)       column.SortColumnId = 9;
             }
         }
 
@@ -304,7 +307,7 @@ namespace Ryujinx.Ui
         {
             if (_gameLoaded)
             {
-                GtkDialog.CreateInfoDialog("Ryujinx", "A game has already been loaded", "Please close it first and try again.");
+                GtkDialog.CreateInfoDialog("Ryujinx", GetText("A game has already been loaded"), GetText("Please close it first and try again."));
             }
             else
             {
@@ -312,9 +315,9 @@ namespace Ryujinx.Ui
                 {
                     MessageDialog debugWarningDialog = new MessageDialog(this, DialogFlags.Modal, MessageType.Warning, ButtonsType.YesNo, null)
                     {
-                        Title         = "Ryujinx - Warning",
-                        Text          = "You have debug logging enabled, which is designed to be used by developers only.",
-                        SecondaryText = "For optimal performance, it's recommended to disable debug logging. Would you like to disable debug logging now?"
+                        Title         = GetText("Ryujinx - Warning"),
+                        Text          = GetText("You have debug logging enabled, which is designed to be used by developers only."),
+                        SecondaryText = GetText("For optimal performance, it's recommended to disable debug logging. Would you like to disable debug logging now?")
                     };
 
                     if (debugWarningDialog.Run() == (int)ResponseType.Yes)
@@ -330,9 +333,9 @@ namespace Ryujinx.Ui
                 {
                     MessageDialog shadersDumpWarningDialog = new MessageDialog(this, DialogFlags.Modal, MessageType.Warning, ButtonsType.YesNo, null)
                     {
-                        Title         = "Ryujinx - Warning",
-                        Text          = "You have shader dumping enabled, which is designed to be used by developers only.",
-                        SecondaryText = "For optimal performance, it's recommended to disable shader dumping. Would you like to disable shader dumping now?"
+                        Title         = GetText("Ryujinx - Warning"),
+                        Text          = GetText("You have shader dumping enabled, which is designed to be used by developers only."),
+                        SecondaryText = GetText("For optimal performance, it's recommended to disable shader dumping. Would you like to disable shader dumping now?")
                     };
 
                     if (shadersDumpWarningDialog.Run() == (int)ResponseType.Yes)
@@ -546,7 +549,7 @@ namespace Ryujinx.Ui
 
             bool fullScreenToggled = this.Window.State.HasFlag(Gdk.WindowState.Fullscreen);
 
-            _fullScreen.Label = fullScreenToggled ? "Exit Fullscreen" : "Enter Fullscreen";
+            _fullScreen.Label = fullScreenToggled ? GetText("Exit Fullscreen") : GetText("Enter Fullscreen");
         }
 
         private static void UpdateGameMetadata(string titleId)
@@ -657,7 +660,7 @@ namespace Ryujinx.Ui
         {
             Application.Invoke(delegate
             {
-                _progressLabel.Text = $"{args.NumAppsLoaded}/{args.NumAppsFound} Games Loaded";
+                _progressLabel.Text = GetText($"{args.NumAppsLoaded}/{args.NumAppsFound} Games Loaded");
                 float barValue      = 0;
 
                 if (args.NumAppsFound != 0)
@@ -732,7 +735,7 @@ namespace Ryujinx.Ui
 
         private void Load_Application_File(object sender, EventArgs args)
         {
-            FileChooserDialog fileChooser = new FileChooserDialog("Choose the file to open", this, FileChooserAction.Open, "Cancel", ResponseType.Cancel, "Open", ResponseType.Accept);
+            FileChooserDialog fileChooser = new FileChooserDialog(GetText("Choose the file to open"), this, FileChooserAction.Open, GetText("Cancel"), ResponseType.Cancel, GetText("Open"), ResponseType.Accept);
 
             fileChooser.Filter = new FileFilter();
             fileChooser.Filter.AddPattern("*.nsp" );
@@ -752,7 +755,7 @@ namespace Ryujinx.Ui
 
         private void Load_Application_Folder(object sender, EventArgs args)
         {
-            FileChooserDialog fileChooser = new FileChooserDialog("Choose the folder to open", this, FileChooserAction.SelectFolder, "Cancel", ResponseType.Cancel, "Open", ResponseType.Accept);
+            FileChooserDialog fileChooser = new FileChooserDialog(GetText("Choose the folder to open"), this, FileChooserAction.SelectFolder, GetText("Cancel"), ResponseType.Cancel, GetText("Open"), ResponseType.Accept);
 
             if (fileChooser.Run() == (int)ResponseType.Accept)
             {
@@ -789,12 +792,12 @@ namespace Ryujinx.Ui
 
         private void Installer_File_Pressed(object o, EventArgs args)
         {
-            FileChooserDialog fileChooser = new FileChooserDialog("Choose the firmware file to open",
+            FileChooserDialog fileChooser = new FileChooserDialog(GetText("Choose the firmware file to open"),
                                                                   this,
                                                                   FileChooserAction.Open,
-                                                                  "Cancel",
+                                                                  GetText("Cancel"),
                                                                   ResponseType.Cancel,
-                                                                  "Open",
+                                                                  GetText("Open"),
                                                                   ResponseType.Accept);
 
             fileChooser.Filter = new FileFilter();
@@ -806,12 +809,12 @@ namespace Ryujinx.Ui
 
         private void Installer_Directory_Pressed(object o, EventArgs args)
         {
-            FileChooserDialog directoryChooser = new FileChooserDialog("Choose the firmware directory to open",
+            FileChooserDialog directoryChooser = new FileChooserDialog(GetText("Choose the firmware directory to open"),
                                                                        this,
                                                                        FileChooserAction.SelectFolder,
-                                                                       "Cancel",
+                                                                       GetText("Cancel"),
                                                                        ResponseType.Cancel,
-                                                                       "Open",
+                                                                       GetText("Open"),
                                                                        ResponseType.Accept);
 
             HandleInstallerDialog(directoryChooser);
@@ -847,11 +850,11 @@ namespace Ryujinx.Ui
                     {
                         dialog = new MessageDialog(this, DialogFlags.Modal, MessageType.Info, ButtonsType.Ok, false, "");
 
-                        dialog.Text = "Firmware not found.";
+                        dialog.Text = GetText("Firmware not found.");
 
-                        dialog.SecondaryText = $"A valid system firmware was not found in {filename}.";
+                        dialog.SecondaryText = GetText($"A valid system firmware was not found in {filename}.");
 
-                        Logger.PrintError(LogClass.Application, $"A valid system firmware was not found in {filename}.");
+                        Logger.PrintError(LogClass.Application, GetText($"A valid system firmware was not found in {filename}."));
 
                         dialog.Run();
                         dialog.Hide();
@@ -862,18 +865,18 @@ namespace Ryujinx.Ui
 
                     SystemVersion currentVersion = _contentManager.GetCurrentFirmwareVersion();
 
-                    string dialogMessage = $"System version {firmwareVersion.VersionString} will be installed.";
+                    string dialogMessage = GetText($"System version {firmwareVersion.VersionString} will be installed.");
 
                     if (currentVersion != null)
                     {
-                        dialogMessage += $"This will replace the current system version {currentVersion.VersionString}. ";
+                        dialogMessage += GetText($"This will replace the current system version {currentVersion.VersionString}. ");
                     }
 
-                    dialogMessage += "Do you want to continue?";
+                    dialogMessage += GetText("Do you want to continue?");
 
                     dialog = new MessageDialog(this, DialogFlags.Modal, MessageType.Question, ButtonsType.YesNo, false, "");
 
-                    dialog.Text = $"Install Firmware {firmwareVersion.VersionString}";
+                    dialog.Text = GetText($"Install Firmware {firmwareVersion.VersionString}");
                     dialog.SecondaryText = dialogMessage;
 
                     int response = dialog.Run();
@@ -882,13 +885,13 @@ namespace Ryujinx.Ui
 
                     dialog = new MessageDialog(this, DialogFlags.Modal, MessageType.Info, ButtonsType.None, false, "");
 
-                    dialog.Text = $"Install Firmware {firmwareVersion.VersionString}";
+                    dialog.Text = GetText($"Install Firmware {firmwareVersion.VersionString}");
 
-                    dialog.SecondaryText = "Installing firmware...";
+                    dialog.SecondaryText = GetText("Installing firmware...");
 
                     if (response == (int)ResponseType.Yes)
                     {
-                        Logger.PrintInfo(LogClass.Application, $"Installing firmware {firmwareVersion.VersionString}");
+                        Logger.PrintInfo(LogClass.Application, GetText($"Installing firmware {firmwareVersion.VersionString}"));
                         
                         Thread thread = new Thread(() =>
                         {
@@ -908,11 +911,11 @@ namespace Ryujinx.Ui
 
                                     dialog = new MessageDialog(this, DialogFlags.Modal, MessageType.Info, ButtonsType.Ok, false, "");
 
-                                    dialog.Text = $"Install Firmware {firmwareVersion.VersionString}";
+                                    dialog.Text = GetText($"Install Firmware {firmwareVersion.VersionString}");
 
-                                    dialog.SecondaryText = $"System version {firmwareVersion.VersionString} successfully installed.";
+                                    dialog.SecondaryText = GetText($"System version {firmwareVersion.VersionString} successfully installed.");
 
-                                    Logger.PrintInfo(LogClass.Application, $"System version {firmwareVersion.VersionString} successfully installed.");
+                                    Logger.PrintInfo(LogClass.Application, GetText($"System version {firmwareVersion.VersionString} successfully installed."));
 
                                     dialog.Run();
                                     dialog.Dispose();
@@ -928,10 +931,10 @@ namespace Ryujinx.Ui
 
                                     dialog = new MessageDialog(this, DialogFlags.Modal, MessageType.Info, ButtonsType.Ok, false, "");
 
-                                    dialog.Text = $"Install Firmware {firmwareVersion.VersionString} Failed.";
+                                    dialog.Text = GetText($"Install Firmware {firmwareVersion.VersionString} Failed.");
 
-                                    dialog.SecondaryText = $"An error occured while installing system version {firmwareVersion.VersionString}." +
-                                     " Please check logs for more info.";
+                                    dialog.SecondaryText = GetText($"An error occured while installing system version {firmwareVersion.VersionString}." +
+                                     " Please check logs for more info.");
 
                                     Logger.PrintError(LogClass.Application, ex.Message);
 
@@ -964,9 +967,9 @@ namespace Ryujinx.Ui
 
                     dialog = new MessageDialog(this, DialogFlags.Modal, MessageType.Info, ButtonsType.Ok, false, "");
 
-                    dialog.Text = "Parsing Firmware Failed.";
+                    dialog.Text = GetText("Parsing Firmware Failed.");
 
-                    dialog.SecondaryText = "An error occured while parsing firmware. Please check the logs for more info.";
+                    dialog.SecondaryText = GetText("An error occured while parsing firmware. Please check the logs for more info.");
 
                     Logger.PrintError(LogClass.Application, ex.Message);
 
@@ -1014,7 +1017,7 @@ namespace Ryujinx.Ui
             }
             catch(System.ComponentModel.Win32Exception)
             {
-                GtkDialog.CreateErrorDialog("Update canceled by user or updater was not found");
+                GtkDialog.CreateErrorDialog(GetText("Update canceled by user or updater was not found"));
             }
         }
 
@@ -1114,15 +1117,15 @@ namespace Ryujinx.Ui
             string aValue = model.GetValue(a, 5).ToString();
             string bValue = model.GetValue(b, 5).ToString();
 
-            if (aValue.Length > 4 && aValue.Substring(aValue.Length - 4) == "mins")
+            if (aValue.Length > 4 && aValue.Substring(aValue.Length - 4) == GetText("mins"))
             {
                 aValue = (float.Parse(aValue.Substring(0, aValue.Length - 5)) * 60).ToString();
             }
-            else if (aValue.Length > 3 && aValue.Substring(aValue.Length - 3) == "hrs")
+            else if (aValue.Length > 3 && aValue.Substring(aValue.Length - 3) == GetText("hrs"))
             {
                 aValue = (float.Parse(aValue.Substring(0, aValue.Length - 4)) * 3600).ToString();
             }
-            else if (aValue.Length > 4 && aValue.Substring(aValue.Length - 4) == "days")
+            else if (aValue.Length > 4 && aValue.Substring(aValue.Length - 4) == GetText("days"))
             {
                 aValue = (float.Parse(aValue.Substring(0, aValue.Length - 5)) * 86400).ToString();
             }
@@ -1131,15 +1134,15 @@ namespace Ryujinx.Ui
                 aValue = aValue.Substring(0, aValue.Length - 1);
             }
 
-            if (bValue.Length > 4 && bValue.Substring(bValue.Length - 4) == "mins")
+            if (bValue.Length > 4 && bValue.Substring(bValue.Length - 4) == GetText("mins"))
             {
                 bValue = (float.Parse(bValue.Substring(0, bValue.Length - 5)) * 60).ToString();
             }
-            else if (bValue.Length > 3 && bValue.Substring(bValue.Length - 3) == "hrs")
+            else if (bValue.Length > 3 && bValue.Substring(bValue.Length - 3) == GetText("hrs"))
             {
                 bValue = (float.Parse(bValue.Substring(0, bValue.Length - 4)) * 3600).ToString();
             }
-            else if (bValue.Length > 4 && bValue.Substring(bValue.Length - 4) == "days")
+            else if (bValue.Length > 4 && bValue.Substring(bValue.Length - 4) == GetText("days"))
             {
                 bValue = (float.Parse(bValue.Substring(0, bValue.Length - 5)) * 86400).ToString();
             }

@@ -1,0 +1,1135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Ryujinx" xml:space="preserve">
+    <value>Ryujinx</value>
+  </data>
+  <data name="(REE-YOU-JI-NX)" xml:space="preserve">
+    <value>(REE-YOU-JI-NX)</value>
+  </data>
+  <data name="Click to open the Ryujinx website in your default browser" xml:space="preserve">
+    <value>Click to open the Ryujinx website in your default browser</value>
+  </data>
+  <data name="www.ryujinx.org" xml:space="preserve">
+    <value>www.ryujinx.org</value>
+  </data>
+  <data name="Version x.x.x (Commit Number)" xml:space="preserve">
+    <value>Version x.x.x (Commit Number)</value>
+  </data>
+  <data name="MIT License" xml:space="preserve">
+    <value>MIT License</value>
+  </data>
+  <data name="Click to open the Ryujinx Patreon page in your default browser" xml:space="preserve">
+    <value>Click to open the Ryujinx Patreon page in your default browser</value>
+  </data>
+  <data name="Patreon" xml:space="preserve">
+    <value>Patreon</value>
+  </data>
+  <data name="Click to open the Ryujinx GitHub page in your default browser" xml:space="preserve">
+    <value>Click to open the Ryujinx GitHub page in your default browser</value>
+  </data>
+  <data name="GitHub" xml:space="preserve">
+    <value>GitHub</value>
+  </data>
+  <data name="Click to open an invite to the Ryujinx Discord server in your default browser" xml:space="preserve">
+    <value>Click to open an invite to the Ryujinx Discord server in your default browser</value>
+  </data>
+  <data name="Discord" xml:space="preserve">
+    <value>Discord</value>
+  </data>
+  <data name="Click to open the Ryujinx Twitter page in your default browser" xml:space="preserve">
+    <value>Click to open the Ryujinx Twitter page in your default browser</value>
+  </data>
+  <data name="Twitter" xml:space="preserve">
+    <value>Twitter</value>
+  </data>
+  <data name="About" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="Created By:" xml:space="preserve">
+    <value>Created By:</value>
+  </data>
+  <data name="All Contributors..." xml:space="preserve">
+    <value>All Contributors...</value>
+  </data>
+  <data name="Ryujinx - Controller Settings" xml:space="preserve">
+    <value>Ryujinx - Controller Settings</value>
+  </data>
+  <data name="Input Device" xml:space="preserve">
+    <value>Input Device</value>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="Refresh" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="The controller's type" xml:space="preserve">
+    <value>The controller's type</value>
+  </data>
+  <data name="Controller Type:" xml:space="preserve">
+    <value>Controller Type:</value>
+  </data>
+  <data name="Handheld" xml:space="preserve">
+    <value>Handheld</value>
+  </data>
+  <data name="Pro Controller" xml:space="preserve">
+    <value>Pro Controller</value>
+  </data>
+  <data name="Paired Joycons" xml:space="preserve">
+    <value>Paired Joycons</value>
+  </data>
+  <data name="Left Joycon" xml:space="preserve">
+    <value>Left Joycon</value>
+  </data>
+  <data name="Right Joycon" xml:space="preserve">
+    <value>Right Joycon</value>
+  </data>
+  <data name="Profile:" xml:space="preserve">
+    <value>Profile:</value>
+  </data>
+  <data name="Load" xml:space="preserve">
+    <value>Load</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Buttons" xml:space="preserve">
+    <value>Buttons</value>
+  </data>
+  <data name="A" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="B" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="X" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="Y" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="+" xml:space="preserve">
+    <value>+</value>
+  </data>
+  <data name="-" xml:space="preserve">
+    <value>-</value>
+  </data>
+  <data name="Left Stick" xml:space="preserve">
+    <value>Left Stick</value>
+  </data>
+  <data name="LStick Button" xml:space="preserve">
+    <value>LStick Button</value>
+  </data>
+  <data name="LStick Down" xml:space="preserve">
+    <value>LStick Down</value>
+  </data>
+  <data name="LStick Up" xml:space="preserve">
+    <value>LStick Up</value>
+  </data>
+  <data name="LStick Right" xml:space="preserve">
+    <value>LStick Right</value>
+  </data>
+  <data name="LStick Left" xml:space="preserve">
+    <value>LStick Left</value>
+  </data>
+  <data name="LStick Lt/Rt" xml:space="preserve">
+    <value>LStick Lt/Rt</value>
+  </data>
+  <data name="LStick Up/Dn" xml:space="preserve">
+    <value>LStick Up/Dn</value>
+  </data>
+  <data name="Invert" xml:space="preserve">
+    <value>Invert</value>
+  </data>
+  <data name="Deadzone Left" xml:space="preserve">
+    <value>Deadzone Left</value>
+  </data>
+  <data name="Triggers" xml:space="preserve">
+    <value>Triggers</value>
+  </data>
+  <data name="L" xml:space="preserve">
+    <value>L</value>
+  </data>
+  <data name="R" xml:space="preserve">
+    <value>R</value>
+  </data>
+  <data name="ZL" xml:space="preserve">
+    <value>ZL</value>
+  </data>
+  <data name="ZR" xml:space="preserve">
+    <value>ZR</value>
+  </data>
+  <data name="Left SL" xml:space="preserve">
+    <value>Left SL</value>
+  </data>
+  <data name="Left SR" xml:space="preserve">
+    <value>Left SR</value>
+  </data>
+  <data name="Right SL" xml:space="preserve">
+    <value>Right SL</value>
+  </data>
+  <data name="Right SR" xml:space="preserve">
+    <value>Right SR</value>
+  </data>
+  <data name="Trigger Threshold" xml:space="preserve">
+    <value>Trigger Threshold</value>
+  </data>
+  <data name="Directional Pad" xml:space="preserve">
+    <value>Directional Pad</value>
+  </data>
+  <data name="Dpad Up" xml:space="preserve">
+    <value>Dpad Up</value>
+  </data>
+  <data name="Dpad Down" xml:space="preserve">
+    <value>Dpad Down</value>
+  </data>
+  <data name="Dpad Left" xml:space="preserve">
+    <value>Dpad Left</value>
+  </data>
+  <data name="Dpad Right" xml:space="preserve">
+    <value>Dpad Right</value>
+  </data>
+  <data name="Right Stick" xml:space="preserve">
+    <value>Right Stick</value>
+  </data>
+  <data name="RStick Button" xml:space="preserve">
+    <value>RStick Button</value>
+  </data>
+  <data name="RStick Up" xml:space="preserve">
+    <value>RStick Up</value>
+  </data>
+  <data name="RStick Down" xml:space="preserve">
+    <value>RStick Down</value>
+  </data>
+  <data name="RStick Left" xml:space="preserve">
+    <value>RStick Left</value>
+  </data>
+  <data name="RStick Right" xml:space="preserve">
+    <value>RStick Right</value>
+  </data>
+  <data name="RStick Lt/Rt" xml:space="preserve">
+    <value>RStick Lt/Rt</value>
+  </data>
+  <data name="RStick Up/Dn" xml:space="preserve">
+    <value>RStick Up/Dn</value>
+  </data>
+  <data name="Deadzone Right" xml:space="preserve">
+    <value>Deadzone Right</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Open the folder where the User save for the application is loaded" xml:space="preserve">
+    <value>Open the folder where the User save for the application is loaded</value>
+  </data>
+  <data name="Open User Save Directory" xml:space="preserve">
+    <value>Open User Save Directory</value>
+  </data>
+  <data name="Open the folder where the Device save for the application is loaded" xml:space="preserve">
+    <value>Open the folder where the Device save for the application is loaded</value>
+  </data>
+  <data name="Open Device Save Directory" xml:space="preserve">
+    <value>Open Device Save Directory</value>
+  </data>
+  <data name="Open the folder where the BCAT save for the application is loaded" xml:space="preserve">
+    <value>Open the folder where the BCAT save for the application is loaded</value>
+  </data>
+  <data name="Open BCAT Save Directory" xml:space="preserve">
+    <value>Open BCAT Save Directory</value>
+  </data>
+  <data name="Manage Title Updates" xml:space="preserve">
+    <value>Manage Title Updates</value>
+  </data>
+  <data name="Extract RomFS Section" xml:space="preserve">
+    <value>Extract RomFS Section</value>
+  </data>
+  <data name="Extract ExeFS Section" xml:space="preserve">
+    <value>Extract ExeFS Section</value>
+  </data>
+  <data name="Extract Logo Section" xml:space="preserve">
+    <value>Extract Logo Section</value>
+  </data>
+  <data name="File" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="Open a file chooser to chose a switch compatible file to load" xml:space="preserve">
+    <value>Open a file chooser to chose a switch compatible file to load</value>
+  </data>
+  <data name="Load Application from File" xml:space="preserve">
+    <value>Load Application from File</value>
+  </data>
+  <data name="Open a file chooser to chose a switch compatible, unpacked application to load" xml:space="preserve">
+    <value>Open a file chooser to chose a switch compatible, unpacked application to load</value>
+  </data>
+  <data name="Load Unpacked Game" xml:space="preserve">
+    <value>Load Unpacked Game</value>
+  </data>
+  <data name="Open Ryujinx filesystem folder" xml:space="preserve">
+    <value>Open Ryujinx filesystem folder</value>
+  </data>
+  <data name="Open Ryujinx Folder" xml:space="preserve">
+    <value>Open Ryujinx Folder</value>
+  </data>
+  <data name="Exit Ryujinx" xml:space="preserve">
+    <value>Exit Ryujinx</value>
+  </data>
+  <data name="Exit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="Enter Fullscreen" xml:space="preserve">
+    <value>Enter Fullscreen</value>
+  </data>
+  <data name="Stop emualtion of the current game and return to game selection" xml:space="preserve">
+    <value>Stop emualtion of the current game and return to game selection</value>
+  </data>
+  <data name="Stop Emulation" xml:space="preserve">
+    <value>Stop Emulation</value>
+  </data>
+  <data name="Select which GUI columns to enable" xml:space="preserve">
+    <value>Select which GUI columns to enable</value>
+  </data>
+  <data name="Enable GUI Columns" xml:space="preserve">
+    <value>Enable GUI Columns</value>
+  </data>
+  <data name="Enable or Disable Favorite Games Column in the game list" xml:space="preserve">
+    <value>Enable or Disable Favorite Games Column in the game list</value>
+  </data>
+  <data name="Enable Favorite Games Column" xml:space="preserve">
+    <value>Enable Favorite Games Column</value>
+  </data>
+  <data name="Enable or Disable Icon Column in the game list" xml:space="preserve">
+    <value>Enable or Disable Icon Column in the game list</value>
+  </data>
+  <data name="Enable Icon Column" xml:space="preserve">
+    <value>Enable Icon Column</value>
+  </data>
+  <data name="Enable or Disable Title Name/ID Column in the game list" xml:space="preserve">
+    <value>Enable or Disable Title Name/ID Column in the game list</value>
+  </data>
+  <data name="Enable Title Name/ID Column" xml:space="preserve">
+    <value>Enable Title Name/ID Column</value>
+  </data>
+  <data name="Enable or Disable Developer Column in the game list" xml:space="preserve">
+    <value>Enable or Disable Developer Column in the game list</value>
+  </data>
+  <data name="Enable Developer Column" xml:space="preserve">
+    <value>Enable Developer Column</value>
+  </data>
+  <data name="Enable or Disable Version Column in the game list" xml:space="preserve">
+    <value>Enable or Disable Version Column in the game list</value>
+  </data>
+  <data name="Enable Version Column" xml:space="preserve">
+    <value>Enable Version Column</value>
+  </data>
+  <data name="Enable or Disable Time Played Column in the game list" xml:space="preserve">
+    <value>Enable or Disable Time Played Column in the game list</value>
+  </data>
+  <data name="Enable Time Played Column" xml:space="preserve">
+    <value>Enable Time Played Column</value>
+  </data>
+  <data name="Enable or Disable Last Played Column in the game list" xml:space="preserve">
+    <value>Enable or Disable Last Played Column in the game list</value>
+  </data>
+  <data name="Enable Last Played Column" xml:space="preserve">
+    <value>Enable Last Played Column</value>
+  </data>
+  <data name="Enable or Disable file extension column in the game list" xml:space="preserve">
+    <value>Enable or Disable file extension column in the game list</value>
+  </data>
+  <data name="Enable File Ext Column" xml:space="preserve">
+    <value>Enable File Ext Column</value>
+  </data>
+  <data name="Enable or Disable File Size Column in the game list" xml:space="preserve">
+    <value>Enable or Disable File Size Column in the game list</value>
+  </data>
+  <data name="Enable File Size Column" xml:space="preserve">
+    <value>Enable File Size Column</value>
+  </data>
+  <data name="Enable or Disable Path Column in the game list" xml:space="preserve">
+    <value>Enable or Disable Path Column in the game list</value>
+  </data>
+  <data name="Enable Path Column" xml:space="preserve">
+    <value>Enable Path Column</value>
+  </data>
+  <data name="Open settings window" xml:space="preserve">
+    <value>Open settings window</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Tools" xml:space="preserve">
+    <value>Tools</value>
+  </data>
+  <data name="Install Firmware" xml:space="preserve">
+    <value>Install Firmware</value>
+  </data>
+  <data name="Install a firmware from XCI or ZIP" xml:space="preserve">
+    <value>Install a firmware from XCI or ZIP</value>
+  </data>
+  <data name="Install a firmware from a directory" xml:space="preserve">
+    <value>Install a firmware from a directory</value>
+  </data>
+  <data name="Open Debugger" xml:space="preserve">
+    <value>Open Debugger</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="Check for updates to Ryujinx (requires Ryujinx Installer)" xml:space="preserve">
+    <value>Check for updates to Ryujinx (requires Ryujinx Installer)</value>
+  </data>
+  <data name="Check for Updates" xml:space="preserve">
+    <value>Check for Updates</value>
+  </data>
+  <data name="Open about window" xml:space="preserve">
+    <value>Open about window</value>
+  </data>
+  <data name="0/0 Games Loaded" xml:space="preserve">
+    <value>0/0 Games Loaded</value>
+  </data>
+  <data name="VSync" xml:space="preserve">
+    <value>VSync</value>
+  </data>
+  <data name="System Version" xml:space="preserve">
+    <value>System Version</value>
+  </data>
+  <data name="Ryujinx - Profile Dialog" xml:space="preserve">
+    <value>Ryujinx - Profile Dialog</value>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Enter a name for the new profile:" xml:space="preserve">
+    <value>Enter a name for the new profile:</value>
+  </data>
+  <data name="Ryujinx - Settings" xml:space="preserve">
+    <value>Ryujinx - Settings</value>
+  </data>
+  <data name="General" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="Enable Discord Rich Presence" xml:space="preserve">
+    <value>Enable Discord Rich Presence</value>
+  </data>
+  <data name="Enables or disables Discord Rich Presence" xml:space="preserve">
+    <value>Enables or disables Discord Rich Presence</value>
+  </data>
+  <data name="Game Directories" xml:space="preserve">
+    <value>Game Directories</value>
+  </data>
+  <data name="Enter a game directroy to add to the list" xml:space="preserve">
+    <value>Enter a game directroy to add to the list</value>
+  </data>
+  <data name=" Add a game directory to the list" xml:space="preserve">
+    <value> Add a game directory to the list</value>
+  </data>
+  <data name="Remove selected game directory" xml:space="preserve">
+    <value>Remove selected game directory</value>
+  </data>
+  <data name="Themes" xml:space="preserve">
+    <value>Themes</value>
+  </data>
+  <data name="Use Custom Theme" xml:space="preserve">
+    <value>Use Custom Theme</value>
+  </data>
+  <data name="Enable or disable custom themes in the GUI" xml:space="preserve">
+    <value>Enable or disable custom themes in the GUI</value>
+  </data>
+  <data name="Path to custom GUI theme" xml:space="preserve">
+    <value>Path to custom GUI theme</value>
+  </data>
+  <data name="Custom Theme Path:" xml:space="preserve">
+    <value>Custom Theme Path:</value>
+  </data>
+  <data name="Browse..." xml:space="preserve">
+    <value>Browse...</value>
+  </data>
+  <data name="Browse for a custom GUI theme" xml:space="preserve">
+    <value>Browse for a custom GUI theme</value>
+  </data>
+  <data name="UI Language" xml:space="preserve">
+    <value>UI Language</value>
+  </data>
+  <data name="Language*" xml:space="preserve">
+    <value>Language*</value>
+  </data>
+  <data name="English (English)" xml:space="preserve">
+    <value>English (English)</value>
+  </data>
+  <data name="French (Français)" xml:space="preserve">
+    <value>French (Français)</value>
+  </data>
+  <data name="*Requires application restart." xml:space="preserve">
+    <value>*Requires application restart.</value>
+  </data>
+  <data name="Enable Docked Mode" xml:space="preserve">
+    <value>Enable Docked Mode</value>
+  </data>
+  <data name="Enable or disable Docked Mode" xml:space="preserve">
+    <value>Enable or disable Docked Mode</value>
+  </data>
+  <data name="Direct Keyboard Access" xml:space="preserve">
+    <value>Direct Keyboard Access</value>
+  </data>
+  <data name="Enable or disable &quot;direct keyboard access (HID) support&quot; (Provides games access to your keyboard as a text entry device)" xml:space="preserve">
+    <value>Enable or disable "direct keyboard access (HID) support" (Provides games access to your keyboard as a text entry device)</value>
+  </data>
+  <data name="Player 1" xml:space="preserve">
+    <value>Player 1</value>
+  </data>
+  <data name="Configure" xml:space="preserve">
+    <value>Configure</value>
+  </data>
+  <data name="Player 3" xml:space="preserve">
+    <value>Player 3</value>
+  </data>
+  <data name="Player 2" xml:space="preserve">
+    <value>Player 2</value>
+  </data>
+  <data name="Player 6" xml:space="preserve">
+    <value>Player 6</value>
+  </data>
+  <data name="Player 5" xml:space="preserve">
+    <value>Player 5</value>
+  </data>
+  <data name="Player 7" xml:space="preserve">
+    <value>Player 7</value>
+  </data>
+  <data name="Player 4" xml:space="preserve">
+    <value>Player 4</value>
+  </data>
+  <data name="Player 8" xml:space="preserve">
+    <value>Player 8</value>
+  </data>
+  <data name="Input" xml:space="preserve">
+    <value>Input</value>
+  </data>
+  <data name="Core" xml:space="preserve">
+    <value>Core</value>
+  </data>
+  <data name="Change System Region" xml:space="preserve">
+    <value>Change System Region</value>
+  </data>
+  <data name="System Region:" xml:space="preserve">
+    <value>System Region:</value>
+  </data>
+  <data name="Japan" xml:space="preserve">
+    <value>Japan</value>
+  </data>
+  <data name="USA" xml:space="preserve">
+    <value>USA</value>
+  </data>
+  <data name="Europe" xml:space="preserve">
+    <value>Europe</value>
+  </data>
+  <data name="Australia" xml:space="preserve">
+    <value>Australia</value>
+  </data>
+  <data name="China" xml:space="preserve">
+    <value>China</value>
+  </data>
+  <data name="Korea" xml:space="preserve">
+    <value>Korea</value>
+  </data>
+  <data name="Taiwan" xml:space="preserve">
+    <value>Taiwan</value>
+  </data>
+  <data name="Change System Language" xml:space="preserve">
+    <value>Change System Language</value>
+  </data>
+  <data name="System Language:" xml:space="preserve">
+    <value>System Language:</value>
+  </data>
+  <data name="American English" xml:space="preserve">
+    <value>American English</value>
+  </data>
+  <data name="British English" xml:space="preserve">
+    <value>British English</value>
+  </data>
+  <data name="Canadian French" xml:space="preserve">
+    <value>Canadian French</value>
+  </data>
+  <data name="Chinese" xml:space="preserve">
+    <value>Chinese</value>
+  </data>
+  <data name="Dutch" xml:space="preserve">
+    <value>Dutch</value>
+  </data>
+  <data name="French" xml:space="preserve">
+    <value>French</value>
+  </data>
+  <data name="German" xml:space="preserve">
+    <value>German</value>
+  </data>
+  <data name="Italian" xml:space="preserve">
+    <value>Italian</value>
+  </data>
+  <data name="Japanese" xml:space="preserve">
+    <value>Japanese</value>
+  </data>
+  <data name="Korean" xml:space="preserve">
+    <value>Korean</value>
+  </data>
+  <data name="Latin American Spanish" xml:space="preserve">
+    <value>Latin American Spanish</value>
+  </data>
+  <data name="Portuguese" xml:space="preserve">
+    <value>Portuguese</value>
+  </data>
+  <data name="Russian" xml:space="preserve">
+    <value>Russian</value>
+  </data>
+  <data name="Simplified Chinese" xml:space="preserve">
+    <value>Simplified Chinese</value>
+  </data>
+  <data name="Spanish" xml:space="preserve">
+    <value>Spanish</value>
+  </data>
+  <data name="Taiwanese" xml:space="preserve">
+    <value>Taiwanese</value>
+  </data>
+  <data name="Traditional Chinese" xml:space="preserve">
+    <value>Traditional Chinese</value>
+  </data>
+  <data name="Change System TimeZone" xml:space="preserve">
+    <value>Change System TimeZone</value>
+  </data>
+  <data name="System TimeZone:" xml:space="preserve">
+    <value>System TimeZone:</value>
+  </data>
+  <data name="System Time:" xml:space="preserve">
+    <value>System Time:</value>
+  </data>
+  <data name="2000" xml:space="preserve">
+    <value>2000</value>
+  </data>
+  <data name="1" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="0" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="Enable VSync" xml:space="preserve">
+    <value>Enable VSync</value>
+  </data>
+  <data name="Enables or disables Vertical Sync" xml:space="preserve">
+    <value>Enables or disables Vertical Sync</value>
+  </data>
+  <data name="Enable Multicore Scheduling" xml:space="preserve">
+    <value>Enable Multicore Scheduling</value>
+  </data>
+  <data name="Enables or disables multi-core scheduling of threads" xml:space="preserve">
+    <value>Enables or disables multi-core scheduling of threads</value>
+  </data>
+  <data name="Enable FS Integrity Checks" xml:space="preserve">
+    <value>Enable FS Integrity Checks</value>
+  </data>
+  <data name="Enables integrity checks on Game content files" xml:space="preserve">
+    <value>Enables integrity checks on Game content files</value>
+  </data>
+  <data name="Hacks" xml:space="preserve">
+    <value>Hacks</value>
+  </data>
+  <data name=" - These may cause instability" xml:space="preserve">
+    <value> - These may cause instability</value>
+  </data>
+  <data name="Ignore Missing Services" xml:space="preserve">
+    <value>Ignore Missing Services</value>
+  </data>
+  <data name="Enable or disable ignoring missing services" xml:space="preserve">
+    <value>Enable or disable ignoring missing services</value>
+  </data>
+  <data name="System" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="Enhancements" xml:space="preserve">
+    <value>Enhancements</value>
+  </data>
+  <data name="Level of Anisotropic Filtering (set to Auto to use the value requested by the game)" xml:space="preserve">
+    <value>Level of Anisotropic Filtering (set to Auto to use the value requested by the game)</value>
+  </data>
+  <data name="Anisotropic Filtering:" xml:space="preserve">
+    <value>Anisotropic Filtering:</value>
+  </data>
+  <data name="Auto" xml:space="preserve">
+    <value>Auto</value>
+  </data>
+  <data name="2x" xml:space="preserve">
+    <value>2x</value>
+  </data>
+  <data name="4x" xml:space="preserve">
+    <value>4x</value>
+  </data>
+  <data name="8x" xml:space="preserve">
+    <value>8x</value>
+  </data>
+  <data name="16x" xml:space="preserve">
+    <value>16x</value>
+  </data>
+  <data name="Developer Options" xml:space="preserve">
+    <value>Developer Options</value>
+  </data>
+  <data name="Graphics Shaders Dump Path" xml:space="preserve">
+    <value>Graphics Shaders Dump Path</value>
+  </data>
+  <data name="Graphics Shaders Dump Path:" xml:space="preserve">
+    <value>Graphics Shaders Dump Path:</value>
+  </data>
+  <data name="Graphics" xml:space="preserve">
+    <value>Graphics</value>
+  </data>
+  <data name="Logging" xml:space="preserve">
+    <value>Logging</value>
+  </data>
+  <data name="Enable Logging to File" xml:space="preserve">
+    <value>Enable Logging to File</value>
+  </data>
+  <data name="Enables or disables logging to a file on disk" xml:space="preserve">
+    <value>Enables or disables logging to a file on disk</value>
+  </data>
+  <data name="Open Logs Folder" xml:space="preserve">
+    <value>Open Logs Folder</value>
+  </data>
+  <data name="Opens the folder where logs are written to." xml:space="preserve">
+    <value>Opens the folder where logs are written to.</value>
+  </data>
+  <data name="Enable Debug Logs" xml:space="preserve">
+    <value>Enable Debug Logs</value>
+  </data>
+  <data name="Enables printing debug log messages" xml:space="preserve">
+    <value>Enables printing debug log messages</value>
+  </data>
+  <data name="Enable Stub Logs" xml:space="preserve">
+    <value>Enable Stub Logs</value>
+  </data>
+  <data name="Enables printing stub log messages" xml:space="preserve">
+    <value>Enables printing stub log messages</value>
+  </data>
+  <data name="Enable Info Logs" xml:space="preserve">
+    <value>Enable Info Logs</value>
+  </data>
+  <data name="Enables printing info log messages" xml:space="preserve">
+    <value>Enables printing info log messages</value>
+  </data>
+  <data name="Enable Warning Logs" xml:space="preserve">
+    <value>Enable Warning Logs</value>
+  </data>
+  <data name="Enables printing warning log messages" xml:space="preserve">
+    <value>Enables printing warning log messages</value>
+  </data>
+  <data name="Enable Error Logs" xml:space="preserve">
+    <value>Enable Error Logs</value>
+  </data>
+  <data name="Enables printing error log messages" xml:space="preserve">
+    <value>Enables printing error log messages</value>
+  </data>
+  <data name="Enable Guest Logs" xml:space="preserve">
+    <value>Enable Guest Logs</value>
+  </data>
+  <data name="Enables printing guest log messages" xml:space="preserve">
+    <value>Enables printing guest log messages</value>
+  </data>
+  <data name="Enable Fs Access Logs" xml:space="preserve">
+    <value>Enable Fs Access Logs</value>
+  </data>
+  <data name="Enables printing fs access log messages" xml:space="preserve">
+    <value>Enables printing fs access log messages</value>
+  </data>
+  <data name="Enables FS access log output to the console. Possible modes are 0-3" xml:space="preserve">
+    <value>Enables FS access log output to the console. Possible modes are 0-3</value>
+  </data>
+  <data name="Fs Global Access Log Mode:" xml:space="preserve">
+    <value>Fs Global Access Log Mode:</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="Japanese (日本語)" xml:space="preserve">
+    <value>Japanese (日本語)</value>
+  </data>
+  <data name="Ryujinx - Title Update Manager" xml:space="preserve">
+    <value>Ryujinx - Title Update Manager</value>
+  </data>
+  <data name="Available Updates" xml:space="preserve">
+    <value>Available Updates</value>
+  </data>
+  <data name="No Update" xml:space="preserve">
+    <value>No Update</value>
+  </data>
+  <data name="Adds an update to this list" xml:space="preserve">
+    <value>Adds an update to this list</value>
+  </data>
+  <data name="Removes the selected update" xml:space="preserve">
+    <value>Removes the selected update</value>
+  </data>
+  <data name="All keyboards" xml:space="preserve">
+    <value>All keyboards</value>
+  </data>
+  <data name="Some fields entered where invalid and therefore your config was not saved." xml:space="preserve">
+    <value>Some fields entered where invalid and therefore your config was not saved.</value>
+  </data>
+  <data name="Deleting Profile" xml:space="preserve">
+    <value>Deleting Profile</value>
+  </data>
+  <data name="This action is irreversible, are your sure you want to continue?" xml:space="preserve">
+    <value>This action is irreversible, are your sure you want to continue?</value>
+  </data>
+  <data name="There is no savedata for {titleName} [{titleId:x16}]" xml:space="preserve">
+    <value>There is no savedata for {titleName} [{titleId:x16}]</value>
+  </data>
+  <data name="Would you like to create savedata for this game?" xml:space="preserve">
+    <value>Would you like to create savedata for this game?</value>
+  </data>
+  <data name="There was an error creating the specified savedata: {result.ToStringWithName()}" xml:space="preserve">
+    <value>There was an error creating the specified savedata: {result.ToStringWithName()}</value>
+  </data>
+  <data name="There was an error finding the specified savedata: {result.ToStringWithName()}" xml:space="preserve">
+    <value>There was an error finding the specified savedata: {result.ToStringWithName()}</value>
+  </data>
+  <data name="Choose the folder to extract into" xml:space="preserve">
+    <value>Choose the folder to extract into</value>
+  </data>
+  <data name="Extract" xml:space="preserve">
+    <value>Extract</value>
+  </data>
+  <data name="Ryujinx - NCA Section Extractor" xml:space="preserve">
+    <value>Ryujinx - NCA Section Extractor</value>
+  </data>
+  <data name="Extracting {ncaSectionType} section from {System.IO.Path.GetFileName(sourceFile)}..." xml:space="preserve">
+    <value>Extracting {ncaSectionType} section from {System.IO.Path.GetFileName(sourceFile)}...</value>
+  </data>
+  <data name="Extraction failed. The main NCA was not present in the selected file." xml:space="preserve">
+    <value>Extraction failed. The main NCA was not present in the selected file.</value>
+  </data>
+  <data name="Extraction failed. Read the log file for further information." xml:space="preserve">
+    <value>Extraction failed. Read the log file for further information.</value>
+  </data>
+  <data name="Extraction has completed successfully." xml:space="preserve">
+    <value>Extraction has completed successfully.</value>
+  </data>
+  <data name="UI error: The selected game did not have a valid title ID" xml:space="preserve">
+    <value>UI error: The selected game did not have a valid title ID</value>
+  </data>
+  <data name="Ryujinx - Warning" xml:space="preserve">
+    <value>Ryujinx - Warning</value>
+  </data>
+  <data name="Ryujinx - Error" xml:space="preserve">
+    <value>Ryujinx - Error</value>
+  </data>
+  <data name="Ryujinx has encountered an error" xml:space="preserve">
+    <value>Ryujinx has encountered an error</value>
+  </data>
+  <data name="Ryujinx - Confirmation" xml:space="preserve">
+    <value>Ryujinx - Confirmation</value>
+  </data>
+  <data name="Ryujinx - Exit" xml:space="preserve">
+    <value>Ryujinx - Exit</value>
+  </data>
+  <data name="Are you sure you want to stop emulation?" xml:space="preserve">
+    <value>Are you sure you want to stop emulation?</value>
+  </data>
+  <data name="All unsaved data will be lost" xml:space="preserve">
+    <value>All unsaved data will be lost</value>
+  </data>
+  <data name="Fav" xml:space="preserve">
+    <value>Fav</value>
+  </data>
+  <data name="Icon" xml:space="preserve">
+    <value>Icon</value>
+  </data>
+  <data name="Application" xml:space="preserve">
+    <value>Application</value>
+  </data>
+  <data name="Developer" xml:space="preserve">
+    <value>Developer</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="Time Played" xml:space="preserve">
+    <value>Time Played</value>
+  </data>
+  <data name="Last Played" xml:space="preserve">
+    <value>Last Played</value>
+  </data>
+  <data name="File Ext" xml:space="preserve">
+    <value>File Ext</value>
+  </data>
+  <data name="File Size" xml:space="preserve">
+    <value>File Size</value>
+  </data>
+  <data name="Path" xml:space="preserve">
+    <value>Path</value>
+  </data>
+  <data name="A game has already been loaded" xml:space="preserve">
+    <value>A game has already been loaded</value>
+  </data>
+  <data name="Please close it first and try again." xml:space="preserve">
+    <value>Please close it first and try again.</value>
+  </data>
+  <data name="You have debug logging enabled, which is designed to be used by developers only." xml:space="preserve">
+    <value>You have debug logging enabled, which is designed to be used by developers only.</value>
+  </data>
+  <data name="For optimal performance, it's recommended to disable debug logging. Would you like to disable debug logging now?" xml:space="preserve">
+    <value>For optimal performance, it's recommended to disable debug logging. Would you like to disable debug logging now?</value>
+  </data>
+  <data name="You have shader dumping enabled, which is designed to be used by developers only." xml:space="preserve">
+    <value>You have shader dumping enabled, which is designed to be used by developers only.</value>
+  </data>
+  <data name="For optimal performance, it's recommended to disable shader dumping. Would you like to disable shader dumping now?" xml:space="preserve">
+    <value>For optimal performance, it's recommended to disable shader dumping. Would you like to disable shader dumping now?</value>
+  </data>
+  <data name="Exit Fullscreen" xml:space="preserve">
+    <value>Exit Fullscreen</value>
+  </data>
+  <data name="{args.NumAppsLoaded}/{args.NumAppsFound} Games Loaded" xml:space="preserve">
+    <value>{args.NumAppsLoaded}/{args.NumAppsFound} Games Loaded</value>
+  </data>
+  <data name="Choose the file to open" xml:space="preserve">
+    <value>Choose the file to open</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="Choose the folder to open" xml:space="preserve">
+    <value>Choose the folder to open</value>
+  </data>
+  <data name="Choose the firmware file to open" xml:space="preserve">
+    <value>Choose the firmware file to open</value>
+  </data>
+  <data name="Choose the firmware directory to open" xml:space="preserve">
+    <value>Choose the firmware directory to open</value>
+  </data>
+  <data name="Firmware not found." xml:space="preserve">
+    <value>Firmware not found.</value>
+  </data>
+  <data name="A valid system firmware was not found in {filename}." xml:space="preserve">
+    <value>A valid system firmware was not found in {filename}.</value>
+  </data>
+  <data name="System version {firmwareVersion.VersionString} will be installed." xml:space="preserve">
+    <value>System version {firmwareVersion.VersionString} will be installed.</value>
+  </data>
+  <data name="This will replace the current system version {currentVersion.VersionString}. " xml:space="preserve">
+    <value>This will replace the current system version {currentVersion.VersionString}. </value>
+  </data>
+  <data name="Do you want to continue?" xml:space="preserve">
+    <value>Do you want to continue?</value>
+  </data>
+  <data name="Install Firmware {firmwareVersion.VersionString}" xml:space="preserve">
+    <value>Install Firmware {firmwareVersion.VersionString}</value>
+  </data>
+  <data name="Installing firmware..." xml:space="preserve">
+    <value>Installing firmware...</value>
+  </data>
+  <data name="Installing firmware {firmwareVersion.VersionString}" xml:space="preserve">
+    <value>Installing firmware {firmwareVersion.VersionString}</value>
+  </data>
+  <data name="System version {firmwareVersion.VersionString} successfully installed." xml:space="preserve">
+    <value>System version {firmwareVersion.VersionString} successfully installed.</value>
+  </data>
+  <data name="Install Firmware {firmwareVersion.VersionString} Failed." xml:space="preserve">
+    <value>Install Firmware {firmwareVersion.VersionString} Failed.</value>
+  </data>
+  <data name="An error occured while installing system version {firmwareVersion.VersionString}. Please check logs for more info." xml:space="preserve">
+    <value>An error occured while installing system version {firmwareVersion.VersionString}. Please check logs for more info.</value>
+  </data>
+  <data name="Parsing Firmware Failed." xml:space="preserve">
+    <value>Parsing Firmware Failed.</value>
+  </data>
+  <data name="An error occured while parsing firmware. Please check the logs for more info." xml:space="preserve">
+    <value>An error occured while parsing firmware. Please check the logs for more info.</value>
+  </data>
+  <data name="Update canceled by user or updater was not found" xml:space="preserve">
+    <value>Update canceled by user or updater was not found</value>
+  </data>
+  <data name="mins" xml:space="preserve">
+    <value>mins</value>
+  </data>
+  <data name="hrs" xml:space="preserve">
+    <value>hrs</value>
+  </data>
+  <data name="days" xml:space="preserve">
+    <value>days</value>
+  </data>
+  <data name="The file name contains invalid characters. Please try again." xml:space="preserve">
+    <value>The file name contains invalid characters. Please try again.</value>
+  </data>
+  <data name="Choose the game directory to add to the list" xml:space="preserve">
+    <value>Choose the game directory to add to the list</value>
+  </data>
+  <data name="Choose the theme to load" xml:space="preserve">
+    <value>Choose the theme to load</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="Updates Available for {titleName} [{titleId}]" xml:space="preserve">
+    <value>Updates Available for {titleName} [{titleId}]</value>
+  </data>
+  <data name="The specified file does not contain an update for the selected title!" xml:space="preserve">
+    <value>The specified file does not contain an update for the selected title!</value>
+  </data>
+  <data name="Add Update Failed!" xml:space="preserve">
+    <value>Add Update Failed!</value>
+  </data>
+  <data name="The NCA header content type check has failed. This is usually because the header key is incorrect or missing." xml:space="preserve">
+    <value>The NCA header content type check has failed. This is usually because the header key is incorrect or missing.</value>
+  </data>
+  <data name="Your key set is missing a key with the name: {exception.Name}" xml:space="preserve">
+    <value>Your key set is missing a key with the name: {exception.Name}</value>
+  </data>
+  <data name="Select update files" xml:space="preserve">
+    <value>Select update files</value>
+  </data>
+  <data name="gdkchan, LDj3SNuD, Ac_K, Thog" xml:space="preserve">
+    <value> gdkchan, 
+ LDj3SNuD, 
+ Ac_K, 
+ Thog</value>
+  </data>
+  <data name="jD, emmaus, Thealexbarney, Andy A (BaronKiko)" xml:space="preserve">
+    <value>»jD«
+emmaus
+Thealexbarney
+Andy A (BaronKiko)</value>
+  </data>
+  <data name="Ryujinx is an emulator for the Nintendo Switch. Please support us on Patreon. Get all the latest news on our Twitter or Discord. Developers interested in contributing can find out more on our Discord." xml:space="preserve">
+    <value>Ryujinx is an emulator for the Nintendo Switch.
+Please support us on Patreon.
+Get all the latest news on our Twitter or Discord.
+Developers interested in contributing can find out more on our Discord.</value>
+  </data>
+  <data name="Ryujinx is not affiliated with Nintendo, or any of its partners, in any way" xml:space="preserve">
+    <value>Ryujinx is not affiliated with Nintendo, 
+or any of its partners, in any way</value>
+  </data>
+</root>
