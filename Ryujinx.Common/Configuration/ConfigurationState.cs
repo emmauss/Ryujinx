@@ -572,15 +572,6 @@ namespace Ryujinx.Configuration
                 configurationFileUpdated = true;
             }
 
-            if (configurationFileFormat.Version < 8)
-            {
-                Common.Logging.Logger.PrintWarning(LogClass.Application, $"Outdated configuration version {configurationFileFormat.Version}, migrating to version 8.");
-
-                configurationFileFormat.UILanguage = "en";
-
-                configurationFileUpdated = true;
-            }
-
             // Only needed for version 6 configurations.
             if (configurationFileFormat.Version == 6)
             {
@@ -598,6 +589,15 @@ namespace Ryujinx.Configuration
                 Common.Logging.Logger.PrintWarning(LogClass.Application, $"Outdated configuration version {configurationFileFormat.Version}, migrating to version 8.");
 
                 configurationFileFormat.EnablePtc = false;
+
+                configurationFileUpdated = true;
+            }
+
+            if (configurationFileFormat.Version < 9)
+            {
+                Common.Logging.Logger.PrintWarning(LogClass.Application, $"Outdated configuration version {configurationFileFormat.Version}, migrating to version 9.");
+
+                configurationFileFormat.UILanguage = "en";
 
                 configurationFileUpdated = true;
             }

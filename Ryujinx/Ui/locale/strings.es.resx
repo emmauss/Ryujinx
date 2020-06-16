@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Ryujinx" xml:space="preserve">
     <value>Ryujinx</value>
@@ -124,97 +124,97 @@
     <value>(REE-YOU-JI-NX)</value>
   </data>
   <data name="Click to open the Ryujinx website in your default browser" xml:space="preserve">
-    <value>Cliquez pour ouvrir le site Web de Ryujinx dans votre navigateur par défaut</value>
+    <value>Haz click para abrir el sitio web de Ryujinx en su navegador predeterminado</value>
   </data>
   <data name="www.ryujinx.org" xml:space="preserve">
     <value>www.ryujinx.org</value>
   </data>
   <data name="Version x.x.x (Commit Number)" xml:space="preserve">
-    <value>Version x.x.x (Numéro de Validation)</value>
+    <value>Versión x.x.x (Número de Compromiso)</value>
   </data>
   <data name="MIT License" xml:space="preserve">
-    <value>License MIT</value>
+    <value>Licencia MIT</value>
   </data>
   <data name="Click to open the Ryujinx Patreon page in your default browser" xml:space="preserve">
-    <value>Cliquez pour ouvrir la page Patreon de Ryujinx dans votre navigateur par défaut</value>
+    <value>Haz click para abrir el sitio de Patreon de Ryujinx en su navegador predeterminado</value>
   </data>
   <data name="Patreon" xml:space="preserve">
     <value>Patreon</value>
   </data>
   <data name="Click to open the Ryujinx GitHub page in your default browser" xml:space="preserve">
-    <value>Cliquez pour ouvrir la page GitHub de Ryujinx dans votre navigateur par défaut</value>
+    <value>Haz click para abrir el sitio de GitHub de Ryujinx en su navegador predeterminado</value>
   </data>
   <data name="GitHub" xml:space="preserve">
     <value>GitHub</value>
   </data>
   <data name="Click to open an invite to the Ryujinx Discord server in your default browser" xml:space="preserve">
-    <value>Cliquez pour ouvrir l'invitation du serveur Discord de Ryujinx dans votre navigateur par défaut</value>
+    <value>Haz click para abrir una invitación del servidor de Discord de Ryujinx en su navegador predeterminado</value>
   </data>
   <data name="Discord" xml:space="preserve">
     <value>Discord</value>
   </data>
   <data name="Click to open the Ryujinx Twitter page in your default browser" xml:space="preserve">
-    <value>Cliquez pour ouvrir la page Twitter de Ryujinx dans votre navigateur par défaut</value>
+    <value>Haz click para abrir el sitio de Twitter de Ryujinx en su navegador predeterminado</value>
   </data>
   <data name="Twitter" xml:space="preserve">
     <value>Twitter</value>
   </data>
   <data name="About" xml:space="preserve">
-    <value>À propos</value>
+    <value>Acerca de</value>
   </data>
   <data name="Created By:" xml:space="preserve">
-    <value>Créé Par :</value>
+    <value>Creado por:</value>
   </data>
   <data name="All Contributors..." xml:space="preserve">
-    <value>Tous les contributeurs ...</value>
+    <value>Todos los Contribuidores...</value>
   </data>
   <data name="Ryujinx - Controller Settings" xml:space="preserve">
-    <value>Ryujinx - Paramètres des Manettes</value>
+    <value>Ryujinx - Ajustes del Mando</value>
   </data>
   <data name="Input Device" xml:space="preserve">
-    <value>Appareil</value>
+    <value>Dispositivo de Entrada</value>
   </data>
   <data name="Disabled" xml:space="preserve">
-    <value>Désactivé</value>
+    <value>Desactivado</value>
   </data>
   <data name="Refresh" xml:space="preserve">
-    <value>Rafraîchir</value>
+    <value>Refrescar</value>
   </data>
   <data name="The controller's type" xml:space="preserve">
-    <value>Le type de manette</value>
+    <value>El tipo de mando</value>
   </data>
   <data name="Controller Type:" xml:space="preserve">
-    <value>Type de Manette :</value>
+    <value>Tipo de Mando:</value>
   </data>
   <data name="Handheld" xml:space="preserve">
-    <value>Mode Portable</value>
+    <value>Portátil</value>
   </data>
   <data name="Pro Controller" xml:space="preserve">
-    <value>Manette Pro</value>
+    <value>Mando Pro</value>
   </data>
   <data name="Paired Joycons" xml:space="preserve">
-    <value>Joycons Jumelés</value>
+    <value>Joycons Emparejados</value>
   </data>
   <data name="Left Joycon" xml:space="preserve">
-    <value>Joycon Gauche</value>
+    <value>Joycon Izquierdo</value>
   </data>
   <data name="Right Joycon" xml:space="preserve">
-    <value>Joycon Droit</value>
+    <value>Joycon Derecho</value>
   </data>
   <data name="Profile:" xml:space="preserve">
-    <value>Profil :</value>
+    <value>Perfil:</value>
   </data>
   <data name="Load" xml:space="preserve">
-    <value>Charger</value>
+    <value>Cargar</value>
   </data>
   <data name="Add" xml:space="preserve">
-    <value>Ajouter</value>
+    <value>Añadir</value>
   </data>
   <data name="Remove" xml:space="preserve">
-    <value>Supprimer</value>
+    <value>Remover</value>
   </data>
   <data name="Buttons" xml:space="preserve">
-    <value>Boutons</value>
+    <value>Botones</value>
   </data>
   <data name="A" xml:space="preserve">
     <value>A</value>
@@ -235,37 +235,37 @@
     <value>-</value>
   </data>
   <data name="Left Stick" xml:space="preserve">
-    <value>Stick de Contrôle Gauche</value>
+    <value>Análogo Izquierdo</value>
   </data>
   <data name="LStick Button" xml:space="preserve">
-    <value>Appuyé</value>
+    <value>Botón AnálogoIzq</value>
   </data>
   <data name="LStick Down" xml:space="preserve">
-    <value>Bas</value>
+    <value>AnálogoIzq Abajo</value>
   </data>
   <data name="LStick Up" xml:space="preserve">
-    <value>Haut</value>
+    <value>AnálogoIzq Arriba</value>
   </data>
   <data name="LStick Right" xml:space="preserve">
-    <value>Droite</value>
+    <value>AnálogoIzq Derecha</value>
   </data>
   <data name="LStick Left" xml:space="preserve">
-    <value>Gauche</value>
+    <value>AnálogoIzq Izquierda</value>
   </data>
   <data name="LStick Lt/Rt" xml:space="preserve">
-    <value>Gauche/Droite</value>
+    <value>AnálogoIzq Lt/Rt</value>
   </data>
   <data name="LStick Up/Dn" xml:space="preserve">
-    <value>Haut/Bas</value>
+    <value>AnálogoIzq Arriba/Abajo</value>
   </data>
   <data name="Invert" xml:space="preserve">
-    <value>Inverser</value>
+    <value>Invertir</value>
   </data>
   <data name="Deadzone Left" xml:space="preserve">
-    <value>Zone Morte</value>
+    <value>Zona Muerta Izquierda</value>
   </data>
   <data name="Triggers" xml:space="preserve">
-    <value>Gâchettes</value>
+    <value>Gatillos</value>
   </data>
   <data name="L" xml:space="preserve">
     <value>L</value>
@@ -280,454 +280,454 @@
     <value>ZR</value>
   </data>
   <data name="Left SL" xml:space="preserve">
-    <value>SL Gauche</value>
+    <value>SL Izquierdo</value>
   </data>
   <data name="Left SR" xml:space="preserve">
-    <value>SR Gauche</value>
+    <value>SR Izquierdo</value>
   </data>
   <data name="Right SL" xml:space="preserve">
-    <value>SL Droit</value>
+    <value>SL Derecho</value>
   </data>
   <data name="Right SR" xml:space="preserve">
-    <value>SR Droit</value>
+    <value>SR Derecho</value>
   </data>
   <data name="Trigger Threshold" xml:space="preserve">
-    <value>Seuil des Gâchettes</value>
+    <value>Umbral del Gatillo</value>
   </data>
   <data name="Directional Pad" xml:space="preserve">
-    <value>Croix Directionnelle</value>
+    <value>Cruceta</value>
   </data>
   <data name="Dpad Up" xml:space="preserve">
-    <value>Haut</value>
+    <value>Cruceta Arriba</value>
   </data>
   <data name="Dpad Down" xml:space="preserve">
-    <value>Bas</value>
+    <value>Cruceta Abajo</value>
   </data>
   <data name="Dpad Left" xml:space="preserve">
-    <value>Gauche</value>
+    <value>Cruceta Izquierda</value>
   </data>
   <data name="Dpad Right" xml:space="preserve">
-    <value>Droit</value>
+    <value>Cruceta Derecha</value>
   </data>
   <data name="Right Stick" xml:space="preserve">
-    <value>Stick de Contrôle Droit</value>
+    <value>Análogo Derecho</value>
   </data>
   <data name="RStick Button" xml:space="preserve">
-    <value>Appuyé</value>
+    <value>Botón AnálogoDer</value>
   </data>
   <data name="RStick Up" xml:space="preserve">
-    <value>Haut</value>
+    <value>AnálogoDer Arriba</value>
   </data>
   <data name="RStick Down" xml:space="preserve">
-    <value>Bas</value>
+    <value>AnálogoDer Abajo</value>
   </data>
   <data name="RStick Left" xml:space="preserve">
-    <value>Gauche</value>
+    <value>AnálogoDer Izquierda</value>
   </data>
   <data name="RStick Right" xml:space="preserve">
-    <value>Droit</value>
+    <value>AnálogoDer Derecha</value>
   </data>
   <data name="RStick Lt/Rt" xml:space="preserve">
-    <value>Gauche/Droite</value>
+    <value>AnálogoDer Lt/Rt</value>
   </data>
   <data name="RStick Up/Dn" xml:space="preserve">
-    <value>Haut/Bas</value>
+    <value>AnálogoDer Arriba/Abajo</value>
   </data>
   <data name="Deadzone Right" xml:space="preserve">
-    <value>Zone Morte</value>
+    <value>Zona Muerta Derecha</value>
   </data>
   <data name="Save" xml:space="preserve">
-    <value>Appliquer</value>
+    <value>Guardar</value>
   </data>
   <data name="Close" xml:space="preserve">
-    <value>Fermer</value>
+    <value>Cerrar</value>
   </data>
   <data name="Open the folder where the User save for the application is loaded" xml:space="preserve">
-    <value>Ouvrir le dossier où l'application charge la sauvegarde de l'utilisateur</value>
+    <value>Abre la carpeta donde el archivo de guardado del Usuario de la aplicación esta cargado</value>
   </data>
   <data name="Open User Save Directory" xml:space="preserve">
-    <value>Ouvrir le dossier de sauvegarde de l'utilisateur</value>
+    <value>Abrir Dirección del archivo de guardado del Usuario</value>
   </data>
   <data name="Open the folder where the Device save for the application is loaded" xml:space="preserve">
-    <value>Ouvrir le dossier où l'application charge la sauvegarde de l'appareil</value>
+    <value>Abre la carpeta donde el archivo guardado del Dispositivo  de la aplicación esta cargado</value>
   </data>
   <data name="Open Device Save Directory" xml:space="preserve">
-    <value>Ouvrir le dossier de sauvegarde de l'appareil</value>
+    <value>Abrir Dirección del archivo de guardado del Dispositivo</value>
   </data>
   <data name="Open the folder where the BCAT save for the application is loaded" xml:space="preserve">
-    <value>Ouvrir le dossier où l'application charge la sauvegarde de BCAT</value>
+    <value>Abre la carpeta donde el archivo de guardado BCAT de la aplicación esta cargado</value>
   </data>
   <data name="Open BCAT Save Directory" xml:space="preserve">
-    <value>Ouvrir le dossier de sauvegarde de BCAT</value>
+    <value>Abrir Dirección del archivo de guardado BCAT</value>
   </data>
   <data name="Manage Title Updates" xml:space="preserve">
-    <value>Gérer les mises à jour des titres</value>
+    <value>Gestionar Actualizaciones del Título</value>
   </data>
   <data name="Extract RomFS Section" xml:space="preserve">
-    <value>Extraire la section RomFS</value>
+    <value>Extraer Sección RomFS</value>
   </data>
   <data name="Extract ExeFS Section" xml:space="preserve">
-    <value>Extraire la section ExeFS</value>
+    <value>Extraer Sección ExeFS</value>
   </data>
   <data name="Extract Logo Section" xml:space="preserve">
-    <value>Extraire la section Logo</value>
+    <value>Extraer Sección Logo</value>
   </data>
   <data name="File" xml:space="preserve">
-    <value>Fichier</value>
+    <value>Archivo</value>
   </data>
   <data name="Open a file chooser to chose a switch compatible file to load" xml:space="preserve">
-    <value>Ouvrir un sélecteur de fichiers pour charger un fichier compatible</value>
+    <value>Abre un selector de archivos para cargar un archivo compatible con la Switch</value>
   </data>
   <data name="Load Application from File" xml:space="preserve">
-    <value>Charger un Fichier</value>
+    <value>Cargar Aplicación desde Archivo</value>
   </data>
   <data name="Open a file chooser to chose a switch compatible, unpacked application to load" xml:space="preserve">
-    <value>Ouvrir un sélecteur de fichiers pour charger une application extraite compatible</value>
+    <value>Abre un selector de archivos para cargar una aplicación descomprimida compatible con la Switch</value>
   </data>
   <data name="Load Unpacked Game" xml:space="preserve">
-    <value>Charger une Application Extraite</value>
+    <value>Carga Juego Descomprimido</value>
   </data>
   <data name="Open Ryujinx filesystem folder" xml:space="preserve">
-    <value>Ouvrez le dossier de fichiers Ryujinx</value>
+    <value>Abre la carpeta del Sistema de Ryujinx</value>
   </data>
   <data name="Open Ryujinx Folder" xml:space="preserve">
-    <value>Ouvrez le dossier Ryujinx</value>
+    <value>Abrir Carpeta de Ryujinx</value>
   </data>
   <data name="Exit Ryujinx" xml:space="preserve">
-    <value>Quitter Ryujinx</value>
+    <value>Sale de Ryujinx</value>
   </data>
   <data name="Exit" xml:space="preserve">
-    <value>Quitter</value>
+    <value>Salir</value>
   </data>
   <data name="Options" xml:space="preserve">
-    <value>Paramètres</value>
+    <value>Opciones</value>
   </data>
   <data name="Enter Fullscreen" xml:space="preserve">
-    <value>Mode Plein Écran</value>
+    <value>Entrar a Pantalla Completa</value>
   </data>
   <data name="Stop emualtion of the current game and return to game selection" xml:space="preserve">
-    <value>Arrêter l'émulation du jeu en cours et revenir à la sélection de jeux</value>
+    <value>Detiene la emulación del juego actual y vuelve a la selección de juegos</value>
   </data>
   <data name="Stop Emulation" xml:space="preserve">
-    <value>Arrêter l'émulation</value>
+    <value>Detener emulación</value>
   </data>
   <data name="Select which GUI columns to enable" xml:space="preserve">
-    <value>Sélectionnez les colonnes de l'interface graphique à activer</value>
+    <value>Selecciona que columnas GUI activar</value>
   </data>
   <data name="Enable GUI Columns" xml:space="preserve">
-    <value>Activer les colonnes de l'interface graphique</value>
+    <value>Activar Columnas GUI</value>
   </data>
   <data name="Enable or Disable Favorite Games Column in the game list" xml:space="preserve">
-    <value>Activer ou désactiver la colonne des jeux favoris dans la liste des jeux</value>
+    <value>Activa o Desactiva la Columna de Juegos Favoritos en la lista de juegos</value>
   </data>
   <data name="Enable Favorite Games Column" xml:space="preserve">
-    <value>Activer la colonne des jeux préférés</value>
+    <value>Activar Columna de Juegos Favoritos</value>
   </data>
   <data name="Enable or Disable Icon Column in the game list" xml:space="preserve">
-    <value>Activer ou désactiver la colonne d'icônes dans la liste des jeux</value>
+    <value>Activa o Desactiva la Columna del Ícono en la lista de juegos</value>
   </data>
   <data name="Enable Icon Column" xml:space="preserve">
-    <value>Activer la colonne d'icônes</value>
+    <value>Activar Columna de Íconos</value>
   </data>
   <data name="Enable or Disable Title Name/ID Column in the game list" xml:space="preserve">
-    <value>Activer ou désactiver la colonne Nom/ID du titre dans la liste des jeux</value>
+    <value>Activa o Desactiva la Columna Nombre del Título/ID en la lista de juegos</value>
   </data>
   <data name="Enable Title Name/ID Column" xml:space="preserve">
-    <value>Activer la colonne Nom/ID du titre</value>
+    <value>Activar Columna Nombre del Título/ID</value>
   </data>
   <data name="Enable or Disable Developer Column in the game list" xml:space="preserve">
-    <value>Activer ou désactiver la colonne développeur dans la liste des jeux</value>
+    <value>Activa o Desactiva la Columna Desarrollador en la lista de juegos</value>
   </data>
   <data name="Enable Developer Column" xml:space="preserve">
-    <value>Activer la colonne développeur</value>
+    <value>Activar Columna Desarrollador</value>
   </data>
   <data name="Enable or Disable Version Column in the game list" xml:space="preserve">
-    <value>Activer ou désactiver la colonne de version dans la liste des jeux</value>
+    <value>Activa o Desactiva la Columna Versión en la lista de juegos</value>
   </data>
   <data name="Enable Version Column" xml:space="preserve">
-    <value>Activer la colonne de version</value>
+    <value>Activar Columna Versión</value>
   </data>
   <data name="Enable or Disable Time Played Column in the game list" xml:space="preserve">
-    <value>Activer ou désactiver la colonne du temps de jeu dans la liste des jeux</value>
+    <value>Activa o Desactiva la Columna Tiempo Jugado en la lista de juegos</value>
   </data>
   <data name="Enable Time Played Column" xml:space="preserve">
-    <value>Activer la colonne du temps de jeu</value>
+    <value>Activar Columna Tiempo Jugado</value>
   </data>
   <data name="Enable or Disable Last Played Column in the game list" xml:space="preserve">
-    <value>Activer ou désactiver la colonne de la dernière session de jeu dans la liste des jeux</value>
+    <value>Activa o Desactiva la Columna Jugado por Última Vez en la lista de juegos</value>
   </data>
   <data name="Enable Last Played Column" xml:space="preserve">
-    <value>Activer la colonne de la dernière session de jeu</value>
+    <value>Activar Columna Jugado por Última Vez</value>
   </data>
   <data name="Enable or Disable file extension column in the game list" xml:space="preserve">
-    <value>Activer ou désactiver la colonne d'extension de fichier dans la liste des jeux</value>
+    <value>Activa o Desactiva la Columna Extension de Archivo en la lista de juegos</value>
   </data>
   <data name="Enable File Ext Column" xml:space="preserve">
-    <value>Activer la colonne d'extension de fichier</value>
+    <value>Activar Ext Archivo</value>
   </data>
   <data name="Enable or Disable File Size Column in the game list" xml:space="preserve">
-    <value>Activer ou désactiver la colonne de taille de fichier dans la liste des jeux</value>
+    <value>Activa o Desactiva la Columna Tamaño del Archivo en la lista de juegos</value>
   </data>
   <data name="Enable File Size Column" xml:space="preserve">
-    <value>Activer la colonne de taille de fichier</value>
+    <value>Activar Columna Tamaño del Archivo</value>
   </data>
   <data name="Enable or Disable Path Column in the game list" xml:space="preserve">
-    <value>Activer ou désactiver la colonne de chemin dans la liste des jeux</value>
+    <value>Activa o Desactiva la Columna Dirección en la lista de juegos</value>
   </data>
   <data name="Enable Path Column" xml:space="preserve">
-    <value>Activer la colonne de chemin</value>
+    <value>Activar Columna Dirección</value>
   </data>
   <data name="Open settings window" xml:space="preserve">
-    <value>Ouvrir la fenêtre des paramètres</value>
+    <value>Abre la ventana de Ajustes</value>
   </data>
   <data name="Settings" xml:space="preserve">
-    <value>Paramètres</value>
+    <value>Ajustes</value>
   </data>
   <data name="Tools" xml:space="preserve">
-    <value>Outils</value>
+    <value>Herramientas</value>
   </data>
   <data name="Install Firmware" xml:space="preserve">
-    <value>Installer le firmware</value>
+    <value>Instalar Firmware</value>
   </data>
   <data name="Install a firmware from XCI or ZIP" xml:space="preserve">
-    <value>Installer un firmware depuis un XCI ou ZIP</value>
+    <value>Instalar Firmware desde XCI o ZIP</value>
   </data>
   <data name="Install a firmware from a directory" xml:space="preserve">
-    <value>Installer un firmware depuis un dossier</value>
+    <value>Instalar Firmware desde una Dirección</value>
   </data>
   <data name="Open Debugger" xml:space="preserve">
-    <value>Ouvrir le Débogueur</value>
+    <value>Abrir Depurador</value>
   </data>
   <data name="Help" xml:space="preserve">
-    <value>Aide</value>
+    <value>Ayuda</value>
   </data>
   <data name="Check for updates to Ryujinx (requires Ryujinx Installer)" xml:space="preserve">
-    <value>Vérifier les mises à jour (nécessite Ryujinx Installer)</value>
+    <value>Buscar actualizaciones para Ryujinx (requiere el Instalador de Ryujinx)</value>
   </data>
   <data name="Check for Updates" xml:space="preserve">
-    <value>Vérifier les mises à jour</value>
+    <value>Buscar Actualizaciones</value>
   </data>
   <data name="Open about window" xml:space="preserve">
-    <value>Ouvrir la fenêtre "À Propos"</value>
+    <value>Abre la ventana Acerca de</value>
   </data>
   <data name="0/0 Games Loaded" xml:space="preserve">
-    <value>0/0 Jeux Chargés</value>
+    <value>0/0 Juegos Cargados</value>
   </data>
   <data name="VSync" xml:space="preserve">
-    <value>Synchronisation Verticale</value>
+    <value>Sincronización Vertical</value>
   </data>
   <data name="System Version" xml:space="preserve">
-    <value>Version du Système</value>
+    <value>Versión del Sistema</value>
   </data>
   <data name="Ryujinx - Profile Dialog" xml:space="preserve">
-    <value>Ryujinx - Boîte de dialogue du profil</value>
+    <value>Ryujinx - Diálogo de Perfiles</value>
   </data>
   <data name="OK" xml:space="preserve">
-    <value>OK</value>
+    <value>Aceptar</value>
   </data>
   <data name="Cancel" xml:space="preserve">
-    <value>Annuler</value>
+    <value>Cancelar</value>
   </data>
   <data name="Enter a name for the new profile:" xml:space="preserve">
-    <value>Saisissez un nom pour le nouveau profil:</value>
+    <value>Escribe un nombre para el nuevo perfil:</value>
   </data>
   <data name="Ryujinx - Settings" xml:space="preserve">
-    <value>Ryujinx - Paramètres</value>
+    <value>Ryujinx - Ajustes</value>
   </data>
   <data name="General" xml:space="preserve">
-    <value>Général</value>
+    <value>General</value>
   </data>
   <data name="Enable Discord Rich Presence" xml:space="preserve">
-    <value>Activer Discord Rich Presence</value>
+    <value>Activar la Presencia de Discord</value>
   </data>
   <data name="Enables or disables Discord Rich Presence" xml:space="preserve">
-    <value>Active ou désactive Discord Rich Presence</value>
+    <value>Activa o Desactiva la Presencia de Discord</value>
   </data>
   <data name="Game Directories" xml:space="preserve">
-    <value>Dossiers de jeux</value>
+    <value>Dirección de juegos</value>
   </data>
   <data name="Enter a game directroy to add to the list" xml:space="preserve">
-    <value>Entrez un dossier de jeu à ajouter à la liste</value>
+    <value>Escribe una dirección de juegos para añadir a la lista</value>
   </data>
   <data name=" Add a game directory to the list" xml:space="preserve">
-    <value> Ajouter un répertoire de jeu à la liste</value>
+    <value> Añade una dirección de juegos a la lista</value>
   </data>
   <data name="Remove selected game directory" xml:space="preserve">
-    <value>Retirer le dossier de jeu sélectionné</value>
+    <value>Remueve la dirección de juegos seleccionada</value>
   </data>
   <data name="Themes" xml:space="preserve">
-    <value>Thèmes</value>
+    <value>Temas</value>
   </data>
   <data name="Use Custom Theme" xml:space="preserve">
-    <value>Utiliser un Thème Personnalisé</value>
+    <value>Usar Tema Personalizado</value>
   </data>
   <data name="Enable or disable custom themes in the GUI" xml:space="preserve">
-    <value>Activer ou désactiver les thèmes personnalisés dans l'interface graphique</value>
+    <value>Activa o Desactiva los temas personalizados en el GUI</value>
   </data>
   <data name="Path to custom GUI theme" xml:space="preserve">
-    <value>Chemin Vers le Thème Personnalisé</value>
+    <value>Dirección para el tema personalizado del GUI</value>
   </data>
   <data name="Custom Theme Path:" xml:space="preserve">
-    <value>Chemin d'Accès au Thème Personnalisé:</value>
+    <value>Dirección del Tema Personalizado:</value>
   </data>
   <data name="Browse..." xml:space="preserve">
-    <value>Parcourir...</value>
+    <value>Buscar...</value>
   </data>
   <data name="Browse for a custom GUI theme" xml:space="preserve">
-    <value>Rechercher un Thème Personnalisé</value>
+    <value>Busca un tema personalizado del GUI</value>
   </data>
   <data name="UI Language" xml:space="preserve">
-    <value>Langue de l'interface</value>
+    <value>Idioma de la Interfaz</value>
   </data>
   <data name="Language*" xml:space="preserve">
-    <value>Langue*</value>
+    <value>Idioma*</value>
   </data>
   <data name="English (English)" xml:space="preserve">
-    <value>Anglais (English)</value>
+    <value>Inglés (English)</value>
   </data>
   <data name="French (Français)" xml:space="preserve">
-    <value>Français</value>
+    <value>Francés (Français)</value>
   </data>
   <data name="*Requires application restart." xml:space="preserve">
-    <value>*Nécessite le redémarrage de l'application.</value>
+    <value>*Requiere un reinicio de la aplicación.</value>
   </data>
   <data name="Enable Docked Mode" xml:space="preserve">
-    <value>Activer le Mode Téléviseur</value>
+    <value>Activar Modo Acoplado</value>
   </data>
   <data name="Enable or disable Docked Mode" xml:space="preserve">
-    <value>Activer ou désactiver le Mode Téléviseur</value>
+    <value>Activa o Desactiva el Modo Acoplado</value>
   </data>
   <data name="Direct Keyboard Access" xml:space="preserve">
-    <value>Accès Direct au Clavier</value>
+    <value>Acceso Directo al Teclado</value>
   </data>
   <data name="Enable or disable &quot;direct keyboard access (HID) support&quot; (Provides games access to your keyboard as a text entry device)" xml:space="preserve">
-    <value>Activer ou désactiver la prise en charge directe de l'accès au clavier (HID) (Permets aux jeux d'utiliser votre clavier en tant que périphérique d'entrée de texte)</value>
+    <value>Activa o Desactiva "Acceso Directo al Teclado (HID)" (Provee acceso al teclado como dispositivo de entrada de texto para los juegos)</value>
   </data>
   <data name="Player 1" xml:space="preserve">
-    <value>Joueur 1</value>
+    <value>Jugador 1</value>
   </data>
   <data name="Configure" xml:space="preserve">
-    <value>Configurer</value>
+    <value>Configurar</value>
   </data>
   <data name="Player 3" xml:space="preserve">
-    <value>Joueur 3</value>
+    <value>Jugador 3</value>
   </data>
   <data name="Player 2" xml:space="preserve">
-    <value>Joueur 2</value>
+    <value>Jugador 2</value>
   </data>
   <data name="Player 6" xml:space="preserve">
-    <value>Joueur 6</value>
+    <value>Jugador 6</value>
   </data>
   <data name="Player 5" xml:space="preserve">
-    <value>Joueur 5</value>
+    <value>Jugador 5</value>
   </data>
   <data name="Player 7" xml:space="preserve">
-    <value>Joueur 7</value>
+    <value>Jugador 7</value>
   </data>
   <data name="Player 4" xml:space="preserve">
-    <value>Joueur 4</value>
+    <value>Jugador 4</value>
   </data>
   <data name="Player 8" xml:space="preserve">
-    <value>Joueur 8</value>
+    <value>Player 8</value>
   </data>
   <data name="Input" xml:space="preserve">
-    <value>Entrées</value>
+    <value>Entrada</value>
   </data>
   <data name="Core" xml:space="preserve">
-    <value>Coeur</value>
+    <value>Núcleo</value>
   </data>
   <data name="Change System Region" xml:space="preserve">
-    <value>Changer la région du système</value>
+    <value>Cambia la Región del Sistema</value>
   </data>
   <data name="System Region:" xml:space="preserve">
-    <value>Région du Système:</value>
+    <value>Región del Sistema:</value>
   </data>
   <data name="Japan" xml:space="preserve">
-    <value>Japon</value>
+    <value>Japón</value>
   </data>
   <data name="USA" xml:space="preserve">
-    <value>Amérique du Nord</value>
+    <value>Estados Unidos</value>
   </data>
   <data name="Europe" xml:space="preserve">
-    <value>Europe</value>
+    <value>Europa</value>
   </data>
   <data name="Australia" xml:space="preserve">
-    <value>Australie</value>
+    <value>Australia</value>
   </data>
   <data name="China" xml:space="preserve">
-    <value>Chine</value>
+    <value>China</value>
   </data>
   <data name="Korea" xml:space="preserve">
-    <value>Corée</value>
+    <value>Corea</value>
   </data>
   <data name="Taiwan" xml:space="preserve">
-    <value>Taïwan</value>
+    <value>Taiwán</value>
   </data>
   <data name="Change System Language" xml:space="preserve">
-    <value>Changer la Langue du Système</value>
+    <value>Cambia el Idioma del Sistema</value>
   </data>
   <data name="System Language:" xml:space="preserve">
-    <value>Langue du Système:</value>
+    <value>Idioma del Sistema:</value>
   </data>
   <data name="American English" xml:space="preserve">
-    <value>Anglais Américain</value>
+    <value>Inglés Americano</value>
   </data>
   <data name="British English" xml:space="preserve">
-    <value>Anglais Britannique</value>
+    <value>Inglés Británico</value>
   </data>
   <data name="Canadian French" xml:space="preserve">
-    <value>Français Canadien</value>
+    <value>Francés Canadiense</value>
   </data>
   <data name="Chinese" xml:space="preserve">
-    <value>Chinois</value>
+    <value>Chino</value>
   </data>
   <data name="Dutch" xml:space="preserve">
-    <value>Néerlandais</value>
+    <value>Holandés</value>
   </data>
   <data name="French" xml:space="preserve">
-    <value>Français</value>
+    <value>Francés</value>
   </data>
   <data name="German" xml:space="preserve">
-    <value>Allemand</value>
+    <value>Alemán</value>
   </data>
   <data name="Italian" xml:space="preserve">
-    <value>Italien</value>
+    <value>Italiano</value>
   </data>
   <data name="Japanese" xml:space="preserve">
-    <value>Japonais</value>
+    <value>Japonés</value>
   </data>
   <data name="Korean" xml:space="preserve">
-    <value>Coréen</value>
+    <value>Koreano</value>
   </data>
   <data name="Latin American Spanish" xml:space="preserve">
-    <value>Espagnol Latino-Américain</value>
+    <value>Español Latinoamericano</value>
   </data>
   <data name="Portuguese" xml:space="preserve">
-    <value>Portugais</value>
+    <value>Portugués</value>
   </data>
   <data name="Russian" xml:space="preserve">
-    <value>Russe</value>
+    <value>Ruso</value>
   </data>
   <data name="Simplified Chinese" xml:space="preserve">
-    <value>Chinois Simplifié</value>
+    <value>Chino Simplificado</value>
   </data>
   <data name="Spanish" xml:space="preserve">
-    <value>Espagnol</value>
+    <value>Español</value>
   </data>
   <data name="Taiwanese" xml:space="preserve">
-    <value>Taïwanais</value>
+    <value>Taiwanés</value>
   </data>
   <data name="Traditional Chinese" xml:space="preserve">
-    <value>Chinois Traditionnel</value>
+    <value>Chino Tradicional</value>
   </data>
   <data name="Change System TimeZone" xml:space="preserve">
-    <value>Changer le fuseau horaire du système</value>
+    <value>Cambia la Zona Horaria del Sistema</value>
   </data>
   <data name="System TimeZone:" xml:space="preserve">
-    <value>Fuseau Horaire du Système:</value>
+    <value>Zona Horaria del Sistema:</value>
   </data>
   <data name="System Time:" xml:space="preserve">
-    <value>Heure du Système:</value>
+    <value>Fecha del Sistema:</value>
   </data>
   <data name="2000" xml:space="preserve">
     <value>2000</value>
@@ -739,49 +739,49 @@
     <value>0</value>
   </data>
   <data name="Enable VSync" xml:space="preserve">
-    <value>Activer la Synchronisation Verticale</value>
+    <value>Activar Sincronización Vertical</value>
   </data>
   <data name="Enables or disables Vertical Sync" xml:space="preserve">
-    <value>Active ou désactive la Synchronisation Verticale</value>
+    <value>Activa o Desactiva la Sincronización Vertical</value>
   </data>
   <data name="Enable Multicore Scheduling" xml:space="preserve">
-    <value>Activer la Planification Multicœur</value>
+    <value>Activar Programación Multinúcleo</value>
   </data>
   <data name="Enables or disables multi-core scheduling of threads" xml:space="preserve">
-    <value>Active ou désactive la planification multicœur des threads</value>
+    <value>Activa o Desactiva la programación multinúcleo de hilos</value>
   </data>
   <data name="Enable FS Integrity Checks" xml:space="preserve">
-    <value>Activer les contrôles d'intégrité FS</value>
+    <value>Activar la comprobación de integridad de FS</value>
   </data>
   <data name="Enables integrity checks on Game content files" xml:space="preserve">
-    <value>Permet la vérification d'intégrité des fichiers de contenu du jeu</value>
+    <value>Activa la comprobación de integridad en archivos de contenido del juego</value>
   </data>
   <data name="Hacks" xml:space="preserve">
     <value>Hacks</value>
   </data>
   <data name=" - These may cause instability" xml:space="preserve">
-    <value> - Ceux-ci peuvent provoquer une instabilité</value>
+    <value> - Estos pueden causar inestabilidad</value>
   </data>
   <data name="Ignore Missing Services" xml:space="preserve">
-    <value>Ignorer les services manquants</value>
+    <value>Ignorar Servicios Perdidos</value>
   </data>
   <data name="Enable or disable ignoring missing services" xml:space="preserve">
-    <value>Activer ou désactiver l'ignorance des services manquants</value>
+    <value>Activa o Desactiva Ignorar Servicios Perdidos</value>
   </data>
   <data name="System" xml:space="preserve">
-    <value>Système</value>
+    <value>Sistema</value>
   </data>
   <data name="Enhancements" xml:space="preserve">
-    <value>Améliorations</value>
+    <value>Mejoras</value>
   </data>
   <data name="Level of Anisotropic Filtering (set to Auto to use the value requested by the game)" xml:space="preserve">
-    <value>Niveau de Filtrage Anisotrope (défini sur Automatique pour utiliser la valeur demandée par le jeu)</value>
+    <value>Nivel del Filtro de Anisotropía</value>
   </data>
   <data name="Anisotropic Filtering:" xml:space="preserve">
-    <value>Filtrage Anisotrope:</value>
+    <value>Filtro Anisotrópico:</value>
   </data>
   <data name="Auto" xml:space="preserve">
-    <value>Automatique</value>
+    <value>Automático</value>
   </data>
   <data name="2x" xml:space="preserve">
     <value>2x</value>
@@ -796,319 +796,319 @@
     <value>16x</value>
   </data>
   <data name="Developer Options" xml:space="preserve">
-    <value>Options de Développeur</value>
+    <value>Opciones de Desarrollador</value>
   </data>
   <data name="Graphics Shaders Dump Path" xml:space="preserve">
-    <value>Chemin d'extraction des shaders graphiques</value>
+    <value>Dirección de Volcado de Sombreadores Gráficos</value>
   </data>
   <data name="Graphics Shaders Dump Path:" xml:space="preserve">
-    <value>Chemin d'Extraction des Shaders Graphiques:</value>
+    <value>Dirección de Volcado de Sombreadores Gráficos:</value>
   </data>
   <data name="Graphics" xml:space="preserve">
-    <value>Graphismes</value>
+    <value>Gráficos</value>
   </data>
   <data name="Logging" xml:space="preserve">
-    <value>Loguage</value>
+    <value>Registro</value>
   </data>
   <data name="Enable Logging to File" xml:space="preserve">
-    <value>Activer le loguage dans un fichier</value>
+    <value>Activar Registrar a Archivo</value>
   </data>
   <data name="Enables or disables logging to a file on disk" xml:space="preserve">
-    <value>Active ou désactive le loguage dans un fichier sur le disque</value>
+    <value>Activa o Desactiva el registro a un archivo en disco</value>
   </data>
   <data name="Open Logs Folder" xml:space="preserve">
-    <value>Ouvrir le Dossier des Logs</value>
+    <value>Abrir Carpeta de Registros</value>
   </data>
   <data name="Opens the folder where logs are written to." xml:space="preserve">
-    <value>Ouvre le dossier dans lequel les logs sont écrits.</value>
+    <value>Abre la carpeta donde se escriben los registros.</value>
   </data>
   <data name="Enable Debug Logs" xml:space="preserve">
-    <value>Activer les Logs de Débogage</value>
+    <value>Activar Registros de Depuración</value>
   </data>
   <data name="Enables printing debug log messages" xml:space="preserve">
-    <value>Active l'impression des messages de logs de débogage</value>
+    <value>Permite escribir mensajes de registro de depuración</value>
   </data>
   <data name="Enable Stub Logs" xml:space="preserve">
-    <value>Activer les Logs de Stub</value>
+    <value>Activar Registro de Trozos</value>
   </data>
   <data name="Enables printing stub log messages" xml:space="preserve">
-    <value>Active l'impression des messages de logs de stub</value>
+    <value>Permite escribir mensajes de registro de trozos</value>
   </data>
   <data name="Enable Info Logs" xml:space="preserve">
-    <value>Activer les Logs d'Informations</value>
+    <value>Activar Registro de Información</value>
   </data>
   <data name="Enables printing info log messages" xml:space="preserve">
-    <value>Active l'impression des messages de logs d'informations</value>
+    <value>Permite escribir mensajes de Registro de Información</value>
   </data>
   <data name="Enable Warning Logs" xml:space="preserve">
-    <value>Activer les Logs d'Avertissements</value>
+    <value>Activar Registro de Advertencias</value>
   </data>
   <data name="Enables printing warning log messages" xml:space="preserve">
-    <value>Active l'impression des messages de logs d'avertissements</value>
+    <value>Permite escribir mensajes de Resgistro de Advertencias</value>
   </data>
   <data name="Enable Error Logs" xml:space="preserve">
-    <value>Activer les Logs  d'Erreurs</value>
+    <value>Activar Registro de Errores</value>
   </data>
   <data name="Enables printing error log messages" xml:space="preserve">
-    <value>Active l'impression des messages de logs d'erreurs</value>
+    <value>Permite escribir mensajes de Registro de Errores</value>
   </data>
   <data name="Enable Guest Logs" xml:space="preserve">
-    <value>Activer les Logs d'Invités</value>
+    <value>Activar Registro de Invitados</value>
   </data>
   <data name="Enables printing guest log messages" xml:space="preserve">
-    <value>Active l'impression des messages de logs d'invités</value>
+    <value>Permite escribir mensajes de Registro de Invitados</value>
   </data>
   <data name="Enable Fs Access Logs" xml:space="preserve">
-    <value>Activer les Logs d'Accès FS</value>
+    <value>Activar Registro de Acceso de FS</value>
   </data>
   <data name="Enables printing fs access log messages" xml:space="preserve">
-    <value>Active l'impression des messages de logs d'accès FS</value>
+    <value>Permite escribir mensajes de Registro de Acceso de FS</value>
   </data>
   <data name="Enables FS access log output to the console. Possible modes are 0-3" xml:space="preserve">
-    <value>Active la sortie des logs d'accès FS sur la console. Les modes possibles sont 0-3</value>
+    <value>Activar la salida de Registro hacia la consola. Los modos posibles son 0-3</value>
   </data>
   <data name="Fs Global Access Log Mode:" xml:space="preserve">
-    <value>Mode de Log d'Accès FS Global:</value>
+    <value>Modo de Registro de Acceso Global FS:</value>
   </data>
   <data name="English" xml:space="preserve">
-    <value>Anglais</value>
+    <value>Inglés</value>
   </data>
   <data name="Japanese (日本語)" xml:space="preserve">
-    <value>Japonais (日本語)</value>
+    <value>Japonés (日本語)</value>
   </data>
   <data name="Ryujinx - Title Update Manager" xml:space="preserve">
-    <value>Ryujinx - Gestionnaire de Mise à Jour de Titre</value>
+    <value>Ryujinx - Gerente de Actualizaciones de Títulos</value>
   </data>
   <data name="Available Updates" xml:space="preserve">
-    <value>Mises à jour Disponibles</value>
+    <value>Actualizaciones Disponibles</value>
   </data>
   <data name="No Update" xml:space="preserve">
-    <value>Pas de mise à jour</value>
+    <value>Sin Actualizaciones</value>
   </data>
   <data name="Adds an update to this list" xml:space="preserve">
-    <value>Ajoute une mise à jour à cette liste</value>
+    <value>Añade una actualización a esta lista</value>
   </data>
   <data name="Removes the selected update" xml:space="preserve">
-    <value>Retire la mise à jour sélectionnée</value>
+    <value>Remueve la actualización seleccionada</value>
   </data>
   <data name="All keyboards" xml:space="preserve">
-    <value>Tous les claviers</value>
+    <value>Todos los Teclados</value>
   </data>
   <data name="Some fields entered where invalid and therefore your config was not saved." xml:space="preserve">
-    <value>Certains champs sont entrés là où ils n'étaient pas valides et donc votre configuration n'a pas été enregistrée.</value>
+    <value>Algunos campos escritos fueron inválidos y por lo tanto tu configuración no fue guardada.</value>
   </data>
   <data name="Deleting Profile" xml:space="preserve">
-    <value>Suppression d'un profil</value>
+    <value>Borrando Perfil</value>
   </data>
   <data name="This action is irreversible, are your sure you want to continue?" xml:space="preserve">
-    <value>Cette action est irréversible, êtes-vous sûr de vouloir continuer?</value>
+    <value>Esta acción es irreversible, ¿estas seguro de que quieres continuar?</value>
   </data>
   <data name="There is no savedata for {titleName} [{titleId:x16}]" xml:space="preserve">
-    <value>Il n'y a pas de données enregistrées pour {titleName} [{titleId:x16}]</value>
+    <value>No hay datos guardados para {titleName} [{titleId:x16}]</value>
   </data>
   <data name="Would you like to create savedata for this game?" xml:space="preserve">
-    <value>Souhaitez-vous créer des données de sauvegarde pour ce jeu?</value>
+    <value>¿Te gustaría crear un archivo de guardado para este juego?</value>
   </data>
   <data name="There was an error creating the specified savedata: {result.ToStringWithName()}" xml:space="preserve">
-    <value>Une erreur s'est produite lors de la création des données de sauvegardes spécifiées: {result.ToStringWithName()}</value>
+    <value>Hubo un error creando el archivo de guardado especificado: {result.ToStringWithName()}</value>
   </data>
   <data name="There was an error finding the specified savedata: {result.ToStringWithName()}" xml:space="preserve">
-    <value>Une erreur s'est produite lors de la recherche des données de sauvegardes spécifiées: {result.ToStringWithName()}</value>
+    <value>Hubo un error encontrando el archivo de guardado especificado: {result.ToStringWithName()}</value>
   </data>
   <data name="Choose the folder to extract into" xml:space="preserve">
-    <value>Choisissez le dossier dans lequel extraire</value>
+    <value>Escoge la carpeta donde extraer</value>
   </data>
   <data name="Extract" xml:space="preserve">
-    <value>Extraire</value>
+    <value>Extraer</value>
   </data>
   <data name="Ryujinx - NCA Section Extractor" xml:space="preserve">
-    <value>Ryujinx - Extracteur de section NCA</value>
+    <value>Ryujinx - Extractor de Sección NCA</value>
   </data>
   <data name="Extracting {ncaSectionType} section from {System.IO.Path.GetFileName(sourceFile)}..." xml:space="preserve">
-    <value>Extraction de la section {ncaSectionType} à partir de {System.IO.Path.GetFileName(sourceFile)}...</value>
+    <value>Extrayendo la sección {ncaSectionType} desde {System.IO.Path.GetFileName(sourceFile)}...</value>
   </data>
   <data name="Extraction failed. The main NCA was not present in the selected file." xml:space="preserve">
-    <value>L'extraction a échoué. Le NCA principal n'était pas présent dans le fichier sélectionné.</value>
+    <value>Extracción fallida. El NCA principal no fue encontrado en el archivo seleccionado.</value>
   </data>
   <data name="Extraction failed. Read the log file for further information." xml:space="preserve">
-    <value>L'extraction a échoué. Lisez le fichier de logs pour plus d'informations.</value>
+    <value>Extracción fallida. Lea el archivo de registro para mas información.</value>
   </data>
   <data name="Extraction has completed successfully." xml:space="preserve">
-    <value>L'extraction s'est terminée avec succès.</value>
+    <value>La extracción se a completado correctamente.</value>
   </data>
   <data name="UI error: The selected game did not have a valid title ID" xml:space="preserve">
-    <value>Erreur d'interface utilisateur: le jeu sélectionné n'avait pas d'ID de titre valide</value>
+    <value>Error de la Interfaz: El juego seleccionado no tenia un título ID válido</value>
   </data>
   <data name="Ryujinx - Warning" xml:space="preserve">
-    <value>Ryujinx - Avertissement</value>
+    <value>Ryujinx - Advertencia</value>
   </data>
   <data name="Ryujinx - Error" xml:space="preserve">
-    <value>Ryujinx - Erreur</value>
+    <value>Ryujinx - Error</value>
   </data>
   <data name="Ryujinx has encountered an error" xml:space="preserve">
-    <value>Ryujinx a rencontré une erreur</value>
+    <value>Ryujinx ha encontrado un error</value>
   </data>
   <data name="Ryujinx - Confirmation" xml:space="preserve">
-    <value>Ryujinx - Confirmation</value>
+    <value>Ryujinx - Confirmación</value>
   </data>
   <data name="Ryujinx - Exit" xml:space="preserve">
-    <value>Ryujinx - Quitter</value>
+    <value>Ryujinx - Salir</value>
   </data>
   <data name="Are you sure you want to stop emulation?" xml:space="preserve">
-    <value>Voulez-vous vraiment arrêter l'émulation?</value>
+    <value>¿Estas seguro que quieres terminar la emulación?</value>
   </data>
   <data name="All unsaved data will be lost" xml:space="preserve">
-    <value>Toutes les données non enregistrées seront perdues</value>
+    <value>Todos los datos sin guardar serán perdidos</value>
   </data>
   <data name="Fav" xml:space="preserve">
-    <value>Favori</value>
+    <value>Fav</value>
   </data>
   <data name="Icon" xml:space="preserve">
-    <value>Icône</value>
+    <value>Ícono</value>
   </data>
   <data name="Application" xml:space="preserve">
-    <value>Application</value>
+    <value>Aplicación</value>
   </data>
   <data name="Developer" xml:space="preserve">
-    <value>Développeur</value>
+    <value>Desarrollador</value>
   </data>
   <data name="Version" xml:space="preserve">
-    <value>Version</value>
+    <value>Versión</value>
   </data>
   <data name="Time Played" xml:space="preserve">
-    <value>Temps Joué</value>
+    <value>Tiempo Jugado</value>
   </data>
   <data name="Last Played" xml:space="preserve">
-    <value>Dernière Session</value>
+    <value>Jugado por Última Vez</value>
   </data>
   <data name="File Ext" xml:space="preserve">
-    <value>Extension du Fichier</value>
+    <value>Ext Archivo</value>
   </data>
   <data name="File Size" xml:space="preserve">
-    <value>Taille du Fichier</value>
+    <value>Tamaño del Archivo</value>
   </data>
   <data name="Path" xml:space="preserve">
-    <value>Chemin</value>
+    <value>Dirección</value>
   </data>
   <data name="A game has already been loaded" xml:space="preserve">
-    <value>Un jeu a déjà été chargé</value>
+    <value>Un juego ya ha sido cargado</value>
   </data>
   <data name="Please close it first and try again." xml:space="preserve">
-    <value>Veuillez le fermer d'abord et réessayer.</value>
+    <value>Por favor ciérralo e intenta de nuevo.</value>
   </data>
   <data name="You have debug logging enabled, which is designed to be used by developers only." xml:space="preserve">
-    <value>Vous avez activé les rapports de débogage, qui est conçue pour être utilisée uniquement par les développeurs.</value>
+    <value>Tienes el registro de depuración activado, el cual esta diseñado para ser usado solo por desarrolladores.</value>
   </data>
   <data name="For optimal performance, it's recommended to disable debug logging. Would you like to disable debug logging now?" xml:space="preserve">
-    <value>Pour des performances optimales, il est recommandé de désactiver cette option. Souhaitez-vous désactiver les rapports de débogage maintenant?</value>
+    <value>Para un rendimiento optimo, se recomienda desactivar el registro de depuración. ¿Te gustaría desactivar el registro de depuración ahora?</value>
   </data>
   <data name="You have shader dumping enabled, which is designed to be used by developers only." xml:space="preserve">
-    <value>Vous avez activé le vidage de shader, qui est conçu pour être utilisé uniquement par les développeurs.</value>
+    <value>Tienes el volcado de sombreadores activado, el cual esta diseñado para ser usado solo por desarrolladores.</value>
   </data>
   <data name="For optimal performance, it's recommended to disable shader dumping. Would you like to disable shader dumping now?" xml:space="preserve">
-    <value>Pour des performances optimales, il est recommandé de désactiver cette option. Souhaitez-vous désactiver le vidage de shaders maintenant?</value>
+    <value>Para un rendimiento optimo, se recomienda desactivar el volcamiento de sombreadores. ¿Te gustaría desactivar el volcado de sombreadores ahora?</value>
   </data>
   <data name="Exit Fullscreen" xml:space="preserve">
-    <value>Quitter le mode plein écran</value>
+    <value>Salir de la Pantalla Completa</value>
   </data>
   <data name="{args.NumAppsLoaded}/{args.NumAppsFound} Games Loaded" xml:space="preserve">
-    <value>{args.NumAppsLoaded}/{args.NumAppsFound} Jeux Chargés</value>
+    <value>{args.NumAppsLoaded}/{args.NumAppsFound} Juegos Cargados</value>
   </data>
   <data name="Choose the file to open" xml:space="preserve">
-    <value>Choisissez le fichier à ouvrir</value>
+    <value>Escoge el archivo para abrir</value>
   </data>
   <data name="Open" xml:space="preserve">
-    <value>Ouvrir</value>
+    <value>Abrir</value>
   </data>
   <data name="Choose the folder to open" xml:space="preserve">
-    <value>Choisissez le dossier à ouvrir</value>
+    <value>Escoge la carpeta para abrir</value>
   </data>
   <data name="Choose the firmware file to open" xml:space="preserve">
-    <value>Choisissez le fichier du firmware à ouvrir</value>
+    <value>Escoge el archivo de Firmware para abrir</value>
   </data>
   <data name="Choose the firmware directory to open" xml:space="preserve">
-    <value>Choisissez le dossier du firmware à ouvrir</value>
+    <value>Escoge la dirección del Firmware para abrir</value>
   </data>
   <data name="Firmware not found." xml:space="preserve">
-    <value>Firmware introuvable.</value>
+    <value>Firmware no encontrado.</value>
   </data>
   <data name="A valid system firmware was not found in {filename}." xml:space="preserve">
-    <value>Aucun firmware valide trouvable dans {filename}.</value>
+    <value>Un Firmware de Sistema válido no se encontró en {filename}.</value>
   </data>
   <data name="System version {firmwareVersion.VersionString} will be installed." xml:space="preserve">
-    <value>La Version du Système {firmwareVersion.VersionString} sera installée.</value>
+    <value>El Sistema versión {firmwareVersion.VersionString} será instalado.</value>
   </data>
   <data name="This will replace the current system version {currentVersion.VersionString}. " xml:space="preserve">
-    <value>Cela remplacera la version actuelle du système {currentVersion.VersionString}. </value>
+    <value>Esto reemplazará la versión del sistema actual {currentVersion.VersionString}. </value>
   </data>
   <data name="Do you want to continue?" xml:space="preserve">
-    <value>Voulez-vous continuer?</value>
+    <value>¿Quieres continuar?</value>
   </data>
   <data name="Install Firmware {firmwareVersion.VersionString}" xml:space="preserve">
-    <value>Installer le firmware {firmwareVersion.VersionString}</value>
+    <value>Instalar Firmware {firmwareVersion.VersionString}</value>
   </data>
   <data name="Installing firmware..." xml:space="preserve">
-    <value>Installation du firmware...</value>
+    <value>Instalando Firmware...</value>
   </data>
   <data name="Installing firmware {firmwareVersion.VersionString}" xml:space="preserve">
-    <value>Installation du firmware {firmwareVersion.VersionString}</value>
+    <value>Instalando Firmware {firmwareVersion.VersionString}</value>
   </data>
   <data name="System version {firmwareVersion.VersionString} successfully installed." xml:space="preserve">
-    <value>La Version du Système {firmwareVersion.VersionString} a été installée avec succès.</value>
+    <value>Sistema Versión {firmwareVersion.VersionString} instalado correctamente.</value>
   </data>
   <data name="Install Firmware {firmwareVersion.VersionString} Failed." xml:space="preserve">
-    <value>Échec de l'installation du Firmware {firmwareVersion.VersionString}.</value>
+    <value>Instalación del Firmware {firmwareVersion.VersionString} fallido.</value>
   </data>
   <data name="An error occured while installing system version {firmwareVersion.VersionString}. Please check logs for more info." xml:space="preserve">
-    <value>Une erreur s'est produite lors de l'installation de la version du système {firmwareVersion.VersionString}. Veuillez consulter les journaux pour plus d'informations.</value>
+    <value>Un error ha ocurrido mientras se instalaba el sistema versión {firmwareVersion.VersionString}. Por favor vea el registro para mas información.</value>
   </data>
   <data name="Parsing Firmware Failed." xml:space="preserve">
-    <value>Échec de l'analyse du Firmware.</value>
+    <value>Análisis del Firmware Fallido.</value>
   </data>
   <data name="An error occured while parsing firmware. Please check the logs for more info." xml:space="preserve">
-    <value>Une erreur s'est produite lors de l'analyse du firmware. Veuillez consulter les journaux pour plus d'informations.</value>
+    <value>Un error ha ocurrido mientras se analizaba el Firmware. Por favor lea el registro para mas información.</value>
   </data>
   <data name="Update canceled by user or updater was not found" xml:space="preserve">
-    <value>La mise à jour annulée par l'utilisateur ou le programme de mise à jour est introuvable</value>
+    <value>Actualización cancelada por el usuario o el actualizador no fue encontrado</value>
   </data>
   <data name="mins" xml:space="preserve">
-    <value>minutes</value>
+    <value>minutos</value>
   </data>
   <data name="hrs" xml:space="preserve">
-    <value>heures</value>
+    <value>horas</value>
   </data>
   <data name="days" xml:space="preserve">
-    <value>jours</value>
+    <value>días</value>
   </data>
   <data name="The file name contains invalid characters. Please try again." xml:space="preserve">
-    <value>Le nom de fichier contient des caractères non valides. Veuillez réessayer.</value>
+    <value>El nombre del archivo contiene caracteres inválidos. Por favor intente nuevamente.</value>
   </data>
   <data name="Choose the game directory to add to the list" xml:space="preserve">
-    <value>Choisissez le dossier du jeu à ajouter à la liste</value>
+    <value>Escoge la dirección del juego para añadir a la lista</value>
   </data>
   <data name="Choose the theme to load" xml:space="preserve">
-    <value>Choisissez le thème à charger</value>
+    <value>Escoge el tema para cargar</value>
   </data>
   <data name="Select" xml:space="preserve">
-    <value>Sélectionner</value>
+    <value>Seleccionar</value>
   </data>
   <data name="Updates Available for {titleName} [{titleId}]" xml:space="preserve">
-    <value>Mises à jour disponibles pour {titleName} [{titleId}]</value>
+    <value>Actualizaciones Disponibles para {titleName} [{titleId}]</value>
   </data>
   <data name="The specified file does not contain an update for the selected title!" xml:space="preserve">
-    <value>Le fichier spécifié ne contient pas de mise à jour pour le titre sélectionné!</value>
+    <value>¡El archivo especificado no contiene una actualización para el título seleccionado!</value>
   </data>
   <data name="Add Update Failed!" xml:space="preserve">
-    <value>Échec de l'ajout de la mise à jour!</value>
+    <value>¡Añadir Actualización Falló!</value>
   </data>
   <data name="The NCA header content type check has failed. This is usually because the header key is incorrect or missing." xml:space="preserve">
-    <value>La vérification du type de contenu d'en-tête NCA a échoué. Cela est généralement dû au fait que la clé d'en-tête est incorrecte ou manquante.</value>
+    <value>La verificación del tipo de contenido del encabezado NCA ha fallado. Esto generalmente se debe a que la clave del encabezado es incorrecta o faltante.</value>
   </data>
   <data name="Your key set is missing a key with the name: {exception.Name}" xml:space="preserve">
-    <value>Votre ensemble de clés ne contient pas de clé portant le nom: {exception.Name}</value>
+    <value>Tu conjunto de claves no tiene la clave con el nombre {exception.Name}</value>
   </data>
   <data name="Select update files" xml:space="preserve">
-    <value>Sélectionnez les fichiers de mise à jour</value>
+    <value>Selecciona archivos de actualización</value>
   </data>
   <data name="gdkchan, LDj3SNuD, Ac_K, Thog" xml:space="preserve">
     <value> gdkchan,
@@ -1116,20 +1116,20 @@
  Ac_K,
  Thog</value>
   </data>
+  <data name="Ryujinx is not affiliated with Nintendo, or any of its partners, in any way" xml:space="preserve">
+    <value>Ryujinx no esta afiliado con Nintendo,
+o ninguno de sus socios, en ninguna manera</value>
+  </data>
+  <data name="Ryujinx is an emulator for the Nintendo Switch. Please support us on Patreon. Get all the latest news on our Twitter or Discord. Developers interested in contributing can find out more on our Discord." xml:space="preserve">
+    <value>Ryujinx es un emulador para la Nintendo Switch.
+Por favor apóyanos en Patreon
+Obtén las últimas noticias en nuestro Twitter o Discord.
+Desarrolladores interesados en contribuir pueden encontrar mas información en nuestro Discord.</value>
+  </data>
   <data name="jD, emmaus, Thealexbarney, Andy A (BaronKiko)" xml:space="preserve">
     <value>»jD«
 emmaus
 Thealexbarney
 Andy A (BaronKiko)</value>
-  </data>
-  <data name="Ryujinx is an emulator for the Nintendo Switch. Please support us on Patreon. Get all the latest news on our Twitter or Discord. Developers interested in contributing can find out more on our Discord." xml:space="preserve">
-    <value>Ryujinx est un émulateur de Nintendo Switch.
-Veuillez nous soutenir sur Patreon.
-Recevez les toutes dernières nouvelles sur notre Twitter ou Discord.
-Les développeurs intéressés à contribuer peuvent en savoir plus sur notre Discord.</value>
-  </data>
-  <data name="Ryujinx is not affiliated with Nintendo, or any of its partners, in any way" xml:space="preserve">
-    <value>Ryujinx n'est pas affilié à Nintendo, ou l'un de ses partenaires, 
-de quelque manière que ce soit</value>
   </data>
 </root>
