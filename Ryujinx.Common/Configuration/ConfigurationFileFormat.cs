@@ -13,7 +13,7 @@ namespace Ryujinx.Configuration
         /// <summary>
         /// The current version of the file format
         /// </summary>
-        public const int CurrentVersion = 11;
+        public const int CurrentVersion = 12;
 
         public int Version { get; set; }
 
@@ -181,6 +181,21 @@ namespace Ryujinx.Configuration
         /// Hotkey Keyboard Bindings
         /// </summary>
         public KeyboardHotkeys Hotkeys { get; set; }
+
+        /// <summary>
+        /// Host address of the DSU Server
+        /// </summary>
+        public string DsuServerHost { get; set; }
+
+        /// <summary>
+        /// Port of the DSU Server
+        /// </summary>
+        public int DsuServerPort { get; set; }
+
+        /// <summary>
+        /// Enables or disables motion controls
+        /// </summary>
+        public bool EnableMotionControls { get; set; }
 
         /// <summary>
         /// Keyboard control bindings

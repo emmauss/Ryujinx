@@ -26,10 +26,19 @@ namespace Ryujinx.Ui
         [GUI] Adjustment   _controllerDeadzoneLeft;
         [GUI] Adjustment   _controllerDeadzoneRight;
         [GUI] Adjustment   _controllerTriggerThreshold;
+        [GUI] Adjustment   _slotNumber;
+        [GUI] Adjustment   _altSlotNumber;
+        [GUI] Adjustment   _sensitivity;
+        [GUI] CheckButton  _enableMotion;
+        [GUI] CheckButton  _enableAltServer;
+        [GUI] CheckButton  _mirrorInput;
+        [GUI] Entry        _dsuServerHost;
+        [GUI] Entry        _dsuServerPort;
         [GUI] ComboBoxText _inputDevice;
         [GUI] ComboBoxText _profile;
         [GUI] ToggleButton _refreshInputDevicesButton;
         [GUI] Box          _settingsBox;
+        [GUI] Box          _altBox;
         [GUI] Grid         _leftStickKeyboard;
         [GUI] Grid         _leftStickController;
         [GUI] Box          _deadZoneLeftBox;
@@ -206,6 +215,7 @@ namespace Ryujinx.Ui
         {
             _leftSideTriggerBox.Hide();
             _rightSideTriggerBox.Hide();
+            _altBox.Hide();
 
             switch (_controllerType.ActiveId)
             {
@@ -214,6 +224,9 @@ namespace Ryujinx.Ui
                     break;
                 case "JoyconRight":
                     _rightSideTriggerBox.Show();
+                    break;
+                case "JoyconPair":
+                    _altBox.Show();
                     break;
             }
 
@@ -271,6 +284,14 @@ namespace Ryujinx.Ui
             _controllerDeadzoneLeft.Value     = 0;
             _controllerDeadzoneRight.Value    = 0;
             _controllerTriggerThreshold.Value = 0;
+            _enableAltServer.Active           = false;
+            _mirrorInput.Active               = false;
+            _enableMotion.Active              = false;
+            _slotNumber.Value                 = 0;
+            _altSlotNumber.Value              = 0;
+            _sensitivity.Value                = 100;
+            _dsuServerHost.Buffer.Text        = "";
+            _dsuServerPort.Buffer.Text        = "";
         }
 
         private void SetValues(InputConfig config)
@@ -280,34 +301,42 @@ namespace Ryujinx.Ui
                 case KeyboardConfig keyboardConfig:
                     _controllerType.SetActiveId(keyboardConfig.ControllerType.ToString());
 
-                    _lStickUp.Label     = keyboardConfig.LeftJoycon.StickUp.ToString();
-                    _lStickDown.Label   = keyboardConfig.LeftJoycon.StickDown.ToString();
-                    _lStickLeft.Label   = keyboardConfig.LeftJoycon.StickLeft.ToString();
-                    _lStickRight.Label  = keyboardConfig.LeftJoycon.StickRight.ToString();
-                    _lStickButton.Label = keyboardConfig.LeftJoycon.StickButton.ToString();
-                    _dpadUp.Label       = keyboardConfig.LeftJoycon.DPadUp.ToString();
-                    _dpadDown.Label     = keyboardConfig.LeftJoycon.DPadDown.ToString();
-                    _dpadLeft.Label     = keyboardConfig.LeftJoycon.DPadLeft.ToString();
-                    _dpadRight.Label    = keyboardConfig.LeftJoycon.DPadRight.ToString();
-                    _minus.Label        = keyboardConfig.LeftJoycon.ButtonMinus.ToString();
-                    _l.Label            = keyboardConfig.LeftJoycon.ButtonL.ToString();
-                    _zL.Label           = keyboardConfig.LeftJoycon.ButtonZl.ToString();
-                    _lSl.Label          = keyboardConfig.LeftJoycon.ButtonSl.ToString();
-                    _lSr.Label          = keyboardConfig.LeftJoycon.ButtonSr.ToString();
-                    _rStickUp.Label     = keyboardConfig.RightJoycon.StickUp.ToString();
-                    _rStickDown.Label   = keyboardConfig.RightJoycon.StickDown.ToString();
-                    _rStickLeft.Label   = keyboardConfig.RightJoycon.StickLeft.ToString();
-                    _rStickRight.Label  = keyboardConfig.RightJoycon.StickRight.ToString();
-                    _rStickButton.Label = keyboardConfig.RightJoycon.StickButton.ToString();
-                    _a.Label            = keyboardConfig.RightJoycon.ButtonA.ToString();
-                    _b.Label            = keyboardConfig.RightJoycon.ButtonB.ToString();
-                    _x.Label            = keyboardConfig.RightJoycon.ButtonX.ToString();
-                    _y.Label            = keyboardConfig.RightJoycon.ButtonY.ToString();
-                    _plus.Label         = keyboardConfig.RightJoycon.ButtonPlus.ToString();
-                    _r.Label            = keyboardConfig.RightJoycon.ButtonR.ToString();
-                    _zR.Label           = keyboardConfig.RightJoycon.ButtonZr.ToString();
-                    _rSl.Label          = keyboardConfig.RightJoycon.ButtonSl.ToString();
-                    _rSr.Label          = keyboardConfig.RightJoycon.ButtonSr.ToString();
+                    _lStickUp.Label            = keyboardConfig.LeftJoycon.StickUp.ToString();
+                    _lStickDown.Label          = keyboardConfig.LeftJoycon.StickDown.ToString();
+                    _lStickLeft.Label          = keyboardConfig.LeftJoycon.StickLeft.ToString();
+                    _lStickRight.Label         = keyboardConfig.LeftJoycon.StickRight.ToString();
+                    _lStickButton.Label        = keyboardConfig.LeftJoycon.StickButton.ToString();
+                    _dpadUp.Label              = keyboardConfig.LeftJoycon.DPadUp.ToString();
+                    _dpadDown.Label            = keyboardConfig.LeftJoycon.DPadDown.ToString();
+                    _dpadLeft.Label            = keyboardConfig.LeftJoycon.DPadLeft.ToString();
+                    _dpadRight.Label           = keyboardConfig.LeftJoycon.DPadRight.ToString();
+                    _minus.Label               = keyboardConfig.LeftJoycon.ButtonMinus.ToString();
+                    _l.Label                   = keyboardConfig.LeftJoycon.ButtonL.ToString();
+                    _zL.Label                  = keyboardConfig.LeftJoycon.ButtonZl.ToString();
+                    _lSl.Label                 = keyboardConfig.LeftJoycon.ButtonSl.ToString();
+                    _lSr.Label                 = keyboardConfig.LeftJoycon.ButtonSr.ToString();
+                    _rStickUp.Label            = keyboardConfig.RightJoycon.StickUp.ToString();
+                    _rStickDown.Label          = keyboardConfig.RightJoycon.StickDown.ToString();
+                    _rStickLeft.Label          = keyboardConfig.RightJoycon.StickLeft.ToString();
+                    _rStickRight.Label         = keyboardConfig.RightJoycon.StickRight.ToString();
+                    _rStickButton.Label        = keyboardConfig.RightJoycon.StickButton.ToString();
+                    _a.Label                   = keyboardConfig.RightJoycon.ButtonA.ToString();
+                    _b.Label                   = keyboardConfig.RightJoycon.ButtonB.ToString();
+                    _x.Label                   = keyboardConfig.RightJoycon.ButtonX.ToString();
+                    _y.Label                   = keyboardConfig.RightJoycon.ButtonY.ToString();
+                    _plus.Label                = keyboardConfig.RightJoycon.ButtonPlus.ToString();
+                    _r.Label                   = keyboardConfig.RightJoycon.ButtonR.ToString();
+                    _zR.Label                  = keyboardConfig.RightJoycon.ButtonZr.ToString();
+                    _rSl.Label                 = keyboardConfig.RightJoycon.ButtonSl.ToString();
+                    _rSr.Label                 = keyboardConfig.RightJoycon.ButtonSr.ToString();
+                    _slotNumber.Value          = keyboardConfig.Slot;
+                    _altSlotNumber.Value       = keyboardConfig.AltSlot;;
+                    _sensitivity.Value         = keyboardConfig.Sensitivity;
+                    _enableMotion.Active       = keyboardConfig.EnableMotion;
+                    _mirrorInput.Active        = keyboardConfig.MirrorInput;
+                    _enableAltServer.Active    = keyboardConfig.UseAltServer;
+                    _dsuServerHost.Buffer.Text = keyboardConfig.DsuServerHost;
+                    _dsuServerPort.Buffer.Text = keyboardConfig.DsuServerPort.ToString();
                     break;
                 case ControllerConfig controllerConfig:
                     _controllerType.SetActiveId(controllerConfig.ControllerType.ToString());
@@ -343,6 +372,14 @@ namespace Ryujinx.Ui
                     _controllerDeadzoneLeft.Value     = controllerConfig.DeadzoneLeft;
                     _controllerDeadzoneRight.Value    = controllerConfig.DeadzoneRight;
                     _controllerTriggerThreshold.Value = controllerConfig.TriggerThreshold;
+                    _slotNumber.Value                 = controllerConfig.Slot;
+                    _altSlotNumber.Value              = controllerConfig.AltSlot;
+                    _sensitivity.Value                = controllerConfig.Sensitivity;
+                    _enableMotion.Active              = controllerConfig.EnableMotion;
+                    _enableAltServer.Active           = controllerConfig.UseAltServer;
+                    _mirrorInput.Active               = controllerConfig.MirrorInput;
+                    _dsuServerHost.Buffer.Text        = controllerConfig.DsuServerHost;
+                    _dsuServerPort.Buffer.Text        = controllerConfig.DsuServerPort.ToString();
                     break;
             }
         }
@@ -419,7 +456,15 @@ namespace Ryujinx.Ui
                         ButtonZr    = rButtonZr,
                         ButtonSl    = rButtonSl,
                         ButtonSr    = rButtonSr
-                    }
+                    },
+                    EnableMotion  = _enableMotion.Active,
+                    UseAltServer  = _enableAltServer.Active,
+                    MirrorInput   = _mirrorInput.Active,
+                    Slot          = (int)_slotNumber.Value,
+                    AltSlot       = (int)_slotNumber.Value,
+                    Sensitivity   = (int)_sensitivity.Value,
+                    DsuServerHost = _dsuServerHost.Buffer.Text,
+                    DsuServerPort = int.Parse(_dsuServerPort.Buffer.Text)
                 };
             }
             
@@ -492,7 +537,15 @@ namespace Ryujinx.Ui
                         ButtonZr     = rButtonZr,
                         ButtonSl     = rButtonSl,
                         ButtonSr     = rButtonSr
-                    }
+                    },
+                    EnableMotion  = _enableMotion.Active,
+                    UseAltServer  = _enableAltServer.Active,
+                    MirrorInput   = _mirrorInput.Active,
+                    Slot          = (int)_slotNumber.Value,
+                    AltSlot       = (int)_slotNumber.Value,
+                    Sensitivity   = (int)_sensitivity.Value,
+                    DsuServerHost = _dsuServerHost.Buffer.Text,
+                    DsuServerPort = int.Parse(_dsuServerPort.Buffer.Text)
                 };
             }
 
@@ -750,7 +803,15 @@ namespace Ryujinx.Ui
                             ButtonZr    = Key.O,
                             ButtonSl    = Key.Unbound,
                             ButtonSr    = Key.Unbound
-                        }
+                        },
+                        EnableMotion  = false,
+                        UseAltServer  = false,
+                        MirrorInput   = false,
+                        Slot          = 0,
+                        AltSlot       = 0,
+                        Sensitivity   = 100,
+                        DsuServerHost = "",
+                        DsuServerPort = 0
                     };
                 }
                 else if (_inputDevice.ActiveId.StartsWith("controller"))
@@ -795,7 +856,15 @@ namespace Ryujinx.Ui
                             ButtonSr     = ControllerInputId.Unbound,
                             InvertStickX = false,
                             InvertStickY = false
-                        }
+                        },
+                        EnableMotion  = false,
+                        UseAltServer  = false,
+                        MirrorInput   = false,
+                        Slot          = 0,
+                        AltSlot       = 0,
+                        Sensitivity   = 100,
+                        DsuServerHost = "",
+                        DsuServerPort = 0
                     };
                 }
             }

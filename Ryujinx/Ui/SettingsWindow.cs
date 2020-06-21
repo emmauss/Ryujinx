@@ -74,6 +74,9 @@ namespace Ryujinx.Ui
         [GUI] ToggleButton _configureController7;
         [GUI] ToggleButton _configureController8;
         [GUI] ToggleButton _configureControllerH;
+        [GUI] Entry        _dsuServerHost;
+        [GUI] Entry        _dsuServerPort;
+        [GUI] CheckButton  _enableDSUClient;
 #pragma warning restore CS0649, IDE0044
 
         public SettingsWindow(VirtualFileSystem virtualFileSystem, HLE.FileSystem.Content.ContentManager contentManager) : this(new Builder("Ryujinx.Ui.SettingsWindow.glade"), virtualFileSystem, contentManager) { }
@@ -185,6 +188,11 @@ namespace Ryujinx.Ui
                 _custThemeToggle.Click();
             }
 
+            if (ConfigurationState.Instance.Hid.EnableDsuClient)
+            {
+                _enableDSUClient.Click();
+            }
+
             TimeZoneContentManager timeZoneContentManager = new TimeZoneContentManager();
 
             timeZoneContentManager.InitializeInstance(virtualFileSystem, contentManager, LibHac.FsSystem.IntegrityCheckLevel.None);
@@ -217,6 +225,8 @@ namespace Ryujinx.Ui
             _graphicsShadersDumpPath.Buffer.Text = ConfigurationState.Instance.Graphics.ShadersDumpPath;
             _fsLogSpinAdjustment.Value           = ConfigurationState.Instance.System.FsGlobalAccessLogMode;
             _systemTimeOffset                    = ConfigurationState.Instance.System.SystemTimeOffset;
+            _dsuServerHost.Buffer.Text           = ConfigurationState.Instance.Hid.DsuServerHost.Value;
+            _dsuServerPort.Buffer.Text           = ConfigurationState.Instance.Hid.DsuServerPort.Value.ToString();
 
             _gameDirsBox.AppendColumn("", new CellRendererText(), "text", 0);
             _gameDirsBoxStore  = new ListStore(typeof(string));
@@ -437,6 +447,9 @@ namespace Ryujinx.Ui
             ConfigurationState.Instance.System.EnableFsIntegrityChecks.Value   = _fsicToggle.Active;
             ConfigurationState.Instance.System.IgnoreMissingServices.Value     = _ignoreToggle.Active;
             ConfigurationState.Instance.Hid.EnableKeyboard.Value               = _directKeyboardAccess.Active;
+            ConfigurationState.Instance.Hid.DsuServerHost.Value                = _dsuServerHost.Buffer.Text;
+            ConfigurationState.Instance.Hid.DsuServerPort.Value                = int.Parse(_dsuServerPort.Buffer.Text);
+            ConfigurationState.Instance.Hid.EnableDsuClient.Value              = _enableDSUClient.Active;
             ConfigurationState.Instance.Ui.EnableCustomTheme.Value             = _custThemeToggle.Active;
             ConfigurationState.Instance.System.Language.Value                  = Enum.Parse<Language>(_systemLanguageSelect.ActiveId);
             ConfigurationState.Instance.System.Region.Value                    = Enum.Parse<Configuration.System.Region>(_systemRegionSelect.ActiveId);

@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using Ryujinx.Common.Logging;
 using Ryujinx.HLE.HOS.Kernel.Threading;
 
@@ -229,7 +230,7 @@ namespace Ryujinx.HLE.HOS.Services.Hid
             Logger.PrintInfo(LogClass.Hid, $"Connected ControllerType {type} to PlayerIndex {player}");
         }
 
-        private static NpadLayoutsIndex ControllerTypeToLayout(ControllerType controllerType)
+        private static NpadLayoutsIndex ControllerTypeToNpadLayout(ControllerType controllerType)
         => controllerType switch
         {
             ControllerType.ProController => NpadLayoutsIndex.ProController,
@@ -241,6 +242,18 @@ namespace Ryujinx.HLE.HOS.Services.Hid
             _                            => NpadLayoutsIndex.SystemExternal
         };
 
+        private static SixAxixLayoutsIndex ControllerTypeToSixAxisLayout(ControllerType controllerType)
+        => controllerType switch
+        {
+            ControllerType.ProController => SixAxixLayoutsIndex.ProController,
+            ControllerType.Handheld      => SixAxixLayoutsIndex.Handheld,
+            ControllerType.JoyconPair    => SixAxixLayoutsIndex.JoyDualLeft,
+            ControllerType.JoyconLeft    => SixAxixLayoutsIndex.JoyLeft,
+            ControllerType.JoyconRight   => SixAxixLayoutsIndex.JoyRight,
+            ControllerType.Pokeball      => SixAxixLayoutsIndex.Pokeball,
+            _                            => SixAxixLayoutsIndex.SystemExternal
+        };
+
         public void SetGamepadsInput(params GamepadInput[] states)
         {
             UpdateAllEntries();
@@ -248,6 +261,39 @@ namespace Ryujinx.HLE.HOS.Services.Hid
             for (int i = 0; i < states.Length; ++i)
             {
                 SetGamepadState(states[i].PlayerId, states[i].Buttons, states[i].LStick, states[i].RStick);
+            }
+        }
+
+        public void SetSixAxisInput(params SixAxisInput[] states)
+        {
+            for (int i = 0; i < states.Length; ++i)
+            {
+                HidVector accel = new HidVector()
+                {
+                    X = states[i].Accelerometer.X,
+                    Y = states[i].Accelerometer.Y,
+                    Z = states[i].Accelerometer.Z
+                };
+
+                HidVector gyro = new HidVector()
+                {
+                    X = states[i].Gyroscope.X,
+                    Y = states[i].Gyroscope.Y,
+                    Z = states[i].Gyroscope.Z
+                };
+
+                HidVector rotation = new HidVector()
+                {
+                    X = states[i].Rotation.X,
+                    Y = states[i].Rotation.Y,
+                    Z = states[i].Rotation.Z
+                };
+
+                if (SetSixAxisState(states[i].PlayerId, accel, gyro, rotation, states[i].Orientation))
+                {
+                    SetSixAxisState(states[i + 1].PlayerId, accel, gyro, rotation, states[i + 1].Orientation, true);
+                    i++;
+                }
             }
         }
 
@@ -270,7 +316,7 @@ namespace Ryujinx.HLE.HOS.Services.Hid
             }
 
             ref ShMemNpad  currentNpad   = ref _device.Hid.SharedMemory.Npads[(int)player];
-            ref NpadLayout currentLayout = ref currentNpad.Layouts[(int)ControllerTypeToLayout(currentNpad.Header.Type)];
+            ref NpadLayout currentLayout = ref currentNpad.Layouts[(int)ControllerTypeToNpadLayout(currentNpad.Header.Type)];
             ref NpadState  currentEntry  = ref currentLayout.Entries[(int)currentLayout.Header.LatestEntry];
 
             currentEntry.Buttons = buttons;
@@ -282,6 +328,45 @@ namespace Ryujinx.HLE.HOS.Services.Hid
             // Mirror data to Default layout just in case
             ref NpadLayout mainLayout = ref currentNpad.Layouts[(int)NpadLayoutsIndex.SystemExternal];
             mainLayout.Entries[(int)mainLayout.Header.LatestEntry] = currentEntry;
+        }
+
+        private unsafe bool SetSixAxisState(PlayerIndex player, HidVector accel,
+            HidVector gyro, HidVector rotation, float[] orientation, bool isRightPair = false)
+        {
+            if (player == PlayerIndex.Auto)
+            {
+                player = PrimaryController;
+            }
+
+            if (player == PlayerIndex.Unknown)
+            {
+                return false;
+            }
+
+            if (_configuredNpads[(int)player].State != FilterState.Accepted)
+            {
+                return false;
+            }
+
+            ref ShMemNpad currentNpad = ref _device.Hid.SharedMemory.Npads[(int)player];
+            ref NpadSixAxis currentLayout = ref currentNpad.Sixaxis[(int)ControllerTypeToSixAxisLayout(currentNpad.Header.Type) + (isRightPair ? 1 : 0)];
+            ref SixAxisState currentEntry = ref currentLayout.Entries[(int)currentLayout.Header.LatestEntry];
+
+            int previousEntryIndex = (int)(currentLayout.Header.LatestEntry == 0 ?
+                                            currentLayout.Header.MaxEntryIndex : currentLayout.Header.LatestEntry - 1);
+
+            ref SixAxisState previousEntry = ref currentLayout.Entries[previousEntryIndex];
+
+            currentEntry.Accelerometer = accel;
+            currentEntry.Gyroscope     = gyro;
+            currentEntry.Rotations     = rotation;
+
+            for (int i = 0; i < 9; i++)
+            {
+                currentEntry.Orientation[i] = orientation[i];
+            }
+
+            return currentNpad.Header.Type == ControllerType.JoyconPair && !isRightPair;
         }
 
         private void UpdateAllEntries()
@@ -325,6 +410,21 @@ namespace Ryujinx.HLE.HOS.Services.Hid
                             currentEntry.ConnectionState |= NpadConnectionState.JoyRightConnected;
                             break;
                     }
+                }
+
+                ref Array6<NpadSixAxis> sixaxis = ref controllers[i].Sixaxis;
+                for (int l = 0; l < sixaxis.Length; ++l)
+                {
+                    ref NpadSixAxis currentLayout = ref sixaxis[l];
+                    int currentIndex = UpdateEntriesHeader(ref currentLayout.Header, out int previousIndex);
+
+                    ref SixAxisState currentEntry = ref currentLayout.Entries[currentIndex];
+                    SixAxisState previousEntry = currentLayout.Entries[previousIndex];
+
+                    currentEntry.SampleTimestamp = previousEntry.SampleTimestamp + 1;
+                    currentEntry.SampleTimestamp2 = previousEntry.SampleTimestamp2 + 1;
+
+                    currentEntry._unknown2 = 1;
                 }
             }
         }
