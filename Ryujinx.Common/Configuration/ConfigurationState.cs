@@ -475,12 +475,10 @@ namespace Ryujinx.Configuration
             Ui.EnableCustomTheme.Value             = false;
             Ui.CustomThemePath.Value               = "";
             Hid.EnableKeyboard.Value               = false;
-            
             Hid.Hotkeys.Value = new KeyboardHotkeys
             {
                 ToggleVsync = Key.Tab
             };
-
             Hid.InputConfig.Value = new List<InputConfig>
             {
                 new KeyboardConfig
@@ -521,7 +519,15 @@ namespace Ryujinx.Configuration
                         ButtonZr    = Key.O,
                         ButtonSl    = Key.PageUp,
                         ButtonSr    = Key.PageDown
-                    }
+                    },
+                    EnableMotion  = false,
+                    MirrorInput   = false,
+                    Slot          = 0,
+                    AltSlot       = 0,
+                    Sensitivity   = 100,
+                    GyroDeadzone  = 1,
+                    DsuServerHost = "127.0.0.1",
+                    DsuServerPort = 26760
                 }
             };
         }
@@ -620,7 +626,15 @@ namespace Ryujinx.Configuration
                             ButtonZr    = Key.O,
                             ButtonSl    = Key.Unbound,
                             ButtonSr    = Key.Unbound
-                        }
+                        },
+                        EnableMotion  = false,
+                        MirrorInput   = false,
+                        Slot          = 0,
+                        AltSlot       = 0,
+                        Sensitivity   = 100,
+                        GyroDeadzone  = 1,
+                        DsuServerHost = "127.0.0.1",
+                        DsuServerPort = 26760
                     }
                 };
 

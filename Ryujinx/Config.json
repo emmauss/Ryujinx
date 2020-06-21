@@ -85,7 +85,14 @@
         "button_zr": "O",
         "button_sl": "Unbound",
         "button_sr": "Unbound"
-      }
+      },
+      "slot": 0,
+      "alt_slot": 0,
+      "mirror_input": false,
+      "dsu_server_host": "127.0.0.1",
+      "dsu_server_port": 26760,
+      "sensitivity": 100,
+      "enable_motion": false
     }
   ],
   "controller_config": []

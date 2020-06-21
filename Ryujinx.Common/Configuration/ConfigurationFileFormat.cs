@@ -14,7 +14,7 @@ namespace Ryujinx.Configuration
         /// <summary>
         /// The current version of the file format
         /// </summary>
-        public const int CurrentVersion = 12;
+        public const int CurrentVersion = 13;
 
         public int Version { get; set; }
 
