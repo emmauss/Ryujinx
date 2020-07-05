@@ -94,6 +94,7 @@ namespace Ryujinx.Ui
             this.DefaultWidth  = monitorWidth < 1280 ? monitorWidth : 1280;
             this.DefaultHeight = monitorHeight < 760 ? monitorHeight : 760;
 
+            this.WindowStateEvent += MainWindow_WindowStateEvent;
             this.DeleteEvent      += Window_Close;
             _fullScreen.Activated += FullScreen_Toggled;
 
@@ -190,6 +191,11 @@ namespace Ryujinx.Ui
             Task.Run(RefreshFirmwareLabel);
 
             _statusBar.Hide();
+        }
+
+        private void MainWindow_WindowStateEvent(object o, WindowStateEventArgs args)
+        {
+            _fullScreen.Label = args.Event.NewWindowState.HasFlag(Gdk.WindowState.Fullscreen) ? "Exit Fullscreen" : "Enter Fullscreen";
         }
 
 #if USE_DEBUGGING
@@ -507,6 +513,11 @@ namespace Ryujinx.Ui
 
                 _glWidget.ShowAll();
                 EditFooterForGameRender();
+
+                if (this.Window.State.HasFlag(Gdk.WindowState.Fullscreen))
+                {
+                    ToggleExtraWidgets(false);
+                }
             });
 
             _glWidget.WaitEvent.WaitOne();
@@ -522,6 +533,11 @@ namespace Ryujinx.Ui
             // NOTE: Everything that is here will not be executed when you close the UI.
             Application.Invoke(delegate
             {
+                if (this.Window.State.HasFlag(Gdk.WindowState.Fullscreen))
+                {
+                    ToggleExtraWidgets(true);
+                }
+
                 _viewBox.Remove(_glWidget);
                 _glWidget.Exit();
 
@@ -585,10 +601,6 @@ namespace Ryujinx.Ui
                     _footerBox.Hide();
                 }
             }
-
-            bool fullScreenToggled = this.Window.State.HasFlag(Gdk.WindowState.Fullscreen);
-
-            _fullScreen.Label = fullScreenToggled ? "Exit Fullscreen" : "Enter Fullscreen";
         }
 
         private static void UpdateGameMetadata(string titleId)
