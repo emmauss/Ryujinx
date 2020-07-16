@@ -27,7 +27,10 @@ namespace Ryujinx.Common.Configuration.Hid
 
             var deltaDegree = GetGyroscope() * (deltaTime / 1000000f);
 
-            Rotation += deltaDegree;
+            if (TimeStamp != 0) // don't update rotation on the first packet
+            {
+                Rotation += deltaDegree;
+            }
 
             TimeStamp = timestamp;
 

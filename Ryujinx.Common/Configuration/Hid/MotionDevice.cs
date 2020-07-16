@@ -1,5 +1,6 @@
 ﻿using Ryujinx.Common.DSU;
 using Ryujinx.Configuration;
+using System;
 using System.Numerics;
 
 namespace Ryujinx.Common.Configuration.Hid
@@ -62,15 +63,15 @@ namespace Ryujinx.Common.Configuration.Hid
             float dot = Vector3.Dot(baseVector, Accelerometer);
             float k   = 1.0f / (1.0f + dot);
 
-            Orientation[0] = (axis.X * axis.X * k) + dot;
-            Orientation[1] = (axis.Y * axis.X * k) - axis.Z;
-            Orientation[2] = (axis.Z * axis.X * k) + axis.Y;
-            Orientation[3] = (axis.X * axis.Y * k) + axis.Z;
-            Orientation[4] = (axis.Y * axis.Y * k) + dot;
-            Orientation[5] = (axis.Z * axis.Y * k) - axis.X;
-            Orientation[6] = (axis.X * axis.Z * k) - axis.Y;
-            Orientation[7] = (axis.Y * axis.Z * k) + axis.X;
-            Orientation[8] = (axis.Z * axis.Z * k) + dot;
+            Orientation[0] = Math.Clamp((axis.X * axis.X * k) + dot, -1, 1);
+            Orientation[1] = Math.Clamp((axis.Y * axis.X * k) - axis.Z, -1, 1);
+            Orientation[2] = Math.Clamp((axis.Z * axis.X * k) + axis.Y, -1, 1);
+            Orientation[3] = Math.Clamp((axis.X * axis.Y * k) + axis.Z, -1, 1);
+            Orientation[4] = Math.Clamp((axis.Y * axis.Y * k) + dot, -1, 1);
+            Orientation[5] = Math.Clamp((axis.Z * axis.Y * k) - axis.X, -1, 1);
+            Orientation[6] = Math.Clamp((axis.X * axis.Z * k) - axis.Y, -1, 1);
+            Orientation[7] = Math.Clamp((axis.Y * axis.Z * k) + axis.X, -1, 1);
+            Orientation[8] = Math.Clamp((axis.Z * axis.Z * k) + dot, -1, 1);
         }
 
         private Vector3 Truncate(Vector3 value)
