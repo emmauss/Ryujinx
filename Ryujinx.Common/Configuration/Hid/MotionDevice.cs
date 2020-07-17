@@ -56,22 +56,17 @@ namespace Ryujinx.Common.Configuration.Hid
             Accelerometer = Truncate(input.GetAccelerometer());
             Rotation      = Truncate(input.Rotation * 0.0027f * sensitivity / 100);
 
-            Vector3 baseVector = new Vector3(0, 0, -1);
+            var orientation = input.GetOrientation();
 
-            Vector3 axis = Vector3.Cross(baseVector , Accelerometer);
-
-            float dot = Vector3.Dot(baseVector, Accelerometer);
-            float k   = 1.0f / (1.0f + dot);
-
-            Orientation[0] = Math.Clamp((axis.X * axis.X * k) + dot, -1, 1);
-            Orientation[1] = Math.Clamp((axis.Y * axis.X * k) - axis.Z, -1, 1);
-            Orientation[2] = Math.Clamp((axis.Z * axis.X * k) + axis.Y, -1, 1);
-            Orientation[3] = Math.Clamp((axis.X * axis.Y * k) + axis.Z, -1, 1);
-            Orientation[4] = Math.Clamp((axis.Y * axis.Y * k) + dot, -1, 1);
-            Orientation[5] = Math.Clamp((axis.Z * axis.Y * k) - axis.X, -1, 1);
-            Orientation[6] = Math.Clamp((axis.X * axis.Z * k) - axis.Y, -1, 1);
-            Orientation[7] = Math.Clamp((axis.Y * axis.Z * k) + axis.X, -1, 1);
-            Orientation[8] = Math.Clamp((axis.Z * axis.Z * k) + dot, -1, 1);
+            Orientation[0] = Math.Clamp(orientation.M11, -1, 1);
+            Orientation[1] = Math.Clamp(orientation.M12, -1, 1);
+            Orientation[2] = Math.Clamp(orientation.M13, -1, 1);
+            Orientation[3] = Math.Clamp(orientation.M21, -1, 1);
+            Orientation[4] = Math.Clamp(orientation.M22, -1, 1);
+            Orientation[5] = Math.Clamp(orientation.M23, -1, 1);
+            Orientation[6] = Math.Clamp(orientation.M31, -1, 1);
+            Orientation[7] = Math.Clamp(orientation.M32, -1, 1);
+            Orientation[8] = Math.Clamp(orientation.M33, -1, 1);
         }
 
         private Vector3 Truncate(Vector3 value)
