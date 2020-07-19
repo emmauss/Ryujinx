@@ -5,108 +5,101 @@ namespace Ryujinx.Common.Configuration.Hid
 {
     public class MotionInput
     {
-        private Vector3 _orientation { get; set; }
-
+        private Vector3  _orientation  { get; set; }
         public ulong     TimeStamp     { get; set; }
-        public Vector3[] Accelerometer { get; set; }
-        public Vector3[] Gyroscrope    { get; set; }
+        public Vector3   Accelerometer { get; set; }
+        public Vector3   Gyroscrope    { get; set; }
         public Vector3   Rotation      { get; set; }
-
-        private int index;
 
         public MotionInput()
         {
-            Accelerometer = new Vector3[3];
-            Gyroscrope    = new Vector3[3];
+            Accelerometer = new Vector3();
+            Gyroscrope    = new Vector3();
             Rotation      = new Vector3();
             _orientation  = new Vector3();
         }
 
         public void Update(Vector3 accel, Vector3 gyro, ulong timestamp)
         {
-            Accelerometer[index] = accel;
+            Accelerometer = accel;
+            Gyroscrope = gyro;
 
-            ulong deltaTime = timestamp - TimeStamp;
+            float deltaTime = ((timestamp - TimeStamp) / 1000000f);
 
-            var deltaGyro = gyro * (deltaTime / 1000000f);
+            var deltaGyro = gyro * deltaTime;
 
             try
             {
                 if (TimeStamp == 0)
                 {
-                    Vector3 accelAngle = new Vector3
-                    {
-                        X = 0,
-                        Y = 0,
-                        Z = 0
-                    };
 
-                    _orientation = accelAngle;
                 }
                 else if (TimeStamp != 0 && deltaGyro.Length() > 0.1f)
                 {
-                    Gyroscrope[index] = gyro;
-
-                    deltaGyro = GetGyroscope() * (deltaTime / 1000000f);
-
                     Rotation += deltaGyro;
-
-                    Vector3 compAngle = new Vector3
-                    {
-                        X = _orientation.X + deltaGyro.X,
-                        Y = _orientation.Y + deltaGyro.Y,
-                        Z = _orientation.Z + deltaGyro.Z
-                    };
-
-                    _orientation = compAngle;
                 }
                 else
                 {
-                    Gyroscrope[index] = new Vector3();
+                    Gyroscrope = new Vector3();
+                    deltaGyro = gyro * deltaTime;
 
                     return;
                 }
             }
             finally
             {
-                TimeStamp = timestamp;
-
-                index++;
-
-                if (index >= Accelerometer.Length)
+                Vector3 angle = new Vector3
                 {
-                    index = 0;
+                    X = MathF.Atan2(accel.X, MathF.Sqrt(MathF.Pow(accel.Z, 2) + MathF.Pow(accel.Y, 2))),
+                    Y = MathF.Atan2(accel.Y, MathF.Sqrt(MathF.Pow(accel.Z, 2) + MathF.Pow(accel.X, 2))),
+                    Z = 89,
+                };
+
+                var compAngle = angle;
+
+               /* if (TimeStamp != 0 && deltaGyro.Length() > 0.1f)
+                {
+                    compAngle = new Vector3()
+                    {
+                        X = Filter(_orientation.X + deltaGyro.X, angle.X),
+                        Y = _orientation.Y + deltaGyro.Y,
+                        Z = Filter(_orientation.Z + deltaGyro.Z, angle.Z)
+                    };
                 }
-            }            
+               */
+                _orientation = NormalizeAngle(compAngle);
+
+                TimeStamp = timestamp;
+            }           
         }
 
-        public Vector3 GetAccelerometer()
+        public float Filter(float gyroAngle, float accelAngle)
         {
-            Vector3 sum = new Vector3();
-
-            foreach(var vector in Accelerometer)
-            {
-                sum += vector;
-            }
-
-            return sum / Accelerometer.Length;
+            return 0.85f * gyroAngle + 0.15f * accelAngle;
         }
 
-        public Vector3 GetGyroscope()
+        public Vector3 NormalizeAngle(Vector3 angles)
         {
-            Vector3 sum = new Vector3();
-
-            foreach (var vector in Gyroscrope)
+            Vector3 normalized = new Vector3()
             {
-                sum += vector;
-            }
+                X = angles.X % 360,
+                Y = angles.Y % 360,
+                Z = angles.Z % 360
+            };
 
-            return sum / Gyroscrope.Length;
+            normalized.X = normalized.X > 180 ? normalized.X - 360 : normalized.X;
+            normalized.Y = normalized.Y > 180 ? normalized.Y - 360 : normalized.Y;
+            normalized.Z = normalized.Z > 180 ? normalized.Z - 360 : normalized.Z;
+
+            return normalized;
         }
 
         public Matrix4x4 GetOrientation()
         {
-            var rotation = _orientation * MathF.PI / 180;
+            Vector3 orientation = NormalizeAngle(_orientation);
+
+            var rotation = orientation * MathF.PI / 180;
+
             return Matrix4x4.CreateFromYawPitchRoll(rotation.Y, rotation.X, rotation.Z);
         }
     }

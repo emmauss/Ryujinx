@@ -52,8 +52,8 @@ namespace Ryujinx.Common.Configuration.Hid
 
             var input = _motionSource.GetData((int)player, slot);
 
-            Gyroscope     = Truncate(input.GetGyroscope() * 0.0027f * sensitivity / 100);
-            Accelerometer = Truncate(input.GetAccelerometer());
+            Gyroscope     = Truncate(input.Gyroscrope * 0.0027f * sensitivity / 100);
+            Accelerometer = Truncate(input.Accelerometer);
             Rotation      = Truncate(input.Rotation * 0.0027f * sensitivity / 100);
 
             var orientation = input.GetOrientation();
