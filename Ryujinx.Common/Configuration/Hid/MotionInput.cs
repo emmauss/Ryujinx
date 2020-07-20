@@ -50,27 +50,34 @@ namespace Ryujinx.Common.Configuration.Hid
             {
                 Vector3 angle = new Vector3
                 {
-                    X = MathF.Atan2(accel.X, MathF.Sqrt(MathF.Pow(accel.Z, 2) + MathF.Pow(accel.Y, 2))),
-                    Y = MathF.Atan2(accel.Y, MathF.Sqrt(MathF.Pow(accel.Z, 2) + MathF.Pow(accel.X, 2))),
-                    Z = 89,
+                    X = RadToDegree(MathF.Atan2(accel.X, accel.Z)),
+                    Y = RadToDegree(MathF.Atan2(accel.Y, accel.Z)),
+                    Z = RadToDegree(MathF.Atan2(accel.X, accel.Y))
                 };
 
                 var compAngle = angle;
 
-               /* if (TimeStamp != 0 && deltaGyro.Length() > 0.1f)
+                if (TimeStamp != 0)
                 {
                     compAngle = new Vector3()
                     {
                         X = Filter(_orientation.X + deltaGyro.X, angle.X),
-                        Y = _orientation.Y + deltaGyro.Y,
-                        Z = Filter(_orientation.Z + deltaGyro.Z, angle.Z)
+                        Z = _orientation.Z + deltaGyro.Z,
+                        Y = Filter(_orientation.Y + deltaGyro.Y, angle.Y)
                     };
                 }
-               */
-                _orientation = NormalizeAngle(compAngle);
+               
+                _orientation = compAngle;
 
                 TimeStamp = timestamp;
             }           
+        }
+
+        private float OrientateAngle(float angle)
+        {
+            angle %= 360;
+
+            return angle > 180 ? angle - 360 : angle;
         }
 
         public float Filter(float gyroAngle, float accelAngle)
@@ -87,20 +94,25 @@ namespace Ryujinx.Common.Configuration.Hid
                 Z = angles.Z % 360
             };
 
-            normalized.X = normalized.X > 180 ? normalized.X - 360 : normalized.X;
-            normalized.Y = normalized.Y > 180 ? normalized.Y - 360 : normalized.Y;
-            normalized.Z = normalized.Z > 180 ? normalized.Z - 360 : normalized.Z;
+            normalized.X = normalized.X < 0 ? normalized.X + 360 : normalized.X;
+            normalized.Y = normalized.Y < 0 ? normalized.Y + 360 : normalized.Y;
+            normalized.Z = normalized.Z < 0 ? normalized.Z + 360 : normalized.Z;
 
             return normalized;
         }
 
         public Matrix4x4 GetOrientation()
         {
-            Vector3 orientation = NormalizeAngle(_orientation);
+            Vector3 orientation = _orientation;
 
             var rotation = orientation * MathF.PI / 180;
 
             return Matrix4x4.CreateFromYawPitchRoll(rotation.Y, rotation.X, rotation.Z);
+        }
+
+        private float RadToDegree(float radian)
+        {
+            return radian * 180 / MathF.PI;
         }
     }
 }
