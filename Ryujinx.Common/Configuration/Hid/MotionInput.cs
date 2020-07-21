@@ -5,6 +5,11 @@ namespace Ryujinx.Common.Configuration.Hid
 {
     public class MotionInput
     {
+        private bool _isPitchClockwise;
+        private bool _isRollClockwise;
+        private bool _isUp;
+        private bool _isLeft;
+        private bool _isBack;
         private Vector3  _orientation  { get; set; }
         public ulong     TimeStamp     { get; set; }
         public Vector3   Accelerometer { get; set; }
@@ -32,7 +37,11 @@ namespace Ryujinx.Common.Configuration.Hid
             {
                 if (TimeStamp == 0)
                 {
+                    _isUp = accel.Z < 0;
+                    _isLeft = accel.X < 0;
+                    _isBack = accel.Y < 0;
 
+                    _isRollClockwise = !_isUp;
                 }
                 else if (TimeStamp != 0 && deltaGyro.Length() > 0.1f)
                 {
@@ -55,8 +64,30 @@ namespace Ryujinx.Common.Configuration.Hid
                     Z = 0
                 };
 
-                angle.X = GetRelativeAngle(accel.Y, accel.Z, -angle.X);
-                angle.Y = GetRelativeAngle(accel.X, accel.Z, angle.Y);
+                if((_isLeft && accel.X > 0) || (!_isLeft && accel.X < 0))
+                {
+                    if (_isUp)
+                    {
+                        _isRollClockwise = accel.X > 0;
+                    }
+
+                    _isLeft = accel.X < 0;
+                }
+
+                if ((_isBack && accel.Y > 0) || (!_isBack && accel.Y < 0))
+                {
+                    if (_isUp)
+                    {
+                        _isPitchClockwise = accel.Y > 0;
+                    }
+
+                    _isBack = accel.Y < 0;
+                }
+
+                _isUp = accel.Z < 0;
+
+               // angle.X = -GetRelativePitchAngle(accel.Y, angle.X);
+                angle.Y = GetRelativeRollAngle(accel.X, angle.Y); 
 
                 var compAngle = angle;
 
@@ -76,16 +107,31 @@ namespace Ryujinx.Common.Configuration.Hid
             }           
         }
 
-        private float GetRelativeAngle(float axis, float baseAxis, float angle)
+        private float GetRelativeRollAngle(float axis, float angle)
         {
             angle = MathF.Max(-90, MathF.Min(angle, 90));
 
-            angle = (axis <= 0, baseAxis <= 0) switch
+            angle = (axis <= 0, _isUp) switch
             {
-                (true, true) => angle,
-                (true, false) => -180 - angle,
-                (false, true) => angle,
-                (false, false) => 180 - angle
+                (false, false) => !_isRollClockwise ? -180 - angle : 180 - angle,
+                (false, true) => !_isRollClockwise ?  -360 + angle : angle,
+                (true, false) => !_isRollClockwise ? -180 - angle : 180 - angle,
+                (true, true) => !_isRollClockwise ? angle : -360 + angle
+            };
+
+            return angle;
+        }
+
+        private float GetRelativePitchAngle(float axis, float angle)
+        {
+            angle = MathF.Max(-90, MathF.Min(angle, 90));
+
+            angle = (axis <= 0, _isUp) switch
+            {
+                (false, false) => !_isPitchClockwise ? -180 - angle : 180 - angle,
+                (false, true) => !_isPitchClockwise ? -360 + angle : angle,
+                (true, false) => !_isPitchClockwise ? -180 - angle : 180 - angle,
+                (true, true) => !_isPitchClockwise ? angle : -360 + angle
             };
 
             return angle;
@@ -96,29 +142,19 @@ namespace Ryujinx.Common.Configuration.Hid
             return 0.85f * gyroAngle + 0.15f * accelAngle;
         }
 
-        public Vector3 NormalizeAngle(Vector3 angles)
-        {
-            Vector3 normalized = new Vector3()
-            {
-                X = angles.X % 360,
-                Y = angles.Y % 360,
-                Z = angles.Z % 360
-            };
-
-            normalized.X = normalized.X < 0 ? normalized.X + 360 : normalized.X;
-            normalized.Y = normalized.Y < 0 ? normalized.Y + 360 : normalized.Y;
-            normalized.Z = normalized.Z < 0 ? normalized.Z + 360 : normalized.Z;
-
-            return normalized;
-        }
-
         public Matrix4x4 GetOrientation()
         {
             Vector3 orientation = _orientation;
 
             var rotation = orientation * MathF.PI / 180;
 
-            return Matrix4x4.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(rotation.Y, rotation.X, rotation.Z));
+            var quat = Quaternion.CreateFromAxisAngle(Vector3.UnitZ, rotation.Z);
+            quat *= Quaternion.CreateFromAxisAngle(Vector3.UnitX, rotation.Y);
+            quat *= Quaternion.CreateFromAxisAngle(Vector3.UnitY, Rotation.X);
+
+            return Matrix4x4.CreateFromQuaternion(quat);
+
+           // return Matrix4x4.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(rotation.Y, rotation.X, rotation.Z));
         }
 
         private float RadToDegree(float radian)
