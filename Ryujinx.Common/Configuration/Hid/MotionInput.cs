@@ -50,10 +50,13 @@ namespace Ryujinx.Common.Configuration.Hid
             {
                 Vector3 angle = new Vector3
                 {
-                    X = RadToDegree(MathF.Atan2(accel.X, accel.Z)),
-                    Y = RadToDegree(MathF.Atan2(accel.Y, accel.Z)),
-                    Z = RadToDegree(MathF.Atan2(accel.X, accel.Y))
+                    X = RadToDegree(MathF.Atan2(accel.Y, MathF.Sqrt(MathF.Pow(accel.X, 2) + MathF.Pow(accel.Z, 2)))),
+                    Y = RadToDegree(MathF.Atan2(accel.X, MathF.Sqrt(MathF.Pow(accel.Z, 2) + MathF.Pow(accel.Y, 2)))),
+                    Z = 0
                 };
+
+                angle.X = GetRelativeAngle(accel.Y, accel.Z, -angle.X);
+                angle.Y = GetRelativeAngle(accel.X, accel.Z, angle.Y);
 
                 var compAngle = angle;
 
@@ -73,11 +76,19 @@ namespace Ryujinx.Common.Configuration.Hid
             }           
         }
 
-        private float OrientateAngle(float angle)
+        private float GetRelativeAngle(float axis, float baseAxis, float angle)
         {
-            angle %= 360;
+            angle = MathF.Max(-90, MathF.Min(angle, 90));
 
-            return angle > 180 ? angle - 360 : angle;
+            angle = (axis <= 0, baseAxis <= 0) switch
+            {
+                (true, true) => angle,
+                (true, false) => -180 - angle,
+                (false, true) => angle,
+                (false, false) => 180 - angle
+            };
+
+            return angle;
         }
 
         public float Filter(float gyroAngle, float accelAngle)
@@ -107,7 +118,7 @@ namespace Ryujinx.Common.Configuration.Hid
 
             var rotation = orientation * MathF.PI / 180;
 
-            return Matrix4x4.CreateFromYawPitchRoll(rotation.Y, rotation.X, rotation.Z);
+            return Matrix4x4.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(rotation.Y, rotation.X, rotation.Z));
         }
 
         private float RadToDegree(float radian)
