@@ -25,7 +25,7 @@ namespace Ryujinx.Common.Configuration.Hid
             Rotation      = new Vector3();
             _orientation  = new Vector3();
 
-            _filter = new MotionSensorFilter(1f / 60f, 0.1f);
+            _filter = new MotionSensorFilter(1f / 60f);
         }
 
         public void Update(Vector3 accel, Vector3 gyro, ulong timestamp)
@@ -61,53 +61,14 @@ namespace Ryujinx.Common.Configuration.Hid
                 gyro.Y = DegreeToRad(gyro.Y);
                 gyro.Z = DegreeToRad(gyro.Z);
 
-                _filter.Update(gyro.Y, gyro.X, -gyro.Z, accel.X, accel.Z, accel.Y);
+                _filter.Update(gyro.Z, gyro.Y, gyro.X, accel.Y, accel.X, accel.Z);
 
                 TimeStamp = timestamp;
             }           
         }
 
-        private float GetRelativeRollAngle(float axis, float angle)
-        {
-            angle = MathF.Max(-90, MathF.Min(angle, 90));
-
-            angle = (axis <= 0, _isUp) switch
-            {
-                (false, false) => !_isRollClockwise ? -180 - angle : 180 - angle,
-                (false, true) => !_isRollClockwise ?  -360 + angle : angle,
-                (true, false) => !_isRollClockwise ? -180 - angle : 180 - angle,
-                (true, true) => !_isRollClockwise ? angle : -360 + angle
-            };
-
-            return angle;
-        }
-
-        private float GetRelativePitchAngle(float axis, float angle)
-        {
-            angle = MathF.Max(-90, MathF.Min(angle, 90));
-
-            angle = (axis <= 0, _isUp) switch
-            {
-                (false, false) => !_isPitchClockwise ? -180 - angle : 180 - angle,
-                (false, true) => !_isPitchClockwise ? -360 + angle : angle,
-                (true, false) => !_isPitchClockwise ? -180 - angle : 180 - angle,
-                (true, true) => !_isPitchClockwise ? angle : -360 + angle
-            };
-
-            return angle;
-        }
-
-        public float Filter(float gyroAngle, float accelAngle)
-        {
-            return 0.85f * gyroAngle + 0.15f * accelAngle;
-        }
-
         public Matrix4x4 GetOrientation()
         {
-            /* Vector3 orientation = _orientation;
-
-             var rotation = orientation * MathF.PI / 180;*/
-
             var filteredQuat = _filter.Quaternion;
 
             Quaternion quaternion = new Quaternion(filteredQuat[0], filteredQuat[1], filteredQuat[2], filteredQuat[3]);

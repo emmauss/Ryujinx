@@ -12,16 +12,20 @@ namespace Ryujinx.Common.Utilities
     /// See: http://www.x-io.co.uk/node/8#open_source_ahrs_and_imu_algorithms
     /// </remarks>
     public class MotionSensorFilter
-    {
-        /// <summary>
-        /// Gets or sets the sample period.
-        /// </summary>
+    {/// <summary>
+     /// Gets or sets the sample period.
+     /// </summary>
         public float SamplePeriod { get; set; }
 
         /// <summary>
-        /// Gets or sets the algorithm gain beta.
+        /// Gets or sets the algorithm proportional gain.
         /// </summary>
-        public float Beta { get; set; }
+        public float Kp { get; set; }
+
+        /// <summary>
+        /// Gets or sets the algorithm integral gain.
+        /// </summary>
+        public float Ki { get; set; }
 
         /// <summary>
         /// Gets or sets the Quaternion output.
@@ -29,30 +33,54 @@ namespace Ryujinx.Common.Utilities
         public float[] Quaternion { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MotionSensorFilter"/> class.
+        /// Gets or sets the integral error.
+        /// </summary>
+        private float[] eInt { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MadgwickAHRS"/> class.
         /// </summary>
         /// <param name="samplePeriod">
         /// Sample period.
         /// </param>
         public MotionSensorFilter(float samplePeriod)
-            : this(samplePeriod, 1f)
+            : this(samplePeriod, 1f, 0f)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MotionSensorFilter"/> class.
+        /// Initializes a new instance of the <see cref="MadgwickAHRS"/> class.
         /// </summary>
         /// <param name="samplePeriod">
         /// Sample period.
         /// </param>
-        /// <param name="beta">
-        /// Algorithm gain beta.
+        /// <param name="kp">
+        /// Algorithm proportional gain.
+        /// </param> 
+        public MotionSensorFilter(float samplePeriod, float kp)
+            : this(samplePeriod, kp, 0f)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MadgwickAHRS"/> class.
+        /// </summary>
+        /// <param name="samplePeriod">
+        /// Sample period.
         /// </param>
-        public MotionSensorFilter(float samplePeriod, float beta)
+        /// <param name="kp">
+        /// Algorithm proportional gain.
+        /// </param>
+        /// <param name="ki">
+        /// Algorithm integral gain.
+        /// </param>
+        public MotionSensorFilter(float samplePeriod, float kp, float ki)
         {
             SamplePeriod = samplePeriod;
-            Beta = beta;
+            Kp = kp;
+            Ki = ki;
             Quaternion = new float[] { 1f, 0f, 0f, 0f };
+            eInt = new float[] { 0f, 0f, 0f };
         }
 
         /// <summary>
@@ -87,32 +115,17 @@ namespace Ryujinx.Common.Utilities
         /// </param>
         /// <remarks>
         /// Optimised for minimal arithmetic.
-        /// Total ±: 160
-        /// Total *: 172
-        /// Total /: 5
-        /// Total sqrt: 5
         /// </remarks> 
         public void Update(float gx, float gy, float gz, float ax, float ay, float az, float mx, float my, float mz)
         {
             float q1 = Quaternion[0], q2 = Quaternion[1], q3 = Quaternion[2], q4 = Quaternion[3];   // short name local variable for readability
             float norm;
-            float hx, hy, _2bx, _2bz;
-            float s1, s2, s3, s4;
-            float qDot1, qDot2, qDot3, qDot4;
+            float hx, hy, bx, bz;
+            float vx, vy, vz, wx, wy, wz;
+            float ex, ey, ez;
+            float pa, pb, pc;
 
             // Auxiliary variables to avoid repeated arithmetic
-            float _2q1mx;
-            float _2q1my;
-            float _2q1mz;
-            float _2q2mx;
-            float _4bx;
-            float _4bz;
-            float _2q1 = 2f * q1;
-            float _2q2 = 2f * q2;
-            float _2q3 = 2f * q3;
-            float _2q4 = 2f * q4;
-            float _2q1q3 = 2f * q1 * q3;
-            float _2q3q4 = 2f * q3 * q4;
             float q1q1 = q1 * q1;
             float q1q2 = q1 * q2;
             float q1q3 = q1 * q3;
@@ -141,40 +154,53 @@ namespace Ryujinx.Common.Utilities
             mz *= norm;
 
             // Reference direction of Earth's magnetic field
-            _2q1mx = 2f * q1 * mx;
-            _2q1my = 2f * q1 * my;
-            _2q1mz = 2f * q1 * mz;
-            _2q2mx = 2f * q2 * mx;
-            hx = mx * q1q1 - _2q1my * q4 + _2q1mz * q3 + mx * q2q2 + _2q2 * my * q3 + _2q2 * mz * q4 - mx * q3q3 - mx * q4q4;
-            hy = _2q1mx * q4 + my * q1q1 - _2q1mz * q2 + _2q2mx * q3 - my * q2q2 + my * q3q3 + _2q3 * mz * q4 - my * q4q4;
-            _2bx = (float)Math.Sqrt(hx * hx + hy * hy);
-            _2bz = -_2q1mx * q3 + _2q1my * q2 + mz * q1q1 + _2q2mx * q4 - mz * q2q2 + _2q3 * my * q4 - mz * q3q3 + mz * q4q4;
-            _4bx = 2f * _2bx;
-            _4bz = 2f * _2bz;
+            hx = 2f * mx * (0.5f - q3q3 - q4q4) + 2f * my * (q2q3 - q1q4) + 2f * mz * (q2q4 + q1q3);
+            hy = 2f * mx * (q2q3 + q1q4) + 2f * my * (0.5f - q2q2 - q4q4) + 2f * mz * (q3q4 - q1q2);
+            bx = (float)Math.Sqrt((hx * hx) + (hy * hy));
+            bz = 2f * mx * (q2q4 - q1q3) + 2f * my * (q3q4 + q1q2) + 2f * mz * (0.5f - q2q2 - q3q3);
 
-            // Gradient decent algorithm corrective step
-            s1 = -_2q3 * (2f * q2q4 - _2q1q3 - ax) + _2q2 * (2f * q1q2 + _2q3q4 - ay) - _2bz * q3 * (_2bx * (0.5f - q3q3 - q4q4) + _2bz * (q2q4 - q1q3) - mx) + (-_2bx * q4 + _2bz * q2) * (_2bx * (q2q3 - q1q4) + _2bz * (q1q2 + q3q4) - my) + _2bx * q3 * (_2bx * (q1q3 + q2q4) + _2bz * (0.5f - q2q2 - q3q3) - mz);
-            s2 = _2q4 * (2f * q2q4 - _2q1q3 - ax) + _2q1 * (2f * q1q2 + _2q3q4 - ay) - 4f * q2 * (1 - 2f * q2q2 - 2f * q3q3 - az) + _2bz * q4 * (_2bx * (0.5f - q3q3 - q4q4) + _2bz * (q2q4 - q1q3) - mx) + (_2bx * q3 + _2bz * q1) * (_2bx * (q2q3 - q1q4) + _2bz * (q1q2 + q3q4) - my) + (_2bx * q4 - _4bz * q2) * (_2bx * (q1q3 + q2q4) + _2bz * (0.5f - q2q2 - q3q3) - mz);
-            s3 = -_2q1 * (2f * q2q4 - _2q1q3 - ax) + _2q4 * (2f * q1q2 + _2q3q4 - ay) - 4f * q3 * (1 - 2f * q2q2 - 2f * q3q3 - az) + (-_4bx * q3 - _2bz * q1) * (_2bx * (0.5f - q3q3 - q4q4) + _2bz * (q2q4 - q1q3) - mx) + (_2bx * q2 + _2bz * q4) * (_2bx * (q2q3 - q1q4) + _2bz * (q1q2 + q3q4) - my) + (_2bx * q1 - _4bz * q3) * (_2bx * (q1q3 + q2q4) + _2bz * (0.5f - q2q2 - q3q3) - mz);
-            s4 = _2q2 * (2f * q2q4 - _2q1q3 - ax) + _2q3 * (2f * q1q2 + _2q3q4 - ay) + (-_4bx * q4 + _2bz * q2) * (_2bx * (0.5f - q3q3 - q4q4) + _2bz * (q2q4 - q1q3) - mx) + (-_2bx * q1 + _2bz * q3) * (_2bx * (q2q3 - q1q4) + _2bz * (q1q2 + q3q4) - my) + _2bx * q2 * (_2bx * (q1q3 + q2q4) + _2bz * (0.5f - q2q2 - q3q3) - mz);
-            norm = 1f / (float)Math.Sqrt(s1 * s1 + s2 * s2 + s3 * s3 + s4 * s4);    // normalise step magnitude
-            s1 *= norm;
-            s2 *= norm;
-            s3 *= norm;
-            s4 *= norm;
+            // Estimated direction of gravity and magnetic field
+            vx = 2f * (q2q4 - q1q3);
+            vy = 2f * (q1q2 + q3q4);
+            vz = q1q1 - q2q2 - q3q3 + q4q4;
+            wx = 2f * bx * (0.5f - q3q3 - q4q4) + 2f * bz * (q2q4 - q1q3);
+            wy = 2f * bx * (q2q3 - q1q4) + 2f * bz * (q1q2 + q3q4);
+            wz = 2f * bx * (q1q3 + q2q4) + 2f * bz * (0.5f - q2q2 - q3q3);
 
-            // Compute rate of change of quaternion
-            qDot1 = 0.5f * (-q2 * gx - q3 * gy - q4 * gz) - Beta * s1;
-            qDot2 = 0.5f * (q1 * gx + q3 * gz - q4 * gy) - Beta * s2;
-            qDot3 = 0.5f * (q1 * gy - q2 * gz + q4 * gx) - Beta * s3;
-            qDot4 = 0.5f * (q1 * gz + q2 * gy - q3 * gx) - Beta * s4;
+            // Error is cross product between estimated direction and measured direction of gravity
+            ex = (ay * vz - az * vy) + (my * wz - mz * wy);
+            ey = (az * vx - ax * vz) + (mz * wx - mx * wz);
+            ez = (ax * vy - ay * vx) + (mx * wy - my * wx);
+            if (Ki > 0f)
+            {
+                eInt[0] += ex;      // accumulate integral error
+                eInt[1] += ey;
+                eInt[2] += ez;
+            }
+            else
+            {
+                eInt[0] = 0.0f;     // prevent integral wind up
+                eInt[1] = 0.0f;
+                eInt[2] = 0.0f;
+            }
 
-            // Integrate to yield quaternion
-            q1 += qDot1 * SamplePeriod;
-            q2 += qDot2 * SamplePeriod;
-            q3 += qDot3 * SamplePeriod;
-            q4 += qDot4 * SamplePeriod;
-            norm = 1f / (float)Math.Sqrt(q1 * q1 + q2 * q2 + q3 * q3 + q4 * q4);    // normalise quaternion
+            // Apply feedback terms
+            gx = gx + Kp * ex + Ki * eInt[0];
+            gy = gy + Kp * ey + Ki * eInt[1];
+            gz = gz + Kp * ez + Ki * eInt[2];
+
+            // Integrate rate of change of quaternion
+            pa = q2;
+            pb = q3;
+            pc = q4;
+            q1 = q1 + (-q2 * gx - q3 * gy - q4 * gz) * (0.5f * SamplePeriod);
+            q2 = pa + (q1 * gx + pb * gz - pc * gy) * (0.5f * SamplePeriod);
+            q3 = pb + (q1 * gy - pa * gz + pc * gx) * (0.5f * SamplePeriod);
+            q4 = pc + (q1 * gz + pa * gy - pb * gx) * (0.5f * SamplePeriod);
+
+            // Normalise quaternion
+            norm = (float)Math.Sqrt(q1 * q1 + q2 * q2 + q3 * q3 + q4 * q4);
+            norm = 1.0f / norm;
             Quaternion[0] = q1 * norm;
             Quaternion[1] = q2 * norm;
             Quaternion[2] = q3 * norm;
@@ -202,34 +228,13 @@ namespace Ryujinx.Common.Utilities
         /// <param name="az">
         /// Accelerometer z axis measurement in any calibrated units.
         /// </param>
-        /// <remarks>
-        /// Optimised for minimal arithmetic.
-        /// Total ±: 45
-        /// Total *: 85
-        /// Total /: 3
-        /// Total sqrt: 3
-        /// </remarks>
         public void Update(float gx, float gy, float gz, float ax, float ay, float az)
         {
             float q1 = Quaternion[0], q2 = Quaternion[1], q3 = Quaternion[2], q4 = Quaternion[3];   // short name local variable for readability
             float norm;
-            float s1, s2, s3, s4;
-            float qDot1, qDot2, qDot3, qDot4;
-
-            // Auxiliary variables to avoid repeated arithmetic
-            float _2q1 = 2f * q1;
-            float _2q2 = 2f * q2;
-            float _2q3 = 2f * q3;
-            float _2q4 = 2f * q4;
-            float _4q1 = 4f * q1;
-            float _4q2 = 4f * q2;
-            float _4q3 = 4f * q3;
-            float _8q2 = 8f * q2;
-            float _8q3 = 8f * q3;
-            float q1q1 = q1 * q1;
-            float q2q2 = q2 * q2;
-            float q3q3 = q3 * q3;
-            float q4q4 = q4 * q4;
+            float vx, vy, vz;
+            float ex, ey, ez;
+            float pa, pb, pc;
 
             // Normalise accelerometer measurement
             norm = (float)Math.Sqrt(ax * ax + ay * ay + az * az);
@@ -239,29 +244,45 @@ namespace Ryujinx.Common.Utilities
             ay *= norm;
             az *= norm;
 
-            // Gradient decent algorithm corrective step
-            s1 = _4q1 * q3q3 + _2q3 * ax + _4q1 * q2q2 - _2q2 * ay;
-            s2 = _4q2 * q4q4 - _2q4 * ax + 4f * q1q1 * q2 - _2q1 * ay - _4q2 + _8q2 * q2q2 + _8q2 * q3q3 + _4q2 * az;
-            s3 = 4f * q1q1 * q3 + _2q1 * ax + _4q3 * q4q4 - _2q4 * ay - _4q3 + _8q3 * q2q2 + _8q3 * q3q3 + _4q3 * az;
-            s4 = 4f * q2q2 * q4 - _2q2 * ax + 4f * q3q3 * q4 - _2q3 * ay;
-            norm = 1f / (float)Math.Sqrt(s1 * s1 + s2 * s2 + s3 * s3 + s4 * s4);    // normalise step magnitude
-            s1 *= norm;
-            s2 *= norm;
-            s3 *= norm;
-            s4 *= norm;
+            // Estimated direction of gravity
+            vx = 2.0f * (q2 * q4 - q1 * q3);
+            vy = 2.0f * (q1 * q2 + q3 * q4);
+            vz = q1 * q1 - q2 * q2 - q3 * q3 + q4 * q4;
 
-            // Compute rate of change of quaternion
-            qDot1 = 0.5f * (-q2 * gx - q3 * gy - q4 * gz) - Beta * s1;
-            qDot2 = 0.5f * (q1 * gx + q3 * gz - q4 * gy) - Beta * s2;
-            qDot3 = 0.5f * (q1 * gy - q2 * gz + q4 * gx) - Beta * s3;
-            qDot4 = 0.5f * (q1 * gz + q2 * gy - q3 * gx) - Beta * s4;
+            // Error is cross product between estimated direction and measured direction of gravity
+            ex = (ay * vz - az * vy);
+            ey = (az * vx - ax * vz);
+            ez = (ax * vy - ay * vx);
+            if (Ki > 0f)
+            {
+                eInt[0] += ex;      // accumulate integral error
+                eInt[1] += ey;
+                eInt[2] += ez;
+            }
+            else
+            {
+                eInt[0] = 0.0f;     // prevent integral wind up
+                eInt[1] = 0.0f;
+                eInt[2] = 0.0f;
+            }
 
-            // Integrate to yield quaternion
-            q1 += qDot1 * SamplePeriod;
-            q2 += qDot2 * SamplePeriod;
-            q3 += qDot3 * SamplePeriod;
-            q4 += qDot4 * SamplePeriod;
-            norm = 1f / (float)Math.Sqrt(q1 * q1 + q2 * q2 + q3 * q3 + q4 * q4);    // normalise quaternion
+            // Apply feedback terms
+            gx = gx + Kp * ex + Ki * eInt[0];
+            gy = gy + Kp * ey + Ki * eInt[1];
+            gz = gz + Kp * ez + Ki * eInt[2];
+
+            // Integrate rate of change of quaternion
+            pa = q2;
+            pb = q3;
+            pc = q4;
+            q1 = q1 + (-q2 * gx - q3 * gy - q4 * gz) * (0.5f * SamplePeriod);
+            q2 = pa + (q1 * gx + pb * gz - pc * gy) * (0.5f * SamplePeriod);
+            q3 = pb + (q1 * gy - pa * gz + pc * gx) * (0.5f * SamplePeriod);
+            q4 = pc + (q1 * gz + pa * gy - pb * gx) * (0.5f * SamplePeriod);
+
+            // Normalise quaternion
+            norm = (float)Math.Sqrt(q1 * q1 + q2 * q2 + q3 * q3 + q4 * q4);
+            norm = 1.0f / norm;
             Quaternion[0] = q1 * norm;
             Quaternion[1] = q2 * norm;
             Quaternion[2] = q3 * norm;
