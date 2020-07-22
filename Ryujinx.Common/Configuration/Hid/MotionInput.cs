@@ -61,7 +61,7 @@ namespace Ryujinx.Common.Configuration.Hid
                 gyro.Y = DegreeToRad(gyro.Y);
                 gyro.Z = DegreeToRad(gyro.Z);
 
-                _filter.Update(gyro.X, gyro.Y, gyro.Z, accel.Y, accel.Z, accel.X);
+                _filter.Update(gyro.Y, gyro.X, -gyro.Z, accel.X, accel.Z, accel.Y);
 
                 TimeStamp = timestamp;
             }           
