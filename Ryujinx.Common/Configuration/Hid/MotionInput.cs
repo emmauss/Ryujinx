@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Numerics;
+using Ryujinx.Common.Utilities;
 
 namespace Ryujinx.Common.Configuration.Hid
 {
     public class MotionInput
     {
+        private MotionSensorFilter _filter;
         private bool _isPitchClockwise;
         private bool _isRollClockwise;
         private bool _isUp;
@@ -22,6 +24,8 @@ namespace Ryujinx.Common.Configuration.Hid
             Gyroscrope    = new Vector3();
             Rotation      = new Vector3();
             _orientation  = new Vector3();
+
+            _filter = new MotionSensorFilter(1f / 60f, 0.1f);
         }
 
         public void Update(Vector3 accel, Vector3 gyro, ulong timestamp)
@@ -29,7 +33,7 @@ namespace Ryujinx.Common.Configuration.Hid
             Accelerometer = accel;
             Gyroscrope = gyro;
 
-            float deltaTime = ((timestamp - TimeStamp) / 1000000f);
+            float deltaTime = (timestamp - TimeStamp) / 1000000f;
 
             var deltaGyro = gyro * deltaTime;
 
@@ -37,11 +41,7 @@ namespace Ryujinx.Common.Configuration.Hid
             {
                 if (TimeStamp == 0)
                 {
-                    _isUp = accel.Z < 0;
-                    _isLeft = accel.X < 0;
-                    _isBack = accel.Y < 0;
-
-                    _isRollClockwise = !_isUp;
+                    
                 }
                 else if (TimeStamp != 0 && deltaGyro.Length() > 0.1f)
                 {
@@ -57,51 +57,11 @@ namespace Ryujinx.Common.Configuration.Hid
             }
             finally
             {
-                Vector3 angle = new Vector3
-                {
-                    X = RadToDegree(MathF.Atan2(accel.Y, MathF.Sqrt(MathF.Pow(accel.X, 2) + MathF.Pow(accel.Z, 2)))),
-                    Y = RadToDegree(MathF.Atan2(accel.X, MathF.Sqrt(MathF.Pow(accel.Z, 2) + MathF.Pow(accel.Y, 2)))),
-                    Z = 0
-                };
+                gyro.X = DegreeToRad(gyro.X);
+                gyro.Y = DegreeToRad(gyro.Y);
+                gyro.Z = DegreeToRad(gyro.Z);
 
-                if((_isLeft && accel.X > 0) || (!_isLeft && accel.X < 0))
-                {
-                    if (_isUp)
-                    {
-                        _isRollClockwise = accel.X > 0;
-                    }
-
-                    _isLeft = accel.X < 0;
-                }
-
-                if ((_isBack && accel.Y > 0) || (!_isBack && accel.Y < 0))
-                {
-                    if (_isUp)
-                    {
-                        _isPitchClockwise = accel.Y > 0;
-                    }
-
-                    _isBack = accel.Y < 0;
-                }
-
-                _isUp = accel.Z < 0;
-
-               // angle.X = -GetRelativePitchAngle(accel.Y, angle.X);
-                angle.Y = GetRelativeRollAngle(accel.X, angle.Y); 
-
-                var compAngle = angle;
-
-                if (TimeStamp != 0)
-                {
-                    compAngle = new Vector3()
-                    {
-                        X = Filter(_orientation.X + deltaGyro.X, angle.X),
-                        Z = _orientation.Z + deltaGyro.Z,
-                        Y = Filter(_orientation.Y + deltaGyro.Y, angle.Y)
-                    };
-                }
-               
-                _orientation = compAngle;
+                _filter.Update(gyro.X, gyro.Y, gyro.Z, accel.Y, accel.Z, accel.X);
 
                 TimeStamp = timestamp;
             }           
@@ -144,22 +104,24 @@ namespace Ryujinx.Common.Configuration.Hid
 
         public Matrix4x4 GetOrientation()
         {
-            Vector3 orientation = _orientation;
+            /* Vector3 orientation = _orientation;
 
-            var rotation = orientation * MathF.PI / 180;
+             var rotation = orientation * MathF.PI / 180;*/
 
-            var quat = Quaternion.CreateFromAxisAngle(Vector3.UnitZ, rotation.Z);
-            quat *= Quaternion.CreateFromAxisAngle(Vector3.UnitX, rotation.Y);
-            quat *= Quaternion.CreateFromAxisAngle(Vector3.UnitY, Rotation.X);
+            var filteredQuat = _filter.Quaternion;
 
-            return Matrix4x4.CreateFromQuaternion(quat);
+            Quaternion quaternion = new Quaternion(filteredQuat[0], filteredQuat[1], filteredQuat[2], filteredQuat[3]);
 
-           // return Matrix4x4.CreateFromQuaternion(Quaternion.CreateFromYawPitchRoll(rotation.Y, rotation.X, rotation.Z));
+            return Matrix4x4.CreateFromQuaternion(quaternion);
         }
 
         private float RadToDegree(float radian)
         {
             return radian * 180 / MathF.PI;
+        }
+        private float DegreeToRad(float degree)
+        {
+            return degree / 180 * MathF.PI;
         }
     }
 }
