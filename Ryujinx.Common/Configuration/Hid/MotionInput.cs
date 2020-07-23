@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Ryujinx.Common.Utilities;
 
 namespace Ryujinx.Common.Configuration.Hid
@@ -57,11 +58,11 @@ namespace Ryujinx.Common.Configuration.Hid
             }
             finally
             {
-                gyro.X = 0;//DegreeToRad(gyro.X);
-                gyro.Y = 0;//DegreeToRad(gyro.Y);
-                gyro.Z = 0;//DegreeToRad(gyro.Z);
+                gyro.X = DegreeToRad(gyro.X);
+                gyro.Y = DegreeToRad(gyro.Y);
+                gyro.Z = DegreeToRad(gyro.Z);
 
-                _filter.Update(gyro.X, gyro.Y, gyro.Z, accel.X, accel.Y, -accel.Z);
+                _filter.Update(gyro.X, gyro.Y, -gyro.Z, accel.X, accel.Y, accel.Z);
 
                 TimeStamp = timestamp;
             }           
@@ -70,13 +71,11 @@ namespace Ryujinx.Common.Configuration.Hid
         public Matrix4x4 GetOrientation()
         {
             var filteredQuat = _filter.Quaternion;
+            Quaternion quaternion = new Quaternion(filteredQuat[2], filteredQuat[1], filteredQuat[0], -filteredQuat[3]);
 
-            Quaternion quaternion = new Quaternion(filteredQuat[2], filteredQuat[1], filteredQuat[0], filteredQuat[3]);
+            var matrix = Matrix4x4.CreateRotationZ(DegreeToRad(25)) * Matrix4x4.CreateFromQuaternion(quaternion);
 
-            var matrix = Matrix4x4.CreateFromQuaternion(quaternion);
-            
-
-            return matrix * Matrix4x4.CreateScale(-1, 1, 1);
+            return matrix;
         }
 
         private float RadToDegree(float radian)
