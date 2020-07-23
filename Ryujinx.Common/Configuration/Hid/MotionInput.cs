@@ -57,11 +57,11 @@ namespace Ryujinx.Common.Configuration.Hid
             }
             finally
             {
-                gyro.X = DegreeToRad(gyro.X);
-                gyro.Y = DegreeToRad(gyro.Y);
-                gyro.Z = DegreeToRad(gyro.Z);
+                gyro.X = 0;//DegreeToRad(gyro.X);
+                gyro.Y = 0;//DegreeToRad(gyro.Y);
+                gyro.Z = 0;//DegreeToRad(gyro.Z);
 
-                _filter.Update(gyro.Z, gyro.Y, gyro.X, accel.Y, accel.X, accel.Z);
+                _filter.Update(gyro.X, gyro.Y, gyro.Z, accel.X, accel.Y, -accel.Z);
 
                 TimeStamp = timestamp;
             }           
@@ -71,9 +71,12 @@ namespace Ryujinx.Common.Configuration.Hid
         {
             var filteredQuat = _filter.Quaternion;
 
-            Quaternion quaternion = new Quaternion(filteredQuat[0], filteredQuat[1], filteredQuat[2], filteredQuat[3]);
+            Quaternion quaternion = new Quaternion(filteredQuat[2], filteredQuat[1], filteredQuat[0], filteredQuat[3]);
 
-            return Matrix4x4.CreateFromQuaternion(quaternion);
+            var matrix = Matrix4x4.CreateFromQuaternion(quaternion);
+            
+
+            return matrix * Matrix4x4.CreateScale(-1, 1, 1);
         }
 
         private float RadToDegree(float radian)
