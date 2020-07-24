@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Ryujinx.Common.Utilities
 {
@@ -37,7 +34,7 @@ namespace Ryujinx.Common.Utilities
         /// <summary>
         /// Gets or sets the integral error.
         /// </summary>
-        private float[] eInt { get; set; }
+        private float[] _intergralError { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MadgwickAHRS"/> class.
@@ -81,8 +78,8 @@ namespace Ryujinx.Common.Utilities
             SamplePeriod = samplePeriod;
             Kp = kp;
             Ki = ki;
-            Quaternion = new float[] { 1f, 0f, 0f, 0f };
-            eInt = new float[] { 0f, 0f, 0f };
+            Quaternion      = new float[] { 1f, 0f, 0f, 0f };
+            _intergralError = new float[] { 0f, 0f, 0f };
         }
 
         /// <summary>
@@ -118,6 +115,7 @@ namespace Ryujinx.Common.Utilities
             norm = (float)Math.Sqrt(ax * ax + ay * ay + az * az);
             if (norm == 0f) return; // handle NaN
             norm = 1 / norm;        // use reciprocal for division
+
             ax *= norm;
             ay *= norm;
             az *= norm;
@@ -131,23 +129,24 @@ namespace Ryujinx.Common.Utilities
             ex = (ay * vz - az * vy);
             ey = (az * vx - ax * vz);
             ez = (ax * vy - ay * vx);
+            
             if (Ki > 0f)
             {
-                eInt[0] += ex;      // accumulate integral error
-                eInt[1] += ey;
-                eInt[2] += ez;
+                _intergralError[0] += ex;      // accumulate integral error
+                _intergralError[1] += ey;
+                _intergralError[2] += ez;
             }
             else
             {
-                eInt[0] = 0.0f;     // prevent integral wind up
-                eInt[1] = 0.0f;
-                eInt[2] = 0.0f;
+                _intergralError[0] = 0.0f;     // prevent integral wind up
+                _intergralError[1] = 0.0f;
+                _intergralError[2] = 0.0f;
             }
 
             // Apply feedback terms
-            gx = gx + Kp * ex + Ki * eInt[0];
-            gy = gy + Kp * ey + Ki * eInt[1];
-            gz = gz + Kp * ez + Ki * eInt[2];
+            gx = gx + Kp * ex + Ki * _intergralError[0];
+            gy = gy + Kp * ey + Ki * _intergralError[1];
+            gz = gz + Kp * ez + Ki * _intergralError[2];
 
             // Integrate rate of change of quaternion
             pa = q2;

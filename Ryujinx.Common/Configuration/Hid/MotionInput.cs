@@ -7,9 +7,7 @@ namespace Ryujinx.Common.Configuration.Hid
 {
     public class MotionInput
     {
-        private MotionSensorFilter _filter;
-
-        private Vector3  _orientation  { get; set; }
+        private readonly MotionSensorFilter _filter;
 
         public ulong     TimeStamp     { get; set; }
         public Vector3   Accelerometer { get; set; }
@@ -21,7 +19,6 @@ namespace Ryujinx.Common.Configuration.Hid
             Accelerometer = new Vector3();
             Gyroscrope    = new Vector3();
             Rotation      = new Vector3();
-            _orientation  = new Vector3();
 
             _filter = new MotionSensorFilter(1f / 60f);
         }
@@ -72,7 +69,7 @@ namespace Ryujinx.Common.Configuration.Hid
         public Matrix4x4 GetOrientation()
         {
             var filteredQuat = _filter.Quaternion;
-            
+
             Quaternion quaternion = new Quaternion(filteredQuat[2], filteredQuat[1], filteredQuat[0], filteredQuat[3]);
 
             return Matrix4x4.CreateRotationZ(DegreeToRad(180)) * Matrix4x4.CreateFromQuaternion(quaternion);
