@@ -8,12 +8,9 @@ namespace Ryujinx.Common.Configuration.Hid
     public class MotionInput
     {
         private MotionSensorFilter _filter;
-        private bool _isPitchClockwise;
-        private bool _isRollClockwise;
-        private bool _isUp;
-        private bool _isLeft;
-        private bool _isBack;
+
         private Vector3  _orientation  { get; set; }
+
         public ulong     TimeStamp     { get; set; }
         public Vector3   Accelerometer { get; set; }
         public Vector3   Gyroscrope    { get; set; }
@@ -40,20 +37,24 @@ namespace Ryujinx.Common.Configuration.Hid
 
             try
             {
-                if (TimeStamp == 0)
+                switch (TimeStamp)
                 {
-                    
-                }
-                else if (TimeStamp != 0 && deltaGyro.Length() > 0.1f)
-                {
-                    Rotation += deltaGyro;
-                }
-                else
-                {
-                    Gyroscrope = new Vector3();
-                    deltaGyro = gyro * deltaTime;
+                    case 0:
+                        break;
+                    default:
+                        if (TimeStamp != 0 && deltaGyro.Length() > 0.1f)
+                        {
+                            Rotation += deltaGyro;
+                        }
+                        else
+                        {
+                            Gyroscrope = new Vector3();
+                            deltaGyro = gyro * deltaTime;
 
-                    return;
+                            return;
+                        }
+
+                        break;
                 }
             }
             finally
@@ -62,7 +63,7 @@ namespace Ryujinx.Common.Configuration.Hid
                 gyro.Y = DegreeToRad(gyro.Y);
                 gyro.Z = DegreeToRad(gyro.Z);
 
-                _filter.Update(gyro.X, gyro.Y, -gyro.Z, accel.X, accel.Y, accel.Z);
+                _filter.Update(-gyro.X, gyro.Y, -gyro.Z, -accel.X, accel.Y, -accel.Z);
 
                 TimeStamp = timestamp;
             }           
@@ -71,17 +72,12 @@ namespace Ryujinx.Common.Configuration.Hid
         public Matrix4x4 GetOrientation()
         {
             var filteredQuat = _filter.Quaternion;
-            Quaternion quaternion = new Quaternion(filteredQuat[2], filteredQuat[1], filteredQuat[0], -filteredQuat[3]);
+            
+            Quaternion quaternion = new Quaternion(filteredQuat[2], filteredQuat[1], filteredQuat[0], filteredQuat[3]);
 
-            var matrix = Matrix4x4.CreateRotationZ(DegreeToRad(25)) * Matrix4x4.CreateFromQuaternion(quaternion);
-
-            return matrix;
+            return Matrix4x4.CreateRotationZ(DegreeToRad(180)) * Matrix4x4.CreateFromQuaternion(quaternion);
         }
 
-        private float RadToDegree(float radian)
-        {
-            return radian * 180 / MathF.PI;
-        }
         private float DegreeToRad(float degree)
         {
             return degree / 180 * MathF.PI;
