@@ -72,7 +72,7 @@ namespace Ryujinx.Audio
             return bufferTags.ToArray();
         }
 
-        public void AppendBuffer<T>(int trackId, long bufferTag, T[] buffer) where T : struct
+        public void AppendBuffer<T>(int trackId, long bufferTag, T[] buffer) where T : unmanaged
         {
             _buffers.Enqueue(bufferTag);
 

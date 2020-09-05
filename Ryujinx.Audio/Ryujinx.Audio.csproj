@@ -16,10 +16,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OpenTK.NetStandard" Version="1.0.5.12" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Ryujinx.Common\Ryujinx.Common.csproj" />
   </ItemGroup>
 
@@ -36,6 +32,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>libsoundio.so</TargetPath>
     </ContentWithTargetPath>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="OpenTK.Core" Version="4.0.0-pre9.7" />
+    <PackageReference Include="OpenTK.OpenAL" Version="4.0.0-pre9.7" />
   </ItemGroup>
 
 </Project>

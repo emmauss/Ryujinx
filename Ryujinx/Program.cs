@@ -1,6 +1,7 @@
 using ARMeilleure.Translation.PTC;
 using Gtk;
 using OpenTK;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using Ryujinx.Common.Configuration;
 using Ryujinx.Common.Logging;
 using Ryujinx.Common.SystemInfo;
@@ -44,11 +45,7 @@ namespace Ryujinx
                 }
             }
 
-            Toolkit.Init(new ToolkitOptions
-            {
-                Backend = PlatformBackend.PreferNative,
-                EnableHighResolution = true
-            });
+            GTKBindingHelper.InitializeGlBindings();
 
             Version = Assembly.GetEntryAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
 
@@ -114,6 +111,8 @@ namespace Ryujinx
                 UserErrorDialog.CreateUserErrorDialog(UserError.NoKeys);
             }
 
+            Joystick.Initialize();
+
             MainWindow mainWindow = new MainWindow();
             mainWindow.Show();
 
@@ -123,6 +122,8 @@ namespace Ryujinx
             }
 
             Application.Run();
+
+            GLFW.Terminate();
         }
 
         private static void PrintSystemInfo()

@@ -1,5 +1,6 @@
+using Gdk;
 using Gtk;
-using OpenTK.Input;
+using OpenTK.Windowing.Common.Input;
 using Ryujinx.Common.Configuration;
 using Ryujinx.Common.Configuration.Hid;
 using Ryujinx.Common.Utilities;
@@ -8,21 +9,25 @@ using Ryujinx.HLE.FileSystem;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading;
 
 using GUI = Gtk.Builder.ObjectAttribute;
+using Image = Gtk.Image;
 using Key = Ryujinx.Configuration.Hid.Key;
 
 namespace Ryujinx.Ui
 {
-    public class ControllerWindow : Window
+    public class ControllerWindow : Gtk.Window
     {
         private PlayerIndex       _playerIndex;
         private InputConfig       _inputConfig;
         private bool              _isWaitingForInput;
         private VirtualFileSystem _virtualFileSystem;
+        private KeyboardState     _keyboardState;
+        private bool              _mousePressed;
 
 #pragma warning disable CS0649, IDE0044
         [GUI] Adjustment   _controllerDeadzoneLeft;
@@ -79,6 +84,20 @@ namespace Ryujinx.Ui
         [GUI] ToggleButton _rSl;
         [GUI] ToggleButton _rSr;
         [GUI] Image        _controllerImage;
+
+        public KeyboardState KeyboardState
+        {
+            get
+            {
+                var state = _keyboardState;
+
+                _keyboardState = default;
+
+                return state;
+            }
+            set => _keyboardState = value;
+        }
+
 #pragma warning restore CS0649, IDE0044
 
         public ControllerWindow(PlayerIndex controllerId, VirtualFileSystem virtualFileSystem) : this(new Builder("Ryujinx.Ui.ControllerWindow.glade"), controllerId, virtualFileSystem) { }
@@ -148,8 +167,58 @@ namespace Ryujinx.Ui
             UpdateInputDeviceList();
             SetAvailableOptions();
 
+            AddEvents((int)(EventMask.ButtonPressMask
+                          | EventMask.ButtonReleaseMask
+                          | EventMask.PointerMotionMask
+                          | EventMask.KeyPressMask
+                          | EventMask.KeyReleaseMask));
+
+            _inputDevice.IsFocus = false;
+            _profile.IsFocus = false;
+
+            this.KeyPressEvent      += ControllerWindow_KeyPressEvent;
+            this.KeyReleaseEvent    += ControllerWindow_KeyReleaseEvent;
+            this.ButtonPressEvent   += ControllerWindow_ButtonPressEvent;
+            this.ButtonReleaseEvent += ControllerWindow_ButtonReleaseEvent;
+
+            _keyboardState = new KeyboardState();
+
             ClearValues();
             if (_inputDevice.ActiveId != null) SetCurrentValues();
+        }
+
+        [GLib.ConnectBefore]
+        private void ControllerWindow_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
+        {
+            _mousePressed = false;
+        }
+
+        [GLib.ConnectBefore]
+        private void ControllerWindow_ButtonPressEvent(object o, ButtonPressEventArgs args)
+        {
+            _mousePressed = true;
+        }
+
+        [GLib.ConnectBefore]
+        private void ControllerWindow_KeyReleaseEvent(object o, KeyReleaseEventArgs args)
+        {
+            var key = args.Event.Key.ToOpenTKKey();
+
+            if (key != OpenTK.Windowing.Common.Input.Key.Unknown)
+            {
+                _keyboardState.SetKeyState(key, false);
+            }
+        }
+
+        [GLib.ConnectBefore]
+        private void ControllerWindow_KeyPressEvent(object o, KeyPressEventArgs args)
+        {
+            var key = args.Event.Key.ToOpenTKKey();
+
+            if (key != OpenTK.Windowing.Common.Input.Key.Unknown)
+            {
+                _keyboardState.SetKeyState(key, true);
+            }
         }
 
         private void UpdateInputDeviceList()
@@ -160,13 +229,25 @@ namespace Ryujinx.Ui
 
             _inputDevice.Append($"keyboard/{KeyboardConfig.AllKeyboardsIndex}", "All keyboards");
 
-            for (int i = 0; i < 20; i++)
-            {
-                if (KeyboardController.GetKeyboardState(i + 1).IsConnected)
-                    _inputDevice.Append($"keyboard/{i + 1}", $"Keyboard/{i + 1}");
+            var devices = Display.DeviceManager.ListDevices(DeviceType.Master);
 
-                if (GamePad.GetState(i).IsConnected)
-                    _inputDevice.Append($"controller/{i}", $"Controller/{i} ({GamePad.GetName(i)})");
+            Gdk.Device keyboardDevice = devices.Where(x=>x.InputSource == InputSource.Keyboard).FirstOrDefault();//(seat[0] as Seat).Keyboard;
+
+            if (keyboardDevice != null && keyboardDevice.Mode != Gdk.InputMode.Disabled)
+            {
+                _inputDevice.Append($"keyboard/1", $"Keyboard/1 {keyboardDevice.Name}");
+            }
+
+            Joystick.UpdateStates();
+
+            for (int i = 0; i < Joystick.JoystickCount; i++)
+            {
+                JoystickState joystick = Joystick.GetState(i);
+
+                if (Joystick.GetState(i).IsConnected)
+                {
+                    _inputDevice.Append($"controller/{i}", $"Controller/{i} ({joystick.Name})");
+                }
             }
 
             switch (_inputConfig)
@@ -533,13 +614,20 @@ namespace Ryujinx.Ui
             return null;
         }
 
-        private static bool IsAnyKeyPressed(out Key pressedKey, int index)
+        private bool IsAnyKeyPressed(out Key pressedKey)
         {
-            KeyboardState keyboardState = KeyboardController.GetKeyboardState(index);
+            pressedKey = Key.Unbound;
+
+            KeyboardState keyboardState = KeyboardState;
 
             foreach (Key key in Enum.GetValues(typeof(Key)))
             {
-                if (keyboardState.IsKeyDown((OpenTK.Input.Key)key))
+                if (key == Key.Unbound || key == Key.Unknown || key == Key.LastKey)
+                {
+                    continue;
+                }
+
+                if (keyboardState.IsKeyDown((OpenTK.Windowing.Common.Input.Key)key))
                 {
                     pressedKey = key;
 
@@ -547,18 +635,18 @@ namespace Ryujinx.Ui
                 }
             }
 
-            pressedKey = Key.Unbound;
-
             return false;
         }
 
         private static bool IsAnyButtonPressed(out ControllerInputId pressedButton, int index, double triggerThreshold)
         {
+            Joystick.UpdateStates();
+
             JoystickState        joystickState        = Joystick.GetState(index);
             JoystickCapabilities joystickCapabilities = Joystick.GetCapabilities(index);
 
             //Buttons
-            for (int i = 0; i != joystickCapabilities.ButtonCount; i++)
+            for (int i = 0; i < joystickCapabilities.ButtonCount; i++)
             {
                 if (joystickState.IsButtonDown(i))
                 {
@@ -569,9 +657,10 @@ namespace Ryujinx.Ui
             }
 
             //Axis
-            for (int i = 0; i != joystickCapabilities.AxisCount; i++)
+            for (int i = 0; i < joystickCapabilities.AxisCount; i++)
             {
-                if (joystickState.GetAxis(i) > 0.5f && joystickState.GetAxis(i) > triggerThreshold)
+                var axis = Math.Abs(joystickState.GetAxis(i));
+                if (axis > 0.5f && axis > triggerThreshold)
                 {
                     Enum.TryParse($"Axis{i}", out pressedButton);
 
@@ -580,16 +669,16 @@ namespace Ryujinx.Ui
             }
 
             //Hats
-            for (int i = 0; i != joystickCapabilities.HatCount; i++)
+            for (int i = 0; i < joystickCapabilities.HatCount; i++)
             {
-                JoystickHatState hatState = joystickState.GetHat((JoystickHat)i);
+                Hat hatState = joystickState.GetHat(i);
                 string           pos      = null;
 
-                if (hatState.IsUp)    pos = "Up";
-                if (hatState.IsDown)  pos = "Down";
-                if (hatState.IsLeft)  pos = "Left";
-                if (hatState.IsRight) pos = "Right";
-                if (pos == null)      continue;
+                if (hatState.HasFlag(Hat.Up))    pos = "Up";
+                if (hatState.HasFlag(Hat.Down))  pos = "Down";
+                if (hatState.HasFlag(Hat.Left))  pos = "Left";
+                if (hatState.HasFlag(Hat.Right)) pos = "Right";
+                if (pos == null)                 continue;
 
                 Enum.TryParse($"Hat{i}{pos}", out pressedButton);
 
@@ -642,6 +731,7 @@ namespace Ryujinx.Ui
         {
             if (_isWaitingForInput)
             {
+                ((ToggleButton)sender).Active = false;
                 return;
             }
 
@@ -649,20 +739,21 @@ namespace Ryujinx.Ui
 
             Thread inputThread = new Thread(() =>
             {
-                Button button = (ToggleButton)sender;
+                ToggleButton button = (ToggleButton)sender;
 
                 if (_inputDevice.ActiveId.StartsWith("keyboard"))
                 {
                     Key pressedKey;
 
                     int index = int.Parse(_inputDevice.ActiveId.Split("/")[1]);
-                    while (!IsAnyKeyPressed(out pressedKey, index))
+
+                    while (!IsAnyKeyPressed(out pressedKey))
                     {
-                        if (Mouse.GetState().IsAnyButtonDown || Keyboard.GetState().IsKeyDown(OpenTK.Input.Key.Escape))
+                        if (_mousePressed || _keyboardState.IsKeyDown(OpenTK.Windowing.Common.Input.Key.Escape) || !_isWaitingForInput)
                         {
                             Application.Invoke(delegate
                             {
-                                button.SetStateFlags(0, true);
+                                button.Active = false;
                             });
 
                             _isWaitingForInput = false;
@@ -674,7 +765,7 @@ namespace Ryujinx.Ui
                     Application.Invoke(delegate
                     {
                         button.Label = pressedKey.ToString();
-                        button.SetStateFlags(0, true);
+                        button.Active = false;
                     });
                 }
                 else if (_inputDevice.ActiveId.StartsWith("controller"))
@@ -684,11 +775,11 @@ namespace Ryujinx.Ui
                     int index = int.Parse(_inputDevice.ActiveId.Split("/")[1]);
                     while (!IsAnyButtonPressed(out pressedButton, index, _controllerTriggerThreshold.Value))
                     {
-                        if (Mouse.GetState().IsAnyButtonDown || Keyboard.GetState().IsAnyKeyDown)
+                        if (_mousePressed || _keyboardState.IsAnyKeyDown || !_isWaitingForInput)
                         {
                             Application.Invoke(delegate
                             {
-                                button.SetStateFlags(0, true);
+                                button.Active = false;
                             });
 
                             _isWaitingForInput = false;
@@ -700,7 +791,7 @@ namespace Ryujinx.Ui
                     Application.Invoke(delegate
                     {
                         button.Label = pressedButton.ToString();
-                        button.SetStateFlags(0, true);
+                        button.Active = false;
                     });
                 }
 

@@ -187,7 +187,38 @@ namespace Ryujinx.Ui
             _statusBar.Hide();
 
             _uiHandler = new GtkHostUiHandler(this);
+            
             _gamePath = null;
+
+            this.KeyPressEvent += MainWindow_KeyPressEvent;
+            this.KeyReleaseEvent += MainWindow_KeyReleaseEvent;
+        }
+
+        // Send key events down to the renderer in case main window has grab focus
+        [GLib.ConnectBefore]
+        private void MainWindow_KeyReleaseEvent(object o, KeyReleaseEventArgs args)
+        {
+            if (_glWidget != null)
+            {
+                var key = args.Event.Key.ToOpenTKKey();
+
+                _glWidget.KeyRelease(key);
+
+                args.RetVal = true;
+            }
+        }
+
+        [GLib.ConnectBefore]
+        private void MainWindow_KeyPressEvent(object o, KeyPressEventArgs args)
+        {
+            if (_glWidget != null)
+            {
+                var key = args.Event.Key.ToOpenTKKey();
+
+                _glWidget.KeyPress(key);
+
+                args.RetVal = true;
+            }
         }
 
         private void MainWindow_WindowStateEvent(object o, WindowStateEventArgs args)

@@ -1,0 +1,213 @@
+﻿using OpenTK.Windowing.Common.Input;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Ryujinx.Ui
+{
+    public static class GdkKeyMapping
+    {
+        public static Dictionary<Gdk.Key, Key> GdkKeyMappingDictionary { get; }
+
+        static GdkKeyMapping()
+        {
+            GdkKeyMappingDictionary = new Dictionary<Gdk.Key, Key>()
+            {
+                { Gdk.Key.VoidSymbol, Key.Unknown },
+                { Gdk.Key.Shift_L, Key.ShiftLeft },
+                { Gdk.Key.Shift_R, Key.ShiftRight },
+                { Gdk.Key.Control_L, Key.ControlLeft },
+                { Gdk.Key.Control_R, Key.ControlRight },
+                { Gdk.Key.Alt_L, Key.AltLeft },
+                { Gdk.Key.Alt_R, Key.AltRight },
+                { Gdk.Key.Super_L, Key.WinLeft },
+                { Gdk.Key.Super_R, Key.WinRight },
+                { Gdk.Key.Menu, Key.Menu },
+                { Gdk.Key.F1, Key.F1 },
+                { Gdk.Key.F2, Key.F2 },
+                { Gdk.Key.F3, Key.F3 },
+                { Gdk.Key.F4, Key.F4 },
+                { Gdk.Key.F5, Key.F5 },
+                { Gdk.Key.F6, Key.F6 },
+                { Gdk.Key.F7, Key.F7 },
+                { Gdk.Key.F8, Key.F8 },
+                { Gdk.Key.F9, Key.F9 },
+                { Gdk.Key.F10, Key.F10 },
+                { Gdk.Key.F11, Key.F11 },
+                { Gdk.Key.F12, Key.F12 },
+                { Gdk.Key.F13, Key.F13 },
+                { Gdk.Key.F14, Key.F14 },
+                { Gdk.Key.F15, Key.F15 },
+                { Gdk.Key.F16, Key.F16 },
+                { Gdk.Key.F17, Key.F17 },
+                { Gdk.Key.F18, Key.F18 },
+                { Gdk.Key.F19, Key.F19 },
+                { Gdk.Key.F20, Key.F20 },
+                { Gdk.Key.F21, Key.F21 },
+                { Gdk.Key.F22, Key.F22 },
+                { Gdk.Key.F23, Key.F23 },
+                { Gdk.Key.F24, Key.F24 },
+                { Gdk.Key.F25, Key.F25 },
+                { Gdk.Key.F26, Key.F26 },
+                { Gdk.Key.F27, Key.F27 },
+                { Gdk.Key.F28, Key.F28 },
+                { Gdk.Key.F29, Key.F29 },
+                { Gdk.Key.F30, Key.F30 },
+                { Gdk.Key.F31, Key.F31 },
+                { Gdk.Key.F32, Key.F32 },
+                { Gdk.Key.F33, Key.F33 },
+                { Gdk.Key.F34, Key.F34 },
+                { Gdk.Key.F35, Key.F35 },
+                { Gdk.Key.Up, Key.Up },
+                { Gdk.Key.Down, Key.Down },
+                { Gdk.Key.Left, Key.Left },
+                { Gdk.Key.Right, Key.Right },
+                { Gdk.Key.Return, Key.Enter },
+                { Gdk.Key.ISO_Enter, Key.Enter },
+                { Gdk.Key.Key_3270_Enter, Key.Enter },
+                { Gdk.Key.Escape, Key.Escape },
+                { Gdk.Key.space, Key.Space },
+                { Gdk.Key.Tab, Key.Tab },
+                { Gdk.Key.BackSpace, Key.BackSpace },
+                { Gdk.Key.Insert, Key.Insert },
+                { Gdk.Key.Delete, Key.Delete },
+                { Gdk.Key.Page_Up, Key.PageUp },
+                { Gdk.Key.Page_Down, Key.PageDown },
+                { Gdk.Key.Home, Key.Home },
+                { Gdk.Key.End, Key.End },
+                { Gdk.Key.KP_Space, Key.Space },
+                { Gdk.Key.KP_Tab, Key.Tab },
+                { Gdk.Key.KP_Insert, Key.Insert },
+                { Gdk.Key.KP_Delete, Key.Delete },
+                { Gdk.Key.KP_Page_Up, Key.PageUp },
+                { Gdk.Key.KP_Page_Down, Key.PageDown },
+                { Gdk.Key.KP_Home, Key.Home },
+                { Gdk.Key.KP_End, Key.End },
+                { Gdk.Key.Caps_Lock, Key.CapsLock },
+                { Gdk.Key.Scroll_Lock, Key.ScrollLock },
+                { Gdk.Key.Key_3270_PrintScreen, Key.PrintScreen },
+                { Gdk.Key.Pause, Key.Pause },
+                { Gdk.Key.Num_Lock, Key.NumLock },
+                { Gdk.Key.Clear, Key.Clear },
+                { Gdk.Key.KP_0, Key.Keypad0 },
+                { Gdk.Key.KP_1, Key.Keypad1 },
+                { Gdk.Key.KP_2, Key.Keypad2 },
+                { Gdk.Key.KP_3, Key.Keypad3 },
+                { Gdk.Key.KP_4, Key.Keypad4 },
+                { Gdk.Key.KP_5, Key.Keypad5 },
+                { Gdk.Key.KP_6, Key.Keypad6 },
+                { Gdk.Key.KP_7, Key.Keypad7 },
+                { Gdk.Key.KP_8, Key.Keypad8 },
+                { Gdk.Key.KP_9, Key.Keypad9 },
+                { Gdk.Key.KP_Divide, Key.KeypadDivide },
+                { Gdk.Key.KP_Multiply, Key.KeypadMultiply },
+                { Gdk.Key.KP_Subtract, Key.KeypadSubtract },
+                { Gdk.Key.KP_Add, Key.KeypadAdd },
+                { Gdk.Key.KP_Equal, Key.KeypadEqual },
+                { Gdk.Key.KP_Decimal, Key.KeypadDecimal },
+                { Gdk.Key.KP_Enter, Key.KeypadEnter },
+                { Gdk.Key.A, Key.A },
+                { Gdk.Key.B, Key.B },
+                { Gdk.Key.C, Key.C },
+                { Gdk.Key.D, Key.D },
+                { Gdk.Key.E, Key.E },
+                { Gdk.Key.F, Key.F },
+                { Gdk.Key.G, Key.G },
+                { Gdk.Key.H, Key.H },
+                { Gdk.Key.I, Key.I },
+                { Gdk.Key.J, Key.J },
+                { Gdk.Key.K, Key.K },
+                { Gdk.Key.L, Key.L },
+                { Gdk.Key.M, Key.M },
+                { Gdk.Key.N, Key.N },
+                { Gdk.Key.O, Key.O },
+                { Gdk.Key.P, Key.P },
+                { Gdk.Key.Q, Key.Q },
+                { Gdk.Key.R, Key.R },
+                { Gdk.Key.S, Key.S },
+                { Gdk.Key.T, Key.T },
+                { Gdk.Key.U, Key.U },
+                { Gdk.Key.V, Key.V },
+                { Gdk.Key.W, Key.W },
+                { Gdk.Key.X, Key.X },
+                { Gdk.Key.Y, Key.Y },
+                { Gdk.Key.Z, Key.Z },
+                { Gdk.Key.a, Key.A },
+                { Gdk.Key.b, Key.B },
+                { Gdk.Key.c, Key.C },
+                { Gdk.Key.d, Key.D },
+                { Gdk.Key.e, Key.E },
+                { Gdk.Key.f, Key.F },
+                { Gdk.Key.g, Key.G },
+                { Gdk.Key.h, Key.H },
+                { Gdk.Key.i, Key.I },
+                { Gdk.Key.j, Key.J },
+                { Gdk.Key.k, Key.K },
+                { Gdk.Key.l, Key.L },
+                { Gdk.Key.m, Key.M },
+                { Gdk.Key.n, Key.N },
+                { Gdk.Key.o, Key.O },
+                { Gdk.Key.p, Key.P },
+                { Gdk.Key.q, Key.Q },
+                { Gdk.Key.r, Key.R },
+                { Gdk.Key.s, Key.S },
+                { Gdk.Key.t, Key.T },
+                { Gdk.Key.u, Key.U },
+                { Gdk.Key.v, Key.V },
+                { Gdk.Key.w, Key.W },
+                { Gdk.Key.x, Key.X },
+                { Gdk.Key.y, Key.Y },
+                { Gdk.Key.z, Key.Z },
+                { Gdk.Key.parenleft, Key.Number0 },
+                { Gdk.Key.Key_0, Key.Number0 },
+                { Gdk.Key.Key_1, Key.Number1 },
+                { Gdk.Key.Key_2, Key.Number2 },
+                { Gdk.Key.Key_3, Key.Number3 },
+                { Gdk.Key.Key_4, Key.Number4 },
+                { Gdk.Key.Key_5, Key.Number5 },
+                { Gdk.Key.Key_6, Key.Number6 },
+                { Gdk.Key.Key_7, Key.Number7 },
+                { Gdk.Key.Key_8, Key.Number8 },
+                { Gdk.Key.Key_9, Key.Number9 },
+                { Gdk.Key.parenright, Key.Number9 },
+                { Gdk.Key.dead_tilde, Key.Tilde },
+                { Gdk.Key.asciitilde, Key.Tilde },
+                { Gdk.Key.dead_grave, Key.Grave },
+                { Gdk.Key.minus, Key.Minus },
+                { Gdk.Key.plus, Key.Plus },
+                { Gdk.Key.bracketleft, Key.BracketLeft },
+                { Gdk.Key.bracketright, Key.BracketRight },
+                { Gdk.Key.braceleft, Key.BracketLeft },
+                { Gdk.Key.braceright, Key.BracketRight },
+                { Gdk.Key.semicolon, Key.Semicolon },
+                { Gdk.Key.quoteleft, Key.Quote },
+                { Gdk.Key.quoteright, Key.Quote },
+                { Gdk.Key.comma, Key.Comma },
+                { Gdk.Key.period, Key.Period },
+                { Gdk.Key.slash, Key.Slash },
+                { Gdk.Key.backslash, Key.BackSlash }
+            };
+        }
+
+        public static Gdk.Key ToGkdKey(this Key key)
+        {
+            if (GdkKeyMappingDictionary.ContainsValue(key))
+            {
+                return GdkKeyMappingDictionary.First(x => x.Value == key).Key;
+            }
+
+            return Gdk.Key.VoidSymbol;
+        }
+
+        public static Key ToOpenTKKey(this Gdk.Key key)
+        {
+            if (GdkKeyMappingDictionary.TryGetValue(key, out Key newKey))
+            {
+                return newKey;
+            }
+
+            return Key.Unknown;
+        }
+    }
+}

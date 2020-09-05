@@ -1,5 +1,5 @@
 ﻿using System;
-using OpenTK.Input;
+using OpenTK.Windowing.Common.Input;
 using Ryujinx.Common.Configuration.Hid;
 using Ryujinx.Configuration;
 using Ryujinx.HLE.HOS.Services.Hid;
@@ -16,19 +16,17 @@ namespace Ryujinx.Ui
     {
         private readonly KeyboardConfig _config;
 
-        public KeyboardController(KeyboardConfig config)
+        private readonly KeyboardState _keyboardState;
+
+        public KeyboardController(KeyboardConfig config, KeyboardState keyboardState)
         {
             _config = config;
+            _keyboardState = keyboardState;
         }
 
-        public static KeyboardState GetKeyboardState(int index)
+        public KeyboardState GetKeyboardState(int index)
         {
-            if (index == KeyboardConfig.AllKeyboardsIndex || index < 0)
-            {
-                return Keyboard.GetState();
-            }
-
-            return Keyboard.GetState(index - 1);
+            return _keyboardState;
         }
 
         public ControllerKeys GetButtons()
@@ -37,29 +35,39 @@ namespace Ryujinx.Ui
 
             ControllerKeys buttons = 0;
 
-            if (keyboard[(Key)_config.LeftJoycon.StickButton]) buttons |= ControllerKeys.LStick;
-            if (keyboard[(Key)_config.LeftJoycon.DPadUp])      buttons |= ControllerKeys.DpadUp;
-            if (keyboard[(Key)_config.LeftJoycon.DPadDown])    buttons |= ControllerKeys.DpadDown;
-            if (keyboard[(Key)_config.LeftJoycon.DPadLeft])    buttons |= ControllerKeys.DpadLeft;
-            if (keyboard[(Key)_config.LeftJoycon.DPadRight])   buttons |= ControllerKeys.DpadRight;
-            if (keyboard[(Key)_config.LeftJoycon.ButtonMinus]) buttons |= ControllerKeys.Minus;
-            if (keyboard[(Key)_config.LeftJoycon.ButtonL])     buttons |= ControllerKeys.L;
-            if (keyboard[(Key)_config.LeftJoycon.ButtonZl])    buttons |= ControllerKeys.Zl;
-            if (keyboard[(Key)_config.LeftJoycon.ButtonSl])    buttons |= ControllerKeys.SlLeft;
-            if (keyboard[(Key)_config.LeftJoycon.ButtonSr])    buttons |= ControllerKeys.SlRight;
+            if (CheckBounded(_config.LeftJoycon.StickButton, keyboard)) buttons |= ControllerKeys.LStick;
+            if (CheckBounded(_config.LeftJoycon.DPadUp,      keyboard)) buttons |= ControllerKeys.DpadUp;
+            if (CheckBounded(_config.LeftJoycon.DPadDown,    keyboard)) buttons |= ControllerKeys.DpadDown;
+            if (CheckBounded(_config.LeftJoycon.DPadLeft,    keyboard)) buttons |= ControllerKeys.DpadLeft;
+            if (CheckBounded(_config.LeftJoycon.DPadRight,   keyboard)) buttons |= ControllerKeys.DpadRight;
+            if (CheckBounded(_config.LeftJoycon.ButtonMinus, keyboard)) buttons |= ControllerKeys.Minus;
+            if (CheckBounded(_config.LeftJoycon.ButtonL,     keyboard)) buttons |= ControllerKeys.L;
+            if (CheckBounded(_config.LeftJoycon.ButtonZl,    keyboard)) buttons |= ControllerKeys.Zl;
+            if (CheckBounded(_config.LeftJoycon.ButtonSl,    keyboard)) buttons |= ControllerKeys.SlLeft;
+            if (CheckBounded(_config.LeftJoycon.ButtonSr,    keyboard)) buttons |= ControllerKeys.SlRight;
             
-            if (keyboard[(Key)_config.RightJoycon.StickButton]) buttons |= ControllerKeys.RStick;
-            if (keyboard[(Key)_config.RightJoycon.ButtonA])     buttons |= ControllerKeys.A;
-            if (keyboard[(Key)_config.RightJoycon.ButtonB])     buttons |= ControllerKeys.B;
-            if (keyboard[(Key)_config.RightJoycon.ButtonX])     buttons |= ControllerKeys.X;
-            if (keyboard[(Key)_config.RightJoycon.ButtonY])     buttons |= ControllerKeys.Y;
-            if (keyboard[(Key)_config.RightJoycon.ButtonPlus])  buttons |= ControllerKeys.Plus;
-            if (keyboard[(Key)_config.RightJoycon.ButtonR])     buttons |= ControllerKeys.R;
-            if (keyboard[(Key)_config.RightJoycon.ButtonZr])    buttons |= ControllerKeys.Zr;
-            if (keyboard[(Key)_config.RightJoycon.ButtonSl])    buttons |= ControllerKeys.SrLeft;
-            if (keyboard[(Key)_config.RightJoycon.ButtonSr])    buttons |= ControllerKeys.SrRight;
+            if (CheckBounded(_config.RightJoycon.StickButton, keyboard)) buttons |= ControllerKeys.RStick;
+            if (CheckBounded(_config.RightJoycon.ButtonA,     keyboard)) buttons |= ControllerKeys.A;
+            if (CheckBounded(_config.RightJoycon.ButtonB,     keyboard)) buttons |= ControllerKeys.B;
+            if (CheckBounded(_config.RightJoycon.ButtonX,     keyboard)) buttons |= ControllerKeys.X;
+            if (CheckBounded(_config.RightJoycon.ButtonY,     keyboard)) buttons |= ControllerKeys.Y;
+            if (CheckBounded(_config.RightJoycon.ButtonPlus,  keyboard)) buttons |= ControllerKeys.Plus;
+            if (CheckBounded(_config.RightJoycon.ButtonR,     keyboard)) buttons |= ControllerKeys.R;
+            if (CheckBounded(_config.RightJoycon.ButtonZr,    keyboard)) buttons |= ControllerKeys.Zr;
+            if (CheckBounded(_config.RightJoycon.ButtonSl,    keyboard)) buttons |= ControllerKeys.SrLeft;
+            if (CheckBounded(_config.RightJoycon.ButtonSr,    keyboard)) buttons |= ControllerKeys.SrRight;
 
             return buttons;
+        }
+
+        public bool CheckBounded(Configuration.Hid.Key key, KeyboardState keyboard)
+        {
+            if (key == Configuration.Hid.Key.Unbound || key == Configuration.Hid.Key.Unknown || key == Configuration.Hid.Key.LastKey)
+            {
+                return false;
+            }
+
+            return keyboard[(Key)key];
         }
 
         public (short, short) GetLeftStick()
@@ -69,10 +77,10 @@ namespace Ryujinx.Ui
             short dx = 0;
             short dy = 0;
             
-            if (keyboard[(Key)_config.LeftJoycon.StickUp])    dy =  short.MaxValue;
-            if (keyboard[(Key)_config.LeftJoycon.StickDown])  dy = -short.MaxValue;
-            if (keyboard[(Key)_config.LeftJoycon.StickLeft])  dx = -short.MaxValue;
-            if (keyboard[(Key)_config.LeftJoycon.StickRight]) dx =  short.MaxValue;
+            if (CheckBounded(_config.LeftJoycon.StickUp,    keyboard)) dy =  short.MaxValue;
+            if (CheckBounded(_config.LeftJoycon.StickDown,  keyboard)) dy = -short.MaxValue;
+            if (CheckBounded(_config.LeftJoycon.StickLeft,  keyboard)) dx = -short.MaxValue;
+            if (CheckBounded(_config.LeftJoycon.StickRight, keyboard)) dx =  short.MaxValue;
 
             return (dx, dy);
         }
@@ -84,10 +92,10 @@ namespace Ryujinx.Ui
             short dx = 0;
             short dy = 0;
 
-            if (keyboard[(Key)_config.RightJoycon.StickUp])    dy =  short.MaxValue;
-            if (keyboard[(Key)_config.RightJoycon.StickDown])  dy = -short.MaxValue;
-            if (keyboard[(Key)_config.RightJoycon.StickLeft])  dx = -short.MaxValue;
-            if (keyboard[(Key)_config.RightJoycon.StickRight]) dx =  short.MaxValue;
+            if (CheckBounded(_config.RightJoycon.StickUp,    keyboard)) dy =  short.MaxValue;
+            if (CheckBounded(_config.RightJoycon.StickDown,  keyboard)) dy = -short.MaxValue;
+            if (CheckBounded(_config.RightJoycon.StickLeft,  keyboard)) dx = -short.MaxValue;
+            if (CheckBounded(_config.RightJoycon.StickRight, keyboard)) dx =  short.MaxValue;
 
             return (dx, dy);
         }

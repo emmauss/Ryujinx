@@ -1,9 +1,11 @@
 ﻿using OpenTK;
 using OpenTK.Input;
+using OpenTK.Windowing.Common.Input;
 using Ryujinx.Common.Configuration.Hid;
 using Ryujinx.HLE.HOS.Services.Hid;
 using System;
-
+using System.Collections.Generic;
+using System.Numerics;
 using ControllerConfig = Ryujinx.Common.Configuration.Hid.ControllerConfig;
 
 namespace Ryujinx.Ui
@@ -70,7 +72,7 @@ namespace Ryujinx.Ui
             {
                 int axis = controllerInputId - ControllerInputId.Axis0;
 
-                return joystickState.GetAxis(axis) > _config.TriggerThreshold;
+                return Math.Abs(joystickState.GetAxis(axis)) > _config.TriggerThreshold;
             }
             else if (controllerInputId <= ControllerInputId.Hat2Right)
             {
@@ -78,12 +80,19 @@ namespace Ryujinx.Ui
 
                 int baseHatId = (int)ControllerInputId.Hat0Up + (hat * 4);
 
-                JoystickHatState hatState = joystickState.GetHat((JoystickHat)hat);
+                try
+                {
+                    Hat hatState = joystickState.GetHat(hat);
 
-                if (hatState.IsUp    && ((int)controllerInputId % baseHatId == 0)) return true;
-                if (hatState.IsDown  && ((int)controllerInputId % baseHatId == 1)) return true;
-                if (hatState.IsLeft  && ((int)controllerInputId % baseHatId == 2)) return true;
-                if (hatState.IsRight && ((int)controllerInputId % baseHatId == 3)) return true;
+                    if (hatState.HasFlag(Hat.Up) && ((int)controllerInputId % baseHatId == 0)) return true;
+                    if (hatState.HasFlag(Hat.Down) && ((int)controllerInputId % baseHatId == 1)) return true;
+                    if (hatState.HasFlag(Hat.Left) && ((int)controllerInputId % baseHatId == 2)) return true;
+                    if (hatState.HasFlag(Hat.Right) && ((int)controllerInputId % baseHatId == 3)) return true;
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    return false;
+                }
             }
 
             return false;
