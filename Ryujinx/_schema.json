@@ -1456,7 +1456,7 @@
           "dsu_server_host": "127.0.0.1",
           "dsu_server_port": 26760,
           "sensitivity": 100,
-          "gyro_deazone": 1,
+          "gyro_deadzone": 1,
           "enable_motion": false
         }
       ]

@@ -243,6 +243,7 @@ namespace Ryujinx.Motion
                                 Y = inputData.GyroscopeRoll,
                                 Z = inputData.GyroscopeYaw * -1
                             };
+
                             ulong timestamp = inputData.MotionTimestamp;
 
                             InputConfig config = ConfigurationState.Instance.Hid.InputConfig.Value.Find(x => x.PlayerIndex == (PlayerIndex)clientId);

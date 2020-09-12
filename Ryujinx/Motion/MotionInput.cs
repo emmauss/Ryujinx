@@ -26,17 +26,17 @@ namespace Ryujinx.Motion
 
         public void Update(Vector3 accel, Vector3 gyro, ulong timestamp, int sensitivity, float deadzone)
         {
-            if (gyro.Length() <= deadzone && accel.Length() >= 0.9 && accel.Z <= -0.9)
+            if (gyro.Length() <= deadzone && accel.Length() >= 0.8 && accel.Z <= -0.8)
             {
                 _calibrationFrame++;
 
                 if (_calibrationFrame >= 90)
                 {
-                    gyro = new Vector3();
+                    gyro = Vector3.Zero;
 
-                    Rotation = new Vector3();
+                    Rotation = Vector3.Zero;
 
-                    _filter.Quaternion.W = 0;
+                    _filter.Reset();
 
                     _calibrationFrame = 0;
                 }
@@ -66,15 +66,11 @@ namespace Ryujinx.Motion
                 Rotation += deltaGyro;
             }
 
-            gyro.X = DegreeToRad(gyro.X);
-            gyro.Y = -DegreeToRad(gyro.Y);
-            gyro.Z = DegreeToRad(gyro.Z);
+            gyro = DegreeToRad(gyro);
 
-            //accel *= -1;
-            accel.Y *= -1;
+            accel *= -1;
 
             _filter.SamplePeriod = TimeStamp == 0 ? 1 / 60f : deltaTime;
-            //_filter.Update(gyro.X, -gyro.Y, -gyro.Z, accel.X, -accel.Y, -accel.Z);
             _filter.Update(accel, gyro);
 
             TimeStamp = timestamp;
@@ -82,16 +78,12 @@ namespace Ryujinx.Motion
 
         public Matrix4x4 GetOrientation()
         {
-            var filteredQuat = _filter.Quaternion;
-
-            Quaternion quaternion = new Quaternion(filteredQuat.Y, filteredQuat.X, filteredQuat.W, filteredQuat.Z);
-
-            return Matrix4x4.CreateFromQuaternion(quaternion);
+            return Matrix4x4.CreateFromQuaternion(_filter.Orientation);
         }
 
-        private float DegreeToRad(float degree)
+        private Vector3 DegreeToRad(Vector3 degree)
         {
-            return degree / 180 * MathF.PI;
+            return degree * (MathF.PI / 180);
         }
     }
 }

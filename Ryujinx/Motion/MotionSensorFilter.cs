@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 
 namespace Ryujinx.Motion
 {
@@ -11,6 +12,7 @@ namespace Ryujinx.Motion
         /// Sample rate coefficient.
         /// </summary>
         public const float SampleRateCoefficient = 0.45f;
+        private bool _initilized;
 
         /// <summary>
         /// Gets or sets the sample period.
@@ -31,6 +33,12 @@ namespace Ryujinx.Motion
         /// Quaternion output.
         /// </summary>
         public Quaternion Quaternion;
+        
+        
+        /// <summary>
+        /// Reference orientation.
+        /// </summary>
+        private Quaternion _referenceOrientation;
 
         /// <summary>
         /// Integral error.
@@ -79,6 +87,25 @@ namespace Ryujinx.Motion
             Ki = ki;
             Quaternion = Quaternion.Identity;
             _intergralError = new Vector3();
+
+            Update(new Vector3(0, 0, -1), default);
+
+            _referenceOrientation = Quaternion;
+
+            _initilized = true;
+        }
+
+        public void Reset()
+        {
+             _referenceOrientation = Quaternion;
+        }
+
+        public Quaternion Orientation
+        {
+            get
+            {
+                return Quaternion * Quaternion.Inverse(_referenceOrientation);
+            }
         }
 
         /// <summary>
@@ -93,12 +120,11 @@ namespace Ryujinx.Motion
         public void Update(Vector3 accel, Vector3 gyro)
         {
             // Normalise accelerometer measurement.
-            float norm = accel.Length();
-            if (norm == 0f || float.IsNaN(norm))
+            float norm = 1f / accel.Length();
+            if (!float.IsFinite(norm))
             {
-                return; // Handle NaNs.
+                return;
             }
-            norm = 1f / norm;
 
             accel *= norm;
 
