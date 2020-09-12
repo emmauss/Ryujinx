@@ -26,7 +26,7 @@ namespace Ryujinx.Motion
 
         public void Update(Vector3 accel, Vector3 gyro, ulong timestamp, int sensitivity, float deadzone)
         {
-            if (gyro.Length() <= deadzone && accel.Length() >= 0.8 && accel.Z <= -0.8)
+            if (gyro.Length() <= 1 && accel.Length() >= 0.8 && accel.Z <= -0.8)
             {
                 _calibrationFrame++;
 
@@ -68,7 +68,10 @@ namespace Ryujinx.Motion
 
             gyro = DegreeToRad(gyro);
 
-            accel *= -1;
+            gyro.Z *= -1;
+            gyro.X *= -1;
+
+            accel.Y *= -1;
 
             _filter.SamplePeriod = TimeStamp == 0 ? 1 / 60f : deltaTime;
             _filter.Update(accel, gyro);

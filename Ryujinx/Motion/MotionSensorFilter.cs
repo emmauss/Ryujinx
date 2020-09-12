@@ -134,16 +134,20 @@ namespace Ryujinx.Motion
             float q4 = Quaternion.Z;
 
             // Estimated direction of gravity.
-            Vector3 gravity = new Vector3();
-            gravity.X = 2f * (q2 * q4 - q1 * q3);
-            gravity.Y = 2f * (q1 * q2 + q3 * q4);
-            gravity.Z = q1 * q1 - q2 * q2 - q3 * q3 + q4 * q4;
+            Vector3 gravity = new Vector3
+            {
+                X = 2f * (q2 * q4 - q1 * q3),
+                Y = 2f * (q1 * q2 + q3 * q4),
+                Z = q1 * q1 - q2 * q2 - q3 * q3 + q4 * q4
+            };
 
             // Error is cross product between estimated direction and measured direction of gravity.
-            Vector3 error = new Vector3();
-            error.X = accel.Y * gravity.Z - accel.Z * gravity.Y;
-            error.Y = accel.Z * gravity.X - accel.X * gravity.Z;
-            error.Z = accel.X * gravity.Y - accel.Y * gravity.X;
+            Vector3 error = new Vector3
+            {
+                X = accel.Y * gravity.Z - accel.Z * gravity.Y,
+                Y = accel.Z * gravity.X - accel.X * gravity.Z,
+                Z = accel.X * gravity.Y - accel.Y * gravity.X
+            };
 
             if (Ki > 0f)
             {
@@ -166,17 +170,15 @@ namespace Ryujinx.Motion
             q4 += (q1 * gyro.Z + delta.X * gyro.Y - delta.Y * gyro.X) * (SampleRateCoefficient * SamplePeriod);
 
             // Normalise quaternion.
-            norm = Quaternion.Length();
-            if (norm == 0f || float.IsNaN(norm))
-            {
-                return; // Handle NaNs.
-            }
-            norm = 1f / norm;
+            Quaternion quaternion = new Quaternion(q2, q3, q4, q1);
 
-            Quaternion.W = q1 * norm;
-            Quaternion.X = q2 * norm;
-            Quaternion.Y = q3 * norm;
-            Quaternion.Z = q4 * norm;
+            norm = 1f / quaternion.Length();
+            if (!float.IsFinite(norm))
+            {
+                return;
+            }
+
+            Quaternion = quaternion * norm;
         }
     }
 }
