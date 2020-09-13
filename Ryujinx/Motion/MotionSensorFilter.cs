@@ -12,7 +12,6 @@ namespace Ryujinx.Motion
         /// Sample rate coefficient.
         /// </summary>
         public const float SampleRateCoefficient = 0.45f;
-        private bool _initilized;
 
         /// <summary>
         /// Gets or sets the sample period.
@@ -91,8 +90,6 @@ namespace Ryujinx.Motion
             Update(new Vector3(0, 0, -1), default);
 
             _referenceOrientation = Quaternion;
-
-            _initilized = true;
         }
 
         public void Reset()
