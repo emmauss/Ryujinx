@@ -46,7 +46,7 @@ namespace Ryujinx.Motion
                 _calibrationFrame = 0;
             }
 
-            Accelerometer = accel;
+            Accelerometer = accel * -1;
 
             if (gyro.Length() < deadzone)
             {

@@ -107,17 +107,21 @@ namespace Ryujinx.Motion
             }
         }
 
-        public MotionInput GetData(int player, int slot)
+        public bool TryGetData(int player, int slot, out MotionInput input)
         {
             lock (_motionData)
             {
                 if (_motionData.ContainsKey(player))
                 {
-                    return _motionData[player][slot];
+                    input = _motionData[player][slot];
+
+                    return true;
                 }
             }
 
-            return new MotionInput();
+            input = null;
+
+            return false;
         }
 
         private void Send(byte[] data, int clientId)

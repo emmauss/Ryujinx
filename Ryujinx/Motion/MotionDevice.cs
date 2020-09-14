@@ -44,15 +44,13 @@ namespace Ryujinx.Motion
 
             Orientation = new float[9];
 
-            if (!config.EnableMotion)
+            if (!config.EnableMotion || !_motionSource.TryGetData((int)player, slot, out MotionInput input))
             {
                 Accelerometer = new Vector3();
                 Gyroscope     = new Vector3();
 
                 return;
             }
-
-            MotionInput input = _motionSource.GetData((int)player, slot);
 
             Gyroscope     = Truncate(input.Gyroscrope * 0.0027f);
             Accelerometer = Truncate(input.Accelerometer);
