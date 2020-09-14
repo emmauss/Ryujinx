@@ -20,13 +20,13 @@ namespace Ryujinx.Motion
             Gyroscrope    = new Vector3();
             Rotation      = new Vector3();
 
-            // TODO : RE the correct filter
+            // TODO: RE the correct filter.
             _filter = new MotionSensorFilter(1 / 60f);
         }
 
         public void Update(Vector3 accel, Vector3 gyro, ulong timestamp, int sensitivity, float deadzone)
         {
-            if (gyro.Length() <= 1 && accel.Length() >= 0.8 && accel.Z <= -0.8)
+            if (gyro.Length() <= 1f && accel.Length() >= 0.8f && accel.Z >= 0.8f)
             {
                 _calibrationFrame++;
 
@@ -50,10 +50,10 @@ namespace Ryujinx.Motion
 
             if (gyro.Length() < deadzone)
             {
-                gyro = new Vector3(0, 0, 0);
+                gyro = Vector3.Zero;
             }
 
-            gyro *= sensitivity / 100f;
+            gyro *= (sensitivity / 100f);
 
             Gyroscrope = gyro;
 
@@ -66,25 +66,18 @@ namespace Ryujinx.Motion
                 Rotation += deltaGyro;
             }
 
-            gyro = DegreeToRad(gyro);
-
-            gyro.Z *= -1;
-            gyro.X *= -1;
-
-            accel.Y *= -1;
-
             _filter.SamplePeriod = TimeStamp == 0 ? 1 / 60f : deltaTime;
-            _filter.Update(accel, gyro);
+            _filter.Update(accel, DegreeToRad(gyro));
 
             TimeStamp = timestamp;
         }
 
         public Matrix4x4 GetOrientation()
         {
-            return Matrix4x4.CreateFromQuaternion(_filter.Orientation);
+            return Matrix4x4.CreateFromQuaternion(_filter.Quaternion);
         }
 
-        private Vector3 DegreeToRad(Vector3 degree)
+        private static Vector3 DegreeToRad(Vector3 degree)
         {
             return degree * (MathF.PI / 180);
         }

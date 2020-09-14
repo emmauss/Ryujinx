@@ -1,5 +1,4 @@
-﻿using System;
-using System.Numerics;
+﻿using System.Numerics;
 
 namespace Ryujinx.Motion
 {
@@ -29,15 +28,9 @@ namespace Ryujinx.Motion
         public float Ki { get; set; }
 
         /// <summary>
-        /// Quaternion output.
+        /// Gets the Quaternion output.
         /// </summary>
-        public Quaternion Quaternion;
-        
-        
-        /// <summary>
-        /// Reference orientation.
-        /// </summary>
-        private Quaternion _referenceOrientation;
+        public Quaternion Quaternion { get; private set; }
 
         /// <summary>
         /// Integral error.
@@ -84,25 +77,10 @@ namespace Ryujinx.Motion
             SamplePeriod = samplePeriod;
             Kp = kp;
             Ki = ki;
-            Quaternion = Quaternion.Identity;
+
+            Reset();
+
             _intergralError = new Vector3();
-
-            Update(new Vector3(0, 0, -1), default);
-
-            _referenceOrientation = Quaternion;
-        }
-
-        public void Reset()
-        {
-             _referenceOrientation = Quaternion;
-        }
-
-        public Quaternion Orientation
-        {
-            get
-            {
-                return Quaternion * Quaternion.Inverse(_referenceOrientation);
-            }
         }
 
         /// <summary>
@@ -118,6 +96,7 @@ namespace Ryujinx.Motion
         {
             // Normalise accelerometer measurement.
             float norm = 1f / accel.Length();
+
             if (!float.IsFinite(norm))
             {
                 return;
@@ -125,13 +104,13 @@ namespace Ryujinx.Motion
 
             accel *= norm;
 
-            float q1 = Quaternion.W;
             float q2 = Quaternion.X;
             float q3 = Quaternion.Y;
             float q4 = Quaternion.Z;
+            float q1 = Quaternion.W;
 
             // Estimated direction of gravity.
-            Vector3 gravity = new Vector3
+            Vector3 gravity = new Vector3()
             {
                 X = 2f * (q2 * q4 - q1 * q3),
                 Y = 2f * (q1 * q2 + q3 * q4),
@@ -139,7 +118,7 @@ namespace Ryujinx.Motion
             };
 
             // Error is cross product between estimated direction and measured direction of gravity.
-            Vector3 error = new Vector3
+            Vector3 error = new Vector3()
             {
                 X = accel.Y * gravity.Z - accel.Z * gravity.Y,
                 Y = accel.Z * gravity.X - accel.X * gravity.Z,
@@ -152,7 +131,7 @@ namespace Ryujinx.Motion
             }
             else
             {
-                _intergralError = new Vector3(); // Prevent integral wind up.
+                _intergralError = Vector3.Zero; // Prevent integral wind up.
             }
 
             // Apply feedback terms.
@@ -170,12 +149,18 @@ namespace Ryujinx.Motion
             Quaternion quaternion = new Quaternion(q2, q3, q4, q1);
 
             norm = 1f / quaternion.Length();
+
             if (!float.IsFinite(norm))
             {
                 return;
             }
 
             Quaternion = quaternion * norm;
+        }
+
+        public void Reset()
+        {
+            Quaternion = Quaternion.Identity;
         }
     }
 }

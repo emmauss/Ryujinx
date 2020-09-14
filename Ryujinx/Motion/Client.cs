@@ -231,17 +231,19 @@ namespace Ryujinx.Motion
                             break;
                         case MessageType.Data:
                             ControllerDataResponse inputData = reader.ReadStruct<ControllerDataResponse>();
+
                             Vector3 accelerometer = new Vector3()
                             {
-                                X = inputData.AccelerometerX,
-                                Y = -inputData.AccelerometerZ,
-                                Z = inputData.AccelerometerY
+                                X = -inputData.AccelerometerX,
+                                Y = inputData.AccelerometerZ,
+                                Z = -inputData.AccelerometerY
                             };
+
                             Vector3 gyroscrope = new Vector3()
                             {
                                 X = inputData.GyroscopePitch,
                                 Y = inputData.GyroscopeRoll,
-                                Z = inputData.GyroscopeYaw * -1
+                                Z = -inputData.GyroscopeYaw
                             };
 
                             ulong timestamp = inputData.MotionTimestamp;
