@@ -52,28 +52,30 @@ namespace Ryujinx.Motion
                 return;
             }
 
-            Gyroscope     = Truncate(input.Gyroscrope * 0.0027f);
-            Accelerometer = Truncate(input.Accelerometer);
-            Rotation      = Truncate(input.Rotation * 0.0027f);
+            Gyroscope     = Truncate(input.Gyroscrope * 0.0027f, 3);
+            Accelerometer = Truncate(input.Accelerometer, 3);
+            Rotation      = Truncate(input.Rotation * 0.0027f, 3);
 
             Matrix4x4 orientation = input.GetOrientation();
 
-            Orientation[0] = Math.Clamp(orientation.M11, -1, 1);
-            Orientation[1] = Math.Clamp(orientation.M12, -1, 1);
-            Orientation[2] = Math.Clamp(orientation.M13, -1, 1);
-            Orientation[3] = Math.Clamp(orientation.M21, -1, 1);
-            Orientation[4] = Math.Clamp(orientation.M22, -1, 1);
-            Orientation[5] = Math.Clamp(orientation.M23, -1, 1);
-            Orientation[6] = Math.Clamp(orientation.M31, -1, 1);
-            Orientation[7] = Math.Clamp(orientation.M32, -1, 1);
-            Orientation[8] = Math.Clamp(orientation.M33, -1, 1);
+            Orientation[0] = Math.Clamp(orientation.M11, -1f, 1f);
+            Orientation[1] = Math.Clamp(orientation.M12, -1f, 1f);
+            Orientation[2] = Math.Clamp(orientation.M13, -1f, 1f);
+            Orientation[3] = Math.Clamp(orientation.M21, -1f, 1f);
+            Orientation[4] = Math.Clamp(orientation.M22, -1f, 1f);
+            Orientation[5] = Math.Clamp(orientation.M23, -1f, 1f);
+            Orientation[6] = Math.Clamp(orientation.M31, -1f, 1f);
+            Orientation[7] = Math.Clamp(orientation.M32, -1f, 1f);
+            Orientation[8] = Math.Clamp(orientation.M33, -1f, 1f);
         }
 
-        private Vector3 Truncate(Vector3 value)
+        private static Vector3 Truncate(Vector3 value, int decimals)
         {
-            value.X = (int)(value.X * 1000) * 0.001f;
-            value.Y = (int)(value.Y * 1000) * 0.001f;
-            value.Z = (int)(value.Z * 1000) * 0.001f;
+            float power = MathF.Pow(10, decimals);
+
+            value.X = float.IsNegative(value.X) ? MathF.Ceiling(value.X * power) / power : MathF.Floor(value.X * power) / power;
+            value.Y = float.IsNegative(value.Y) ? MathF.Ceiling(value.Y * power) / power : MathF.Floor(value.Y * power) / power;
+            value.Z = float.IsNegative(value.Z) ? MathF.Ceiling(value.Z * power) / power : MathF.Floor(value.Z * power) / power;
 
             return value;
         }
