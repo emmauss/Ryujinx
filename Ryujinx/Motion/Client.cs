@@ -24,7 +24,8 @@ namespace Ryujinx.Motion
         private readonly Dictionary<int, Dictionary<int, MotionInput>> _motionData;
         private readonly Dictionary<int, UdpClient> _clients;
 
-        private bool[] _clientErrorStatus = new bool[Enum.GetValues(typeof(PlayerIndex)).Length];
+        private bool[] _clientErrorStatus   = new bool[Enum.GetValues(typeof(PlayerIndex)).Length];
+        private long[] _clientRetryTimer = new long[Enum.GetValues(typeof(PlayerIndex)).Length];
 
         public Client()
         {
@@ -63,14 +64,14 @@ namespace Ryujinx.Motion
 
         public void RegisterClient(int player, string host, int port)
         {
-            if (_clients.ContainsKey(player))
+            if (_clients.ContainsKey(player) || !CanConnect(player))
             {
                 return;
             }
 
             lock (_clients)
             {
-                if (_clients.ContainsKey(player))
+                if (_clients.ContainsKey(player) || !CanConnect(player))
                 {
                     return;
                 }
@@ -110,21 +111,22 @@ namespace Ryujinx.Motion
 
                         _clientErrorStatus[player] = true;
                     }
-                    _clients?.Remove(player);
 
-                    _hosts?.Remove(player);
+                    RemoveClient(player);
 
                     client?.Dispose();
+
+                    SetRetryTimer(player);
                 }
                 catch (Exception ex)
                 {
                     _clientErrorStatus[player] = true;
 
-                    _clients?.Remove(player);
-
-                    _hosts?.Remove(player);
+                    RemoveClient(player);
 
                     client?.Dispose();
+
+                    SetRetryTimer(player);
                 }
             }
         }
@@ -146,6 +148,13 @@ namespace Ryujinx.Motion
             return false;
         }
 
+        private void RemoveClient(int clientId)
+        {
+            _clients?.Remove(clientId);
+
+            _hosts?.Remove(clientId);
+        }
+
         private void Send(byte[] data, int clientId)
         {
             if (_clients.TryGetValue(clientId, out UdpClient _client))
@@ -165,21 +174,21 @@ namespace Ryujinx.Motion
 
                         _clientErrorStatus[clientId] = true;
 
-                        _clients.Remove(clientId);
-
-                        _hosts.Remove(clientId);
+                        RemoveClient(clientId);
 
                         _client?.Dispose();
+
+                        SetRetryTimer(clientId);
                     }
                     catch (ObjectDisposedException dex)
                     {
                         _clientErrorStatus[clientId] = true;
 
-                        _clients.Remove(clientId);
-
-                        _hosts.Remove(clientId);
+                        RemoveClient(clientId);
 
                         _client?.Dispose();
+
+                        SetRetryTimer(clientId);
                     }
                 }
             }
@@ -213,6 +222,23 @@ namespace Ryujinx.Motion
             throw new Exception($"Client {clientId} is not registered.");
         }
 
+        private void SetRetryTimer(int clientId)
+        {
+            var elapsedMs = PerformanceCounter.ElapsedMilliseconds;
+
+            _clientRetryTimer[clientId] = elapsedMs;
+        }
+
+        private void ResetRetryTimer(int clientId)
+        {
+            _clientRetryTimer[clientId] = 0;
+        }
+
+        private bool CanConnect(int clientId)
+        {
+            return _clientRetryTimer[clientId] == 0 ? true : PerformanceCounter.ElapsedMilliseconds - 5000 > _clientRetryTimer[clientId];
+        }
+
         public void ReceiveLoop(int clientId)
         {
             if (_hosts.TryGetValue(clientId, out IPEndPoint endPoint))
@@ -241,7 +267,6 @@ namespace Ryujinx.Motion
                             }
                             catch (SocketException ex)
                             {
-
                                 if (!_clientErrorStatus[clientId])
                                 {
                                     Logger.Warning?.PrintMsg(LogClass.Hid, $"Unable to receive data from motion source at {endPoint}. Error code {ex.ErrorCode}");
@@ -249,21 +274,21 @@ namespace Ryujinx.Motion
 
                                 _clientErrorStatus[clientId] = true;
 
-                                _clients.Remove(clientId);
-
-                                _hosts.Remove(clientId);
+                                RemoveClient(clientId);
 
                                 _client?.Dispose();
+
+                                SetRetryTimer(clientId);
                             }
                             catch (ObjectDisposedException dex)
                             {
                                 _clientErrorStatus[clientId] = true;
 
-                                _clients.Remove(clientId);
-
-                                _hosts.Remove(clientId);
+                                RemoveClient(clientId);
 
                                 _client?.Dispose();
+
+                                SetRetryTimer(clientId);
                             }
                         }
                     }
@@ -275,6 +300,8 @@ namespace Ryujinx.Motion
         public async Task HandleResponse(byte[] data, int clientId)
 #pragma warning restore CS1998
         {
+            ResetRetryTimer(clientId);
+
             MessageType type = (MessageType)BitConverter.ToUInt32(data.AsSpan().Slice(16, 4));
 
             data = data.AsSpan().Slice(16).ToArray();
