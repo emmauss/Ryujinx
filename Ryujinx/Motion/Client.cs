@@ -68,13 +68,20 @@ namespace Ryujinx.Motion
                 return;
             }
 
-            try
+            lock (_clients)
             {
-                lock (_clients)
+                if (_clients.ContainsKey(player))
+                {
+                    return;
+                }
+
+                UdpClient client = null;
+
+                try
                 {
                     IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(host), port);
 
-                    UdpClient client = new UdpClient(host, port);
+                    client = new UdpClient(host, port);
 
                     _clients.Add(player, client);
                     _hosts.Add(player, endPoint);
@@ -86,23 +93,38 @@ namespace Ryujinx.Motion
                         ReceiveLoop(player);
                     });
                 }
-            }
-            catch (FormatException fex)
-            {
-                if (!_clientErrorStatus[player])
+                catch (FormatException fex)
                 {
-                    Logger.Warning?.PrintMsg(LogClass.Hid, $"Unable to connect to motion source at {host}:{port}. Error {fex.Message}");
+                    if (!_clientErrorStatus[player])
+                    {
+                        Logger.Warning?.PrintMsg(LogClass.Hid, $"Unable to connect to motion source at {host}:{port}. Error {fex.Message}");
 
-                    _clientErrorStatus[player] = true;
+                        _clientErrorStatus[player] = true;
+                    }
                 }
-            }
-            catch (SocketException ex)
-            {
-                if (!_clientErrorStatus[player])
+                catch (SocketException sex)
                 {
-                    Logger.Warning?.PrintMsg(LogClass.Hid, $"Unable to connect to motion source at {host}:{port}. Error code {ex.ErrorCode}");
+                    if (!_clientErrorStatus[player])
+                    {
+                        Logger.Warning?.PrintMsg(LogClass.Hid, $"Unable to connect to motion source at {host}:{port}. Error code {sex.ErrorCode}");
 
+                        _clientErrorStatus[player] = true;
+                    }
+                    _clients?.Remove(player);
+
+                    _hosts?.Remove(player);
+
+                    client?.Dispose();
+                }
+                catch (Exception ex)
+                {
                     _clientErrorStatus[player] = true;
+
+                    _clients?.Remove(player);
+
+                    _hosts?.Remove(player);
+
+                    client?.Dispose();
                 }
             }
         }
@@ -149,11 +171,49 @@ namespace Ryujinx.Motion
 
                         _client?.Dispose();
                     }
+                    catch (ObjectDisposedException dex)
+                    {
+                        _clientErrorStatus[clientId] = true;
+
+                        _clients.Remove(clientId);
+
+                        _hosts.Remove(clientId);
+
+                        _client?.Dispose();
+                    }
                 }
             }
         }
 
-        private byte[] Receive(int clientId)
+        private byte[] Receive(int clientId, int timeout =  0)
+        {
+            if (_hosts.TryGetValue(clientId, out IPEndPoint endPoint))
+            {
+                if (_clients.TryGetValue(clientId, out UdpClient _client))
+                {
+                    if (_client != null && _client.Client != null)
+                    {
+                        if (_client.Client.Connected)
+                        {
+                            _client.Client.ReceiveTimeout = timeout;
+
+                            var result = _client?.Receive(ref endPoint);
+
+                            if (result.Length > 0)
+                            {
+                                _clientErrorStatus[clientId] = false;
+                            }
+
+                            return result;
+                        }
+                    }
+                }
+            }
+
+            throw new Exception($"Client {clientId} is not registered.");
+        }
+
+        public void ReceiveLoop(int clientId)
         {
             if (_hosts.TryGetValue(clientId, out IPEndPoint endPoint))
             {
@@ -165,17 +225,23 @@ namespace Ryujinx.Motion
                         {
                             try
                             {
-                                var result = _client?.Receive(ref endPoint);
-
-                                if (result.Length > 0)
+                                while (_active)
                                 {
-                                    _clientErrorStatus[clientId] = false;
-                                }
+                                    byte[] data = Receive(clientId);
 
-                                return result;
+                                    if (data.Length == 0)
+                                    {
+                                        continue;
+                                    }
+
+#pragma warning disable CS4014
+                                    HandleResponse(data, clientId);
+#pragma warning restore CS4014
+                                }
                             }
                             catch (SocketException ex)
                             {
+
                                 if (!_clientErrorStatus[clientId])
                                 {
                                     Logger.Warning?.PrintMsg(LogClass.Hid, $"Unable to receive data from motion source at {endPoint}. Error code {ex.ErrorCode}");
@@ -189,28 +255,19 @@ namespace Ryujinx.Motion
 
                                 _client?.Dispose();
                             }
+                            catch (ObjectDisposedException dex)
+                            {
+                                _clientErrorStatus[clientId] = true;
+
+                                _clients.Remove(clientId);
+
+                                _hosts.Remove(clientId);
+
+                                _client?.Dispose();
+                            }
                         }
                     }
                 }
-            }
-            
-            return new byte[0];
-        }
-
-        public void ReceiveLoop(int clientId)
-        {
-            while (_active)
-            {
-                byte[] data = Receive(clientId);
-
-                if (data.Length == 0)
-                {
-                    continue;
-                }
-
-#pragma warning disable CS4014
-                HandleResponse(data, clientId);
-#pragma warning restore CS4014
             }
         }
 
