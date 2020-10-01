@@ -137,9 +137,10 @@ namespace Ryujinx.Motion
             {
                 if (_motionData.ContainsKey(player))
                 {
-                    input = _motionData[player][slot];
-
-                    return true;
+                    if (_motionData[player].TryGetValue(slot, out input))
+                    {
+                        return true;
+                    }
                 }
             }
 
