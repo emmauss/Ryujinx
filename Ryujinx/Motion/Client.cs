@@ -24,8 +24,8 @@ namespace Ryujinx.Motion
         private readonly Dictionary<int, Dictionary<int, MotionInput>> _motionData;
         private readonly Dictionary<int, UdpClient> _clients;
 
-        private bool[] _clientErrorStatus   = new bool[Enum.GetValues(typeof(PlayerIndex)).Length];
-        private long[] _clientRetryTimer = new long[Enum.GetValues(typeof(PlayerIndex)).Length];
+        private bool[] _clientErrorStatus = new bool[Enum.GetValues(typeof(PlayerIndex)).Length];
+        private long[] _clientRetryTimer  = new long[Enum.GetValues(typeof(PlayerIndex)).Length];
 
         public Client()
         {
@@ -195,28 +195,22 @@ namespace Ryujinx.Motion
             }
         }
 
-        private byte[] Receive(int clientId, int timeout =  0)
+        private byte[] Receive(int clientId, int timeout = 0)
         {
-            if (_hosts.TryGetValue(clientId, out IPEndPoint endPoint))
+            if (_hosts.TryGetValue(clientId, out IPEndPoint endPoint) && _clients.TryGetValue(clientId, out UdpClient _client))
             {
-                if (_clients.TryGetValue(clientId, out UdpClient _client))
+                if (_client != null && _client.Client != null && _client.Client.Connected)
                 {
-                    if (_client != null && _client.Client != null)
+                    _client.Client.ReceiveTimeout = timeout;
+
+                    var result = _client?.Receive(ref endPoint);
+
+                    if (result.Length > 0)
                     {
-                        if (_client.Client.Connected)
-                        {
-                            _client.Client.ReceiveTimeout = timeout;
-
-                            var result = _client?.Receive(ref endPoint);
-
-                            if (result.Length > 0)
-                            {
-                                _clientErrorStatus[clientId] = false;
-                            }
-
-                            return result;
-                        }
+                        _clientErrorStatus[clientId] = false;
                     }
+
+                    return result;
                 }
             }
 
@@ -242,56 +236,50 @@ namespace Ryujinx.Motion
 
         public void ReceiveLoop(int clientId)
         {
-            if (_hosts.TryGetValue(clientId, out IPEndPoint endPoint))
+            if (_hosts.TryGetValue(clientId, out IPEndPoint endPoint) && _clients.TryGetValue(clientId, out UdpClient _client))
             {
-                if (_clients.TryGetValue(clientId, out UdpClient _client))
+                if (_client != null && _client.Client != null && _client.Client.Connected)
                 {
-                    if (_client != null && _client.Client != null)
+                    try
                     {
-                        if (_client.Client.Connected)
+                        while (_active)
                         {
-                            try
-                            {
-                                while (_active)
-                                {
-                                    byte[] data = Receive(clientId);
+                            byte[] data = Receive(clientId);
 
-                                    if (data.Length == 0)
-                                    {
-                                        continue;
-                                    }
+                            if (data.Length == 0)
+                            {
+                                continue;
+                            }
 
 #pragma warning disable CS4014
-                                    HandleResponse(data, clientId);
+                            HandleResponse(data, clientId);
 #pragma warning restore CS4014
-                                }
-                            }
-                            catch (SocketException ex)
-                            {
-                                if (!_clientErrorStatus[clientId])
-                                {
-                                    Logger.Warning?.PrintMsg(LogClass.Hid, $"Unable to receive data from motion source at {endPoint}. Error code {ex.ErrorCode}");
-                                }
-
-                                _clientErrorStatus[clientId] = true;
-
-                                RemoveClient(clientId);
-
-                                _client?.Dispose();
-
-                                SetRetryTimer(clientId);
-                            }
-                            catch (ObjectDisposedException dex)
-                            {
-                                _clientErrorStatus[clientId] = true;
-
-                                RemoveClient(clientId);
-
-                                _client?.Dispose();
-
-                                SetRetryTimer(clientId);
-                            }
                         }
+                    }
+                    catch (SocketException ex)
+                    {
+                        if (!_clientErrorStatus[clientId])
+                        {
+                            Logger.Warning?.PrintMsg(LogClass.Hid, $"Unable to receive data from motion source at {endPoint}. Error code {ex.ErrorCode}");
+                        }
+
+                        _clientErrorStatus[clientId] = true;
+
+                        RemoveClient(clientId);
+
+                        _client?.Dispose();
+
+                        SetRetryTimer(clientId);
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        _clientErrorStatus[clientId] = true;
+
+                        RemoveClient(clientId);
+
+                        _client?.Dispose();
+
+                        SetRetryTimer(clientId);
                     }
                 }
             }
@@ -307,67 +295,65 @@ namespace Ryujinx.Motion
 
             data = data.AsSpan().Slice(16).ToArray();
 
-            using (MemoryStream mem = new MemoryStream(data))
+            using MemoryStream mem = new MemoryStream(data);
+
+            using BinaryReader reader = new BinaryReader(mem);
+
+            switch (type)
             {
-                using (BinaryReader reader = new BinaryReader(mem))
-                {
-                    switch (type)
+                case MessageType.Protocol:
+                    break;
+                case MessageType.Info:
+                    ControllerInfoResponse contollerInfo = reader.ReadStruct<ControllerInfoResponse>();
+                    break;
+                case MessageType.Data:
+                    ControllerDataResponse inputData = reader.ReadStruct<ControllerDataResponse>();
+
+                    Vector3 accelerometer = new Vector3()
                     {
-                        case MessageType.Protocol:
-                            break;
-                        case MessageType.Info:
-                            ControllerInfoResponse contollerInfo = reader.ReadStruct<ControllerInfoResponse>();
-                            break;
-                        case MessageType.Data:
-                            ControllerDataResponse inputData = reader.ReadStruct<ControllerDataResponse>();
+                        X = -inputData.AccelerometerX,
+                        Y = inputData.AccelerometerZ,
+                        Z = -inputData.AccelerometerY
+                    };
 
-                            Vector3 accelerometer = new Vector3()
+                    Vector3 gyroscrope = new Vector3()
+                    {
+                        X = inputData.GyroscopePitch,
+                        Y = inputData.GyroscopeRoll,
+                        Z = -inputData.GyroscopeYaw
+                    };
+
+                    ulong timestamp = inputData.MotionTimestamp;
+
+                    InputConfig config = ConfigurationState.Instance.Hid.InputConfig.Value.Find(x => x.PlayerIndex == (PlayerIndex)clientId);
+
+                    lock (_motionData)
+                    {
+                        int slot = inputData.Shared.Slot;
+
+                        if (_motionData.ContainsKey(clientId))
+                        {
+                            if (_motionData[clientId].ContainsKey(slot))
                             {
-                                X = -inputData.AccelerometerX,
-                                Y = inputData.AccelerometerZ,
-                                Z = -inputData.AccelerometerY
-                            };
+                                var previousData = _motionData[clientId][slot];
 
-                            Vector3 gyroscrope = new Vector3()
-                            {
-                                X = inputData.GyroscopePitch,
-                                Y = inputData.GyroscopeRoll,
-                                Z = -inputData.GyroscopeYaw
-                            };
-
-                            ulong timestamp = inputData.MotionTimestamp;
-
-                            InputConfig config = ConfigurationState.Instance.Hid.InputConfig.Value.Find(x => x.PlayerIndex == (PlayerIndex)clientId);
-
-                            lock (_motionData)
-                            {
-                                int slot = inputData.Shared.Slot;
-
-                                if (_motionData.ContainsKey(clientId))
-                                {
-                                    if (_motionData[clientId].ContainsKey(slot))
-                                    {
-                                        var previousData = _motionData[clientId][slot];
-
-                                        previousData.Update(accelerometer, gyroscrope, timestamp, config.Sensitivity, (float)config.GyroDeadzone);
-                                    }
-                                    else
-                                    {
-                                        MotionInput input = new MotionInput();
-                                        input.Update(accelerometer, gyroscrope, timestamp, config.Sensitivity, (float)config.GyroDeadzone);
-                                        _motionData[clientId].Add(slot, input);
-                                    }
-                                }
-                                else
-                                {
-                                    MotionInput input = new MotionInput();
-                                    input.Update(accelerometer, gyroscrope, timestamp, config.Sensitivity, (float)config.GyroDeadzone);
-                                    _motionData.Add(clientId, new Dictionary<int, MotionInput>() { { slot, input } });
-                                }
+                                previousData.Update(accelerometer, gyroscrope, timestamp, config.Sensitivity, (float)config.GyroDeadzone);
                             }
-                            break;
+                            else
+                            {
+                                MotionInput input = new MotionInput();
+                                input.Update(accelerometer, gyroscrope, timestamp, config.Sensitivity, (float)config.GyroDeadzone);
+                                _motionData[clientId].Add(slot, input);
+                            }
+                        }
+                        else
+                        {
+                            MotionInput input = new MotionInput();
+                            input.Update(accelerometer, gyroscrope, timestamp, config.Sensitivity, (float)config.GyroDeadzone);
+                            _motionData.Add(clientId, new Dictionary<int, MotionInput>() { { slot, input } });
+                        }
                     }
-                }
+                    break;
             }
         }
 
