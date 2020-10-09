@@ -252,7 +252,7 @@ namespace Ryujinx.Motion
                             }
 
 #pragma warning disable CS4014
-                            HandleResponse(data, clientId);
+                            Task.Run(() => HandleResponse(data, clientId));
 #pragma warning restore CS4014
                         }
                     }
@@ -286,7 +286,7 @@ namespace Ryujinx.Motion
         }
 
 #pragma warning disable CS1998
-        public async Task HandleResponse(byte[] data, int clientId)
+        public void HandleResponse(byte[] data, int clientId)
 #pragma warning restore CS1998
         {
             ResetRetryTimer(clientId);
