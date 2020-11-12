@@ -1,7 +1,7 @@
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
-using OpenTK.Platform;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using Ryujinx.Graphics.GAL;
 using Ryujinx.Graphics.OpenGL.Image;
 using System;
@@ -166,7 +166,7 @@ namespace Ryujinx.Graphics.OpenGL
             return handle;
         }
 
-        public void InitializeBackgroundContext(IGraphicsContext baseContext)
+        public unsafe void InitializeBackgroundContext(OpenTK.Windowing.GraphicsLibraryFramework.Window* baseContext)
         {
             BackgroundContext = new BackgroundContextWorker(baseContext);
         }

@@ -1,5 +1,6 @@
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using Ryujinx.Common.Configuration;
 using Ryujinx.Common.Logging;
 using Ryujinx.Graphics.GAL;
@@ -139,9 +140,9 @@ namespace Ryujinx.Graphics.OpenGL
             _counters.QueueReset(type);
         }
 
-        public void BackgroundContextAction(Action action)
+        public unsafe void BackgroundContextAction(Action action)
         {
-            if (GraphicsContext.CurrentContext != null)
+            if (GLFW.GetCurrentContext() != null)
             {
                 action(); // We have a context already - use that (assuming it is the main one).
             }
@@ -151,7 +152,7 @@ namespace Ryujinx.Graphics.OpenGL
             }
         }
 
-        public void InitializeBackgroundContext(IGraphicsContext baseContext)
+        public unsafe void InitializeBackgroundContext(OpenTK.Windowing.GraphicsLibraryFramework.Window* baseContext)
         {
             _window.InitializeBackgroundContext(baseContext);
         }

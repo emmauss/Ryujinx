@@ -31,7 +31,7 @@ namespace ARMeilleure.Translation.PTC
         internal static bool Enabled { get; private set; }
 
         public static ulong StaticCodeStart { internal get; set; }
-        public static int   StaticCodeSize  { internal get; set; }
+        public static int StaticCodeSize { internal get; set; }
 
         static PtcProfiler()
         {
@@ -57,7 +57,7 @@ namespace ARMeilleure.Translation.PTC
             {
                 lock (_lock)
                 {
-                    Debug.Assert(!highCq && !ProfiledFuncs.ContainsKey(address));
+                    //Debug.Assert(!highCq && !ProfiledFuncs.ContainsKey(address));
 
                     ProfiledFuncs.TryAdd(address, (mode, highCq));
                 }

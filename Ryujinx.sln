@@ -57,6 +57,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ryujinx.Graphics.Nvdec.H264
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ryujinx.Graphics.Video", "Ryujinx.Graphics.Video\Ryujinx.Graphics.Video.csproj", "{FD4A2C14-8E3D-4957-ABBE-3C38897B3E2D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ryujinx.Skia", "Ryujinx.Skia\Ryujinx.Skia.csproj", "{63DFF677-E6F7-432B-9CBD-5CDF0E054050}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -159,6 +161,10 @@ Global
 		{FD4A2C14-8E3D-4957-ABBE-3C38897B3E2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD4A2C14-8E3D-4957-ABBE-3C38897B3E2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD4A2C14-8E3D-4957-ABBE-3C38897B3E2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63DFF677-E6F7-432B-9CBD-5CDF0E054050}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63DFF677-E6F7-432B-9CBD-5CDF0E054050}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63DFF677-E6F7-432B-9CBD-5CDF0E054050}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63DFF677-E6F7-432B-9CBD-5CDF0E054050}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

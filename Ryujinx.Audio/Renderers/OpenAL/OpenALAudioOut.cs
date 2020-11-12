@@ -1,7 +1,7 @@
-using OpenTK.Audio;
 using OpenTK.Audio.OpenAL;
 using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -20,7 +20,7 @@ namespace Ryujinx.Audio
         /// <summary>
         /// The <see cref="OpenTK.Audio"/> audio context
         /// </summary>
-        private AudioContext _context;
+        private ALContext _context;
 
         /// <summary>
         /// An object pool containing <see cref="OpenALAudioTrack"/> objects
@@ -48,6 +48,11 @@ namespace Ryujinx.Audio
         private bool _volumeChanged;
 
         /// <summary>
+        /// The default device
+        /// </summary>
+        private ALDevice _device;
+
+        /// <summary>
         /// True if OpenAL is supported on the device
         /// </summary>
         public static bool IsSupported
@@ -56,7 +61,7 @@ namespace Ryujinx.Audio
             {
                 try
                 {
-                    return AudioContext.AvailableDevices.Count > 0;
+                    return ALC.GetStringList(GetEnumerationStringList.DeviceSpecifier).Count() > 0;
                 }
                 catch
                 {
@@ -67,9 +72,11 @@ namespace Ryujinx.Audio
 
         public OpenALAudioOut()
         {
-            _context           = new AudioContext();
-            _tracks            = new ConcurrentDictionary<int, OpenALAudioTrack>();
-            _keepPolling       = true;
+            _device = ALC.OpenDevice("");
+
+            _context = ALC.CreateContext(_device, new ALContextAttributes());
+            _tracks = new ConcurrentDictionary<int, OpenALAudioTrack>();
+            _keepPolling = true;
             _audioPollerThread = new Thread(AudioPollerWork)
             {
                 Name = "Audio.PollerThread"
@@ -80,6 +87,8 @@ namespace Ryujinx.Audio
 
         private void AudioPollerWork()
         {
+            ALC.MakeContextCurrent(_context);
+
             do
             {
                 foreach (OpenALAudioTrack track in _tracks.Values)
@@ -101,7 +110,8 @@ namespace Ryujinx.Audio
             }
 
             _tracks.Clear();
-            _context.Dispose();
+            ALC.DestroyContext(_context);
+            ALC.CloseDevice(_device);
         }
 
         public bool SupportsChannelCount(int channels)
@@ -205,7 +215,7 @@ namespace Ryujinx.Audio
         /// <param name="trackId">The track to append the buffer to</param>
         /// <param name="bufferTag">The internal tag of the buffer</param>
         /// <param name="buffer">The buffer to append to the track</param>
-        public void AppendBuffer<T>(int trackId, long bufferTag, T[] buffer) where T : struct
+        public unsafe void AppendBuffer<T>(int trackId, long bufferTag, T[] buffer) where T : unmanaged
         {
             if (_tracks.TryGetValue(trackId, out OpenALAudioTrack track))
             {
@@ -238,11 +248,11 @@ namespace Ryujinx.Audio
                             throw new NotImplementedException($"Downmixing from {track.VirtualChannels} to {track.HardwareChannels} not implemented!");
                         }
 
-                        AL.BufferData(bufferId, track.Format, downmixedBuffer, downmixedBuffer.Length * sizeof(ushort), track.SampleRate);
+                        AL.BufferData(bufferId, track.Format, downmixedBuffer.AsSpan(), track.SampleRate);
                     }
                     else
                     {
-                        AL.BufferData(bufferId, track.Format, buffer, buffer.Length * sizeof(ushort), track.SampleRate);
+                        AL.BufferData(bufferId, track.Format, buffer, track.SampleRate);
                     }
 
                     AL.SourceQueueBuffer(track.SourceId, bufferId);
@@ -318,7 +328,7 @@ namespace Ryujinx.Audio
         {
             if (!_volumeChanged)
             {
-                _volume        = volume;
+                _volume = volume;
                 _volumeChanged = true;
             }
         }

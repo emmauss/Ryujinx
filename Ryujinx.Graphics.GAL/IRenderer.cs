@@ -9,6 +9,7 @@ namespace Ryujinx.Graphics.GAL
         IPipeline Pipeline { get; }
 
         IWindow Window { get; }
+        string GpuVendor { get; }
 
         void BackgroundContextAction(Action action);
 

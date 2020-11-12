@@ -152,7 +152,7 @@ namespace Ryujinx.Audio
         /// <param name="trackId">The track to append the buffer to</param>
         /// <param name="bufferTag">The internal tag of the buffer</param>
         /// <param name="buffer">The buffer to append to the track</param>
-        public void AppendBuffer<T>(int trackId, long bufferTag, T[] buffer) where T : struct
+        public void AppendBuffer<T>(int trackId, long bufferTag, T[] buffer) where T : unmanaged
         {
             if (_trackPool.TryGet(trackId, out SoundIoAudioTrack track))
             {

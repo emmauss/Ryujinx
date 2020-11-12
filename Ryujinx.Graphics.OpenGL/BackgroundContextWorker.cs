@@ -1,5 +1,5 @@
-﻿using OpenTK;
-using OpenTK.Graphics;
+﻿using OpenTK.Windowing.GraphicsLibraryFramework;
+using OpenTK;
 using Ryujinx.Common;
 using System;
 using System.Collections.Generic;
@@ -7,13 +7,12 @@ using System.Threading;
 
 namespace Ryujinx.Graphics.OpenGL
 {
-    class BackgroundContextWorker : IDisposable
+    unsafe class BackgroundContextWorker : IDisposable
     {
         [ThreadStatic]
         public static bool InBackground;
 
-        private GameWindow _window;
-        private GraphicsContext _context;
+        private OpenTK.Windowing.GraphicsLibraryFramework.Window* _window;
         private Thread _thread;
         private bool _running;
 
@@ -21,16 +20,18 @@ namespace Ryujinx.Graphics.OpenGL
         private Queue<Action> _work;
         private ObjectPool<ManualResetEventSlim> _invokePool;
 
-        public BackgroundContextWorker(IGraphicsContext baseContext)
+        public BackgroundContextWorker(OpenTK.Windowing.GraphicsLibraryFramework.Window* baseContext)
         {
-            _window = new GameWindow(
-                100, 100, GraphicsMode.Default,
-                "Background Window", OpenTK.GameWindowFlags.FixedWindow, OpenTK.DisplayDevice.Default,
-                3, 3, GraphicsContextFlags.ForwardCompatible, baseContext, false);
+            GLFW.WindowHint(WindowHintBool.Visible, false);
+            GLFW.WindowHint(WindowHintBool.Resizable, false);
+            GLFW.WindowHint(WindowHintContextApi.ContextCreationApi, ContextApi.NativeContextApi);
+            GLFW.WindowHint(WindowHintOpenGlProfile.OpenGlProfile, OpenGlProfile.Core);
+            GLFW.WindowHint(WindowHintClientApi.ClientApi, ClientApi.OpenGlApi);
+            GLFW.WindowHint(WindowHintInt.ContextVersionMajor, 3);
+            GLFW.WindowHint(WindowHintInt.ContextVersionMinor, 3);
+            GLFW.WindowHint(WindowHintBool.OpenGLForwardCompat, true);
 
-            _window.Visible = false;
-            _context = (GraphicsContext)_window.Context;
-            _context.MakeCurrent(null);
+            _window = GLFW.CreateWindow(100, 100, "Background Window", null, baseContext);
 
             _running = true;
 
@@ -45,7 +46,8 @@ namespace Ryujinx.Graphics.OpenGL
         private void Run()
         {
             InBackground = true;
-            _context.MakeCurrent(_window.WindowInfo);
+
+            GLFW.MakeContextCurrent(_window);
 
             while (_running)
             {
@@ -66,7 +68,7 @@ namespace Ryujinx.Graphics.OpenGL
                 }
             }
 
-            _window.Dispose();
+            GLFW.DestroyWindow(_window);
         }
 
         public void Invoke(Action action)

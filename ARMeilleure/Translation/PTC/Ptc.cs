@@ -1,8 +1,3 @@
-using ARMeilleure.CodeGen;
-using ARMeilleure.CodeGen.Unwinding;
-using ARMeilleure.Memory;
-using Ryujinx.Common.Configuration;
-using Ryujinx.Common.Logging;
 using System;
 using System.Buffers.Binary;
 using System.Collections.Concurrent;
@@ -15,10 +10,19 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using System.Threading.Tasks;
 
+using ARMeilleure.CodeGen;
+using ARMeilleure.CodeGen.Unwinding;
+using ARMeilleure.Memory;
+
+using Ryujinx.Common.Configuration;
+using Ryujinx.Common.Logging;
+
 namespace ARMeilleure.Translation.PTC
 {
     public static class Ptc
     {
+        public static event EventHandler<PtcTranslationProgressEvent> TranslationProgress;
+
         private const string HeaderMagic = "PTChd";
 
         private const int InternalVersion = 1273; //! To be incremented manually for each change to the ARMeilleure project.
@@ -617,10 +621,24 @@ namespace ARMeilleure.Translation.PTC
             do
             {
                 Logger.Info?.Print(LogClass.Ptc, $"{funcsCount + _translateCount} of {ProfiledFuncsCount} functions to translate - {_rejitCount} functions rejited");
+
+                TranslationProgress?.Invoke(null, new PtcTranslationProgressEvent()
+                {
+                    Translated = funcsCount + _translateCount,
+                    FunctionCount = ProfiledFuncsCount,
+                    Rejitted = _rejitCount
+                });
             }
             while (!_loggerEvent.WaitOne(refreshRate * 1000));
 
             Logger.Info?.Print(LogClass.Ptc, $"{funcsCount + _translateCount} of {ProfiledFuncsCount} functions to translate - {_rejitCount} functions rejited");
+
+            TranslationProgress?.Invoke(null, new PtcTranslationProgressEvent()
+            {
+                Translated = funcsCount + _translateCount,
+                FunctionCount = ProfiledFuncsCount,
+                Rejitted = _rejitCount
+            });
         }
 
         internal static void WriteInfoCodeReloc(long address, bool highCq, PtcInfo ptcInfo)
@@ -648,17 +666,17 @@ namespace ARMeilleure.Translation.PTC
         {
             ulong featureInfo = 0ul;
 
-            featureInfo |= (Sse3.IsSupported      ? 1ul : 0ul) << 0;
+            featureInfo |= (Sse3.IsSupported ? 1ul : 0ul) << 0;
             featureInfo |= (Pclmulqdq.IsSupported ? 1ul : 0ul) << 1;
-            featureInfo |= (Ssse3.IsSupported     ? 1ul : 0ul) << 9;
-            featureInfo |= (Fma.IsSupported       ? 1ul : 0ul) << 12;
-            featureInfo |= (Sse41.IsSupported     ? 1ul : 0ul) << 19;
-            featureInfo |= (Sse42.IsSupported     ? 1ul : 0ul) << 20;
-            featureInfo |= (Popcnt.IsSupported    ? 1ul : 0ul) << 23;
-            featureInfo |= (Aes.IsSupported       ? 1ul : 0ul) << 25;
-            featureInfo |= (Avx.IsSupported       ? 1ul : 0ul) << 28;
-            featureInfo |= (Sse.IsSupported       ? 1ul : 0ul) << 57;
-            featureInfo |= (Sse2.IsSupported      ? 1ul : 0ul) << 58;
+            featureInfo |= (Ssse3.IsSupported ? 1ul : 0ul) << 9;
+            featureInfo |= (Fma.IsSupported ? 1ul : 0ul) << 12;
+            featureInfo |= (Sse41.IsSupported ? 1ul : 0ul) << 19;
+            featureInfo |= (Sse42.IsSupported ? 1ul : 0ul) << 20;
+            featureInfo |= (Popcnt.IsSupported ? 1ul : 0ul) << 23;
+            featureInfo |= (Aes.IsSupported ? 1ul : 0ul) << 25;
+            featureInfo |= (Avx.IsSupported ? 1ul : 0ul) << 28;
+            featureInfo |= (Sse.IsSupported ? 1ul : 0ul) << 57;
+            featureInfo |= (Sse2.IsSupported ? 1ul : 0ul) << 58;
 
             return featureInfo;
         }

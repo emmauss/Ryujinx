@@ -1,0 +1,101 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Ui\Assets\DiscordLogo.png" />
+    <None Remove="Ui\Assets\GitHubLogo.png" />
+    <None Remove="Ui\Assets\gray.json" />
+    <None Remove="Ui\Assets\greencircle.json" />
+    <None Remove="Ui\Assets\HelloWorld.json" />
+    <None Remove="Ui\Assets\Icon.png" />
+    <None Remove="Ui\Assets\loading.json" />
+    <None Remove="Ui\Assets\logo.png" />
+    <None Remove="Ui\Assets\LottieLogo1.json" />
+    <None Remove="Ui\Assets\NCAIcon.png" />
+    <None Remove="Ui\Assets\NROIcon.png" />
+    <None Remove="Ui\Assets\NSOIcon.png" />
+    <None Remove="Ui\Assets\NSPIcon.png" />
+    <None Remove="Ui\Assets\nudge.json" />
+    <None Remove="Ui\Assets\PatreonLogo.png" />
+    <None Remove="Ui\Assets\plant.json" />
+    <None Remove="Ui\Assets\phone.json" />
+    <None Remove="Ui\Assets\ProCon.svg" />
+    <None Remove="Ui\Assets\ryujinx.gif" />
+    <None Remove="Ui\Assets\TwitterLogo.png" />
+    <None Remove="Ui\Assets\XCIIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Ui\Assets\DiscordLogo.png" />
+    <EmbeddedResource Include="Ui\Assets\GitHubLogo.png" />
+    <EmbeddedResource Include="Ui\Assets\gray.json" />
+    <EmbeddedResource Include="Ui\Assets\Icon.png" />
+    <EmbeddedResource Include="Ui\Assets\loading.json" />
+    <EmbeddedResource Include="Ui\Assets\greencircle.json" />
+    <EmbeddedResource Include="Ui\Assets\listloading.json" />
+    <EmbeddedResource Include="Ui\Assets\HelloWorld.json" />
+    <EmbeddedResource Include="Ui\Assets\logo.png" />
+    <EmbeddedResource Include="Ui\Assets\NCAIcon.png" />
+    <EmbeddedResource Include="Ui\Assets\NROIcon.png" />
+    <EmbeddedResource Include="Ui\Assets\NSOIcon.png" />
+    <EmbeddedResource Include="Ui\Assets\NSPIcon.png" />
+    <EmbeddedResource Include="Ui\Assets\nudge.json" />
+    <EmbeddedResource Include="Ui\Assets\LottieLogo1.json" />
+    <EmbeddedResource Include="Ui\Assets\PatreonLogo.png" />
+    <EmbeddedResource Include="Ui\Assets\plant.json" />
+    <EmbeddedResource Include="Ui\Assets\phone.json" />
+    <EmbeddedResource Include="Ui\Assets\ProCon.svg" />
+    <EmbeddedResource Include="Ui\Assets\ryujinx.gif" />
+    <EmbeddedResource Include="Ui\Assets\TwitterLogo.png" />
+    <EmbeddedResource Include="Ui\Assets\ionicons.ttf" />
+    <EmbeddedResource Include="Ui\Assets\XCIIcon.png" />
+    <EmbeddedResource Include="Ui\Assets\vert.spv" />
+    <EmbeddedResource Include="Ui\Assets\frag.spv" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="DequeNET" Version="1.0.2" />
+    <PackageReference Include="DiscordRichPresence" Version="1.0.150" />
+    <PackageReference Include="LibHac" Version="0.12.0" />
+    <PackageReference Include="Crc32.NET" Version="1.2.0" />
+    <PackageReference Include="LottieSkiaSharp" Version="1.0.2" />
+    <PackageReference Include="SkiaSharp" Version="2.80.2" />
+    <PackageReference Include="SkiaSharp.Elements" Version="1.0.2" />
+    <PackageReference Include="SkiaSharp.Extended" Version="1.60.0" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.80.2" />
+    <PackageReference Include="SkiaSharp.Svg" Version="1.60.0" />
+    <PackageReference Include="SkiaSharp.Views.Desktop.Common" Version="2.80.2" />
+    <PackageReference Include="Topten.RichTextKit" Version="0.3.134" />
+    <PackageReference Include="OpenTK" Version="4.2.0" />
+    <PackageReference Include="Ryujinx.Graphics.Nvdec.Dependencies" Version="4.3.0" Condition="'$(RuntimeIdentifier)' != 'linux-x64' AND '$(RuntimeIdentifier)' != 'osx-x64'" />
+    <PackageReference Include="HarfBuzzSharp" Version="2.6.1.7" />
+    <PackageReference Include="HarfBuzzSharp.NativeAssets.Linux" Version="2.6.1.7" />
+    <PackageReference Include="SkiaSharp.HarfBuzz" Version="2.80.2" />
+    <PackageReference Include="SkiaSharp.Extended.Iconify" Version="1.60.0" />
+    <PackageReference Include="WycliffeAssociates.Typography.OpenFont" Version="1.0.0" />
+    <PackageReference Include="NfdSharp" Version="1.0.1" />
+    <PackageReference Include="EasingFunctions" Version="1.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ARMeilleure\ARMeilleure.csproj" />
+    <ProjectReference Include="..\Ryujinx.Audio\Ryujinx.Audio.csproj" />
+    <ProjectReference Include="..\Ryujinx.Common\Ryujinx.Common.csproj" />
+    <ProjectReference Include="..\Ryujinx.Graphics.Gpu\Ryujinx.Graphics.Gpu.csproj" />
+    <ProjectReference Include="..\Ryujinx.Graphics.OpenGL\Ryujinx.Graphics.OpenGL.csproj" />
+    <ProjectReference Include="..\Ryujinx.HLE\Ryujinx.HLE.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="THIRDPARTY.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>
