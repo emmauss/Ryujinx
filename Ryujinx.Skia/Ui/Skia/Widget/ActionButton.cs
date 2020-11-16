@@ -21,6 +21,8 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
         public bool IsSelected { get; set; }
         public bool IsHovered { get; set; }
 
+        public bool Enabled { get; set; } = true;
+
         public string Name
         {
             get => _name; set
@@ -120,22 +122,36 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
         {
             BackgroundColor = ParentScene.Theme.PrimaryColor;
 
-            if (IsSelected)
+            if (Enabled)
             {
-                BoundingElement.FillColor = ParentScene.Theme.SelectBackgroundColor;
-
-                if (_icon.ForegroundColor != ParentScene.Theme.SelectForegroundColor)
+                if (IsSelected)
                 {
-                    _icon.ForegroundColor = ParentScene.Theme.SelectForegroundColor;
+                    BoundingElement.FillColor = ParentScene.Theme.SelectBackgroundColor;
+
+                    if (_icon.ForegroundColor != ParentScene.Theme.SelectForegroundColor)
+                    {
+                        _icon.ForegroundColor = ParentScene.Theme.SelectForegroundColor;
+                    }
                 }
-            }
-            else if (IsHovered)
-            {
-                BoundingElement.FillColor = ParentScene.Theme.HoverBackgroundColor;
-
-                if (_icon.ForegroundColor != ParentScene.Theme.HoverForegroundColor)
+                else if (IsHovered)
                 {
-                    _icon.ForegroundColor = ParentScene.Theme.HoverForegroundColor;
+                    BoundingElement.FillColor = ParentScene.Theme.HoverBackgroundColor;
+
+                    if (_icon.ForegroundColor != ParentScene.Theme.HoverForegroundColor)
+                    {
+                        _icon.ForegroundColor = ParentScene.Theme.HoverForegroundColor;
+                    }
+                }
+                else
+                {
+                    _icon.ForegroundColor = ParentScene.Theme.SecondaryColor;
+
+                    if (_icon.ForegroundColor != ParentScene.Theme.SecondaryColor)
+                    {
+                        _icon.ForegroundColor = ParentScene.Theme.SecondaryColor;
+                    }
+
+                    BoundingElement.FillColor = BackgroundColor;
                 }
             }
             else
@@ -147,24 +163,27 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
                     _icon.ForegroundColor = ParentScene.Theme.SecondaryColor;
                 }
 
-                BoundingElement.FillColor = BackgroundColor;
+                BoundingElement.FillColor = Colors.NeonGrey;
             }
             BoundingElement.BorderColor = Colors.NeonGrey;
         }
 
         public void OnActivate()
         {
-            Activate?.Invoke(this, null);
+            if (Enabled)
+            {
+                Activate?.Invoke(this, null);
+            }
         }
 
         public void OnHover()
         {
-            IsHovered = true;
+            IsHovered = Enabled && true;
         }
 
         public void OnSelect()
         {
-            IsSelected = true;
+            IsSelected = Enabled && true;
         }
 
         public override void Measure()

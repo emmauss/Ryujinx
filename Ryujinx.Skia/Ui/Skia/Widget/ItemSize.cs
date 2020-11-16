@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Ryujinx.Skia.Ui.Skia.Widget
 {
-    public enum GameCardSizeMode
+    public enum ItemSize
     {
         Small,
         Normal,

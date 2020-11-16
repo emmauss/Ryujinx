@@ -5,6 +5,7 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
 {
     public class ListItem :  UIElement, ISelectable, IHoverable, IAction
     {
+        public event EventHandler Selected;
         private Label _label;
 
         private Rectangle _boundingElement;
@@ -15,6 +16,10 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
         public bool IsSelected { get; set; }
         public bool IsHovered { get; set; }
 
+        public bool IsActive{ get; set; }
+
+        public ItemSize ItemSize { get; set; } = ItemSize.Small;
+
         public ListItem(object value)
         {
             Value = value;
@@ -22,6 +27,8 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
             _label = new Label(value.ToString());
 
             _boundingElement = new Rectangle(default);
+
+            _boundingElement.BorderColor = SKColor.Parse("#f0f0f0");
 
             HorizontalAlignment = LayoutOptions.Stretch;
         }
@@ -39,6 +46,19 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
 
         public override void Measure()
         {
+            switch(ItemSize)
+            {
+                case ItemSize.Small:
+                    _label.FontSize = 16;
+                    break;
+                case ItemSize.Normal:
+                    _label.FontSize = 24;
+                    break;
+                case ItemSize.Large:
+                    _label.FontSize = 30;
+                    break;
+            }
+
             _label.Text = Value.ToString();
 
             _label.Measure(Bounds);
@@ -59,13 +79,6 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
                 _boundingElement.Draw(canvas);
 
                 _label.Draw(canvas);
-
-                using var paint = new SKPaint();
-
-                paint.Color = SKColors.Red;
-                paint.Style = SKPaintStyle.Stroke;
-
-                canvas.DrawRect(Bounds, paint);
             }
         }
 
@@ -78,6 +91,9 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
 
         public void ResetStyle()
         {
+            ForegroundColor = ParentScene.Theme.ForegroundColor;
+            BackgroundColor = ParentScene.Theme.BackgroundColor;
+
             _boundingElement.FillColor = BackgroundColor;
 
             if (IsSelected)
@@ -103,6 +119,8 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
         public void OnSelect()
         {
             IsSelected = true;
+
+            Selected?.Invoke(this, null);
         }
 
         public void OnHover()
@@ -113,11 +131,31 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
         public void RemoveSelection()
         {
             IsSelected = false;
+            IsActive = false;
         }
 
         public void OnActivate()
         {
-            Activate?.Invoke(this, null);
+            lock (this)
+            {
+                if (IsActive)
+                {
+                    IsActive = false;
+
+                    Activate?.Invoke(this, null);
+                }
+                else
+                {
+                    IsActive = true;
+                }
+            }
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            _label.Dispose();
         }
     }
 }

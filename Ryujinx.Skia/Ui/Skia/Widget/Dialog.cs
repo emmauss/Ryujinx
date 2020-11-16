@@ -195,10 +195,10 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
                                 antialias: true);
             _boundingElement.Draw(canvas);
             _titleLine.Draw(canvas);
-            DrawController(canvas);
 
             DrawContent(canvas);
 
+            DrawController(canvas);
             canvas.Restore();
         }
 
@@ -223,9 +223,9 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
 
             if (FixedHeight)
             {
-                float contentHeight = DialogHeight - _buttonBox.Height - _titleRectangle.Height - 20;
+                float contentHeight = DialogHeight - _buttonBox.Height - _titleRectangle.Height - _buttonBox.Height - 20;
 
-                MeasureContent(SKRect.Create(_contentSize.Location, new SKSize(_contentSize.Width, contentHeight)));
+                _contentSize =  MeasureContent(SKRect.Create(_contentSize.Location, new SKSize(_contentSize.Width, contentHeight)));
             }
             else
             {
@@ -286,6 +286,12 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
             {
                 return _title;
             }
+
+            if(_buttonBox.IsPointInside(position))
+            {
+                return _buttonBox.GetElementAtPosition(position);
+            }
+
             return _buttonBox.GetElementAtPosition(position);
         }
     }

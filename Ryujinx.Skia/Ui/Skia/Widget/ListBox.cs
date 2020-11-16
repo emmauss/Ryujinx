@@ -9,10 +9,13 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
 {
     public class ListBox : Box
     {
+        public event EventHandler<ItemSelectedArgs> ItemActivated;
         private Orientation orientation;
         private SKColor backgroundColor = SKColors.Transparent;
         private SKColor foregroundColor;
         private int selectedIndex;
+
+        public ItemSize ItemSize { get; set; } = ItemSize.Small;
 
         public override SKColor BackgroundColor
         {
@@ -94,7 +97,7 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
         {
             get => orientation; set
             {
-
+                
             }
         }
 
@@ -127,15 +130,33 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
                 listItem.BackgroundColor = BackgroundColor;
 
                 listItem.Activate += ListItem_Activate;
+                listItem.Selected += ListItem_Selected;
 
                 OnItemsChanged(Items.Count - 1, item);
             }
         }
 
+        private void ListItem_Selected(object sender, EventArgs e)
+        {
+            if (sender is ListItem listItem)
+            {
+                SelectedIndex = Items.FindIndex(x => x == listItem);
+            }
+        }
+
         public void Clear()
         {
+            for (int i = 0; i < Items.Count; i++)
+            {
+                ListItem item = Items[i];
+
+                Remove(item);
+            }
+
             Items.Clear();
-            
+
+            Elements.Clear();
+
             OnItemsChanged(-1, null);
         }
 
@@ -144,6 +165,8 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
             if (sender is ListItem listItem)
             {
                 SelectedIndex = Items.FindIndex(x => x == listItem);
+
+                ItemActivated?.Invoke(this, new ItemSelectedArgs() { Item = listItem });
             }
         }
 
@@ -162,6 +185,7 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
                     listItem.Dispose();
 
                     listItem.Activate -= ListItem_Activate;
+                    listItem.Selected -= ListItem_Selected;
 
                     OnItemsChanged(listItemIndex, listItem.Value);
                 }
@@ -181,6 +205,7 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
                     listItem.Dispose();
 
                     listItem.Activate -= ListItem_Activate;
+                    listItem.Selected -= ListItem_Selected;
 
                     OnItemsChanged(index, listItem.Value);
                 }
@@ -200,6 +225,7 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
                 AddElement(listItem);
 
                 listItem.Activate += ListItem_Activate;
+                listItem.Selected += ListItem_Selected;
 
                 OnItemsChanged(index, item);
             }
@@ -225,6 +251,8 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
                     {
                         item.OnSelect();
                     }
+
+                    item.ItemSize = ItemSize;
                 }
             }
 
@@ -234,6 +262,13 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
         private void OnItemsChanged(int index, object item = null)
         {
             Scene.IManager.Instance.InvalidateMeasure();
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            Clear();
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
 {
     public class HomeScene : Scene
     {
-        public GameCardSizeMode GameCardSizeMode { get; set; } = GameCardSizeMode.Normal;
+        public ItemSize GameCardSizeMode { get; set; } = ItemSize.Normal;
 
         private const int HeaderHeightPercentage = 8;
         private const int FooterHeightPercentage = 8;
@@ -277,7 +277,7 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
 
             _optionsPopUp.AddWidget(_themeToggle);
             
-            List<string> states = new List<string>(Enum.GetNames(typeof(GameCardSizeMode)));
+            List<string> states = new List<string>(Enum.GetNames(typeof(ItemSize)));
 
             _sizeStateToggle.SetStates(states);
 
@@ -338,9 +338,9 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
 
         private void SizeStateToggle_StateChanged(object sender, ContextMenu.OptionSelectedEventArgs e)
         {
-            if (Enum.TryParse(typeof(GameCardSizeMode), e.SelectedOption, true, out var nextMode))
+            if (Enum.TryParse(typeof(ItemSize), e.SelectedOption, true, out var nextMode))
             {
-                GameCardSizeMode = (GameCardSizeMode)nextMode;
+                GameCardSizeMode = (ItemSize)nextMode;
 
                 _gameList.ScrollTo(0);
 

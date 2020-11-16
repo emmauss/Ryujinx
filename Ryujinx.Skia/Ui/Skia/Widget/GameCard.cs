@@ -198,7 +198,7 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
 
         public override void Measure()
         {
-            GameCardSizeMode mode = (ParentScene as HomeScene).GameCardSizeMode;
+            ItemSize mode = (ParentScene as HomeScene).GameCardSizeMode;
 
             var showTitle = (ParentScene as HomeScene).ShowTitleNames;
 
@@ -211,15 +211,15 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
 
             switch (mode)
             {
-                case GameCardSizeMode.Small:
+                case ItemSize.Small:
                     Width  = GameCardWidth  * 0.75f;
                     Height = GameCardHeight * 0.75f;
                     break;
-                case GameCardSizeMode.Normal:
+                case ItemSize.Normal:
                     Width  = GameCardWidth;
                     Height = GameCardHeight;
                     break;
-                case GameCardSizeMode.Large:
+                case ItemSize.Large:
                     Width  = GameCardWidth  *  1.5f;
                     Height = GameCardHeight * 1.5f;
                     break;

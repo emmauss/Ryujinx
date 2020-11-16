@@ -25,15 +25,18 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
 
         public void RefreshFiles()
         {
-            if(Directory.Exists(Path))
+            lock (this)
             {
-                Files.Clear();
+                if (Directory.Exists(Path))
+                {
+                    Files.Clear();
 
-                Files.AddRange(Directory.EnumerateFiles(Path).Select(x => new FileInfo(x)));
+                    Files.AddRange(Directory.EnumerateFiles(Path).Select(x => new FileInfo(x)));
 
-                Directories.AddRange(Directory.EnumerateDirectories(Path).Select(x => new DirectoryInfo(x)));
+                    Directories.AddRange(Directory.EnumerateDirectories(Path).Select(x => new DirectoryInfo(x)));
 
-                Active = null;
+                    Active = null;
+                }
             }
         }
 

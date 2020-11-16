@@ -181,10 +181,6 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
             _renderer.FontSize(FontSize);
             _renderer.FontWeight(FontStyle.Weight);
             _renderer.FontItalic(FontStyle.Slant == SKFontStyleSlant.Italic);
-            _renderer.MarginLeft(Padding.Left);
-            _renderer.MarginTop(Padding.Top);
-            _renderer.MarginRight(Padding.Right);
-            _renderer.MarginBottom(Padding.Bottom);
             _renderer.FontFamily(FontFamily);
             _renderer.Add(Text);
 

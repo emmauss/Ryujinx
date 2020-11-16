@@ -75,15 +75,6 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
             Measure();
         }
 
-
-
-        public override void Draw(SKCanvas canvas)
-        {
-            base.Draw(canvas);
-
-            var d = DrawElement;
-        }
-
         public override void OnLayout()
         {
             float x = Bounds.Left + Padding.Left, y = Bounds.Top + Padding.Top;
