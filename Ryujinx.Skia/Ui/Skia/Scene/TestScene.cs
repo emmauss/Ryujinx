@@ -60,7 +60,7 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
 
             Icon entry = new Icon("add");
             entry.Bounds = SKRect.Create(500, 100, 100, 50);
-            AddElement(entry);
+            //AddElement(entry);
             entry.BackgroundColor = SKColors.Black;
         }
 
@@ -71,7 +71,17 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
 
             _layout.AddElement(button);
 
-            var dialog = new FileDialog(this, "Hey", DialogButtons.OK, "Y");
+            var slider = new Slider(SKRect.Create(0,0, 200, 50))
+            {
+                HorizontalAlignment = LayoutOptions.Stretch,
+                Minimum = 0,
+                Maximum = 100,
+                Value = 0
+            };
+
+            _layout.AddElement(slider);
+
+            /*var dialog = new FileDialog(this, "Hey", DialogButtons.OK, "Y");
 
             Task.Run(() =>
             {
@@ -80,7 +90,7 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
                 var result = dialog.DialogResult;
 
                 var input  = dialog.Selected;
-            });
+            });*/
         }
 
         private void Button30_Activate(object sender, EventArgs e)
