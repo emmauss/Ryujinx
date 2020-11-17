@@ -71,15 +71,24 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
 
             _layout.AddElement(button);
 
-            var slider = new Slider(SKRect.Create(0,0, 200, 50))
+            var spinner = new Spinner(default)
             {
                 HorizontalAlignment = LayoutOptions.Stretch,
                 Minimum = 0,
                 Maximum = 100,
-                Value = 0
+                WrapAround = true
             };
 
-            _layout.AddElement(slider);
+            var list = new List<string>()
+            {
+                "Yes",
+                "No",
+                "Maybe Not"
+            };
+
+            spinner.SetOptions(list);
+
+            _layout.AddElement(spinner);
 
             /*var dialog = new FileDialog(this, "Hey", DialogButtons.OK, "Y");
 

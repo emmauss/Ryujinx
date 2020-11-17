@@ -17,6 +17,8 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
 
         public event EventHandler<IInput.InputEventArgs> Input;
 
+        public event EventHandler ValueChanged;
+
         private Rectangle _boundingRect { get; set; }
         private Rectangle _sliderRect { get; set; }
 
@@ -47,7 +49,10 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
             get => _value; set
             {
                 _value = value;
+                
                 IManager.Instance.InvalidateMeasure();
+
+                ValueChanged?.Invoke(this, null);
             }
         }
 
