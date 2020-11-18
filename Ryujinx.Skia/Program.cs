@@ -110,7 +110,7 @@ namespace Ryujinx.Skia
                 game = launchPath;
             }
 
-            window.NavigateTo(new TestScene());
+            window.NavigateTo(new MainScene());
 
             window.StartApp(game); 
         }

@@ -25,7 +25,7 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
 
         private IHoverable _hoveredElement;
 
-        public UIElement AttachedElement
+        public UIElement Content
         {
             get => _attachedElement; set
             {
@@ -74,7 +74,7 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
                 return;
             }
 
-            if (AttachedElement != null)
+            if (Content != null)
             {
                 _boundingRectangle.Bounds = Bounds;
 
@@ -109,7 +109,7 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
 
         public override void Measure()
         {
-            if (AttachedElement != null)
+            if (Content != null)
             {
                 SKRect bounds = IManager.Instance.Bounds;
                 

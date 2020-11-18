@@ -8,6 +8,7 @@ namespace Ryujinx.Skia.Ui.Skia
         
         public SKColor SceneBackgroundColor { get; set; }
         public SKColor BackgroundColor { get; set; }
+        public SKColor SideBarColor { get; set; }
         public SKColor LightPrimaryColor { get; set; }
         public SKColor PrimaryColor { get; set; }
         public SKColor DarkPrimaryColor { get; set; }

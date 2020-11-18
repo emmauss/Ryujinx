@@ -62,7 +62,7 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
 
         public void SetSelected(string selected)
         {
-            if (_states.Contains(selected))
+            if (_states.Contains(selected) && ParentScene != null)
             {
                 int index = _states.FindIndex(x => x == selected);
 
@@ -130,26 +130,27 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
                 _stateBox.BorderColor = SKColors.Transparent;
 
                 Measure();
-            }
 
-            if (_states.Count > 0)
-            {
-                ActiveState = _states[0];
-                _activeLabel = _stateBox.Elements[0] as OptionLabel;
-            }
-            else {
-                ActiveState = string.Empty;
-                _activeLabel = null;
-
-                OptionLabel label = new OptionLabel("None")
+                if (_states.Count > 0)
                 {
-                    Margin = default,
-                    HorizontalAlignment = LayoutOptions.Stretch
-                };
+                    ActiveState = _states[0];
+                    _activeLabel = _stateBox.Elements[0] as OptionLabel;
+                }
+                else
+                {
+                    ActiveState = string.Empty;
+                    _activeLabel = null;
 
-                label.Activate += Label_Activate;
+                    OptionLabel label = new OptionLabel("None")
+                    {
+                        Margin = default,
+                        HorizontalAlignment = LayoutOptions.Stretch
+                    };
 
-                _stateBox.AddElement(label);
+                    label.Activate += Label_Activate;
+
+                    _stateBox.AddElement(label);
+                }
             }
         }
 

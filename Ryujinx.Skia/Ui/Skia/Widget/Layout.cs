@@ -326,7 +326,10 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
 
         public void AddElement(UIElement element)
         {
-            element.AttachTo(ParentScene);
+            if (ParentScene != null)
+            {
+                element.AttachTo(ParentScene);
+            }
             Elements.Add(element);
         }
 

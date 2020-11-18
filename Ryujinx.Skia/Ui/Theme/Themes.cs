@@ -30,8 +30,8 @@ namespace Ryujinx.Skia.Ui
             ForegroundColor = Colors.NeonGrey,
             ModalBackgroundColor = SKColors.White,
             SecondaryColor = SKColors.White,
-            ModalBackdropColor = SKColor.Parse("#414142").WithAlpha(100)
-            
+            ModalBackdropColor = SKColor.Parse("#414142").WithAlpha(100),
+            SideBarColor = SKColor.Parse("#fcfcfc")            
         };
 
         public static Theme Dark => new Theme()
@@ -56,7 +56,8 @@ namespace Ryujinx.Skia.Ui
             ForegroundColor = SKColors.White,
             ModalBackgroundColor = SKColor.Parse("#4f4f4f"),
             SecondaryColor = SKColors.White,
-            ModalBackdropColor = SKColor.Parse("#414142").WithAlpha(100)
+            ModalBackdropColor = SKColor.Parse("#414142").WithAlpha(100),
+            SideBarColor = SKColor.Parse("#2e2e2e")
         };
     }
 }
