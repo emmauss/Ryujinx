@@ -37,7 +37,7 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
         {
             _widget.Stopped -= Widget_Stopped;
             _widget.Dispose();
-            IManager.Instance.NavigateTo(new HomeScene());
+            IManager.Instance.NavigateTo(new MainScene());
         }
 
         public override void Measure()

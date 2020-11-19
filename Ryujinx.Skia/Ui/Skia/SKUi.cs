@@ -88,7 +88,7 @@ namespace Ryujinx.Skia.Ui
 
                 if(_scenes.Count <= 0)
                 {
-                    NavigateTo(new HomeScene());
+                    NavigateTo(new MainScene());
 
                     _activeScene = _scenes.Peek();
                 }

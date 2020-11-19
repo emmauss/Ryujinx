@@ -428,7 +428,7 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
             IManager.Instance?.InvalidateMeasure();
         }
 
-        public Element GetElementAtPosition(SKPoint position)
+        public virtual Element GetElementAtPosition(SKPoint position)
         {
             return Elements.GetElementAtPoint(position);
         }

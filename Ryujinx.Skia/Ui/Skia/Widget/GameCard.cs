@@ -198,9 +198,9 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
 
         public override void Measure()
         {
-            ItemSize mode = (ParentScene as HomeScene).GameCardSizeMode;
+            ItemSize mode = (ParentScene as MainScene).GameCardSizeMode;
 
-            var showTitle = (ParentScene as HomeScene).ShowTitleNames;
+            var showTitle = (ParentScene as MainScene).ShowTitleNames;
 
             if (showTitle != _showTitle)
             {

@@ -177,6 +177,16 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
             _activePage.AttachTo(this);
         }
 
+        public override Element GetElementAtPosition(SKPoint position)
+        {
+            if(_activePage.Bounds.Contains(position))
+            {
+                return _activePage.GetElementAtPosition(position);
+            }
+
+            return base.GetElementAtPosition(position);
+        }
+
         private void ThemeToggle_StateChanged(object sender, ContextMenu.OptionSelectedEventArgs e)
         {
             if (e.SelectedOption == LightIcon)
@@ -271,7 +281,10 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
 
             _sideBox.Measure();
 
-            SKRect pageBounds = SKRect.Create(_sideBar.Right, 0, bounds.Width - _sideBar.Width, bounds.Height);
+            SKRect pageBounds = SKRect.Create(_sideBar.Right + _activePage.Margin.Right, 
+                                _activePage.Margin.Top, 
+                                bounds.Width - _sideBar.Width - _activePage.Margin.Left - _activePage.Margin.Right, 
+                                bounds.Height - _activePage.Margin.Top - _activePage.Margin.Bottom);
 
             _activePage.Measure(pageBounds);
 

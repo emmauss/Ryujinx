@@ -25,9 +25,6 @@ namespace Ryujinx.Skia.Ui.Skia.Pages
 
         private const int HeaderHeightPercentage = 8;
         private const int FooterHeightPercentage = 8;
-        private readonly Margin _margin;
-
-        private readonly SKColor _borderColor = SKColors.LightGray;
 
         public bool ShowTitleNames { get; set; } = true;
 
@@ -65,19 +62,20 @@ namespace Ryujinx.Skia.Ui.Skia.Pages
 
         public HomePage()
         {
-            _margin = new Margin(30, 40);
+            Padding = new Margin(30, 40);
 
             _topBar = new Rectangle(default)
             {
-                BorderColor = _borderColor,
                 FillColor = SKColors.Transparent
             };
             _bottomBar = new Rectangle(default)
             {
-                BorderColor = _borderColor,
                 FillColor = SKColors.Transparent
             };
-            _background = new Rectangle(default);
+            _background = new Rectangle(default)
+            {
+                BorderColor = SKColors.Transparent
+            };
 
             _loadedLabel = new Label("", 20)
             {
@@ -299,23 +297,23 @@ namespace Ryujinx.Skia.Ui.Skia.Pages
 
             _background.Bounds = bounds;
 
-            _topBar.Width = bounds.Width;
+            _topBar.Width = bounds.Width - Padding.Right - Padding.Left;
             _topBar.Height = bounds.Height * (HeaderHeightPercentage / 100f);
 
-            _bottomBar.Width = bounds.Width;
+            _bottomBar.Width = _topBar.Width;
             _bottomBar.Height = bounds.Height * (FooterHeightPercentage / 100f);
 
             _topBar.Location = new SKPoint(bounds.Left + 1, 25);
-            _bottomBar.Location = new SKPoint(_margin.Left, bounds.Bottom - _bottomBar.Height);
+            _bottomBar.Location = new SKPoint(Padding.Left, bounds.Bottom - _bottomBar.Height);
 
             float topBoxWidth = _topBar.Width * 0.6f;
-            _topBox.Bounds = SKRect.Create(new SKPoint(_topBar.Right - topBoxWidth, _topBar.Top - _topBox.Margin.Top), new SKSize(topBoxWidth, _topBar.Height - _topBox.Margin.Top));
+            _topBox.Bounds = SKRect.Create(new SKPoint(_topBar.Right - topBoxWidth, _topBar.Top - _topBox.Margin.Top), 
+                                           new SKSize(topBoxWidth, _topBar.Height - _topBox.Margin.Top));
             _topBox.Measure(_topBox.Bounds);
-
-            //_gameList.Width = bounds.Width - _sideBar.Width - _margin.Right;
-            _gameList.Width = bounds.Width - _gameList.Margin.Left - _gameList.Margin.Right;
+            
+            _gameList.Width = bounds.Width - _gameList.Margin.Left - _gameList.Margin.Right - Padding.Right - Padding.Left;
             _gameList.Height = _bottomBar.Top - _topBar.Bottom - 20;
-            _gameList.Location = new SKPoint(bounds.Left + _gameList.Margin.Left, _topBar.Bottom + 20);
+            _gameList.Location = new SKPoint(bounds.Left + _gameList.Margin.Left + Padding.Left, _topBar.Bottom + 20);
 
             _gameList.Measure();
 

@@ -86,10 +86,10 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
 
             var windowBounds = IManager.Instance.Bounds;
 
-            DrawElement = true;/* windowBounds.Contains(tranformedRect.Left, tranformedRect.Top)
+            DrawElement =  windowBounds.Contains(tranformedRect.Left, tranformedRect.Top)
               || windowBounds.Contains(tranformedRect.Right, tranformedRect.Top)
               || windowBounds.Contains(tranformedRect.Left, tranformedRect.Bottom)
-              || windowBounds.Contains(tranformedRect.Right, tranformedRect.Bottom);*/
+              || windowBounds.Contains(tranformedRect.Right, tranformedRect.Bottom);
         }
 
         public void DrawOverlay(SKCanvas canvas)
