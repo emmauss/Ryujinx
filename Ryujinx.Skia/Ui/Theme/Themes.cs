@@ -42,7 +42,7 @@ namespace Ryujinx.Skia.Ui
             LightPrimaryColor = SKColor.Parse("#66f6ff"),
             PrimaryColor = Colors.NeonBlue,
             DarkPrimaryColor = SKColor.Parse("#0092b1"),
-            HoverBackgroundColor = SKColor.Parse("#e6fcff"),
+            HoverBackgroundColor = Colors.NeonGrey,
             HoverForegroundColor = SKColors.White,
             HoverOutlineColor = Colors.NeonBlue,
             SelectBackgroundColor = SKColor.Parse("#80eeff"),

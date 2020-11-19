@@ -23,6 +23,8 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
     {
         public ItemSize GameCardSizeMode { get; set; } = ItemSize.Normal;
 
+        private Dictionary<string, Page> _pages;
+
         private const int HeaderHeightPercentage = 8;
         private const int FooterHeightPercentage = 8;
         private const int SidebarWidthPercentage = 25;
@@ -32,7 +34,7 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
 
         private readonly Margin _margin;
 
-        private readonly SKColor _borderColor = SKColors.LightGray;
+        private readonly SKColor _borderColor = SKColors.Transparent;
 
         public bool ShowTitleNames { get; set; } = true;
 
@@ -60,6 +62,10 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
         private readonly ToggleButton _themeToggle;
 
         private Page _activePage;
+        private NavItem _libraryNavItem;
+        private NavItem _settingNavItem;
+
+        private NavItem _activeNav;
 
         public MainScene()
         {
@@ -125,7 +131,8 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
 
             _sideBox = new Box(default)
             {
-                Orientation = Orientation.Vertical
+                Orientation = Orientation.Vertical,
+                ContentSpacing = 20
             };
 
             _quickOptionsBox = new Box(default)
@@ -154,7 +161,15 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
             _themeToggle.HorizontalAlignment = LayoutOptions.Center;
 
             _quickOptionsBox.AddElement(_themeToggle);
-            
+
+            _libraryNavItem = new NavItem("Library", "game-controller-outline", "library", 150);
+
+            _libraryNavItem.Activate += NavItem_Activate;
+
+            _settingNavItem = new NavItem("Settings", "settings-outline", "settings", 150);
+
+            _settingNavItem.Activate += NavItem_Activate;
+
             List<string> states = new List<string>(Enum.GetNames(typeof(ItemSize)));
 
             states = new List<string>()
@@ -174,7 +189,50 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
 
             _activePage = new HomePage();
 
+            _activeNav = _libraryNavItem;
+
+            _pages = new Dictionary<string, Page>()
+            {
+                {"library", _activePage}
+            };
+
+            _activeNav.OnSelect();
+
             _activePage.AttachTo(this);
+        }
+
+        private void NavItem_Activate(object sender, EventArgs e)
+        {
+            _activeNav.ResetState();
+
+            if(sender is NavItem nav)
+            {
+                if(_pages.TryGetValue(nav.Tag, out var page))
+                {
+                    _activePage = page;
+                }
+                else
+                {
+                    switch (nav.Tag)
+                    {
+                        case "library":
+                            page = new HomePage();
+                            break;
+                        default:
+                            nav.ResetState();
+                            _activeNav?.OnSelect();
+                            return;
+                    }
+
+                    _pages.Add(nav.Tag, page);
+
+                    _activePage = page;
+                }
+                
+                nav.OnSelect();
+
+                _activeNav = nav;
+            }
         }
 
         public override Element GetElementAtPosition(SKPoint position)
@@ -212,6 +270,8 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
             _infoBox.AddElement(_title);
             _infoBox.AddElement(_version);
             _infoBox.AddElement(_firmware);
+            _sideBox.AddElement(_libraryNavItem);
+            _sideBox.AddElement(_settingNavItem);
 
             _sideBox.Margin = new Margin(20, 10, 20, 10);
 
@@ -255,7 +315,7 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
 
             _background.Bounds = bounds;
 
-            _header.Size = new SKSize(120, 120);
+            _header.Size = new SKSize(120, 200);
             _header.Location = new SKPoint(_margin.Left, _margin.Top);
 
             _quickOptionsBox.Measure(_header.Bounds);
@@ -265,9 +325,9 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
             _sideBar.Width = MathF.Min(250, _sideBar.Width);
             _sideBar.Location = new SKPoint(0, 0);
 
-            _sideBox.Width = 160;
-            _sideBox.Height = _sideBar.Height - _sideBox.Margin.Top - _sideBox.Margin.Bottom;
-            _sideBox.Location = new SKPoint(_margin.Left, _margin.Top);
+            _sideBox.Width = 170;
+            _sideBox.Height = _sideBar.Height - _sideBox.Margin.Top - _sideBox.Margin.Bottom - _header.Bottom;
+            _sideBox.Location = new SKPoint(_margin.Left, _margin.Top + _header.Bottom);
 
             _logo.Location = new SKPoint(_sideBar.Left + _margin.Left, bounds.Bottom - 150);
 

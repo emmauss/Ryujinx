@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using Ryujinx.Skia.Ui.Skia.Scene;
 using SkiaSharp;
 
 using static Ryujinx.Skia.Ui.Skia.Widget.ContextMenu;
@@ -170,6 +171,8 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
 
                     StateChange?.Invoke(this, new OptionSelectedEventArgs() { SelectedOption = newState });
                 }
+
+                IManager.Instance.InvalidateMeasure();
             }
         }
 

@@ -89,6 +89,13 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
                 return;
             }
 
+            if (_recreateRenderer)
+            {
+                InvalidateIcon();
+
+                _recreateRenderer = false;
+            }
+
             TextPaintOptions options = new TextPaintOptions
             {
                 IsAntialias = true
@@ -131,6 +138,22 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
             {
 
             }
+        }
+
+        public void InvalidateIcon()
+        {
+            _renderer = new RichString();
+            _renderer.TextColor(ForegroundColor);
+            _renderer.Alignment(TextAlignment.Center);
+            _renderer.FontSize(FontSize);
+            _renderer.FontWeight((int)SKFontStyleWeight.Normal);
+            _renderer.FontItalic(false);
+            _renderer.FontFamily("IonIcon");
+            _renderer.MarginLeft(Padding.Left);
+            _renderer.MarginTop(Padding.Top);
+            _renderer.MarginRight(Padding.Right);
+            _renderer.MarginBottom(Padding.Bottom);
+            _renderer.Add(FontMapper.GetGlyphUnicodeCodepoint(Name));
         }
 
         public override void Measure(SKRect bounds)

@@ -297,10 +297,6 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
                     }
                 }
             }
-            else
-            {
-
-            }
         }
     }
 }

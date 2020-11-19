@@ -121,7 +121,7 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
         {
             _renderer.BackgroundColor = ParentScene.Theme.BackgroundColor;
 
-            
+
             if (IsHovered)
             {
                 _renderer.ForegroundColor = ParentScene.Theme.ContextHoverForegroundColor;
@@ -131,8 +131,8 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
             }
             else if (IsSelected)
             {
-                _renderer.ForegroundColor = ParentScene.Theme.ContextSelectForegroundColor;
-                _renderer.BackgroundColor = ParentScene.Theme.ContextSelectBackgroundColor;
+                _renderer.ForegroundColor = ParentScene.Theme.SecondaryColor;
+                _renderer.BackgroundColor = ParentScene.Theme.PrimaryColor;
 
                 _renderer.InvalidateText();
             }
