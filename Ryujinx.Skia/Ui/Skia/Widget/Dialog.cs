@@ -215,9 +215,11 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
             SKRect bounds = SKRect.Create(windowBounds.MidX - DialogWidth / 2, windowBounds.MidY - totalHeight / 2, DialogWidth, totalHeight);
 
             _titleRectangle.Location = bounds.Location;
+            _titleRectangle.Width = DialogWidth;
             _contentSize.Location = new SKPoint(bounds.Left + Padding.Left, _titleRectangle.Bottom + 20);
             _titleLine.Location = new SKPoint(Bounds.Left, _titleRectangle.Bottom);
             _buttonRectangle.Location = new SKPoint(bounds.Left, _contentSize.Bottom + 1);
+            _buttonRectangle.Width = DialogWidth;
             _buttonBox.Location = new SKPoint(bounds.Right - _buttonBox.Width, bounds.Bottom - _buttonBox.Height);
             _contentSize.Size = new SKSize(bounds.Width - Padding.Left - Padding.Right, _contentSize.Height);
 

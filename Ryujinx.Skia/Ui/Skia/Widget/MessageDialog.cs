@@ -58,6 +58,15 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
 
         public override SKRect MeasureContent(SKRect bounds)
         {
+            _contentBox.Measure(default);
+
+            if(_contentBox.Width > DialogWidth)
+            {
+                DialogWidth = (int)(_contentBox.Width + Margin.Left + Margin.Right);
+
+                bounds.Size = new SKSize(DialogWidth, _contentBox.Height);
+            }
+
             _contentBox.Measure(bounds);
 
             return _contentBox.Bounds;

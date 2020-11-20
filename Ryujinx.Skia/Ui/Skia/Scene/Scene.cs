@@ -81,6 +81,8 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
             canvas.Clear(Theme.SceneBackgroundColor);
             DrawController(canvas);
 
+            DrawMisc(canvas);
+
             Deque<IModal> drawn = new Deque<IModal>();
 
             if (Modals.Count > 0)
@@ -116,6 +118,11 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
                     }
                 }
             }
+        }
+
+        public virtual void DrawMisc(SKCanvas canvas)
+        {
+
         }
 
         public virtual void HandleText(string text)

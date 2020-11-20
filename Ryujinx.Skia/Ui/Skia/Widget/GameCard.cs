@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Threading.Tasks;
 using LibHac.Fs;
 using Ryujinx.Skia.App;
 using Ryujinx.Skia.Ui.Skia.Scene;
@@ -74,19 +75,22 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
             });
         }
 
-        public void OpenSaveDirectory()
+        private void OpenSaveDirectory(SaveDataFilter filter)
         {
             if (!ulong.TryParse(_applicationData.TitleId, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ulong titleIdNumber))
             {
-               // TODO : show error
+                MessageDialog dialog = new MessageDialog(ParentScene,
+                             "Ryujinx - Error",
+                             "Ryujinx has encountered an error",
+                             "UI error: The selected game did not have a valid title ID",
+                             DialogButtons.OK);
+
+                dialog.Run();
 
                 return;
             }
 
-            SaveDataFilter filter = new SaveDataFilter();
-            filter.SetUserId(new UserId(1, 0));
-
-            ApplicationHelper.OpenSaveDir(_applicationData.TitleName, titleIdNumber, filter);
+            ApplicationHelper.OpenSaveDir(_applicationData.TitleName, _applicationData.ControlHolder, titleIdNumber, filter);
         }
 
         public override void LayoutContextMenu()
@@ -107,15 +111,20 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
             {
                 ContextMenu = new ContextMenu();
 
-                List<string> options = new List<string>()
+                Dictionary<string, string> options = new Dictionary<string, string>()
                 {
-                    Play,
-                    ContextActions.OpenGameDirectory,
-                    ContextActions.OpenSaveDirectory
+                    { "play", Play},
+                    { "open_game_dir", ContextActions.OpenGameDirectory},
+                    { "open_user_save_dir", OpenUserSaveDirectory},
+                    { "open_device_save_dir", OpenDeviceSaveDirectory},
+                    { "open_bcat_save_dir", OpenBcatSaveDirectory},
+                    { "manage_title_updates", ManageTitleUpdates},
+                    { "manage_dlc", ManageDlc},
+                    { "open_mods_directory", OpenModsDirectory}
                 };
 
                 ContextMenu.AttachTo(ParentScene);
-                ContextMenu.OptionSelected += ContextMenu_OptionSelected; ;
+                ContextMenu.OptionSelected += ContextMenu_OptionSelected;
                 ContextMenu.SetOptions(options);
                 ContextMenu.AttachedElement = this;
             }
@@ -123,18 +132,33 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
 
         private void ContextMenu_OptionSelected(object sender, ContextMenu.OptionSelectedEventArgs e)
         {
-            switch (e.SelectedOption)
+            Task.Run(() =>
             {
-                case Play:
-                    LoadApp();
-                    break;
-                case ContextActions.OpenGameDirectory:
-                    OpenGameDirectory();
-                    break;
-                case ContextActions.OpenSaveDirectory:
-                    OpenSaveDirectory();
-                    break;
-            }
+                switch (e.SelectedOption)
+                {
+                    case "play":
+                        LoadApp();
+                        break;
+                    case "open_game_dir":
+                        OpenGameDirectory();
+                        break;
+                    case "open_user_save_dir":
+                        SaveDataFilter filter = new SaveDataFilter();
+                        filter.SetUserId(new UserId(1, 0));
+                        OpenSaveDirectory(filter);
+                        break;
+                    case "open_device_save_dir":
+                        filter = new SaveDataFilter();
+                        filter.SetSaveDataType(SaveDataType.Device);
+                        OpenSaveDirectory(filter);
+                        break;
+                    case "open_bcat_save_dir":
+                        filter = new SaveDataFilter();
+                        filter.SetSaveDataType(SaveDataType.Bcat);
+                        OpenSaveDirectory(filter);
+                        break;
+                }
+            });
         }
 
         public override void Draw(SKCanvas canvas)

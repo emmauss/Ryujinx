@@ -13,7 +13,7 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
         public event EventHandler<OptionSelectedEventArgs> OptionSelected;
         public event EventHandler<IInput.InputEventArgs> Input;
 
-        public List<string> Options { get; set; }
+        public Dictionary<string, string> Options { get; set; }
 
         public bool DismissOnFocusOut { get; set; }
         public bool IsInputGrabbed { get; set; }
@@ -37,7 +37,7 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
 
         public ContextMenu()
         {
-            Options = new List<string>();
+            Options = new Dictionary<string, string>();
 
             _optionBox = new Box(default)
             {
@@ -60,10 +60,14 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
             RecreateOptions();
         }
 
-        public void SetOptions(IList<string> options)
+        public void SetOptions(IDictionary<string, string> options)
         {
             Options.Clear();
-            Options.AddRange(options);
+
+            foreach(var option in options)
+            {
+                Options.Add(option.Key, option.Value);
+            }
 
             RecreateOptions();
         }
@@ -76,9 +80,11 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
 
                 foreach (var option in Options)
                 {
-                    OptionLabel label = new OptionLabel(option);
-                    label.Margin = default;
-                    label.HorizontalAlignment = LayoutOptions.Stretch;
+                    OptionLabel label = new OptionLabel(option.Value, option.Key)
+                    {
+                        Margin = default,
+                        HorizontalAlignment = LayoutOptions.Stretch
+                    };
 
                     label.Activate += Label_Activate;
 
@@ -97,7 +103,7 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
         {
             if (sender is OptionLabel label)
             {
-                OnOptionSelect(label.Label);
+                OnOptionSelect(label.Tag);
             }
         }
 

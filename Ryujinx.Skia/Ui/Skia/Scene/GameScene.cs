@@ -88,16 +88,6 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
             IsSelfRendering = true;
             EnableOverlay = true;
 
-           /* string resourceID = "Ryujinx.Skia.Ui.Assets.gray.json";
-            Assembly assembly = GetType().GetTypeInfo().Assembly;
-
-            using (Stream stream = assembly.GetManifestResourceStream(resourceID))
-            {
-                SKRect bounds = SKRect.Create(0, 0, 200, 200);
-                _loadAnimation = new LottieWidget(bounds);
-                _loadAnimation.Load(stream);
-            }*/
-
             SKWindow.TargetFps = 60;
 
             _uiHandler = new SkiaHostUiHandler(this);
@@ -343,7 +333,7 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
         public void Start()
         {
             var manager = IManager.Instance;
-            _renderer.Initialize(_glLogLevel);
+            _device.Gpu.Initialize(_glLogLevel);
             _renderer.Window.SetSize((int)manager.Bounds.Width, (int)manager.Bounds.Height);
             _initialize = true;
 

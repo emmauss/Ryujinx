@@ -1,10 +1,10 @@
 ## Currently Unimplemented UI features
 
 - Widgets
-	- File / Folder Dialog
-	- Spinner
-	- Slider
-	- List View
+	~~- File / Folder Dialog~~
+	~~- Spinner~~
+	~~- Slider~~
+	~~- List View~~
 	
 - Navigation
 	- Multiscene Navigation

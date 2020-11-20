@@ -11,6 +11,9 @@ using Ryujinx.Common.Configuration;
 using Ryujinx.Common.Logging;
 using Ryujinx.Common.Utilities;
 using Ryujinx.HLE.FileSystem;
+using Ryujinx.Skia.Ui;
+using Ryujinx.Skia.Ui.Skia.Scene;
+using Ryujinx.Skia.Ui.Skia.Widget;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
@@ -19,7 +22,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Threading;
-
+using System.Threading.Tasks;
 using static LibHac.Fs.ApplicationSaveDataManagement;
 
 namespace Ryujinx.Skia.App
@@ -28,26 +31,40 @@ namespace Ryujinx.Skia.App
     {
         private static VirtualFileSystem _virtualFileSystem;
 
-        private readonly static BlitStruct<ApplicationControlProperty> _controlData;
-
         public static void Initialize(VirtualFileSystem virtualFileSystem)
         {
             _virtualFileSystem = virtualFileSystem;
         }
 
-        public static bool TryFindSaveData(string titleName, ulong titleId, BlitStruct<ApplicationControlProperty> controlHolder, SaveDataFilter filter, out ulong saveDataId)
+        private static bool TryFindSaveData(string titleName, ulong titleId, BlitStruct<ApplicationControlProperty> controlHolder, SaveDataFilter filter, out ulong saveDataId)
         {
             saveDataId = default;
+
+            var activeScene = ((IManager.Instance) as SKWindow).ActiveScene;
+
+            MessageDialog dialog = null;
 
             Result result = _virtualFileSystem.FsClient.FindSaveDataWithFilter(out SaveDataInfo saveDataInfo, SaveDataSpaceId.User, ref filter);
 
             if (ResultFs.TargetNotFound.Includes(result))
             {
-                // TODO: Savedata was not found. Ask the user if they want to create it
-                
+                // Savedata was not found. Ask the user if they want to create it */
+                var messageDialog = new MessageDialog(activeScene,
+                        "Ryujinx",
+                        $"There is no savedata for {titleName} [{titleId:x16}]",
+                        "Would you like to create savedata for this game?",
+                        DialogButtons.Yes | DialogButtons.No);
+
+                messageDialog.Run();
+
+                if(messageDialog.DialogResult == "No")
+                {
+                    return false;
+                }
+
                 ref ApplicationControlProperty control = ref controlHolder.Value;
 
-                if (controlHolder.ByteSpan.IsEmpty)
+                if (LibHac.Utilities.IsEmpty(controlHolder.ByteSpan))
                 {
                     // If the current application doesn't have a loaded control property, create a dummy one
                     // and set the savedata sizes so a user savedata will be created.
@@ -67,7 +84,13 @@ namespace Ryujinx.Skia.App
 
                 if (result.IsFailure())
                 {
-                   //TODO : Show error
+                    dialog = new MessageDialog(activeScene,
+                             "Ryujinx - Error",
+                             "Ryujinx has encountered an error",
+                             $"There was an error creating the specified savedata: {result.ToStringWithName()}",
+                             DialogButtons.OK);
+
+                    dialog.Run();
 
                     return false;
                 }
@@ -83,7 +106,13 @@ namespace Ryujinx.Skia.App
                 return true;
             }
 
-            //TODO : Show error
+            dialog = new MessageDialog(activeScene,
+                             "Ryujinx - Error",
+                             "Ryujinx has encountered an error",
+                             $"There was an error finding the specified savedata: {result.ToStringWithName()}",
+                             DialogButtons.OK);
+
+            dialog.Run();
 
             return false;
         }
@@ -99,7 +128,7 @@ namespace Ryujinx.Skia.App
             }
 
             string committedPath = System.IO.Path.Combine(saveRootPath, "0");
-            string workingPath = System.IO.Path.Combine(saveRootPath, "1");
+            string workingPath   = System.IO.Path.Combine(saveRootPath, "1");
 
             // If the committed directory exists, that path will be loaded the next time the savedata is mounted
             if (Directory.Exists(committedPath))
@@ -117,11 +146,11 @@ namespace Ryujinx.Skia.App
             return workingPath;
         }
 
-        public static void OpenSaveDir(string titleName, ulong titleId, SaveDataFilter filter)
+        public static void OpenSaveDir(string titleName, BlitStruct<ApplicationControlProperty> controlData, ulong titleId, SaveDataFilter filter)
         {
             filter.SetProgramId(new ProgramId(titleId));
 
-            if (!TryFindSaveData(titleName, titleId, _controlData, filter, out ulong saveDataId))
+            if (!TryFindSaveData(titleName, titleId, controlData, filter, out ulong saveDataId))
             {
                 return;
             }

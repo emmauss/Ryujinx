@@ -303,6 +303,11 @@ namespace Ryujinx.Skia.Ui.Skia.Scene
             base.Draw(canvas);
             _title.DrawOverlay(canvas);
             _version.DrawOverlay(canvas);
+        }
+
+        public override void DrawMisc(SKCanvas canvas)
+        {
+            base.DrawMisc(canvas);
 
             _activePage.Draw(canvas);
         }

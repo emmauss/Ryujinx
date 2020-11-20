@@ -12,6 +12,8 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
 
         public string Label => _label;
 
+        public string Tag{ get; set; }
+
         private Label _renderer;
         private Icon _icon;
 
@@ -22,7 +24,7 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
 
         private Rectangle _boundingRect;
 
-        public OptionLabel(string label, OptionType optionType = OptionType.Label)
+        public OptionLabel(string label, string tag, OptionType optionType = OptionType.Label)
         {
             _label = label;
             this.OptionType = optionType;
@@ -34,6 +36,7 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
             _boundingRect.BorderWidth = 1;
             Margin = default;
             Padding = new Margin(7);
+            Tag = tag;
         }
 
         public override void Draw(SKCanvas canvas)

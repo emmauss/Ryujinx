@@ -115,7 +115,7 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
 
                 foreach (var option in _states)
                 {
-                    OptionLabel label = new OptionLabel(option, OptionType)
+                    OptionLabel label = new OptionLabel(option, "", OptionType)
                     {
                         Margin = default,
                         HorizontalAlignment = LayoutOptions.Stretch
@@ -142,7 +142,7 @@ namespace Ryujinx.Skia.Ui.Skia.Widget
                     ActiveState = string.Empty;
                     _activeLabel = null;
 
-                    OptionLabel label = new OptionLabel("None")
+                    OptionLabel label = new OptionLabel("None", "")
                     {
                         Margin = default,
                         HorizontalAlignment = LayoutOptions.Stretch
