@@ -115,7 +115,7 @@ namespace Ryujinx.Ui.Windows
             _selectedGamepad = null;
 
             // NOTE: To get input in this window, we need to bind a custom keyboard driver instead of using the InputManager one as the main window isn't focused...
-            _gtk3KeyboardDriver = new GTK3KeyboardDriver(this);
+            _gtk3KeyboardDriver = new GTK3KeyboardDriver(this, new Gtk3MouseDriver(this));
 
             Icon = new Gdk.Pixbuf(Assembly.GetExecutingAssembly(), "Ryujinx.Ui.Resources.Logo_Ryujinx.png");
 
