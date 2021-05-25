@@ -37,7 +37,7 @@ namespace Ryujinx.Input.HLE
             float mouseX = position.X;
             float mouseY = position.Y;
 
-            float aspectWidth = SwitchPanelHeight * aspectRatio;//ConfigurationState.Instance.Graphics.AspectRatio.Value.ToFloat();
+            float aspectWidth = SwitchPanelHeight * aspectRatio;
 
             int screenWidth = clientSize.Width;
             int screenHeight = clientSize.Height;

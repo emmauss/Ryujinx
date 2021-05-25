@@ -1,4 +1,6 @@
-﻿namespace Ryujinx.Common.Configuration.Hid.Keyboard
+﻿using Ryujinx.Common.Configuration.Hid.Controller.Motion;
+
+namespace Ryujinx.Common.Configuration.Hid.Keyboard
 {
     public class GenericKeyboardInputConfig<Key> : GenericInputConfigurationCommon<Key> where Key : unmanaged
     {

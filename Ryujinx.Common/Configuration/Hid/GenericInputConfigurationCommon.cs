@@ -1,4 +1,6 @@
-﻿namespace Ryujinx.Common.Configuration.Hid
+﻿using Ryujinx.Common.Configuration.Hid.Controller.Motion;
+
+namespace Ryujinx.Common.Configuration.Hid
 {
     public class GenericInputConfigurationCommon<Button> : InputConfig where Button : unmanaged
     {
@@ -11,5 +13,10 @@
         /// Right JoyCon Controller Bindings
         /// </summary>
         public RightJoyconCommonConfig<Button> RightJoycon { get; set; }
+
+        /// <summary>
+        /// Controller Motion Settings
+        /// </summary>
+        public MotionConfigController Motion { get; set; }
     }
 }

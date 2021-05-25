@@ -2,6 +2,7 @@
 using Ryujinx.Common.Configuration.Hid;
 using Ryujinx.Common.Configuration.Hid.Controller;
 using Ryujinx.Common.Configuration.Hid.Controller.Motion;
+using Ryujinx.Common.Configuration.Hid.Keyboard;
 using Ryujinx.HLE.HOS.Services.Hid;
 using System;
 using System.Numerics;
@@ -256,6 +257,17 @@ namespace Ryujinx.Input.HLE
                     UpdateMotionInput(controllerConfig.Motion);
                 }
             }
+            else if (config is StandardKeyboardInputConfig keyboardInputConfig)
+            {
+                bool needsMotionInputUpdate = _config == null || (_config is StandardKeyboardInputConfig oldKeyboardConfig &&
+                                                                  (oldKeyboardConfig.Motion.EnableMotion != keyboardInputConfig.Motion.EnableMotion) &&
+                                                                  (oldKeyboardConfig.Motion.MotionBackend != keyboardInputConfig.Motion.MotionBackend));
+
+                if (needsMotionInputUpdate)
+                {
+                    UpdateMotionInput(keyboardInputConfig.Motion);
+                }
+            }
             else
             {
                 // Non-controller doesn't have motions.
@@ -321,6 +333,16 @@ namespace Ryujinx.Input.HLE
                         // Finally, get motion input data
                         _cemuHookClient.TryGetData(clientId, cemuControllerConfig.Slot, out _motionInput);
                     }
+                }
+                else if (_config is StandardKeyboardInputConfig keyboardInputConfig)
+                {
+                    Vector3 accelerometer = _gamepad.GetMotionData(MotionInputId.Accelerometer);
+                    Vector3 gyroscope = _gamepad.GetMotionData(MotionInputId.Gyroscope);
+
+                    accelerometer = new Vector3(accelerometer.X, -accelerometer.Z, accelerometer.Y);
+                    gyroscope = new Vector3(gyroscope.X, gyroscope.Z, gyroscope.Y);
+
+                    _motionInput.Update(accelerometer, gyroscope, (ulong)PerformanceCounter.ElapsedNanoseconds / 1000, keyboardInputConfig.Motion.Sensitivity, (float) keyboardInputConfig.Motion.GyroDeadzone);
                 }
             }
             else

@@ -28,10 +28,5 @@ namespace Ryujinx.Common.Configuration.Hid.Controller
         /// Controller Trigger Threshold
         /// </summary>
         public float TriggerThreshold { get; set; }
-
-        /// <summary>
-        /// Controller Motion Settings
-        /// </summary>
-        public MotionConfigController Motion { get; set; }
     }
 }

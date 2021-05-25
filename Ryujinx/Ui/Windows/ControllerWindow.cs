@@ -599,6 +599,12 @@ namespace Ryujinx.Ui.Windows
                         StickRight   = rStickRight,
                         StickButton  = rStickButton,
                     },
+                    Motion =  new MouseMotionConfigController()
+                    {
+                        MotionBackend = MotionInputBackendType.MouseDriver,
+                        Sensitivity =  50,
+                        EnableMotion = true
+                    }
                 };
             }
             

@@ -50,14 +50,16 @@ namespace Ryujinx.Input.GTK3
         {
             if (args.Event.Device.InputSource == InputSource.Mouse)
             {
-                LastPosition = CurrentPosition;
+                LastPosition =  LastPosition.Length() == 0 ? CurrentPosition : LastPosition;
 
                 CurrentPosition = new Vector2((float)args.Event.X, (float)args.Event.Y);
             }
         }
         public Vector2 GetVelocity()
         {
-            return CurrentPosition - LastPosition;
+            var difference = Vector2.Subtract(LastPosition, CurrentPosition);
+            LastPosition = Vector2.Lerp(LastPosition,CurrentPosition, 0.1f);
+            return Vector2.Multiply(difference, 10);
         }
 
         public bool IsButtonPressed(MouseButton button)

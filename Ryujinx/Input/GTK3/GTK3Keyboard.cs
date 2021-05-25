@@ -24,12 +24,14 @@ namespace Ryujinx.Input.GTK3
         private object _userMappingLock = new object();
 
         private readonly GTK3KeyboardDriver _driver;
+        private readonly Gtk3MouseDriver _mouseDriver;
         private StandardKeyboardInputConfig _configuration;
         private List<ButtonMappingEntry> _buttonsUserMapping;
 
-        public GTK3Keyboard(GTK3KeyboardDriver driver, string id, string name)
+        public GTK3Keyboard(GTK3KeyboardDriver driver, Gtk3MouseDriver mouseDriver,string id, string name)
         {
             _driver = driver;
+            _mouseDriver = mouseDriver;
             Id = id;
             Name = name;
             _buttonsUserMapping = new List<ButtonMappingEntry>();
@@ -196,8 +198,12 @@ namespace Ryujinx.Input.GTK3
 
         public Vector3 GetMotionData(MotionInputId inputId)
         {
-            // No operations
+            if (_configuration is StandardKeyboardInputConfig config &&/* config.EnableMouseGyro &&*/ inputId == MotionInputId.Gyroscope)
+            {
+                var velocity = _mouseDriver.GetVelocity();
 
+                return new Vector3(velocity.Y, velocity.X, 0);
+            }
             return Vector3.Zero;
         }
     }
