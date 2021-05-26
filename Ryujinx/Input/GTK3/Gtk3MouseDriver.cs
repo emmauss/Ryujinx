@@ -8,14 +8,16 @@ namespace Ryujinx.Input.GTK3
 {
     public class Gtk3MouseDriver : IMouseDriver
     {
+        private const int GyroIncrement = 8;
+        
         private Widget _parent;
         private Widget _client;
         private bool _isDisposed;
 
         public bool[] Buttons { get; }
         
-        public Vector2 LastPosition { get; private set; }
-        public Vector2 CurrentPosition { get; private set; }
+        public Vector3 LastPosition { get; private set; }
+        public Vector3 CurrentPosition { get; private set; }
 
         public Gtk3MouseDriver(Widget parent)
         {
@@ -24,8 +26,25 @@ namespace Ryujinx.Input.GTK3
             _parent.MotionNotifyEvent += Parent_MotionNotifyEvent;
             _parent.ButtonPressEvent += Parent_ButtonPressEvent;
             _parent.ButtonReleaseEvent += Parent_ButtonReleaseEvent;
+            _parent.ScrollEvent += Parent_ScrollEvent;
 
             Buttons  = new bool[(int) MouseButton.Count];
+        }
+
+        private void Parent_ScrollEvent(object o, ScrollEventArgs args)
+        {
+            if (args.Event.Device.InputSource == InputSource.Mouse )
+            {
+                switch (args.Event.Direction)
+                {
+                    case ScrollDirection.Up:
+                        CurrentPosition = new Vector3(CurrentPosition.X, CurrentPosition.Y, CurrentPosition.Z - GyroIncrement);
+                        break;
+                    case ScrollDirection.Down:
+                        CurrentPosition = new Vector3(CurrentPosition.X, CurrentPosition.Y, CurrentPosition.Z + GyroIncrement);
+                        break;
+                }
+            }
         }
 
         public void SetClientWidget(Widget client)
@@ -52,14 +71,15 @@ namespace Ryujinx.Input.GTK3
             {
                 LastPosition =  LastPosition.Length() == 0 ? CurrentPosition : LastPosition;
 
-                CurrentPosition = new Vector2((float)args.Event.X, (float)args.Event.Y);
+                CurrentPosition = new Vector3((float)args.Event.X, (float)args.Event.Y, CurrentPosition.Z);
             }
         }
-        public Vector2 GetVelocity()
+        
+        public Vector3 GetPointerVelocity()
         {
-            var difference = Vector2.Subtract(LastPosition, CurrentPosition);
-            LastPosition = Vector2.Lerp(LastPosition,CurrentPosition, 0.1f);
-            return Vector2.Multiply(difference, 10);
+            var difference = Vector3.Subtract(LastPosition, CurrentPosition);
+            LastPosition = Vector3.Lerp(LastPosition,CurrentPosition, 0.1f);
+            return Vector3.Multiply(difference, GyroIncrement);
         }
 
         public bool IsButtonPressed(MouseButton button)

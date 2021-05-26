@@ -87,6 +87,7 @@ namespace Ryujinx.Ui
             AddEvents((int)(EventMask.ButtonPressMask
                           | EventMask.ButtonReleaseMask
                           | EventMask.PointerMotionMask
+                          | EventMask.ScrollMask
                           | EventMask.KeyPressMask
                           | EventMask.KeyReleaseMask));
 

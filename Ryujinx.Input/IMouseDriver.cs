@@ -7,10 +7,10 @@ namespace Ryujinx.Input
     public interface IMouseDriver: IGamepadDriver, IDisposable
     {
         public bool[] Buttons { get; }
-        public Vector2 LastPosition { get; }
-        public Vector2 CurrentPosition { get; }
+        public Vector3 LastPosition { get; }
+        public Vector3 CurrentPosition { get; }
 
-        public Vector2 GetVelocity();
+        public Vector3 GetPointerVelocity();
 
         public bool IsButtonPressed(MouseButton button);
 

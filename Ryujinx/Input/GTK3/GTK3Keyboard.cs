@@ -200,9 +200,9 @@ namespace Ryujinx.Input.GTK3
         {
             if (_configuration is StandardKeyboardInputConfig config &&/* config.EnableMouseGyro &&*/ inputId == MotionInputId.Gyroscope)
             {
-                var velocity = _mouseDriver.GetVelocity();
+                var velocity = _mouseDriver.GetPointerVelocity();
 
-                return new Vector3(velocity.Y, velocity.X, 0);
+                return new Vector3(velocity.Y, velocity.X, velocity.Z);
             }
             return Vector3.Zero;
         }
