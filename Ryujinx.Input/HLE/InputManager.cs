@@ -6,12 +6,18 @@ namespace Ryujinx.Input.HLE
     {
         public IGamepadDriver KeyboardDriver { get; private set; }
         public IGamepadDriver GamepadDriver { get; private set; }
-        public IMouseDriver MouseDriver { get; private set; }
+        public IGamepadDriver MouseDriver { get; private set; }
 
-        public InputManager(IGamepadDriver keyboardDriver, IGamepadDriver gamepadDriver, IMouseDriver mouseDriver)
+        public InputManager(IGamepadDriver keyboardDriver, IGamepadDriver gamepadDriver)
         {
             KeyboardDriver = keyboardDriver;
             GamepadDriver = gamepadDriver;
+        }
+
+        public void SetMouseDriver(IGamepadDriver mouseDriver)
+        {
+            MouseDriver?.Dispose();
+
             MouseDriver = mouseDriver;
         }
 
@@ -22,7 +28,12 @@ namespace Ryujinx.Input.HLE
         
         public TouchScreenManager CreateTouchScreenManager()
         {
-            return new TouchScreenManager(MouseDriver);
+            if(MouseDriver == null)
+            {
+                throw new InvalidOperationException("Mouse Driver has not been initialized.");
+            }
+
+            return new TouchScreenManager(MouseDriver.GetGamepad("0") as IMouse);
         }
 
         protected virtual void Dispose(bool disposing)

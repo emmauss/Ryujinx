@@ -67,12 +67,13 @@ namespace Ryujinx.Ui
 
         public RendererWidgetBase(InputManager inputManager, GraphicsDebugLevel glLogLevel)
         {
+            var mouseDriver = new Gtk3MouseDriver(this);
+
             _inputManager = inputManager;
+            _inputManager.SetMouseDriver(mouseDriver);
             NpadManager = _inputManager.CreateNpadManager();
             TouchScreenManager = _inputManager.CreateTouchScreenManager();
             _keyboardInterface = (IKeyboard)_inputManager.KeyboardDriver.GetGamepad("0");
-            
-            (_inputManager.MouseDriver as Gtk3MouseDriver)?.SetClientWidget(this);
 
             WaitEvent = new ManualResetEvent(false);
 
@@ -385,8 +386,8 @@ namespace Ryujinx.Ui
 
         public void Exit()
         {
-            NpadManager?.Dispose();
             TouchScreenManager?.Dispose();
+            NpadManager?.Dispose();
 
             if (_isStopped)
             {
@@ -481,7 +482,7 @@ namespace Ryujinx.Ui
             bool hasTouch = false;
 
             // Get screen touch position from left mouse click
-            if (_isFocused && _inputManager.MouseDriver.IsButtonPressed(MouseButton.Button1))
+            if (_isFocused && (_inputManager.MouseDriver as Gtk3MouseDriver).IsButtonPressed(MouseButton.Button1))
             {
                 hasTouch = TouchScreenManager.Update(true, ConfigurationState.Instance.Graphics.AspectRatio.Value.ToFloat());
             }
@@ -495,7 +496,6 @@ namespace Ryujinx.Ui
 
             return true;
         }
-
 
         [Flags]
         private enum KeyboardHotkeyState

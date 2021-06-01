@@ -240,9 +240,7 @@ namespace Ryujinx.Ui
 
             Task.Run(RefreshFirmwareLabel);
 
-            var mouseDriver = new Gtk3MouseDriver(this);
-
-            InputManager = new InputManager(new GTK3KeyboardDriver(this, mouseDriver), new SDL2GamepadDriver(), mouseDriver);
+            InputManager = new InputManager(new GTK3KeyboardDriver(this), new SDL2GamepadDriver());
         }
 
         private void UpdateIgnoreMissingServicesState(object sender, ReactiveEventArgs<bool> args)

@@ -5,16 +5,13 @@ using System;
 namespace Ryujinx.Input.HLE
 {
     public class TouchScreenManager : IDisposable
-    {
-        private const int SwitchPanelWidth = 1280;
-        private const int SwitchPanelHeight = 720;
-        
-        private readonly IMouseDriver _mouseDriver;
+    {        
+        private readonly IMouse _mouse;
         private Switch _device;
 
-        public TouchScreenManager(IMouseDriver mouseDriver)
+        public TouchScreenManager(IMouse mouse)
         {
-            _mouseDriver = mouseDriver;
+            _mouse = mouse;
         }
         
         public void Initialize(Switch device)
@@ -30,48 +27,16 @@ namespace Ryujinx.Input.HLE
                 
                 return false;
             }
-            
-            var position = _mouseDriver.CurrentPosition;
-            var clientSize = _mouseDriver.GetClientSize();
 
-            float mouseX = position.X;
-            float mouseY = position.Y;
-
-            float aspectWidth = SwitchPanelHeight * aspectRatio;
-
-            int screenWidth = clientSize.Width;
-            int screenHeight = clientSize.Height;
-
-            if (clientSize.Width > clientSize.Height * aspectWidth / SwitchPanelHeight)
+            if (aspectRatio > 0)
             {
-                screenWidth = (int)(clientSize.Height * aspectWidth) / SwitchPanelHeight;
-            }
-            else
-            {
-                screenHeight = (clientSize.Width * SwitchPanelHeight) / (int)aspectWidth;
-            }
-
-            int startX = (clientSize.Width - screenWidth) >> 1;
-            int startY = (clientSize.Height - screenHeight) >> 1;
-
-            int endX = startX + screenWidth;
-            int endY = startY + screenHeight;
-
-            if (mouseX >= startX &&
-                mouseY >= startY &&
-                mouseX < endX &&
-                mouseY < endY)
-            {
-                int screenMouseX = (int)mouseX - startX;
-                int screenMouseY = (int)mouseY - startY;
-
-                int mX = (screenMouseX * (int)aspectWidth) / screenWidth;
-                int mY = (screenMouseY * SwitchPanelHeight) / screenHeight;
+                var snapshot = IMouse.GetMouseStateSnapshot(_mouse);
+                var touchPosition = IMouse.GetTouchPosition(snapshot.Position, _mouse.ClientSize, aspectRatio);
 
                 TouchPoint currentPoint = new TouchPoint
                 {
-                    X = (uint)mX,
-                    Y = (uint)mY,
+                    X = (uint)touchPosition.X,
+                    Y = (uint)touchPosition.Y,
 
                     // Placeholder values till more data is acquired
                     DiameterX = 10,

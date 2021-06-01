@@ -6,43 +6,36 @@ using Size = System.Drawing.Size;
 
 namespace Ryujinx.Input.GTK3
 {
-    public class Gtk3MouseDriver : IMouseDriver
+    public class Gtk3MouseDriver : IGamepadDriver
     {
-        private Widget _parent;
-        private Widget _client;
+        private Widget _widget;
         private bool _isDisposed;
 
-        public bool[] Buttons { get; }
+        public bool[] PressedButtons { get; }
         
-        public Vector2 LastPosition { get; private set; }
         public Vector2 CurrentPosition { get; private set; }
 
         public Gtk3MouseDriver(Widget parent)
         {
-            _parent = parent;
+            _widget = parent;
             
-            _parent.MotionNotifyEvent += Parent_MotionNotifyEvent;
-            _parent.ButtonPressEvent += Parent_ButtonPressEvent;
-            _parent.ButtonReleaseEvent += Parent_ButtonReleaseEvent;
+            _widget.MotionNotifyEvent += Parent_MotionNotifyEvent;
+            _widget.ButtonPressEvent += Parent_ButtonPressEvent;
+            _widget.ButtonReleaseEvent += Parent_ButtonReleaseEvent;
 
-            Buttons  = new bool[(int) MouseButton.Count];
-        }
-
-        public void SetClientWidget(Widget client)
-        {
-            _client = client;
+            PressedButtons  = new bool[(int) MouseButton.Count];
         }
 
         [GLib.ConnectBefore]
         private void Parent_ButtonReleaseEvent(object o, ButtonReleaseEventArgs args)
         {
-            Buttons[args.Event.Button - 1] = false;
+            PressedButtons[args.Event.Button - 1] = false;
         }
 
         [GLib.ConnectBefore]
         private void Parent_ButtonPressEvent(object o, ButtonPressEventArgs args)
         {
-            Buttons[args.Event.Button - 1] = true;
+            PressedButtons[args.Event.Button - 1] = true;
         }
 
         [GLib.ConnectBefore]
@@ -50,24 +43,18 @@ namespace Ryujinx.Input.GTK3
         {
             if (args.Event.Device.InputSource == InputSource.Mouse)
             {
-                LastPosition = CurrentPosition;
-
                 CurrentPosition = new Vector2((float)args.Event.X, (float)args.Event.Y);
             }
-        }
-        public Vector2 GetVelocity()
-        {
-            return CurrentPosition - LastPosition;
         }
 
         public bool IsButtonPressed(MouseButton button)
         {
-            return Buttons[(int) button];
+            return PressedButtons[(int) button];
         }
 
         public Size GetClientSize()
         {
-            return new Size(_client.AllocatedWidth, _client.AllocatedHeight);
+            return new Size(_widget.AllocatedWidth, _widget.AllocatedHeight);
         }
 
         public void Dispose()
@@ -79,11 +66,11 @@ namespace Ryujinx.Input.GTK3
 
             _isDisposed = true;
             
-            _parent.MotionNotifyEvent -= Parent_MotionNotifyEvent;
-            _parent.ButtonPressEvent -= Parent_ButtonPressEvent;
-            _parent.ButtonReleaseEvent -= Parent_ButtonReleaseEvent;
+            _widget.MotionNotifyEvent -= Parent_MotionNotifyEvent;
+            _widget.ButtonPressEvent -= Parent_ButtonPressEvent;
+            _widget.ButtonReleaseEvent -= Parent_ButtonReleaseEvent;
 
-            _client = null;
+            _widget = null;
         }
 
         public string DriverName => "GTK3";
@@ -104,7 +91,7 @@ namespace Ryujinx.Input.GTK3
         
         public IGamepad GetGamepad(string id)
         {
-            throw new NotImplementedException();
+            return new Gtk3Mouse(this);
         }
     }
 }
