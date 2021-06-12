@@ -1,4 +1,5 @@
 using Ryujinx.Common.Configuration.Hid;
+using System;
 using System.Drawing;
 using System.Numerics;
 
@@ -8,7 +9,7 @@ namespace Ryujinx.Input.GTK3
     {
         private GTK3MouseDriver _driver;
 
-        public GamepadFeaturesFlag Features => throw new System.NotImplementedException();
+        public GamepadFeaturesFlag Features => throw new NotImplementedException();
 
         public string Id => "0";
 
@@ -32,22 +33,22 @@ namespace Ryujinx.Input.GTK3
 
         public GamepadStateSnapshot GetMappedStateSnapshot()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public Vector3 GetMotionData(MotionInputId inputId)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public GamepadStateSnapshot GetStateSnapshot()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public (float, float) GetStick(StickInputId inputId)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public bool IsButtonPressed(MouseButton button)
@@ -57,22 +58,22 @@ namespace Ryujinx.Input.GTK3
 
         public bool IsPressed(GamepadButtonInputId inputId)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void Rumble(float lowFrequency, float highFrequency, uint durationMs)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void SetConfiguration(InputConfig configuration)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void SetTriggerThreshold(float triggerThreshold)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void Dispose()
