@@ -67,7 +67,7 @@ namespace Ryujinx.Ui
 
         public RendererWidgetBase(InputManager inputManager, GraphicsDebugLevel glLogLevel)
         {
-            var mouseDriver = new Gtk3MouseDriver(this);
+            var mouseDriver = new GTK3MouseDriver(this);
 
             _inputManager = inputManager;
             _inputManager.SetMouseDriver(mouseDriver);
@@ -482,7 +482,7 @@ namespace Ryujinx.Ui
             bool hasTouch = false;
 
             // Get screen touch position from left mouse click
-            if (_isFocused && (_inputManager.MouseDriver as Gtk3MouseDriver).IsButtonPressed(MouseButton.Button1))
+            if (_isFocused && (_inputManager.MouseDriver as GTK3MouseDriver).IsButtonPressed(MouseButton.Button1))
             {
                 hasTouch = TouchScreenManager.Update(true, ConfigurationState.Instance.Graphics.AspectRatio.Value.ToFloat());
             }

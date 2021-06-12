@@ -5,7 +5,7 @@ using System;
 namespace Ryujinx.Input.HLE
 {
     public class TouchScreenManager : IDisposable
-    {        
+    {
         private readonly IMouse _mouse;
         private Switch _device;
 
@@ -13,7 +13,7 @@ namespace Ryujinx.Input.HLE
         {
             _mouse = mouse;
         }
-        
+
         public void Initialize(Switch device)
         {
             _device = device;
@@ -24,7 +24,7 @@ namespace Ryujinx.Input.HLE
             if (!isFocused)
             {
                 _device.Hid.Touchscreen.Update();
-                
+
                 return false;
             }
 
@@ -51,9 +51,7 @@ namespace Ryujinx.Input.HLE
 
             return false;
         }
-        
-        public void Dispose()
-        {
-        }
+
+        public void Dispose() { }
     }
 }

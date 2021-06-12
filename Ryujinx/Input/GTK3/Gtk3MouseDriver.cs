@@ -6,7 +6,7 @@ using Size = System.Drawing.Size;
 
 namespace Ryujinx.Input.GTK3
 {
-    public class Gtk3MouseDriver : IGamepadDriver
+    public class GTK3MouseDriver : IGamepadDriver
     {
         private Widget _widget;
         private bool _isDisposed;
@@ -15,15 +15,15 @@ namespace Ryujinx.Input.GTK3
         
         public Vector2 CurrentPosition { get; private set; }
 
-        public Gtk3MouseDriver(Widget parent)
+        public GTK3MouseDriver(Widget parent)
         {
             _widget = parent;
-            
+
             _widget.MotionNotifyEvent += Parent_MotionNotifyEvent;
             _widget.ButtonPressEvent += Parent_ButtonPressEvent;
             _widget.ButtonReleaseEvent += Parent_ButtonReleaseEvent;
 
-            PressedButtons  = new bool[(int) MouseButton.Count];
+            PressedButtons = new bool[(int)MouseButton.Count];
         }
 
         [GLib.ConnectBefore]
@@ -57,22 +57,6 @@ namespace Ryujinx.Input.GTK3
             return new Size(_widget.AllocatedWidth, _widget.AllocatedHeight);
         }
 
-        public void Dispose()
-        {
-            if (_isDisposed)
-            {
-                return;
-            }
-
-            _isDisposed = true;
-            
-            _widget.MotionNotifyEvent -= Parent_MotionNotifyEvent;
-            _widget.ButtonPressEvent -= Parent_ButtonPressEvent;
-            _widget.ButtonReleaseEvent -= Parent_ButtonReleaseEvent;
-
-            _widget = null;
-        }
-
         public string DriverName => "GTK3";
         
         public event Action<string> OnGamepadConnected
@@ -91,7 +75,23 @@ namespace Ryujinx.Input.GTK3
         
         public IGamepad GetGamepad(string id)
         {
-            return new Gtk3Mouse(this);
+            return new GTK3Mouse(this);
+        }
+
+        public void Dispose()
+        {
+            if (_isDisposed)
+            {
+                return;
+            }
+
+            _isDisposed = true;
+
+            _widget.MotionNotifyEvent -= Parent_MotionNotifyEvent;
+            _widget.ButtonPressEvent -= Parent_ButtonPressEvent;
+            _widget.ButtonReleaseEvent -= Parent_ButtonReleaseEvent;
+
+            _widget = null;
         }
     }
 }

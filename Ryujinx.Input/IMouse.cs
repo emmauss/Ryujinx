@@ -18,7 +18,6 @@ namespace Ryujinx.Input
         /// <returns>True if the given button is pressed on the mouse</returns>
         bool IsButtonPressed(MouseButton button);
 
-
         /// <summary>
         /// Get the position of the mouse in the client.
         /// </summary>
@@ -28,7 +27,6 @@ namespace Ryujinx.Input
         /// Get the client size.
         /// </summary>
         Size ClientSize { get; }
-
 
         /// <summary>
         /// Get the button states of the mouse.
@@ -44,6 +42,7 @@ namespace Ryujinx.Input
         {
             var position = mouse.GetPosition();
             bool[] buttons = new bool[(int)MouseButton.Count];
+
             mouse.Buttons.CopyTo(buttons, 0);
 
             return new MouseStateSnapshot(buttons, position);

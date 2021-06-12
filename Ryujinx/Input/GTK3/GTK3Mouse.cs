@@ -4,9 +4,9 @@ using System.Numerics;
 
 namespace Ryujinx.Input.GTK3
 {
-    public class Gtk3Mouse : IMouse
+    public class GTK3Mouse : IMouse
     {
-        private Gtk3MouseDriver _driver;
+        private GTK3MouseDriver _driver;
 
         public GamepadFeaturesFlag Features => throw new System.NotImplementedException();
 
@@ -18,15 +18,9 @@ namespace Ryujinx.Input.GTK3
 
         public bool[] Buttons => _driver.PressedButtons;
 
-        public Gtk3Mouse(Gtk3MouseDriver driver)
+        public GTK3Mouse(GTK3MouseDriver driver)
         {
             _driver = driver;
-        }
-
-
-        public void Dispose()
-        {
-            _driver = null;
         }
 
         public Size ClientSize => _driver.GetClientSize();
@@ -79,6 +73,11 @@ namespace Ryujinx.Input.GTK3
         public void SetTriggerThreshold(float triggerThreshold)
         {
             throw new System.NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            _driver = null;
         }
     }
 }

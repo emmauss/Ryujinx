@@ -9,6 +9,7 @@ namespace Ryujinx.Input
     public class MouseStateSnapshot
     {
         private bool[] _buttonState;
+
         public Vector2 Position { get; }
 
         /// <summary>

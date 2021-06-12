@@ -28,7 +28,7 @@ namespace Ryujinx.Input.HLE
         
         public TouchScreenManager CreateTouchScreenManager()
         {
-            if(MouseDriver == null)
+            if (MouseDriver == null)
             {
                 throw new InvalidOperationException("Mouse Driver has not been initialized.");
             }
