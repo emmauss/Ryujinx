@@ -225,6 +225,11 @@ namespace Ryujinx.Configuration
         public bool EnableKeyboard { get; set; }
 
         /// <summary>
+        /// Enable or disable mouse support (Independent from controllers binding)
+        /// </summary>
+        public bool EnableMouse { get; set; }
+
+        /// <summary>
         /// Hotkey Keyboard Bindings
         /// </summary>
         public KeyboardHotkeys Hotkeys { get; set; }
