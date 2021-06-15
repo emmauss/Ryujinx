@@ -11,16 +11,18 @@ namespace Ryujinx.Input
         private bool[] _buttonState;
 
         public Vector2 Position { get; }
+        public Vector2 Scroll { get; }
 
         /// <summary>
         /// Create a new <see cref="MouseStateSnapshot"/>.
         /// </summary>
         /// <param name="buttonState">The keys state</param>
-        public MouseStateSnapshot(bool[] buttonState, Vector2 position)
+        public MouseStateSnapshot(bool[] buttonState, Vector2 position, Vector2 scroll)
         {
             _buttonState = buttonState;
 
             Position = position;
+            Scroll   = scroll;
         }
 
         /// <summary>

@@ -87,6 +87,7 @@ namespace Ryujinx.Ui
             AddEvents((int)(EventMask.ButtonPressMask
                           | EventMask.ButtonReleaseMask
                           | EventMask.PointerMotionMask
+                          | EventMask.ScrollMask
                           | EventMask.KeyPressMask
                           | EventMask.KeyReleaseMask));
 
@@ -254,7 +255,7 @@ namespace Ryujinx.Ui
             Renderer = Device.Gpu.Renderer;
             Renderer?.Window.SetSize(_windowWidth, _windowHeight);
 
-            NpadManager.Initialize(device, ConfigurationState.Instance.Hid.InputConfig, ConfigurationState.Instance.Hid.EnableKeyboard);
+            NpadManager.Initialize(device, ConfigurationState.Instance.Hid.InputConfig, ConfigurationState.Instance.Hid.EnableKeyboard, ConfigurationState.Instance.Hid.EnableMouse);
             TouchScreenManager.Initialize(device);
         }
 
@@ -442,7 +443,7 @@ namespace Ryujinx.Ui
                 });
             }
 
-            NpadManager.Update();
+            NpadManager.Update(ConfigurationState.Instance.Graphics.AspectRatio.Value.ToFloat());
 
             if ((Toplevel as MainWindow).IsFocused)
             {
@@ -461,7 +462,7 @@ namespace Ryujinx.Ui
             bool hasTouch = false;
 
             // Get screen touch position
-            if ((Toplevel as MainWindow).IsFocused)
+            if ((Toplevel as MainWindow).IsFocused && !ConfigurationState.Instance.Hid.EnableMouse)
             {
                 hasTouch = TouchScreenManager.Update(true, (_inputManager.MouseDriver as GTK3MouseDriver).IsButtonPressed(MouseButton.Button1), ConfigurationState.Instance.Graphics.AspectRatio.Value.ToFloat());
             }

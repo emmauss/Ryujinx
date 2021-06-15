@@ -24,6 +24,11 @@ namespace Ryujinx.Input
         Vector2 GetPosition();
 
         /// <summary>
+        /// Get the mouse scroll delta.
+        /// </summary>
+        Vector2 GetScroll();
+
+        /// <summary>
         /// Get the client size.
         /// </summary>
         Size ClientSize { get; }
@@ -40,12 +45,11 @@ namespace Ryujinx.Input
         /// <returns>A snaphost of the state of the mouse.</returns>
         public static MouseStateSnapshot GetMouseStateSnapshot(IMouse mouse)
         {
-            var position = mouse.GetPosition();
             bool[] buttons = new bool[(int)MouseButton.Count];
 
             mouse.Buttons.CopyTo(buttons, 0);
 
-            return new MouseStateSnapshot(buttons, position);
+            return new MouseStateSnapshot(buttons, mouse.GetPosition(), mouse.GetScroll());
         }
 
         /// <summary>
@@ -55,7 +59,7 @@ namespace Ryujinx.Input
         /// <param name="clientSize">The size of the client</param>
         /// <param name="aspectRatio">The aspect ratio of the view</param>
         /// <returns>A snaphost of the state of the mouse.</returns>
-        public static Vector2 GetTouchPosition(Vector2 mousePosition, Size clientSize, float aspectRatio)
+        public static Vector2 GetScreenPosition(Vector2 mousePosition, Size clientSize, float aspectRatio)
         {
             float mouseX = mousePosition.X;
             float mouseY = mousePosition.Y;
