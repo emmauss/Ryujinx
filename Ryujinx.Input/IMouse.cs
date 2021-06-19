@@ -53,7 +53,7 @@ namespace Ryujinx.Input
         }
 
         /// <summary>
-        /// Get the touch position of a mouse position relative to the app's view
+        /// Get the position of a mouse on screen relative to the app's view
         /// </summary>
         /// <param name="mousePosition">The position of the mouse in the client</param>
         /// <param name="clientSize">The size of the client</param>

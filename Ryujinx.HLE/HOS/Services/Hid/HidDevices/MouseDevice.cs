@@ -1,6 +1,5 @@
 using Ryujinx.HLE.HOS.Services.Hid.Types.SharedMemory.Common;
 using Ryujinx.HLE.HOS.Services.Hid.Types.SharedMemory.Mouse;
-using System;
 
 namespace Ryujinx.HLE.HOS.Services.Hid
 {
