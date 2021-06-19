@@ -63,6 +63,7 @@ namespace Ryujinx.Ui
 
         private int _windowHeight;
         private int _windowWidth;
+        private bool _isMouseInClient;
 
         public RendererWidgetBase(InputManager inputManager, GraphicsDebugLevel glLogLevel)
         {
@@ -88,6 +89,8 @@ namespace Ryujinx.Ui
                           | EventMask.ButtonReleaseMask
                           | EventMask.PointerMotionMask
                           | EventMask.ScrollMask
+                          | EventMask.EnterNotifyMask
+                          | EventMask.LeaveNotifyMask
                           | EventMask.KeyPressMask
                           | EventMask.KeyReleaseMask));
 
@@ -126,6 +129,8 @@ namespace Ryujinx.Ui
         {
             ConfigurationState.Instance.HideCursorOnIdle.Event -= HideCursorStateChanged;
 
+            Window.Cursor = null;
+
             NpadManager.Dispose();
             Dispose();
         }
@@ -137,7 +142,32 @@ namespace Ryujinx.Ui
                 _lastCursorMoveTime = Stopwatch.GetTimestamp();
             }
 
+            if(ConfigurationState.Instance.Hid.EnableMouse)
+            {
+                Window.Cursor = _invisibleCursor;
+            }
+
+            _isMouseInClient = true;
+
             return false;
+        }
+
+        protected override bool OnEnterNotifyEvent(EventCrossing evnt)
+        {
+            Window.Cursor = ConfigurationState.Instance.Hid.EnableMouse ? _invisibleCursor : null;
+
+            _isMouseInClient = true;
+
+            return base.OnEnterNotifyEvent(evnt);
+        }
+
+        protected override bool OnLeaveNotifyEvent(EventCrossing evnt)
+        {
+            Window.Cursor = null;
+
+            _isMouseInClient = false;
+
+            return base.OnLeaveNotifyEvent(evnt);
         }
 
         protected override void OnGetPreferredHeight(out int minimumHeight, out int naturalHeight)
@@ -242,10 +272,15 @@ namespace Ryujinx.Ui
 
             _toggleDockedMode = toggleDockedMode;
 
-            if (_hideCursorOnIdle)
+            if (_hideCursorOnIdle && !ConfigurationState.Instance.Hid.EnableMouse)
             {
                 long cursorMoveDelta = Stopwatch.GetTimestamp() - _lastCursorMoveTime;
                 Window.Cursor = (cursorMoveDelta >= CursorHideIdleTime * Stopwatch.Frequency) ? _invisibleCursor : null;
+            }
+
+            if(ConfigurationState.Instance.Hid.EnableMouse && _isMouseInClient)
+            {
+                Window.Cursor = _invisibleCursor;
             }
         }
 
