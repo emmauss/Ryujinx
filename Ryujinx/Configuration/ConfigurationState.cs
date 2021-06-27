@@ -848,7 +848,7 @@ namespace Ryujinx.Configuration
 
             if (configurationFileFormat.Version < 28)
             {
-                Common.Logging.Logger.Warning?.Print(LogClass.Application, $"Outdated configuration version {configurationFileFormat.Version}, migrating to version 27.");
+                Common.Logging.Logger.Warning?.Print(LogClass.Application, $"Outdated configuration version {configurationFileFormat.Version}, migrating to version 28.");
 
                 configurationFileFormat.Hotkeys = new KeyboardHotkeys
                 {
