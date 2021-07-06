@@ -361,7 +361,8 @@ namespace Ryujinx.Ui
                     }
                 });
             }
-            else {
+            else
+            {
                 Logger.Error?.Print(LogClass.Application, $"Screenshot is empty. Size : {e.Data.Length} bytes. Resolution : {e.Width}x{e.Height}", "Screenshot");
             }
         }
