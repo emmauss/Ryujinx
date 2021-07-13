@@ -86,6 +86,7 @@
     <None Remove="Ui\Widgets\ProfileDialog.glade" />
     <None Remove="Ui\Windows\ControllerWindow.glade" />
     <None Remove="Ui\Windows\DlcWindow.glade" />
+    <None Remove="Ui\Windows\AppExplorerWindow.glade" />
     <None Remove="Ui\Windows\SettingsWindow.glade" />
     <None Remove="Ui\Windows\TitleUpdateWindow.glade" />
     <None Remove="Modules\Updater\UpdateDialog.glade" />
@@ -111,6 +112,7 @@
     <EmbeddedResource Include="Ui\Widgets\ProfileDialog.glade" />
     <EmbeddedResource Include="Ui\Windows\ControllerWindow.glade" />
     <EmbeddedResource Include="Ui\Windows\DlcWindow.glade" />
+    <EmbeddedResource Include="Ui\Windows\AppExplorerWindow.glade" />
     <EmbeddedResource Include="Ui\Windows\SettingsWindow.glade" />
     <EmbeddedResource Include="Ui\Windows\TitleUpdateWindow.glade" />
     <EmbeddedResource Include="Modules\Updater\UpdateDialog.glade" />

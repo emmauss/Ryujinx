@@ -1,4 +1,6 @@
 ﻿using Gtk;
+using Ryujinx.Ui.Windows;
+using System;
 
 namespace Ryujinx.Ui.Widgets
 {
@@ -15,6 +17,7 @@ namespace Ryujinx.Ui.Widgets
         private MenuItem _extractRomFsMenuItem;
         private MenuItem _extractExeFsMenuItem;
         private MenuItem _extractLogoMenuItem;
+        private MenuItem _exploreMenuItem;
         private Menu     _manageSubMenu;
         private MenuItem _manageCacheMenuItem;
         private MenuItem _purgePtcCacheMenuItem;
@@ -119,6 +122,15 @@ namespace Ryujinx.Ui.Widgets
             _extractLogoMenuItem.Activated += ExtractLogo_Clicked;
 
             //
+            // _exploreMenuItem
+            //
+            _exploreMenuItem = new MenuItem("Expore Contents")
+            {
+                TooltipText = "Explore App Contents"
+            };
+            _exploreMenuItem.Activated += Explore_Clicked;
+
+            //
             // _manageSubMenu
             //
             _manageSubMenu = new Menu();
@@ -170,11 +182,17 @@ namespace Ryujinx.Ui.Widgets
             ShowComponent();
         }
 
+        private void Explore_Clicked(object sender, EventArgs e)
+        {
+            new AppExplorerWindow(_parent, _virtualFileSystem, _titleFilePath, _titleName, $"{_titleId:x16}").ShowAll();
+        }
+
         private void ShowComponent()
         {
             _extractSubMenu.Append(_extractExeFsMenuItem);
             _extractSubMenu.Append(_extractRomFsMenuItem);
             _extractSubMenu.Append(_extractLogoMenuItem);
+            _extractSubMenu.Append(_exploreMenuItem);
 
             _manageSubMenu.Append(_purgePtcCacheMenuItem);
             _manageSubMenu.Append(_purgeShaderCacheMenuItem);
