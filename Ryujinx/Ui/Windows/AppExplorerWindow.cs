@@ -9,19 +9,22 @@ using Ryujinx.HLE.FileSystem;
 using System;
 using System.IO;
 using System.Linq;
-
+using System.Threading.Tasks;
 using GUI = Gtk.Builder.ObjectAttribute;
 
 namespace Ryujinx.Ui.Windows
 {
-    public class AppExplorerWindow : Window
+    public class AppExplorerWindow : Window, IProgressReport
     {
-        private readonly MainWindow _parent;
         private Xci _xci;
         private PartitionFileSystem _fs;
         private string _appType = "";
         private string _titleName;
         private string _titleId;
+
+        private long _operationTotal;
+        private long _operationCompleted;
+        private bool _operationRunning;
 
 #pragma warning disable CS0649, IDE0044
         [GUI] TreeView _explorerView;
@@ -29,19 +32,21 @@ namespace Ryujinx.Ui.Windows
         [GUI] Label _idLabel;
         [GUI] Label _sizeLabel;
         [GUI] Label _typeLabel;
+        [GUI] Label _progressLabel;
+        [GUI] Entry _searchEntry;
         [GUI] TreeSelection _explorerSelection;
-
+        [GUI] Gtk.ProgressBar _progressBar;
+        [GUI] TreeModelFilter _filterModel;
 #pragma warning restore CS0649, IDE0044
 
         public string AppPath { get; }
 
         public VirtualFileSystem VirtualFileSystem { get; }
 
-        public AppExplorerWindow(MainWindow parent, VirtualFileSystem virtualFileSystem, string titlePath, string titleName, string titleId) : this(new Builder("Ryujinx.Ui.Windows.AppExplorerWindow.glade"), parent, virtualFileSystem, titlePath, titleName, titleId) { }
+        public AppExplorerWindow(VirtualFileSystem virtualFileSystem, string titlePath, string titleName, string titleId) : this(new Builder("Ryujinx.Ui.Windows.AppExplorerWindow.glade"), virtualFileSystem, titlePath, titleName, titleId) { }
 
-        private AppExplorerWindow(Builder builder, MainWindow parent, VirtualFileSystem virtualFileSystem, string appPath, string titleName, string titleId) : base(builder.GetObject("_explorerWindow").Handle)
+        private AppExplorerWindow(Builder builder, VirtualFileSystem virtualFileSystem, string appPath, string titleName, string titleId) : base(builder.GetObject("_explorerWindow").Handle)
         {
-            _parent = parent;
             VirtualFileSystem = virtualFileSystem;
             AppPath = appPath;
             builder.Autoconnect(this);
@@ -49,13 +54,24 @@ namespace Ryujinx.Ui.Windows
             _titleName = titleName;
             _titleId = titleId;
 
+            var model = _explorerView.Model;
+
+            _filterModel = new TreeModelFilter(model, null);
+
+            _filterModel.VisibleFunc = new TreeModelFilterVisibleFunc(Filter);
+
+            _explorerView.Model = _filterModel;
+
             _explorerView.AppendColumn("Name", new CellRendererText(), "text", 0);
             _explorerView.AppendColumn("Size", new CellRendererText(), "text", 1);
             _explorerView.AppendColumn("Path", new CellRendererText(), "text", 2);
             _explorerView.AppendColumn("Type", new CellRendererText(), "text", 3);
+            _explorerView.AppendColumn("Title Id", new CellRendererText(), "text", 4);
 
             _explorerView.Columns[2].Visible = false;
             _explorerView.Columns[0].MinWidth = 250;
+
+            _searchEntry.Changed += SearchEntry_Changed;
 
             Title = $"Ryujinx - Exploring {titleName} Contents";
 
@@ -66,6 +82,74 @@ namespace Ryujinx.Ui.Windows
             _explorerView.ButtonReleaseEvent += ExplorerView_RowClicked;
 
             LoadApp();
+        }
+
+        private void SearchEntry_Changed(object sender, EventArgs e)
+        {
+            _filterModel.Refilter();
+        }
+
+        private bool Filter(ITreeModel model, TreeIter iter)
+        {
+            string query = _searchEntry.Text.ToLower();
+
+            if(string.IsNullOrWhiteSpace(query))
+            {
+                return true;
+            }
+
+            string name = model.GetValue(iter, 0).ToString().ToLower();
+            string type = model.GetValue(iter, 3).ToString();
+            string titleId = model.GetValue(iter, 4).ToString().ToLower();
+
+            if(name == "[expand]" || type == "Section" || type == "Partition")
+            {
+                return true;
+            }
+
+            if(name.Contains(query) || titleId.Contains(query))
+            {
+                return true;
+            }
+
+            if (model.IterHasChild(iter))
+            {
+                return SearchChildNodes(iter);
+            }
+
+            return false;
+
+            bool SearchChildNodes(TreeIter parentIter)
+            {
+                TreeIter childIter;
+                model.IterChildren(out childIter, parentIter);
+
+                string name = model.GetValue(parentIter, 0).ToString().ToLower();
+                string type = model.GetValue(parentIter, 3).ToString();
+                string titleId = model.GetValue(parentIter, 4).ToString().ToLower();
+
+                if (name == "[expand]" || type == "Section" || type == "Partition")
+                {
+                    return true;
+                }
+
+                if (name == "[expand]")
+                {
+                    return true;
+                }
+
+                do
+                {
+                    if (name.Contains(query) || titleId.Contains(query))
+                        return true;
+
+                    if (model.IterHasChild(childIter))
+                        return SearchChildNodes(childIter);
+
+                } while (model.IterNext(ref childIter));
+
+                return false;
+            }
         }
 
         private void ExplorerView_RowClicked(object o, ButtonReleaseEventArgs args)
@@ -136,139 +220,180 @@ namespace Ryujinx.Ui.Windows
 
         private void SaveToMenuItem_Activated(object sender, EventArgs e)
         {
-            _explorerSelection.GetSelected(out TreeIter treeIter);
-
-            string path = _explorerView.Model.GetValue(treeIter, 2).ToString();
+            if(_operationRunning)
+            {
+                return;
+            }
 
             string savePath = GetSaveToPath("Save To...");
 
-            string fileName = string.Empty;
+            _operationRunning = true;
 
             FileStream destination;
 
-            if(!string.IsNullOrWhiteSpace(savePath) && Directory.Exists(savePath))
+            Task.Run(() =>
             {
-                var levels = path.Split("/", StringSplitOptions.RemoveEmptyEntries);
+                _explorerSelection.GetSelected(out TreeIter treeIter);
 
-                switch (_appType)
+                string path = _explorerView.Model.GetValue(treeIter, 2).ToString();
+
+                string fileName = string.Empty;
+
+                FileStream destination;
+
+                try
                 {
-                    case "xci":
-                        var partitionType = Enum.Parse<XciPartitionType>(levels[0], true);
-                        if (_xci.HasPartition(partitionType))
+                    if (!string.IsNullOrWhiteSpace(savePath) && Directory.Exists(savePath))
+                    {
+                        var levels = path.Split("/", StringSplitOptions.RemoveEmptyEntries);
+
+                        switch (_appType)
                         {
-                            var partition = _xci.OpenPartition(partitionType);
-
-                            fileName = levels[1];
-
-                            if (fileName.ToLower().EndsWith(".nca"))
-                            {
-                                if (partition.FileExists(fileName))
+                            case "xci":
+                                var partitionType = Enum.Parse<XciPartitionType>(levels[0], true);
+                                if (_xci.HasPartition(partitionType))
                                 {
-                                    var entry = partition.Files.ToList().Find(x => x.Name == fileName);
+                                    var partition = _xci.OpenPartition(partitionType);
 
-                                    var ncaStorage = partition.OpenFile(entry, OpenMode.Read).AsStorage();
+                                    fileName = levels[1];
 
-                                    if (levels.Length == 2)
+                                    if (fileName.ToLower().EndsWith(".nca"))
                                     {
-                                        using (destination = File.OpenWrite(System.IO.Path.Combine(savePath, fileName)))
+                                        if (partition.FileExists(fileName))
                                         {
-                                            ncaStorage.CopyToStream(destination);
-                                        }
+                                            var entry = partition.Files.ToList().Find(x => x.Name == fileName);
 
-                                        return;
-                                    }
+                                            var ncaStorage = partition.OpenFile(entry, OpenMode.Read).AsStorage();
 
-                                    var nca = new Nca(VirtualFileSystem.KeySet, ncaStorage);
-
-                                    var ncaSectionType = Enum.Parse<NcaSectionType>(levels[2], true);
-
-                                    if (levels.Length == 3)
-                                    {
-                                        if (nca.CanOpenSection(ncaSectionType))
-                                        {
-                                            var section = nca.OpenStorage(ncaSectionType, IntegrityCheckLevel.IgnoreOnInvalid);
-
-                                            savePath = System.IO.Path.Combine(savePath, fileName, ncaSectionType.ToString());
-
-                                            Directory.CreateDirectory(new FileInfo(savePath).DirectoryName);
-
-                                            using (destination = File.OpenWrite(savePath))
+                                            if (levels.Length == 2)
                                             {
-                                                section.CopyToStream(destination);
+                                                using (destination = File.OpenWrite(System.IO.Path.Combine(savePath, fileName)))
+                                                {
+                                                    ncaStorage.GetSize(out var size);
+
+                                                    LogMessage($"Saving {entry.Name}");
+
+                                                    ncaStorage.CopyToStream(destination, size, this);
+                                                }
+
+                                                return;
+                                            }
+
+                                            var nca = new Nca(VirtualFileSystem.KeySet, ncaStorage);
+
+                                            var ncaSectionType = Enum.Parse<NcaSectionType>(levels[2], true);
+
+                                            if (levels.Length == 3)
+                                            {
+                                                if (nca.CanOpenSection(ncaSectionType))
+                                                {
+                                                    var section = nca.OpenStorage(ncaSectionType, IntegrityCheckLevel.IgnoreOnInvalid);
+
+                                                    savePath = System.IO.Path.Combine(savePath, fileName, ncaSectionType.ToString());
+
+                                                    Directory.CreateDirectory(new FileInfo(savePath).DirectoryName);
+
+                                                    using (destination = File.OpenWrite(savePath))
+                                                    {
+                                                        section.GetSize(out var size);
+
+                                                        LogMessage($"Saving {ncaSectionType} section");
+
+                                                        section.CopyToStream(destination, size, this);
+                                                    }
+                                                }
+                                                return;
+                                            }
+                                            string relativePath = string.Join('/', levels.AsSpan().Slice(3).ToArray());
+
+                                            TransverseNca(nca, ncaSectionType, "/" + relativePath);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        savePath = System.IO.Path.Combine(savePath, fileName);
+
+                                        Directory.CreateDirectory(new FileInfo(savePath).DirectoryName);
+
+                                        using (destination = File.OpenWrite(savePath))
+                                        {
+                                            if (partition.OpenFile(out var file, fileName.ToU8Span(), OpenMode.Read) == Result.Success)
+                                            {
+                                                file.GetSize(out var size);
+
+                                                LogMessage($"Saving {fileName}");
+
+                                                file.AsStorage().CopyToStream(destination, size, this);
                                             }
                                         }
-                                        return;
                                     }
-                                    string relativePath = string.Join('/', levels.AsSpan().Slice(3).ToArray());
-
-                                    TransverseNca(nca, ncaSectionType, "/" + relativePath);
                                 }
-                            }
-                            else
-                            {
-                                savePath = System.IO.Path.Combine(savePath, fileName);
-
-                                Directory.CreateDirectory(new FileInfo(savePath).DirectoryName);
-
-                                using (destination = File.OpenWrite(savePath))
+                                break;
+                            case "nsp":
+                                fileName = levels[0];
+                                if (fileName.ToLower().EndsWith(".nca"))
                                 {
-                                    if (partition.OpenFile(out var file, fileName.ToU8Span(), OpenMode.Read) == Result.Success)
+                                    if (_fs.FileExists(fileName))
                                     {
-                                        file.AsStorage().CopyToStream(destination);
+                                        var entry = _fs.Files.ToList().Find(x => x.Name == fileName);
+
+                                        var ncaStorage = _fs.OpenFile(entry, OpenMode.Read).AsStorage();
+
+                                        if (levels.Length == 1)
+                                        {
+                                            using (destination = File.OpenWrite(System.IO.Path.Combine(savePath, fileName)))
+                                            {
+                                                ncaStorage.GetSize(out var size);
+
+                                                LogMessage($"Saving {fileName}");
+
+                                                ncaStorage.CopyToStream(destination, size, this);
+                                            }
+
+                                            return;
+                                        }
+
+                                        var nca = new Nca(VirtualFileSystem.KeySet, ncaStorage);
+
+                                        if (levels.Last() != fileName)
+                                        {
+                                            var ncaSection = Enum.Parse<NcaSectionType>(levels[1], true);
+
+                                            string relativePath = string.Join('/', levels.AsSpan().Slice(2).ToArray());
+
+                                            TransverseNca(nca, ncaSection, "/" + relativePath);
+                                        }
                                     }
                                 }
-                            }
-                        }
-                        break;
-                    case "nsp":
-                        fileName = levels[0];
-                        if (fileName.ToLower().EndsWith(".nca"))
-                        {
-                            if (_fs.FileExists(fileName))
-                            {
-                                var entry = _fs.Files.ToList().Find(x => x.Name == fileName);
-
-                                var ncaStorage = _fs.OpenFile(entry, OpenMode.Read).AsStorage();
-
-                                if (levels.Length == 1)
+                                else
                                 {
-                                    using (destination = File.OpenWrite(System.IO.Path.Combine(savePath, fileName)))
+                                    savePath = System.IO.Path.Combine(savePath, fileName);
+
+                                    Directory.CreateDirectory(new FileInfo(savePath).DirectoryName);
+
+                                    using (destination = File.OpenWrite(savePath))
                                     {
-                                        ncaStorage.CopyToStream(destination);
+                                        if (_fs.OpenFile(out var file, fileName.ToU8Span(), OpenMode.Read) == Result.Success)
+                                        {
+                                            file.GetSize(out var size);
+
+                                            LogMessage($"Saving {fileName}");
+
+                                            file.AsStorage().CopyToStream(destination, size, this);
+                                        }
                                     }
-
-                                    return;
                                 }
-
-                                var nca = new Nca(VirtualFileSystem.KeySet, ncaStorage);
-
-                                if (levels.Last() != fileName)
-                                {
-                                    var ncaSection = Enum.Parse<NcaSectionType>(levels[1], true);
-
-                                    string relativePath = string.Join('/', levels.AsSpan().Slice(2).ToArray());
-
-                                    TransverseNca(nca, ncaSection, "/" + relativePath);
-                                }
-                            }
+                                break;
                         }
-                        else
-                        {
-                            savePath = System.IO.Path.Combine(savePath, fileName);
-
-                            Directory.CreateDirectory(new FileInfo(savePath).DirectoryName);
-
-                            using (destination = File.OpenWrite(savePath))
-                            {
-                                if (_fs.OpenFile(out var file, fileName.ToU8Span(), OpenMode.Read) == Result.Success)
-                                {
-                                    file.AsStorage().CopyToStream(destination);
-                                }
-                            }
-                        }
-                        break;
+                    }
                 }
-            }
+                finally
+                {
+                    _operationRunning = false;
+
+                    LogMessage("Save Successful");
+                }
+            });
 
             void TransverseNca(Nca nca, NcaSectionType sectionType, string relativePath)
             {
@@ -288,11 +413,13 @@ namespace Ryujinx.Ui.Windows
 
                                 using (destination = File.OpenWrite(savePath))
                                 {
-                                    file.AsStorage().CopyToStream(destination);
+                                    file.GetSize(out var size);
+
+                                    LogMessage($"Saving {relativePath}");
+
+                                    file.AsStorage().CopyToStream(destination, size, this);
                                 }
                             }
-
-
                         }
                     }
                 }
@@ -301,6 +428,10 @@ namespace Ryujinx.Ui.Windows
 
         private void ExtractToMenuItem_Activated(object sender, EventArgs e)
         {
+            if(_operationRunning)
+            {
+                return;
+            }
             _explorerSelection.GetSelected(out TreeIter treeIter);
 
             string path = _explorerView.Model.GetValue(treeIter, 2).ToString();
@@ -309,110 +440,132 @@ namespace Ryujinx.Ui.Windows
 
             string fileName = string.Empty;
 
-            if (!string.IsNullOrWhiteSpace(savePath) && Directory.Exists(savePath))
+            _operationRunning = true;
+
+            Task.Run(() =>
             {
-                var levels = path.Split("/", StringSplitOptions.RemoveEmptyEntries);
-
-                switch (_appType)
+                try
                 {
-                    case "xci":
-                        var partitionType = Enum.Parse<XciPartitionType>(levels[0], true);
-                        if (_xci.HasPartition(partitionType))
-                        {
-                            var partition = _xci.OpenPartition(partitionType);
-
-                            if(levels.Length == 1)
-                            {
-                                savePath = System.IO.Path.Combine(savePath, partitionType.ToString());
-
-                                Directory.CreateDirectory(savePath);
-
-                                partition.Extract(savePath);
-
-                                return;
-                            }
-
-                            fileName = levels[1];
-
-                            if (fileName.ToLower().EndsWith(".nca"))
-                            {
-                                if (partition.FileExists(fileName))
-                                {
-                                    var entry = partition.Files.ToList().Find(x => x.Name == fileName);
-
-                                    var ncaStorage = partition.OpenFile(entry, OpenMode.Read).AsStorage();
-
-                                    var nca = new Nca(VirtualFileSystem.KeySet, ncaStorage);
-
-                                    var ncaSectionType = Enum.Parse<NcaSectionType>(levels[2], true);
-
-                                    if (levels.Length == 3)
-                                    {
-                                        if (nca.CanOpenSection(ncaSectionType))
-                                        {
-                                            var section = nca.OpenFileSystem(ncaSectionType, IntegrityCheckLevel.IgnoreOnInvalid);
-
-                                            savePath = System.IO.Path.Combine(savePath, ncaSectionType.ToString());
-
-                                            Directory.CreateDirectory(savePath);
-
-                                            section.Extract(savePath);
-                                        }
-                                        return;
-                                    }
-                                    string relativePath = string.Join('/', levels.AsSpan().Slice(3).ToArray());
-
-                                    TransverseNca(nca, ncaSectionType, "/" + relativePath);
-                                }
-                            }
-                        }
-                        break;
-                    case "nsp":
-                    if(levels.Length == 0)
+                    if (!string.IsNullOrWhiteSpace(savePath) && Directory.Exists(savePath))
                     {
-                            _fs.Extract(savePath);
+                        var levels = path.Split("/", StringSplitOptions.RemoveEmptyEntries);
 
-                            return;
-                        }
-                        fileName = levels[0];
-                        if (fileName.ToLower().EndsWith(".nca"))
+                        switch (_appType)
                         {
-                            if (_fs.FileExists(fileName))
-                            {
-                                var entry = _fs.Files.ToList().Find(x => x.Name == fileName);
-
-                                var ncaStorage = _fs.OpenFile(entry, OpenMode.Read).AsStorage();
-
-                                var nca = new Nca(VirtualFileSystem.KeySet, ncaStorage);
-
-                                if (levels.Last() != fileName)
+                            case "xci":
+                                var partitionType = Enum.Parse<XciPartitionType>(levels[0], true);
+                                if (_xci.HasPartition(partitionType))
                                 {
-                                    var ncaSectionType = Enum.Parse<NcaSectionType>(levels[1], true);
+                                    var partition = _xci.OpenPartition(partitionType);
 
-                                    if (levels.Length == 2)
+                                    if (levels.Length == 1)
                                     {
-                                        if (nca.CanOpenSection(ncaSectionType))
-                                        {
-                                            var section = nca.OpenFileSystem(ncaSectionType, IntegrityCheckLevel.IgnoreOnInvalid);
+                                        savePath = System.IO.Path.Combine(savePath, partitionType.ToString());
 
-                                            savePath = System.IO.Path.Combine(savePath, ncaSectionType.ToString());
+                                        Directory.CreateDirectory(savePath);
 
-                                            Directory.CreateDirectory(savePath);
+                                        LogMessage($"Extracting {partitionType}");
 
-                                            section.Extract(savePath);
-                                        }
+                                        partition.Extract(savePath, this);
+
                                         return;
                                     }
 
-                                    string relativePath = string.Join('/', levels.AsSpan().Slice(2).ToArray());
+                                    fileName = levels[1];
 
-                                    TransverseNca(nca, ncaSectionType, "/" + relativePath);
+                                    if (fileName.ToLower().EndsWith(".nca"))
+                                    {
+                                        if (partition.FileExists(fileName))
+                                        {
+                                            var entry = partition.Files.ToList().Find(x => x.Name == fileName);
+
+                                            var ncaStorage = partition.OpenFile(entry, OpenMode.Read).AsStorage();
+
+                                            var nca = new Nca(VirtualFileSystem.KeySet, ncaStorage);
+
+                                            var ncaSectionType = Enum.Parse<NcaSectionType>(levels[2], true);
+
+                                            if (levels.Length == 3)
+                                            {
+                                                if (nca.CanOpenSection(ncaSectionType))
+                                                {
+                                                    var section = nca.OpenFileSystem(ncaSectionType, IntegrityCheckLevel.IgnoreOnInvalid);
+
+                                                    savePath = System.IO.Path.Combine(savePath, ncaSectionType.ToString());
+
+                                                    Directory.CreateDirectory(savePath);
+
+                                                    LogMessage($"Extracting {ncaSectionType}");
+
+                                                    section.Extract(savePath, this);
+                                                }
+                                                return;
+                                            }
+                                            string relativePath = string.Join('/', levels.AsSpan().Slice(3).ToArray());
+
+                                            TransverseNca(nca, ncaSectionType, "/" + relativePath);
+                                        }
+                                    }
                                 }
-                            }
+                                break;
+                            case "nsp":
+                                if (levels.Length == 0)
+                                {
+                                    LogMessage($"Extracting {_titleName}");
+
+                                    _fs.Extract(savePath, this);
+
+                                    return;
+                                }
+                                fileName = levels[0];
+                                if (fileName.ToLower().EndsWith(".nca"))
+                                {
+                                    if (_fs.FileExists(fileName))
+                                    {
+                                        var entry = _fs.Files.ToList().Find(x => x.Name == fileName);
+
+                                        var ncaStorage = _fs.OpenFile(entry, OpenMode.Read).AsStorage();
+
+                                        var nca = new Nca(VirtualFileSystem.KeySet, ncaStorage);
+
+                                        if (levels.Last() != fileName)
+                                        {
+                                            var ncaSectionType = Enum.Parse<NcaSectionType>(levels[1], true);
+
+                                            if (levels.Length == 2)
+                                            {
+                                                if (nca.CanOpenSection(ncaSectionType))
+                                                {
+                                                    var section = nca.OpenFileSystem(ncaSectionType, IntegrityCheckLevel.IgnoreOnInvalid);
+
+                                                    savePath = System.IO.Path.Combine(savePath, ncaSectionType.ToString());
+
+                                                    Directory.CreateDirectory(savePath);
+
+                                                    LogMessage($"Extracting {ncaSectionType}");
+
+                                                    section.Extract(savePath, this);
+                                                }
+                                                return;
+                                            }
+
+                                            string relativePath = string.Join('/', levels.AsSpan().Slice(2).ToArray());
+
+                                            TransverseNca(nca, ncaSectionType, "/" + relativePath);
+                                        }
+                                    }
+                                }
+                                break;
                         }
-                        break;
+                    }
                 }
-            }
+                finally
+                {
+                    _operationRunning = false;
+
+                    LogMessage("Extraction Successful");
+                }
+            });
 
             void TransverseNca(Nca nca, NcaSectionType sectionType, string relativePath)
             {
@@ -457,9 +610,13 @@ namespace Ryujinx.Ui.Windows
 
                                             Directory.CreateDirectory(new FileInfo(extractionPath).DirectoryName);
 
-                                            using(var stream = File.OpenWrite(extractionPath))
+                                            using (var stream = File.OpenWrite(extractionPath))
                                             {
-                                                file.AsStorage().CopyToStream(stream);
+                                                file.GetSize(out var size);
+
+                                                LogMessage($"Saving {fullPath}");
+
+                                                file.AsStorage().CopyToStream(stream, size, this);
                                             }
                                             break;
                                         case DirectoryEntryType.Directory:
@@ -507,7 +664,11 @@ namespace Ryujinx.Ui.Windows
 
                                                 using (var stream = File.OpenWrite(extractionPath))
                                                 {
-                                                    file.AsStorage().CopyToStream(stream);
+                                                    file.GetSize(out var size);
+
+                                                    LogMessage($"{fullPath}");
+
+                                                    file.AsStorage().CopyToStream(stream, size, this);
                                                 }
                                                 break;
                                             case DirectoryEntryType.Directory:
@@ -525,7 +686,7 @@ namespace Ryujinx.Ui.Windows
 
         private void ExplorerView_RowExpanded(object o, RowExpandedArgs args)
         {
-            var treeStore = _explorerView.Model as TreeStore;
+            var treeStore = (_explorerView.Model as TreeModelFilter).Model as TreeStore;
 
             if(treeStore.IterNChildren(args.Iter) == 1 && treeStore.IterChildren(out var child, args.Iter))
             {
@@ -741,15 +902,15 @@ namespace Ryujinx.Ui.Windows
             }
         }
 
-        private TreeIter AddNode(TreeIter parentIter, string name, string fullPath, ulong size, string dataType = "")
+        private TreeIter AddNode(TreeIter parentIter, string name, string fullPath, ulong size, string dataType = "", string titleId = "")
         {
             if(parentIter.Equals(TreeIter.Zero))
             {
-                return (_explorerView.Model as TreeStore).AppendValues(name, size, fullPath, dataType);
+                return ((_explorerView.Model as TreeModelFilter).Model as TreeStore).AppendValues(name, size, fullPath, dataType, titleId);
             }
             else 
             {
-               return (_explorerView.Model as TreeStore).AppendValues(parentIter, name, size, fullPath, dataType);
+               return ((_explorerView.Model as TreeModelFilter).Model as TreeStore).AppendValues(parentIter, name, size, fullPath, dataType, titleId);
             }
         }
 
@@ -761,7 +922,9 @@ namespace Ryujinx.Ui.Windows
 
             storage.GetSize(out var size);
 
-            iter = AddNode(parentIter, name, path, (ulong)size, nca.Header.ContentType.ToString());
+            string titleId = $"{nca.Header.TitleId:X16}";
+
+            iter = AddNode(parentIter, name, path, (ulong)size, nca.Header.ContentType.ToString(), titleId);
 
             ExpandNca(iter, nca, path);
 
@@ -1007,6 +1170,51 @@ namespace Ryujinx.Ui.Windows
             _fs = null;
 
             base.OnDestroyed();
+        }
+
+        public void Report(long value)
+        {
+            _operationCompleted = value;
+
+            float total = _operationTotal;
+            float completed = _operationCompleted;
+
+            Gtk.Application.Invoke(delegate
+            {
+                _progressBar.Fraction = completed / total;
+            });
+        }
+
+        public void ReportAdd(long value)
+        {
+            _operationCompleted += value;
+
+            float total = _operationTotal;
+            float completed = _operationCompleted;
+
+            Gtk.Application.Invoke(delegate
+            {
+                _progressBar.Fraction = completed / total;
+            });
+        }
+
+        public void SetTotal(long value)
+        {
+            _operationTotal = value;
+            _operationCompleted = 0;
+
+            Gtk.Application.Invoke(delegate
+            {
+                _progressBar.Fraction = 0;
+            });
+        }
+
+        public void LogMessage(string message)
+        {
+            Gtk.Application.Invoke(delegate
+            {
+                _progressLabel.Text = message;
+            });
         }
     }
 }

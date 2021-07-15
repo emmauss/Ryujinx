@@ -184,7 +184,10 @@ namespace Ryujinx.Ui.Widgets
 
         private void Explore_Clicked(object sender, EventArgs e)
         {
-            new AppExplorerWindow(_parent, _virtualFileSystem, _titleFilePath, _titleName, $"{_titleId:x16}").ShowAll();
+            var explorer = new AppExplorerWindow(_virtualFileSystem, _titleFilePath, _titleName, $"{_titleId:x16}");
+
+            explorer.Modal = true;
+            explorer.ShowAll();
         }
 
         private void ShowComponent()

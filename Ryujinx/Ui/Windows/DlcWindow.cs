@@ -183,6 +183,32 @@ namespace Ryujinx.Ui.Windows
                 }
             }
         }
+
+        private void ExploreButton_Clicked(object sender, EventArgs args)
+        {
+            if (_dlcTreeSelection.GetSelected(out ITreeModel treeModel, out TreeIter treeIter))
+            {
+                string path;
+
+                if (_dlcTreeView.Model.IterParent(out TreeIter parentIter, treeIter))
+                {
+                    path = (string)_dlcTreeView.Model.GetValue(parentIter, 2);
+                }
+                else
+                {
+                    path = (string)_dlcTreeView.Model.GetValue(treeIter, 2);
+                }
+
+                if(path.ToLower().EndsWith(".nsp"))
+                {
+                    var explorer = new AppExplorerWindow(_virtualFileSystem, path, "DLC", "");
+
+                    explorer.Modal = true;
+
+                    explorer.ShowAll();
+                }
+            }
+        }
         
         private void RemoveAllButton_Clicked(object sender, EventArgs args)
         {
